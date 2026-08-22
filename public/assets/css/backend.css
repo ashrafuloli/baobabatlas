@@ -29775,6 +29775,66 @@ body.payment-modal-open {
   line-height: 1.5;
 }
 
+.smart-buy-customer-create-page .smart-buy-items {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.smart-buy-customer-create-page .smart-buy-item {
+  padding: 18px;
+  border: 1px solid rgba(23, 114, 69, 0.18);
+  border-radius: 10px;
+  background: rgba(23, 114, 69, 0.018);
+}
+
+.smart-buy-customer-create-page .smart-buy-item-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(85, 85, 85, 0.1);
+}
+
+.smart-buy-customer-create-page .smart-buy-item-title {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.smart-buy-customer-create-page .item-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  min-width: 62px;
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 7px;
+  background: rgba(23, 114, 69, 0.09);
+  color: #177245;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.smart-buy-customer-create-page .smart-buy-item-title h3 {
+  margin: 0;
+  color: #0D2B5A;
+  font-family: "Poppins", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.smart-buy-customer-create-page .smart-buy-item-title p {
+  margin: 2px 0 0;
+  color: rgba(85, 85, 85, 0.65);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 .smart-buy-customer-create-page .form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -29878,6 +29938,7 @@ body.payment-modal-open {
 
 .smart-buy-customer-create-page .upload-box {
   position: relative;
+  overflow: hidden;
   border: 1px dashed rgba(85, 85, 85, 0.3);
   border-radius: 9px;
   background: rgba(16, 26, 35, 0.015);
@@ -29942,6 +30003,142 @@ body.payment-modal-open {
   color: #177245;
   font-size: 14px;
   font-weight: 600;
+}
+
+.smart-buy-customer-create-page .image-preview-wrapper {
+  display: none;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+  padding: 12px;
+  background: #fff;
+}
+
+.smart-buy-customer-create-page .image-preview-wrapper.has-image {
+  display: flex;
+}
+
+.smart-buy-customer-create-page .image-preview-wrapper.has-image + * {
+  display: none;
+}
+
+.smart-buy-customer-create-page .upload-box:has(.image-preview-wrapper.has-image) .upload-content {
+  display: none;
+}
+
+.smart-buy-customer-create-page .upload-box:has(.image-preview-wrapper.has-image) .product-image-input {
+  z-index: 1;
+}
+
+.smart-buy-customer-create-page .product-image-preview {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  max-height: 280px;
+  border-radius: 7px;
+  object-fit: contain;
+}
+
+.smart-buy-customer-create-page .remove-image-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid rgba(220, 53, 69, 0.2);
+  border-radius: 50%;
+  background: #fff;
+  color: #dc3545;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(16, 26, 35, 0.1);
+  transition: all 0.2s ease;
+}
+
+.smart-buy-customer-create-page .remove-image-button:hover {
+  border-color: #dc3545;
+  background: #dc3545;
+  color: #fff;
+}
+
+.smart-buy-customer-create-page .remove-image-button i {
+  line-height: 1;
+}
+
+.smart-buy-customer-create-page .remove-item-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 11px;
+  border: 1px solid rgba(220, 53, 69, 0.2);
+  border-radius: 7px;
+  background: rgba(220, 53, 69, 0.04);
+  color: #dc3545;
+  font-family: "Poppins", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.smart-buy-customer-create-page .remove-item-button:hover {
+  border-color: rgba(220, 53, 69, 0.35);
+  background: rgba(220, 53, 69, 0.08);
+}
+
+.smart-buy-customer-create-page .remove-item-button i {
+  font-size: 16px;
+}
+
+.smart-buy-customer-create-page .add-item-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(85, 85, 85, 0.1);
+}
+
+.smart-buy-customer-create-page .add-item-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 42px;
+  padding: 0 15px;
+  border: 1px dashed rgba(23, 114, 69, 0.45);
+  border-radius: 8px;
+  background: rgba(23, 114, 69, 0.025);
+  color: #177245;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.smart-buy-customer-create-page .add-item-button:hover {
+  border-color: #177245;
+  background: rgba(23, 114, 69, 0.07);
+}
+
+.smart-buy-customer-create-page .add-item-button i {
+  font-size: 18px;
+}
+
+.smart-buy-customer-create-page .add-item-wrapper p {
+  margin: 0;
+  color: rgba(85, 85, 85, 0.6);
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 .smart-buy-customer-create-page .sidebar-card,
@@ -30218,6 +30415,29 @@ body.payment-modal-open {
   .smart-buy-customer-create-page .trust-card {
     padding: 16px;
   }
+  .smart-buy-customer-create-page .smart-buy-item {
+    padding: 14px;
+  }
+  .smart-buy-customer-create-page .smart-buy-item-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .smart-buy-customer-create-page .remove-item-button {
+    width: 100%;
+  }
+  .smart-buy-customer-create-page .add-item-wrapper {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .smart-buy-customer-create-page .add-item-button {
+    width: 100%;
+  }
+  .smart-buy-customer-create-page .image-preview-wrapper {
+    min-height: 180px;
+  }
+  .smart-buy-customer-create-page .product-image-preview {
+    max-height: 230px;
+  }
   .smart-buy-customer-create-page .form-actions {
     justify-content: stretch;
   }
@@ -30232,6 +30452,12 @@ body.payment-modal-open {
   }
   .smart-buy-customer-create-page .smart-buy-message {
     align-items: flex-start;
+  }
+  .smart-buy-customer-create-page .image-preview-wrapper {
+    min-height: 150px;
+  }
+  .smart-buy-customer-create-page .product-image-preview {
+    max-height: 200px;
   }
   .smart-buy-customer-create-page .form-actions {
     align-items: stretch;
@@ -31224,923 +31450,860 @@ body.payment-modal-open {
     padding: 15px 16px;
   }
 }
-/*==================================================
-| Page
-==================================================*/
-.my-smart-buy-details-page {
+.smart-buy-details-page {
   width: 100%;
 }
-
-/*==================================================
-| Header
-==================================================*/
-.my-smart-buy-details-header {
-  margin-bottom: 16px;
+.smart-buy-details-page .page-header {
+  margin-bottom: 20px;
+}
+.smart-buy-details-page .page-header .page-header-content {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: 20px;
 }
-
-.my-smart-buy-details-back {
+@media (max-width: 767px) {
+  .smart-buy-details-page .page-header .page-header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+.smart-buy-details-page .page-header .back-link {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  margin-bottom: 9px;
-  color: #555555;
+  gap: 6px;
+  margin-bottom: 14px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
+  color: #555555;
   text-decoration: none;
-  transition: color 0.2s ease;
 }
-.my-smart-buy-details-back:hover {
+.smart-buy-details-page .page-header .back-link i {
+  font-size: 18px;
+}
+.smart-buy-details-page .page-header .back-link:hover {
   color: #177245;
 }
-
-.my-smart-buy-details-heading {
+.smart-buy-details-page .page-header .page-title-wrapper {
   display: flex;
   align-items: center;
-  gap: 11px;
+  gap: 14px;
 }
-
-.my-smart-buy-details-heading__icon {
-  width: 46px;
-  height: 46px;
-  flex: 0 0 46px;
-  border-radius: 10px;
-  background: rgba(23, 114, 69, 0.08);
-  color: #177245;
-  display: inline-flex;
+.smart-buy-details-page .page-header .page-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
   align-items: center;
   justify-content: center;
-}
-.my-smart-buy-details-heading__icon i {
-  font-size: 20px;
-}
-
-.my-smart-buy-details-heading > div:last-child {
-  min-width: 0;
-}
-
-.my-smart-buy-details-heading > div:last-child > span {
-  display: block;
-  margin-bottom: 2px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: rgba(23, 114, 69, 0.08);
   color: #177245;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-size: 22px;
 }
-
-.my-smart-buy-details-heading h1 {
-  margin: 0 0 3px;
-  color: #0D2B5A;
+.smart-buy-details-page .page-header .page-eyebrow {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #177245;
+}
+.smart-buy-details-page .page-header .page-title {
+  margin: 0;
   font-family: "Poppins", sans-serif;
   font-size: 24px;
   font-weight: 700;
-  line-height: 1.3;
+  line-height: 1.25;
+  color: #0D2B5A;
 }
-
-.my-smart-buy-details-heading p {
-  margin: 0;
-  color: rgba(85, 85, 85, 0.2);
+.smart-buy-details-page .page-header .page-description {
+  margin: 4px 0 0;
   font-size: 14px;
+  color: #555555;
 }
-
-.my-smart-buy-details-status {
-  min-height: 27px;
-  padding: 4px 10px;
-  border-radius: 20px;
-  background: #eaf7ef;
-  color: #2d8752;
+.smart-buy-details-page {
+  /* =========================================
+      Status Badge
+  ========================================= */
+}
+.smart-buy-details-page .status-badge {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  font-size: 14px;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  font-size: 13px;
   font-weight: 600;
-  white-space: nowrap;
 }
-
-.my-smart-buy-details-status i {
+.smart-buy-details-page .status-badge .status-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
   background: currentColor;
 }
-
-/*==================================================
-| Summary
-==================================================*/
-.my-smart-buy-details-summary {
-  margin-bottom: 15px;
-  padding: 13px 16px;
-  border: 1px solid rgba(16, 26, 35, 0.07);
-  border-radius: 10px;
-  background: #fff;
+.smart-buy-details-page .status-in-transit {
+  background: rgba(23, 114, 69, 0.08);
+  color: #177245;
+}
+.smart-buy-details-page {
+  /* =========================================
+      Request Overview
+  ========================================= */
+}
+.smart-buy-details-page .request-overview {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0;
-  box-shadow: 0 3px 14px rgba(16, 26, 35, 0.025);
+  grid-template-columns: repeat(4, 1fr);
+  margin-bottom: 14px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(16, 26, 35, 0.03);
 }
-
-.my-smart-buy-details-summary__item {
-  padding: 2px 15px;
-  border-right: 1px solid rgba(16, 26, 35, 0.06);
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
+@media (min-width: 992px) and (max-width: 1199px) {
+  .smart-buy-details-page .request-overview {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
-
-.my-smart-buy-details-summary__item:first-child {
-  padding-left: 0;
+@media (min-width: 768px) and (max-width: 991px) {
+  .smart-buy-details-page .request-overview {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
-
-.my-smart-buy-details-summary__item:last-child {
-  padding-right: 0;
-  border-right: 0;
+@media (max-width: 767px) {
+  .smart-buy-details-page .request-overview {
+    grid-template-columns: 1fr;
+  }
 }
-
-.my-smart-buy-details-summary__item span {
-  color: rgba(85, 85, 85, 0.2);
-  font-size: 14px;
+.smart-buy-details-page .overview-item {
+  padding: 14px 16px;
+  border-right: 1px solid #ddd;
 }
-
-.my-smart-buy-details-summary__item strong {
-  color: #0D2B5A;
+.smart-buy-details-page .overview-item:last-child {
+  border-right: none;
+}
+@media (min-width: 992px) and (max-width: 1199px) {
+  .smart-buy-details-page .overview-item:nth-child(2) {
+    border-right: none;
+  }
+  .smart-buy-details-page .overview-item:nth-child(-n+2) {
+    border-bottom: 1px solid #ddd;
+  }
+}
+@media (min-width: 768px) and (max-width: 991px) {
+  .smart-buy-details-page .overview-item:nth-child(2) {
+    border-right: none;
+  }
+  .smart-buy-details-page .overview-item:nth-child(-n+2) {
+    border-bottom: 1px solid #ddd;
+  }
+}
+@media (max-width: 767px) {
+  .smart-buy-details-page .overview-item {
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+  }
+  .smart-buy-details-page .overview-item:last-child {
+    border-bottom: none;
+  }
+}
+.smart-buy-details-page .overview-item span {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 12px;
+  color: #555555;
+}
+.smart-buy-details-page .overview-item strong {
+  display: block;
   font-size: 14px;
   font-weight: 600;
+  color: #0D2B5A;
 }
-
-.my-smart-buy-details-summary__item strong.is-success {
-  color: #2d8752;
+.smart-buy-details-page .overview-item .status-text {
+  color: #177245;
 }
-
-/*==================================================
-| Layout
-==================================================*/
-.my-smart-buy-details-layout {
+.smart-buy-details-page {
+  /* =========================================
+      Main Layout
+  ========================================= */
+}
+.smart-buy-details-page .details-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 300px;
+  grid-template-columns: minmax(0, 1fr) 320px;
   align-items: start;
-  gap: 15px;
+  gap: 14px;
 }
-
-.my-smart-buy-details-main {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+@media (min-width: 992px) and (max-width: 1199px) {
+  .smart-buy-details-page .details-layout {
+    grid-template-columns: minmax(0, 1fr) 280px;
+  }
 }
-
-.my-smart-buy-details-sidebar {
+@media (min-width: 768px) and (max-width: 991px) {
+  .smart-buy-details-page .details-layout {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 767px) {
+  .smart-buy-details-page .details-layout {
+    grid-template-columns: 1fr;
+  }
+}
+.smart-buy-details-page .details-main {
   min-width: 0;
-  position: sticky;
-  top: 20px;
+}
+.smart-buy-details-page .details-sidebar {
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
-
-/*==================================================
-| Card
-==================================================*/
-.my-smart-buy-details-card {
+.smart-buy-details-page {
+  /* =========================================
+      Common Card
+  ========================================= */
+}
+.smart-buy-details-page .details-card,
+.smart-buy-details-page .sidebar-card {
+  margin-bottom: 14px;
   overflow: hidden;
-  border: 1px solid rgba(16, 26, 35, 0.07);
-  border-radius: 10px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
   background: #fff;
-  box-shadow: 0 3px 14px rgba(16, 26, 35, 0.025);
+  box-shadow: 0 2px 10px rgba(16, 26, 35, 0.03);
 }
-
-.my-smart-buy-details-card__header {
-  min-height: 58px;
-  padding: 12px 16px;
-  border-bottom: 1px solid rgba(16, 26, 35, 0.06);
+.smart-buy-details-page .sidebar-card {
+  margin-bottom: 0;
+}
+.smart-buy-details-page .card-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
+  gap: 15px;
+  padding: 14px;
+  border-bottom: 1px solid rgba(16, 26, 35, 0.06);
 }
-
-.my-smart-buy-details-card__header h2 {
-  margin: 0 0 3px;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 1.3;
-}
-
-.my-smart-buy-details-card__header p {
+.smart-buy-details-page .card-header h2 {
   margin: 0;
-  color: rgba(85, 85, 85, 0.2);
-  font-size: 14px;
-  line-height: 1.4;
+  font-family: "Poppins", sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: #0D2B5A;
 }
-
-/*==================================================
-| Badge
-==================================================*/
-.my-smart-buy-details-badge {
-  min-height: 25px;
-  padding: 4px 8px;
-  border-radius: 20px;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 14px;
-  font-weight: 600;
-  white-space: nowrap;
+.smart-buy-details-page .card-header p {
+  margin: 3px 0 0;
+  font-size: 13px;
+  color: #555555;
 }
-
-.my-smart-buy-details-badge.is-success {
-  background: #eaf7ef;
-  color: #2d8752;
+@media (max-width: 767px) {
+  .smart-buy-details-page .card-header {
+    flex-direction: column;
+  }
 }
-
-.my-smart-buy-details-badge.is-info {
-  background: rgba(23, 114, 69, 0.08);
-  color: #177245;
+.smart-buy-details-page {
+  /* =========================================
+      Progress
+  ========================================= */
 }
-
-/*==================================================
-| Progress
-==================================================*/
-.my-smart-buy-details-progress {
-  padding: 18px 20px;
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 0;
+.smart-buy-details-page .progress-card .card-header {
+  border-bottom: none;
 }
-
-.my-smart-buy-details-progress__step {
+.smart-buy-details-page .progress-steps {
+  display: flex;
+  align-items: flex-start;
+  padding: 12px 20px 20px;
+  overflow-x: auto;
+}
+@media (max-width: 767px) {
+  .smart-buy-details-page .progress-steps {
+    padding: 10px 15px 18px;
+  }
+}
+.smart-buy-details-page .progress-step {
   position: relative;
-  padding: 0 8px;
+  min-width: 115px;
+  flex: 1;
   text-align: center;
 }
-
-.my-smart-buy-details-progress__step:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  top: 14px;
-  left: calc(50% + 15px);
-  width: calc(100% - 30px);
-  height: 1px;
-  background: #e0e4e6;
-}
-
-.my-smart-buy-details-progress__step.is-completed:not(:last-child)::after {
-  background: rgba(23, 114, 69, 0.28);
-}
-
-.my-smart-buy-details-progress__icon {
-  position: relative;
-  z-index: 2;
-  width: 29px;
-  height: 29px;
-  margin: 0 auto 7px;
-  border: 1px solid #dfe3e5;
-  border-radius: 50%;
-  background: #fff;
-  color: #9ba1a5;
+.smart-buy-details-page .progress-step .progress-icon {
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 0 auto 8px;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  background: #fff;
+  color: #555555;
+  font-size: 14px;
 }
-.my-smart-buy-details-progress__icon i {
-  font-size: 13px;
+.smart-buy-details-page .progress-step strong {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #0D2B5A;
+  white-space: nowrap;
 }
-
-.my-smart-buy-details-progress__step.is-completed .my-smart-buy-details-progress__icon {
-  border-color: rgba(23, 114, 69, 0.18);
-  background: rgba(23, 114, 69, 0.08);
+.smart-buy-details-page .progress-step span {
+  display: block;
+  font-size: 11px;
+  color: #555555;
+  white-space: nowrap;
+}
+.smart-buy-details-page .progress-step.completed .progress-icon {
+  border-color: rgba(23, 114, 69, 0.2);
+  background: rgba(23, 114, 69, 0.06);
   color: #177245;
 }
-
-.my-smart-buy-details-progress__step.is-active .my-smart-buy-details-progress__icon {
+.smart-buy-details-page .progress-step.active .progress-icon {
   border-color: #177245;
   background: #177245;
   color: #fff;
-  box-shadow: 0 0 0 4px rgba(23, 114, 69, 0.08);
+  box-shadow: 0 0 0 5px rgba(23, 114, 69, 0.08);
 }
-
-.my-smart-buy-details-progress__step > div:last-child {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+.smart-buy-details-page .progress-line {
+  height: 1px;
+  flex: 1;
+  min-width: 20px;
+  margin-top: 15px;
+  background: #ddd;
 }
-
-.my-smart-buy-details-progress__step strong {
-  color: #0D2B5A;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.3;
+.smart-buy-details-page .progress-line.completed {
+  background: #177245;
 }
-
-.my-smart-buy-details-progress__step.is-active strong {
-  color: #177245;
+.smart-buy-details-page {
+  /* =========================================
+      Product Details
+  ========================================= */
 }
-
-.my-smart-buy-details-progress__step span {
-  color: rgba(85, 85, 85, 0.2);
-  font-size: 14px;
-}
-
-/*==================================================
-| Product
-==================================================*/
-.my-smart-buy-details-product {
+.smart-buy-details-page .product-request-item {
   padding: 16px;
+  border-top: 1px solid rgba(16, 26, 35, 0.06);
+}
+.smart-buy-details-page .product-request-item:first-of-type {
+  border-top: none;
+}
+.smart-buy-details-page .product-request-header {
+  margin-bottom: 14px;
+}
+.smart-buy-details-page .product-request-title {
   display: flex;
   align-items: flex-start;
   gap: 12px;
 }
-
-.my-smart-buy-details-product__icon {
-  width: 60px;
-  height: 60px;
-  flex: 0 0 60px;
-  border-radius: 9px;
-  background: rgba(23, 114, 69, 0.07);
-  color: #177245;
+.smart-buy-details-page .product-request-title .product-icon {
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: rgba(23, 114, 69, 0.07);
+  color: #177245;
+  font-size: 22px;
 }
-.my-smart-buy-details-product__icon i {
-  font-size: 25px;
+.smart-buy-details-page .product-request-title .product-label {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #177245;
 }
-
-.my-smart-buy-details-product__content {
-  min-width: 0;
-}
-
-.my-smart-buy-details-product__content > span {
-  color: rgba(85, 85, 85, 0.2);
-  font-size: 14px;
-}
-
-.my-smart-buy-details-product__content h3 {
-  margin: 2px 0 5px;
+.smart-buy-details-page .product-request-title h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
   color: #0D2B5A;
-  font-size: 18px;
-  font-weight: 600;
 }
-
-.my-smart-buy-details-product__content > p {
-  margin: 0 0 11px;
+.smart-buy-details-page .product-request-title p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  line-height: 1.6;
   color: #555555;
-  font-size: 14px;
-  line-height: 1.5;
 }
-
-.my-smart-buy-details-product__meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
+.smart-buy-details-page .product-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
 }
-
-.my-smart-buy-details-product__meta > div {
-  min-width: 100px;
-  padding: 7px 9px;
-  border: 1px solid rgba(16, 26, 35, 0.055);
-  border-radius: 7px;
-  background: #fafbfc;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+@media (max-width: 767px) {
+  .smart-buy-details-page .product-meta-grid {
+    grid-template-columns: 1fr;
+  }
 }
-
-.my-smart-buy-details-product__meta span {
-  color: rgba(85, 85, 85, 0.2);
-  font-size: 14px;
+.smart-buy-details-page .product-meta {
+  padding: 9px 10px;
+  border: 1px solid rgba(16, 26, 35, 0.08);
+  border-radius: 8px;
+  background: #F2F4F7;
 }
-
-.my-smart-buy-details-product__meta strong {
+.smart-buy-details-page .product-meta span {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 11px;
+  color: #555555;
+}
+.smart-buy-details-page .product-meta strong {
+  display: block;
+  font-size: 13px;
   color: #0D2B5A;
-  font-size: 14px;
+}
+.smart-buy-details-page .product-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid rgba(16, 26, 35, 0.08);
+  border-radius: 8px;
+}
+.smart-buy-details-page .product-link > i {
+  color: #177245;
+  font-size: 18px;
+}
+.smart-buy-details-page .product-link span {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 11px;
+  color: #555555;
+}
+.smart-buy-details-page .product-link a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #177245;
+  text-decoration: none;
+}
+.smart-buy-details-page .product-notes {
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(23, 114, 69, 0.04);
+}
+.smart-buy-details-page .product-notes span {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #0D2B5A;
+}
+.smart-buy-details-page .product-notes p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #555555;
+}
+.smart-buy-details-page {
+  /* =========================================
+      Quote
+  ========================================= */
+}
+.smart-buy-details-page .card-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 11px;
   font-weight: 600;
 }
-
-/*==================================================
-| Quote
-==================================================*/
-.my-smart-buy-details-quote {
-  padding: 9px 16px 14px;
+.smart-buy-details-page .card-status.success {
+  background: rgba(25, 135, 84, 0.08);
+  color: #198754;
 }
-
-.my-smart-buy-details-quote__row {
-  min-height: 39px;
-  padding: 7px 0;
-  border-bottom: 1px solid rgba(16, 26, 35, 0.055);
+.smart-buy-details-page .card-status.active {
+  background: rgba(23, 114, 69, 0.08);
+  color: #177245;
+}
+.smart-buy-details-page .quote-details {
+  padding: 0 14px;
+}
+.smart-buy-details-page .quote-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 20px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(16, 26, 35, 0.06);
 }
-
-.my-smart-buy-details-quote__row span {
-  color: rgba(85, 85, 85, 0.2);
-  font-size: 14px;
+.smart-buy-details-page .quote-row span {
+  font-size: 13px;
+  color: #555555;
 }
-
-.my-smart-buy-details-quote__row strong {
+.smart-buy-details-page .quote-row strong {
+  font-size: 13px;
   color: #0D2B5A;
-  font-size: 14px;
-  font-weight: 600;
 }
-
-.my-smart-buy-details-quote__row:last-of-type {
-  padding-top: 11px;
-  padding-bottom: 10px;
-  border-bottom: 0;
+.smart-buy-details-page .quote-row.total {
+  border-bottom: none;
 }
-
-.my-smart-buy-details-quote__row:last-of-type span {
+.smart-buy-details-page .quote-row.total span {
+  font-weight: 700;
   color: #0D2B5A;
-  font-weight: 600;
 }
-
-.my-smart-buy-details-quote__row:last-of-type strong {
+.smart-buy-details-page .quote-row.total strong {
+  font-size: 16px;
   color: #177245;
-  font-size: 18px;
 }
-
-.my-smart-buy-details-view-link {
-  min-height: 36px;
-  margin-top: 4px;
-  padding: 0 10px;
-  border: 1px solid rgba(23, 114, 69, 0.14);
-  border-radius: 7px;
-  background: rgba(23, 114, 69, 0.035);
-  color: #177245;
+.smart-buy-details-page .quote-footer {
+  padding: 0 14px 14px;
+}
+.smart-buy-details-page .outline-action-button {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 14px;
+  padding: 8px 12px;
+  border: 1px solid rgba(23, 114, 69, 0.25);
+  border-radius: 7px;
+  color: #177245;
+  font-size: 12px;
   font-weight: 600;
   text-decoration: none;
-  transition: 0.2s ease;
 }
-.my-smart-buy-details-view-link:hover {
-  background: rgba(23, 114, 69, 0.08);
+.smart-buy-details-page {
+  /* =========================================
+      Payment
+  ========================================= */
 }
-
-/*==================================================
-| Payment
-==================================================*/
-.my-smart-buy-details-payment {
-  padding: 14px 16px;
+.smart-buy-details-page .payment-content {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 12px;
+  padding: 15px;
 }
-
-.my-smart-buy-details-payment__icon {
+@media (max-width: 767px) {
+  .smart-buy-details-page .payment-content {
+    flex-wrap: wrap;
+  }
+}
+.smart-buy-details-page .payment-icon {
   width: 40px;
   height: 40px;
-  flex: 0 0 40px;
-  border-radius: 9px;
-  background: #eaf7ef;
-  color: #2d8752;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-.my-smart-buy-details-payment__icon i {
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: rgba(25, 135, 84, 0.08);
+  color: #198754;
   font-size: 19px;
 }
-
-.my-smart-buy-details-payment__content {
-  min-width: 0;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.my-smart-buy-details-payment__content strong {
+.smart-buy-details-page .payment-info strong {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 13px;
   color: #0D2B5A;
-  font-size: 14px;
-  font-weight: 600;
 }
-
-.my-smart-buy-details-payment__content span {
-  color: rgba(85, 85, 85, 0.2);
-  font-size: 14px;
+.smart-buy-details-page .payment-info span {
+  display: block;
+  font-size: 12px;
+  color: #555555;
 }
-
-.my-smart-buy-details-payment__amount {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
-}
-
-.my-smart-buy-details-payment__amount span {
-  color: rgba(85, 85, 85, 0.2);
-  font-size: 14px;
-}
-
-.my-smart-buy-details-payment__amount strong {
-  color: #2d8752;
-  font-size: 18px;
-}
-
-/*==================================================
-| Shipment
-==================================================*/
-.my-smart-buy-details-shipment {
-  padding: 14px 16px;
-}
-
-.my-smart-buy-details-shipment__tracking {
-  padding: 10px;
-  border: 1px solid rgba(23, 114, 69, 0.1);
-  border-radius: 8px;
-  background: rgba(23, 114, 69, 0.025);
-  display: flex;
-  align-items: center;
-  gap: 9px;
-}
-
-.my-smart-buy-details-shipment__tracking > span {
-  color: rgba(85, 85, 85, 0.2);
-  font-size: 14px;
-}
-
-.my-smart-buy-details-shipment__tracking > strong {
-  color: #0D2B5A;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-}
-
-.my-smart-buy-details-copy {
-  min-height: 28px;
+.smart-buy-details-page .payment-amount {
   margin-left: auto;
-  padding: 0 7px;
-  border: 1px solid rgba(16, 26, 35, 0.08);
-  border-radius: 6px;
-  background: #fff;
+  text-align: right;
+}
+@media (max-width: 767px) {
+  .smart-buy-details-page .payment-amount {
+    width: 100%;
+    margin-left: 0;
+    padding-top: 10px;
+    border-top: 1px solid rgba(16, 26, 35, 0.06);
+    text-align: left;
+  }
+}
+.smart-buy-details-page .payment-amount span {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 11px;
   color: #555555;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
 }
-
-.my-smart-buy-details-shipment__grid {
-  margin-top: 10px;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.my-smart-buy-details-shipment__grid > div {
-  padding: 9px;
-  border: 1px solid rgba(16, 26, 35, 0.055);
-  border-radius: 7px;
-  background: #fafbfc;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.my-smart-buy-details-shipment__grid span {
-  color: rgba(85, 85, 85, 0.2);
-  font-size: 14px;
-}
-
-.my-smart-buy-details-shipment__grid strong {
-  color: #0D2B5A;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.my-smart-buy-details-track-button {
-  min-height: 38px;
-  margin-top: 10px;
-  padding: 0 11px;
-  border-radius: 7px;
-  background: #177245;
-  color: #fff;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: 0.2s ease;
-}
-.my-smart-buy-details-track-button:hover {
-  background: rgba(23, 114, 69, 0.07);
-  color: #fff;
-}
-
-/*==================================================
-| Address
-==================================================*/
-.my-smart-buy-details-address {
-  padding: 15px 16px;
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-}
-
-.my-smart-buy-details-address__icon {
-  width: 38px;
-  height: 38px;
-  flex: 0 0 38px;
-  border-radius: 8px;
-  background: rgba(23, 114, 69, 0.08);
+.smart-buy-details-page .payment-amount strong {
+  font-size: 16px;
   color: #177245;
+}
+.smart-buy-details-page {
+  /* =========================================
+      Shipment
+  ========================================= */
+}
+.smart-buy-details-page .tracking-number-row {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(16, 26, 35, 0.06);
 }
-.my-smart-buy-details-address__icon i {
-  font-size: 18px;
-}
-
-.my-smart-buy-details-address > div:last-child {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.my-smart-buy-details-address strong {
-  color: #0D2B5A;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.my-smart-buy-details-address p {
-  margin: 2px 0;
-  color: #555555;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.my-smart-buy-details-address span {
-  color: rgba(85, 85, 85, 0.2);
-  font-size: 14px;
-}
-
-/*==================================================
-| Sidebar Actions
-==================================================*/
-.my-smart-buy-details-actions {
-  padding: 8px;
-}
-
-.my-smart-buy-details-action {
-  min-height: 40px;
-  padding: 0 9px;
-  border-radius: 7px;
-  color: #555555;
+.smart-buy-details-page .tracking-number-row > div {
   display: flex;
   align-items: center;
   gap: 7px;
-  font-size: 14px;
+}
+.smart-buy-details-page .tracking-number-row > div span {
+  font-size: 12px;
+  color: #555555;
+}
+.smart-buy-details-page .tracking-number-row > div strong {
+  font-size: 13px;
+  color: #0D2B5A;
+}
+@media (max-width: 767px) {
+  .smart-buy-details-page .tracking-number-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+.smart-buy-details-page .copy-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fff;
+  color: #0D2B5A;
+  font-size: 12px;
+  cursor: pointer;
+}
+.smart-buy-details-page .copy-button:hover {
+  border-color: #177245;
+  color: #177245;
+}
+.smart-buy-details-page .shipment-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  padding: 14px;
+}
+@media (max-width: 767px) {
+  .smart-buy-details-page .shipment-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.smart-buy-details-page .shipment-info {
+  padding: 10px;
+  border: 1px solid rgba(16, 26, 35, 0.08);
+  border-radius: 8px;
+  background: #F2F4F7;
+}
+.smart-buy-details-page .shipment-info span {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 11px;
+  color: #555555;
+}
+.smart-buy-details-page .shipment-info strong {
+  display: block;
+  font-size: 13px;
+  color: #0D2B5A;
+}
+.smart-buy-details-page .shipment-footer {
+  padding: 0 14px 14px;
+}
+.smart-buy-details-page .track-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 13px;
+  border-radius: 7px;
+  background: #177245;
+  color: #fff;
+  font-size: 12px;
   font-weight: 600;
   text-decoration: none;
-  transition: 0.2s ease;
 }
-
-.my-smart-buy-details-action > span {
-  flex: 1;
+.smart-buy-details-page {
+  /* =========================================
+      Delivery Information
+  ========================================= */
 }
-
-.my-smart-buy-details-action:hover {
-  background: #f7f8f9;
-  color: #0D2B5A;
+.smart-buy-details-page .delivery-content {
+  padding: 16px;
 }
-
-.my-smart-buy-details-action.is-primary {
-  background: rgba(23, 114, 69, 0.07);
-  color: #177245;
-}
-
-.my-smart-buy-details-action.is-primary:hover {
-  background: rgba(23, 114, 69, 0.11);
-  color: #177245;
-}
-
-/*==================================================
-| Request Info
-==================================================*/
-.my-smart-buy-details-request-info {
-  padding: 6px 15px 12px;
-}
-
-.my-smart-buy-details-request-info > div {
-  padding: 9px 0;
-  border-bottom: 1px solid rgba(16, 26, 35, 0.055);
+.smart-buy-details-page .delivery-customer {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid rgba(16, 26, 35, 0.06);
 }
-
-.my-smart-buy-details-request-info > div:last-child {
-  border-bottom: 0;
-}
-
-.my-smart-buy-details-request-info span {
-  color: rgba(85, 85, 85, 0.2);
-  font-size: 14px;
-}
-
-.my-smart-buy-details-request-info strong {
-  color: #0D2B5A;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.my-smart-buy-details-request-info strong.is-success {
-  color: #2d8752;
-}
-
-/*==================================================
-| Help
-==================================================*/
-.my-smart-buy-details-help {
-  padding: 12px;
-  border: 1px solid rgba(23, 114, 69, 0.14);
-  border-radius: 9px;
-  background: rgba(23, 114, 69, 0.035);
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-}
-
-.my-smart-buy-details-help__icon {
-  width: 30px;
-  height: 30px;
-  flex: 0 0 30px;
-  border-radius: 7px;
-  background: rgba(23, 114, 69, 0.08);
-  color: #177245;
+.smart-buy-details-page .delivery-customer .delivery-icon {
+  width: 42px;
+  height: 42px;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 10px;
+  background: rgba(23, 114, 69, 0.07);
+  color: #177245;
+  font-size: 19px;
 }
-.my-smart-buy-details-help__icon i {
-  font-size: 15px;
-}
-
-.my-smart-buy-details-help > div:last-child {
-  min-width: 0;
-}
-
-.my-smart-buy-details-help strong {
+.smart-buy-details-page .delivery-customer strong {
   display: block;
   margin-bottom: 3px;
+  font-size: 14px;
   color: #0D2B5A;
-  font-size: 14px;
-  font-weight: 600;
 }
-
-.my-smart-buy-details-help p {
-  margin: 0 0 7px;
+.smart-buy-details-page .delivery-customer span {
+  display: block;
+  font-size: 12px;
   color: #555555;
-  font-size: 14px;
-  line-height: 1.45;
 }
-
-.my-smart-buy-details-help a {
+.smart-buy-details-page .delivery-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+@media (max-width: 767px) {
+  .smart-buy-details-page .delivery-details-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.smart-buy-details-page .delivery-detail {
+  padding: 10px;
+  border: 1px solid rgba(16, 26, 35, 0.08);
+  border-radius: 8px;
+  background: #F2F4F7;
+}
+.smart-buy-details-page .delivery-detail span {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 11px;
+  color: #555555;
+}
+.smart-buy-details-page .delivery-detail strong {
+  display: block;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #0D2B5A;
+}
+.smart-buy-details-page .delivery-detail.full-width {
+  grid-column: 1/-1;
+}
+.smart-buy-details-page {
+  /* =========================================
+      Sidebar
+  ========================================= */
+}
+.smart-buy-details-page .sidebar-card-header {
+  padding: 14px;
+  border-bottom: 1px solid rgba(16, 26, 35, 0.06);
+}
+.smart-buy-details-page .sidebar-card-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0D2B5A;
+}
+.smart-buy-details-page .quick-actions {
+  padding: 8px;
+}
+.smart-buy-details-page .quick-action {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px;
+  border-radius: 7px;
+  color: #555555;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+}
+.smart-buy-details-page .quick-action:hover, .smart-buy-details-page .quick-action.primary {
+  background: rgba(23, 114, 69, 0.06);
+  color: #177245;
+}
+.smart-buy-details-page .quick-action .quick-action-icon {
+  width: 22px;
+  display: flex;
+  justify-content: center;
+  font-size: 15px;
+}
+.smart-buy-details-page .quick-action .action-arrow {
+  margin-left: auto;
+  font-size: 18px;
+}
+.smart-buy-details-page .request-information-list {
+  padding: 0 14px;
+}
+.smart-buy-details-page .request-information-item {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(16, 26, 35, 0.06);
+}
+.smart-buy-details-page .request-information-item:last-child {
+  border-bottom: none;
+}
+.smart-buy-details-page .request-information-item span {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 11px;
+  color: #555555;
+}
+.smart-buy-details-page .request-information-item strong {
+  display: block;
+  font-size: 13px;
+  color: #0D2B5A;
+}
+.smart-buy-details-page .request-information-item strong.status-text {
+  color: #177245;
+}
+.smart-buy-details-page {
+  /* =========================================
+      Support Card
+  ========================================= */
+}
+.smart-buy-details-page .support-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid rgba(23, 114, 69, 0.2);
+  border-radius: 12px;
+  background: rgba(23, 114, 69, 0.04);
+}
+.smart-buy-details-page .support-card .support-icon {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: #fff;
+  color: #177245;
+  font-size: 17px;
+}
+.smart-buy-details-page .support-card strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 13px;
+  color: #0D2B5A;
+}
+.smart-buy-details-page .support-card p {
+  margin: 0 0 8px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #555555;
+}
+.smart-buy-details-page .support-card a {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  color: #177245;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
+  color: #177245;
   text-decoration: none;
 }
 
-/*==================================================
-| Responsive LG
-==================================================*/
-@media (min-width: 992px) and (max-width: 1199px) {
-  .my-smart-buy-details-layout {
-    grid-template-columns: minmax(0, 1fr) 270px;
-  }
-}
-/*==================================================
-| Responsive MD
-==================================================*/
-@media (min-width: 768px) and (max-width: 991px) {
-  .my-smart-buy-details-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  .my-smart-buy-details-layout {
-    grid-template-columns: 1fr;
-  }
-  .my-smart-buy-details-sidebar {
-    position: static;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .my-smart-buy-details-help {
-    grid-column: 1/-1;
-  }
-  .my-smart-buy-details-progress {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    row-gap: 18px;
-  }
-  .my-smart-buy-details-progress__step:nth-child(3)::after {
-    display: none;
-  }
-}
-/*==================================================
-| Responsive XS
-==================================================*/
-@media (max-width: 767px) {
-  .my-smart-buy-details-heading h1 {
-    font-size: 20px;
-  }
-  .my-smart-buy-details-heading__icon {
-    width: 40px;
-    height: 40px;
-    flex-basis: 40px;
-  }
-  .my-smart-buy-details-summary {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-  }
-  .my-smart-buy-details-summary__item {
-    padding: 5px 8px;
-    border-right: 0;
-  }
-  .my-smart-buy-details-summary__item:first-child {
-    padding-left: 8px;
-  }
-  .my-smart-buy-details-summary__item:last-child {
-    padding-right: 8px;
-  }
-  .my-smart-buy-details-layout {
-    grid-template-columns: 1fr;
-  }
-  .my-smart-buy-details-sidebar {
-    grid-template-columns: 1fr;
-  }
-  .my-smart-buy-details-help {
-    grid-column: auto;
-  }
-  .my-smart-buy-details-progress {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-  .my-smart-buy-details-progress__step {
-    min-height: 65px;
-    padding-left: 42px;
-    padding-right: 0;
-    text-align: left;
-  }
-  .my-smart-buy-details-progress__step:not(:last-child)::after {
-    top: 29px;
-    left: 14px;
-    width: 1px;
-    height: calc(100% - 1px);
-  }
-  .my-smart-buy-details-progress__icon {
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin: 0;
-  }
-  .my-smart-buy-details-progress__step > div:last-child {
-    padding-top: 2px;
-  }
-  .my-smart-buy-details-product {
-    flex-direction: column;
-  }
-  .my-smart-buy-details-shipment__tracking {
-    align-items: flex-start;
-    flex-wrap: wrap;
-  }
-  .my-smart-buy-details-copy {
-    margin-left: 0;
-  }
-  .my-smart-buy-details-shipment__grid {
-    grid-template-columns: 1fr;
-  }
-  .my-smart-buy-details-payment {
-    align-items: flex-start;
-    flex-wrap: wrap;
-  }
-  .my-smart-buy-details-payment__amount {
-    width: 100%;
-    padding-top: 8px;
-    border-top: 1px solid rgba(16, 26, 35, 0.055);
-    align-items: flex-start;
-  }
-}
 /*==================================================
 | Page
 ==================================================*/

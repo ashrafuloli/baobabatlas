@@ -22,8 +22,8 @@
                     </a>
 
                     <span class="page-eyebrow">
-                    Smart Buy
-                </span>
+                        Smart Buy
+                    </span>
 
                     <h1 class="page-title">
                         Start a Smart Buy Request
@@ -68,13 +68,13 @@
 
 
         {{--======================================================
-            Form Layout
+            Form
         =======================================================--}}
         <form
-            action="#"
+            class="smart-buy-form"
+            action="{{ route('my-smart-buy-store') }}"
             method="POST"
             enctype="multipart/form-data"
-            class="smart-buy-form"
         >
 
             @csrf
@@ -92,15 +92,15 @@
                     {{--================================================
                         Product Information
                     =================================================--}}
-                    <div class="form-card">
+                    <div class="form-card product-information-card">
 
                         <div class="card-header">
 
                             <div>
 
-                            <span class="card-eyebrow">
-                                Step 01
-                            </span>
+                                <span class="card-eyebrow">
+                                    Step 01
+                                </span>
 
                                 <h2>
                                     Product Information
@@ -116,162 +116,265 @@
                         </div>
 
 
-                        <div class="form-grid">
+                        {{-- Product Items Container --}}
+                        <div
+                            id="smartBuyItems"
+                            class="smart-buy-items"
+                        >
 
 
-                            {{-- Product URL --}}
-                            <div class="form-group full-width">
+                            {{-- First Product Item --}}
+                            <div
+                                class="smart-buy-item"
+                                data-item-index="0"
+                            >
 
-                                <label for="product_url">
-                                    Product URL
-                                    <span>*</span>
-                                </label>
+                                <div class="smart-buy-item-header">
 
-                                <div class="input-with-icon">
+                                    <div class="smart-buy-item-title">
 
-                                    <i class="ri-link"></i>
-
-                                    <input
-                                        type="url"
-                                        id="product_url"
-                                        name="product_url"
-                                        placeholder="https://example.com/product"
-                                        value="{{ old('product_url') }}"
-                                        required
-                                    >
-
-                                </div>
-
-                                <small>
-                                    Paste the complete link to the product
-                                    from the retailer's website.
-                                </small>
-
-                            </div>
-
-
-                            {{-- Product Name --}}
-                            <div class="form-group full-width">
-
-                                <label for="product_name">
-                                    Product Name / Description
-                                    <span>*</span>
-                                </label>
-
-                                <input
-                                    type="text"
-                                    id="product_name"
-                                    name="product_name"
-                                    placeholder="e.g. iPhone 16 Pro 256GB"
-                                    value="{{ old('product_name') }}"
-                                    required
-                                >
-
-                            </div>
-
-
-                            {{-- Quantity --}}
-                            <div class="form-group">
-
-                                <label for="quantity">
-                                    Quantity
-                                    <span>*</span>
-                                </label>
-
-                                <input
-                                    type="number"
-                                    id="quantity"
-                                    name="quantity"
-                                    min="1"
-                                    value="{{ old('quantity', 1) }}"
-                                    required
-                                >
-
-                            </div>
-
-
-                            {{-- Size --}}
-                            <div class="form-group">
-
-                                <label for="size">
-                                    Size
-                                    <span class="optional">
-                                    Optional
-                                </span>
-                                </label>
-
-                                <input
-                                    type="text"
-                                    id="size"
-                                    name="size"
-                                    placeholder="e.g. Large, 42, 256GB"
-                                    value="{{ old('size') }}"
-                                >
-
-                            </div>
-
-
-                            {{-- Color --}}
-                            <div class="form-group">
-
-                                <label for="color">
-                                    Color
-                                    <span class="optional">
-                                    Optional
-                                </span>
-                                </label>
-
-                                <input
-                                    type="text"
-                                    id="color"
-                                    name="color"
-                                    placeholder="e.g. Black"
-                                    value="{{ old('color') }}"
-                                >
-
-                            </div>
-
-
-                            {{-- Product Image --}}
-                            <div class="form-group full-width">
-
-                                <label for="product_image">
-                                    Product Image
-                                    <span class="optional">
-                                    Optional
-                                </span>
-                                </label>
-
-                                <div class="upload-box">
-
-                                    <input
-                                        type="file"
-                                        id="product_image"
-                                        name="product_image"
-                                        accept="image/jpeg,image/png,image/webp"
-                                    >
-
-                                    <div class="upload-content">
-
-                                        <div class="upload-icon">
-                                            <i class="ri-image-add-line"></i>
-                                        </div>
+                                        <span class="item-number">
+                                            Item 01
+                                        </span>
 
                                         <div>
 
-                                            <strong>
-                                                Upload product image
-                                            </strong>
+                                            <h3>
+                                                Product Details
+                                            </h3>
 
-                                            <span>
-                                            JPG, PNG or WEBP · Max 2MB
-                                        </span>
+                                            <p>
+                                                Enter the details for this product.
+                                            </p>
 
                                         </div>
 
-                                        <span class="browse-text">
-                                        Browse
-                                    </span>
+                                    </div>
+
+
+                                    <button
+                                        type="button"
+                                        class="remove-item-button"
+                                        aria-label="Remove product"
+                                    >
+
+                                        <i class="ri-delete-bin-line"></i>
+
+                                        <span>
+                                            Remove
+                                        </span>
+
+                                    </button>
+
+                                </div>
+
+
+                                <div class="form-grid">
+
+
+                                    {{-- Product URL --}}
+                                    <div class="form-group full-width">
+
+                                        <label>
+                                            Product URL
+                                            <span>*</span>
+                                        </label>
+
+                                        <div class="input-with-icon">
+
+                                            <i class="ri-link"></i>
+
+                                            <input
+                                                type="url"
+                                                name="items[0][product_url]"
+                                                placeholder="https://example.com/product"
+                                                value="{{ old('items.0.product_url') }}"
+                                                required
+                                            >
+
+                                        </div>
+
+                                        <small>
+                                            Paste the complete link to the product
+                                            from the retailer's website.
+                                        </small>
+
+                                    </div>
+
+
+                                    {{-- Product Name --}}
+                                    <div class="form-group full-width">
+
+                                        <label>
+                                            Product Name / Description
+                                            <span>*</span>
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            name="items[0][product_name]"
+                                            placeholder="e.g. iPhone 16 Pro 256GB"
+                                            value="{{ old('items.0.product_name') }}"
+                                            required
+                                        >
+
+                                    </div>
+
+
+                                    {{-- Quantity --}}
+                                    <div class="form-group">
+
+                                        <label>
+                                            Quantity
+                                            <span>*</span>
+                                        </label>
+
+                                        <input
+                                            type="number"
+                                            name="items[0][quantity]"
+                                            min="1"
+                                            value="{{ old('items.0.quantity', 1) }}"
+                                            required
+                                        >
+
+                                    </div>
+
+
+                                    {{-- Size --}}
+                                    <div class="form-group">
+
+                                        <label>
+
+                                            Size
+
+                                            <span class="optional">
+                                                Optional
+                                            </span>
+
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            name="items[0][size]"
+                                            placeholder="e.g. Large, 42, 256GB"
+                                            value="{{ old('items.0.size') }}"
+                                        >
+
+                                    </div>
+
+
+                                    {{-- Color --}}
+                                    <div class="form-group">
+
+                                        <label>
+
+                                            Color
+
+                                            <span class="optional">
+                                                Optional
+                                            </span>
+
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            name="items[0][color]"
+                                            placeholder="e.g. Black"
+                                            value="{{ old('items.0.color') }}"
+                                        >
+
+                                    </div>
+
+
+                                    {{-- Product Image --}}
+                                    <div class="form-group full-width">
+
+                                        <label>
+
+                                            Product Image
+
+                                            <span class="optional">
+                                                Optional
+                                            </span>
+
+                                        </label>
+
+                                        <div class="upload-box">
+
+                                            <input
+                                                type="file"
+                                                class="product-image-input"
+                                                name="items[0][product_image]"
+                                                accept="image/jpeg,image/png,image/webp"
+                                            >
+
+                                            <div class="upload-content">
+
+                                                <div class="upload-icon">
+
+                                                    <i class="ri-image-add-line"></i>
+
+                                                </div>
+
+                                                <div>
+
+                                                    <strong>
+                                                        Upload product image
+                                                    </strong>
+
+                                                    <span>
+                                                        JPG, PNG or WEBP · Max 2MB
+                                                    </span>
+
+                                                </div>
+
+                                                <span class="browse-text">
+                                                    Browse
+                                                </span>
+
+                                            </div>
+
+                                            <div class="image-preview-wrapper">
+
+                                                <img
+                                                    class="product-image-preview"
+                                                    src=""
+                                                    alt="Product preview"
+                                                >
+
+                                                <button
+                                                    type="button"
+                                                    class="remove-image-button"
+                                                    aria-label="Remove image"
+                                                >
+                                                    <i class="ri-close-line"></i>
+                                                </button>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    {{-- Notes --}}
+                                    <div class="form-group full-width">
+
+                                        <label>
+
+                                            Additional Notes
+
+                                            <span class="optional">
+                                                Optional
+                                            </span>
+
+                                        </label>
+
+                                        <textarea
+                                            name="items[0][notes]"
+                                            rows="5"
+                                            placeholder="Add any details that may help us identify the exact product you want..."
+                                        >{{ old('items.0.notes') }}</textarea>
 
                                     </div>
 
@@ -279,25 +382,29 @@
 
                             </div>
 
+                        </div>
 
-                            {{-- Notes --}}
-                            <div class="form-group full-width">
 
-                                <label for="notes">
-                                    Additional Notes
-                                    <span class="optional">
-                                    Optional
+                        {{-- Add Another Item --}}
+                        <div class="add-item-wrapper">
+
+                            <button
+                                type="button"
+                                id="addSmartBuyItem"
+                                class="add-item-button"
+                            >
+
+                                <i class="ri-add-line"></i>
+
+                                <span>
+                                    Add Another Item
                                 </span>
-                                </label>
 
-                                <textarea
-                                    id="notes"
-                                    name="notes"
-                                    rows="5"
-                                    placeholder="Add any details that may help us identify the exact product you want..."
-                                >{{ old('notes') }}</textarea>
+                            </button>
 
-                            </div>
+                            <p>
+                                Add another product to this Smart Buy request.
+                            </p>
 
                         </div>
 
@@ -313,9 +420,9 @@
 
                             <div>
 
-                            <span class="card-eyebrow">
-                                Step 02
-                            </span>
+                                <span class="card-eyebrow">
+                                    Step 02
+                                </span>
 
                                 <h2>
                                     Customer Information
@@ -439,9 +546,9 @@
 
                             <div>
 
-                            <span class="card-eyebrow">
-                                Step 03
-                            </span>
+                                <span class="card-eyebrow">
+                                    Step 03
+                                </span>
 
                                 <h2>
                                     Delivery Information
@@ -478,9 +585,13 @@
                                         Select country
                                     </option>
 
-                                    <option value="guinea">
-                                        Guinea
-                                    </option>
+                                    @foreach(config('countries') as $code => $country)
+
+                                        <option value="{{ $code }}">
+                                            {{ $country }}
+                                        </option>
+
+                                    @endforeach
 
                                 </select>
 
@@ -511,10 +622,13 @@
                             <div class="form-group">
 
                                 <label for="zip_code">
+
                                     ZIP / Postal Code
+
                                     <span class="optional">
-                                    Optional
-                                </span>
+                                        Optional
+                                    </span>
+
                                 </label>
 
                                 <input
@@ -532,8 +646,10 @@
                             <div class="form-group full-width">
 
                                 <label for="delivery_address">
+
                                     Delivery Address
                                     <span>*</span>
+
                                 </label>
 
                                 <textarea
@@ -572,8 +688,8 @@
                             <i class="ri-send-plane-line"></i>
 
                             <span>
-                            Submit Smart Buy Request
-                        </span>
+                                Submit Smart Buy Request
+                            </span>
 
                         </button>
 
@@ -600,9 +716,9 @@
 
                             <div>
 
-                            <span>
-                                How It Works
-                            </span>
+                                <span>
+                                    How It Works
+                                </span>
 
                                 <h3>
                                     Simple & Easy
@@ -618,9 +734,9 @@
 
                             <div class="how-step">
 
-                            <span class="step-number">
-                                01
-                            </span>
+                                <span class="step-number">
+                                    01
+                                </span>
 
                                 <div>
 
@@ -640,9 +756,9 @@
 
                             <div class="how-step">
 
-                            <span class="step-number">
-                                02
-                            </span>
+                                <span class="step-number">
+                                    02
+                                </span>
 
                                 <div>
 
@@ -662,9 +778,9 @@
 
                             <div class="how-step">
 
-                            <span class="step-number">
-                                03
-                            </span>
+                                <span class="step-number">
+                                    03
+                                </span>
 
                                 <div>
 
@@ -684,9 +800,9 @@
 
                             <div class="how-step">
 
-                            <span class="step-number">
-                                04
-                            </span>
+                                <span class="step-number">
+                                    04
+                                </span>
 
                                 <div>
 
@@ -706,9 +822,9 @@
 
                             <div class="how-step">
 
-                            <span class="step-number">
-                                05
-                            </span>
+                                <span class="step-number">
+                                    05
+                                </span>
 
                                 <div>
 
@@ -783,5 +899,637 @@
         </form>
 
     </div>
+
+
+    {{--======================================================
+        Smart Buy Item Template
+    =======================================================--}}
+    <template id="smartBuyItemTemplate">
+
+        <div
+            class="smart-buy-item"
+            data-item-index="__INDEX__"
+        >
+
+            <div class="smart-buy-item-header">
+
+                <div class="smart-buy-item-title">
+
+                    <span class="item-number">
+                        Item __NUMBER__
+                    </span>
+
+                    <div>
+
+                        <h3>
+                            Product Details
+                        </h3>
+
+                        <p>
+                            Enter the details for this product.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="remove-item-button"
+                    aria-label="Remove product"
+                >
+
+                    <i class="ri-delete-bin-line"></i>
+
+                    <span>
+                        Remove
+                    </span>
+
+                </button>
+
+            </div>
+
+
+            <div class="form-grid">
+
+
+                <div class="form-group full-width">
+
+                    <label>
+                        Product URL
+                        <span>*</span>
+                    </label>
+
+                    <div class="input-with-icon">
+
+                        <i class="ri-link"></i>
+
+                        <input
+                            type="url"
+                            name="items[__INDEX__][product_url]"
+                            placeholder="https://example.com/product"
+                            required
+                        >
+
+                    </div>
+
+                    <small>
+                        Paste the complete link to the product
+                        from the retailer's website.
+                    </small>
+
+                </div>
+
+
+                <div class="form-group full-width">
+
+                    <label>
+                        Product Name / Description
+                        <span>*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        name="items[__INDEX__][product_name]"
+                        placeholder="e.g. Nike Air Max 90"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Quantity
+                        <span>*</span>
+                    </label>
+
+                    <input
+                        type="number"
+                        name="items[__INDEX__][quantity]"
+                        min="1"
+                        value="1"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+
+                        Size
+
+                        <span class="optional">
+                            Optional
+                        </span>
+
+                    </label>
+
+                    <input
+                        type="text"
+                        name="items[__INDEX__][size]"
+                        placeholder="e.g. Large, 42, 256GB"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+
+                        Color
+
+                        <span class="optional">
+                            Optional
+                        </span>
+
+                    </label>
+
+                    <input
+                        type="text"
+                        name="items[__INDEX__][color]"
+                        placeholder="e.g. Black"
+                    >
+
+                </div>
+
+
+                <div class="form-group full-width">
+
+                    <label>
+
+                        Product Image
+
+                        <span class="optional">
+                            Optional
+                        </span>
+
+                    </label>
+
+                    <div class="upload-box">
+
+                        <input
+                            type="file"
+                            class="product-image-input"
+                            name="items[__INDEX__][product_image]"
+                            accept="image/jpeg,image/png,image/webp"
+                        >
+
+                        <div class="upload-content">
+
+                            <div class="upload-icon">
+
+                                <i class="ri-image-add-line"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <strong>
+                                    Upload product image
+                                </strong>
+
+                                <span>
+                                    JPG, PNG or WEBP · Max 2MB
+                                </span>
+
+                            </div>
+
+
+                            <span class="browse-text">
+                                Browse
+                            </span>
+
+                        </div>
+
+
+                        <div class="image-preview-wrapper">
+
+                            <img
+                                class="product-image-preview"
+                                src=""
+                                alt="Product preview"
+                            >
+
+                            <button
+                                type="button"
+                                class="remove-image-button"
+                                aria-label="Remove image"
+                            >
+                                <i class="ri-close-line"></i>
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group full-width">
+
+                    <label>
+
+                        Additional Notes
+
+                        <span class="optional">
+                            Optional
+                        </span>
+
+                    </label>
+
+                    <textarea
+                        name="items[__INDEX__][notes]"
+                        rows="5"
+                        placeholder="Add any details that may help us identify the exact product you want..."
+                    ></textarea>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </template>
+
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const itemsContainer = document.getElementById('smartBuyItems');
+            const addItemButton = document.getElementById('addSmartBuyItem');
+            const itemTemplate = document.getElementById('smartBuyItemTemplate');
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Update Item Numbers & Field Names
+            |--------------------------------------------------------------------------
+            */
+
+            function updateItems() {
+
+                const items = itemsContainer.querySelectorAll(
+                    '.smart-buy-item'
+                );
+
+                items.forEach(function (item, index) {
+
+                    const itemNumber = String(
+                        index + 1
+                    ).padStart(2, '0');
+
+                    item.dataset.itemIndex = index;
+
+
+                    const itemNumberElement = item.querySelector(
+                        '.item-number'
+                    );
+
+                    if (itemNumberElement) {
+
+                        itemNumberElement.textContent =
+                            'Item ' + itemNumber;
+
+                    }
+
+
+                    const fields = item.querySelectorAll(
+                        'input, textarea, select'
+                    );
+
+                    fields.forEach(function (field) {
+
+                        if (!field.name) {
+                            return;
+                        }
+
+                        field.name = field.name.replace(
+                            /items\[\d+\]/,
+                            'items[' + index + ']'
+                        );
+
+                    });
+
+
+                    const removeButton = item.querySelector(
+                        '.remove-item-button'
+                    );
+
+                    if (removeButton) {
+
+                        if (items.length === 1) {
+
+                            removeButton.style.display = 'none';
+
+                        } else {
+
+                            removeButton.style.display = 'inline-flex';
+
+                        }
+
+                    }
+
+                });
+
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Add New Item
+            |--------------------------------------------------------------------------
+            */
+
+            addItemButton.addEventListener(
+                'click',
+                function () {
+
+                    const nextIndex =
+                        itemsContainer.querySelectorAll(
+                            '.smart-buy-item'
+                        ).length;
+
+                    const itemNumber = String(
+                        nextIndex + 1
+                    ).padStart(2, '0');
+
+
+                    let template = itemTemplate.innerHTML;
+
+                    template = template
+                        .replaceAll('__INDEX__', nextIndex)
+                        .replaceAll('__NUMBER__', itemNumber);
+
+
+                    itemsContainer.insertAdjacentHTML(
+                        'beforeend',
+                        template
+                    );
+
+
+                    updateItems();
+
+
+                    const newItem =
+                        itemsContainer.lastElementChild;
+
+                    if (newItem) {
+
+                        newItem.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+
+                    }
+
+                }
+            );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Remove Item
+            |--------------------------------------------------------------------------
+            */
+
+            itemsContainer.addEventListener(
+                'click',
+                function (event) {
+
+                    const removeButton =
+                        event.target.closest(
+                            '.remove-item-button'
+                        );
+
+
+                    if (removeButton) {
+
+                        const item =
+                            removeButton.closest(
+                                '.smart-buy-item'
+                            );
+
+
+                        if (item) {
+
+                            item.remove();
+
+                            updateItems();
+
+                        }
+
+                        return;
+
+                    }
+
+
+                    const removeImageButton =
+                        event.target.closest(
+                            '.remove-image-button'
+                        );
+
+
+                    if (removeImageButton) {
+
+                        const uploadBox =
+                            removeImageButton.closest(
+                                '.upload-box'
+                            );
+
+                        if (!uploadBox) {
+                            return;
+                        }
+
+
+                        const imageInput =
+                            uploadBox.querySelector(
+                                '.product-image-input'
+                            );
+
+                        const previewWrapper =
+                            uploadBox.querySelector(
+                                '.image-preview-wrapper'
+                            );
+
+                        const previewImage =
+                            uploadBox.querySelector(
+                                '.product-image-preview'
+                            );
+
+
+                        if (imageInput) {
+                            imageInput.value = '';
+                        }
+
+
+                        if (previewImage) {
+                            previewImage.src = '';
+                        }
+
+
+                        if (previewWrapper) {
+                            previewWrapper.classList.remove(
+                                'has-image'
+                            );
+                        }
+
+                    }
+
+                }
+            );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Product Image Preview
+            |--------------------------------------------------------------------------
+            */
+
+            itemsContainer.addEventListener(
+                'change',
+                function (event) {
+
+                    const imageInput =
+                        event.target.closest(
+                            '.product-image-input'
+                        );
+
+
+                    if (!imageInput) {
+                        return;
+                    }
+
+
+                    const file =
+                        imageInput.files[0];
+
+
+                    if (!file) {
+                        return;
+                    }
+
+
+                    const allowedTypes = [
+                        'image/jpeg',
+                        'image/png',
+                        'image/webp'
+                    ];
+
+
+                    const maxFileSize =
+                        2 * 1024 * 1024;
+
+
+                    if (
+                        !allowedTypes.includes(file.type)
+                    ) {
+
+                        imageInput.value = '';
+
+                        if (typeof showToast === 'function') {
+
+                            showToast(
+                                'Only JPG, PNG or WEBP images are allowed.',
+                                'error'
+                            );
+
+                        } else {
+
+                            alert(
+                                'Only JPG, PNG or WEBP images are allowed.'
+                            );
+
+                        }
+
+                        return;
+
+                    }
+
+
+                    if (
+                        file.size > maxFileSize
+                    ) {
+
+                        imageInput.value = '';
+
+                        if (typeof showToast === 'function') {
+
+                            showToast(
+                                'Image size must not exceed 2MB.',
+                                'error'
+                            );
+
+                        } else {
+
+                            alert(
+                                'Image size must not exceed 2MB.'
+                            );
+
+                        }
+
+                        return;
+
+                    }
+
+
+                    const uploadBox =
+                        imageInput.closest(
+                            '.upload-box'
+                        );
+
+
+                    const previewWrapper =
+                        uploadBox.querySelector(
+                            '.image-preview-wrapper'
+                        );
+
+
+                    const previewImage =
+                        uploadBox.querySelector(
+                            '.product-image-preview'
+                        );
+
+
+                    const reader =
+                        new FileReader();
+
+
+                    reader.onload = function (e) {
+
+                        previewImage.src =
+                            e.target.result;
+
+                        previewWrapper.classList.add(
+                            'has-image'
+                        );
+
+                    };
+
+
+                    reader.readAsDataURL(file);
+
+                }
+            );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Initial Setup
+            |--------------------------------------------------------------------------
+            */
+
+            updateItems();
+
+        });
+
+    </script>
 
 @endsection

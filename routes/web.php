@@ -6,6 +6,7 @@ use App\Http\Controllers\Backend\PermissionController;
 use App\Http\Controllers\Backend\ProfileController;
 use App\Http\Controllers\Backend\RoleController;
 use App\Http\Controllers\Backend\UserController;
+use App\Http\Controllers\Customer\MySmartBuyController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -611,16 +612,36 @@ Route::middleware('auth')
 
                 Route::get(
                     '/create',
-                    function () {
-
-                        return view(
-                            'backend.pages.my-smart-buy.create'
-                        );
-
-                    }
+                    [MySmartBuyController::class, 'create']
                 )
                     ->middleware('permission:create-smart-buy')
                     ->name('my-smart-buy-create');
+
+
+                Route::post(
+                    '/create',
+                    [MySmartBuyController::class, 'store']
+                )
+                    ->middleware('permission:create-smart-buy')
+                    ->name('my-smart-buy-store');
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Smart Buy Request Details
+                |--------------------------------------------------------------------------
+                |
+                | IMPORTANT:
+                | Keep this dynamic route LAST.
+                |
+                */
+
+                Route::get(
+                    '/{id}',
+                    [MySmartBuyController::class, 'details']
+                )
+                    ->middleware('permission:view-smart-buy-details')
+                    ->name('my-smart-buy-details');
 
 
                 /*
@@ -783,31 +804,6 @@ Route::middleware('auth')
                 )
                     ->middleware('permission:view-smart-buy-tracking')
                     ->name('smart-buy-tracking');
-
-
-                /*
-                |--------------------------------------------------------------------------
-                | Smart Buy Request Details
-                |--------------------------------------------------------------------------
-                |
-                | IMPORTANT:
-                | Keep this dynamic route LAST.
-                |
-                */
-
-                Route::get(
-                    '/{smartBuy}',
-                    function ($smartBuy) {
-
-                        return view(
-                            'backend.pages.my-smart-buy.details',
-                            compact('smartBuy')
-                        );
-
-                    }
-                )
-                    ->middleware('permission:view-smart-buy-details')
-                    ->name('my-smart-buy-details');
 
             });
 

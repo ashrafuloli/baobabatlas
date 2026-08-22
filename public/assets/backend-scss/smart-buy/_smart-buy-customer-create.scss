@@ -169,6 +169,71 @@
 
 
 // ============================================================
+// Multiple Smart Buy Items
+// ============================================================
+
+.smart-buy-customer-create-page .smart-buy-items {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.smart-buy-customer-create-page .smart-buy-item {
+    padding: 18px;
+    border: 1px solid argb($theme-color, 0.18);
+    border-radius: 10px;
+    background: argb($theme-color, 0.018);
+}
+
+.smart-buy-customer-create-page .smart-buy-item-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 18px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid argb($body-color, 0.10);
+}
+
+.smart-buy-customer-create-page .smart-buy-item-title {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.smart-buy-customer-create-page .item-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    min-width: 62px;
+    height: 30px;
+    padding: 0 10px;
+    border-radius: 7px;
+    background: argb($theme-color, 0.09);
+    color: $theme-color;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.smart-buy-customer-create-page .smart-buy-item-title h3 {
+    margin: 0;
+    color: $heading-color;
+    font-family: $header-fonts;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.smart-buy-customer-create-page .smart-buy-item-title p {
+    margin: 2px 0 0;
+    color: argb($body-color, 0.65);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+
+// ============================================================
 // Form Grid
 // ============================================================
 
@@ -290,6 +355,7 @@
 
 .smart-buy-customer-create-page .upload-box {
     position: relative;
+    overflow: hidden;
     border: 1px dashed argb($body-color, 0.30);
     border-radius: 9px;
     background: argb($dark, 0.015);
@@ -354,6 +420,157 @@
     color: $theme-color;
     font-size: 14px;
     font-weight: 600;
+}
+
+
+// ============================================================
+// Product Image Preview
+// ============================================================
+
+.smart-buy-customer-create-page .image-preview-wrapper {
+    display: none;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    min-height: 220px;
+    padding: 12px;
+    background: #fff;
+}
+
+.smart-buy-customer-create-page .image-preview-wrapper.has-image {
+    display: flex;
+}
+
+.smart-buy-customer-create-page .image-preview-wrapper.has-image + * {
+    display: none;
+}
+
+.smart-buy-customer-create-page .upload-box:has(.image-preview-wrapper.has-image) .upload-content {
+    display: none;
+}
+
+.smart-buy-customer-create-page .upload-box:has(.image-preview-wrapper.has-image) .product-image-input {
+    z-index: 1;
+}
+
+.smart-buy-customer-create-page .product-image-preview {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    max-height: 280px;
+    border-radius: 7px;
+    object-fit: contain;
+}
+
+.smart-buy-customer-create-page .remove-image-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 4;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid argb($danger, 0.20);
+    border-radius: 50%;
+    background: #fff;
+    color: $danger;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px argb($dark, 0.10);
+    transition: all 0.2s ease;
+}
+
+.smart-buy-customer-create-page .remove-image-button:hover {
+    border-color: $danger;
+    background: $danger;
+    color: #fff;
+}
+
+.smart-buy-customer-create-page .remove-image-button i {
+    line-height: 1;
+}
+
+
+// ============================================================
+// Remove Item Button
+// ============================================================
+
+.smart-buy-customer-create-page .remove-item-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 36px;
+    padding: 0 11px;
+    border: 1px solid argb($danger, 0.20);
+    border-radius: 7px;
+    background: argb($danger, 0.04);
+    color: $danger;
+    font-family: $body-fonts;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.smart-buy-customer-create-page .remove-item-button:hover {
+    border-color: argb($danger, 0.35);
+    background: argb($danger, 0.08);
+}
+
+.smart-buy-customer-create-page .remove-item-button i {
+    font-size: 16px;
+}
+
+
+// ============================================================
+// Add Another Item
+// ============================================================
+
+.smart-buy-customer-create-page .add-item-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid argb($body-color, 0.10);
+}
+
+.smart-buy-customer-create-page .add-item-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 42px;
+    padding: 0 15px;
+    border: 1px dashed argb($theme-color, 0.45);
+    border-radius: 8px;
+    background: argb($theme-color, 0.025);
+    color: $theme-color;
+    font-family: $body-fonts;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.smart-buy-customer-create-page .add-item-button:hover {
+    border-color: $theme-color;
+    background: argb($theme-color, 0.07);
+}
+
+.smart-buy-customer-create-page .add-item-button i {
+    font-size: 18px;
+}
+
+.smart-buy-customer-create-page .add-item-wrapper p {
+    margin: 0;
+    color: argb($body-color, 0.60);
+    font-size: 13px;
+    line-height: 1.5;
 }
 
 
@@ -680,6 +897,36 @@
         padding: 16px;
     }
 
+    .smart-buy-customer-create-page .smart-buy-item {
+        padding: 14px;
+    }
+
+    .smart-buy-customer-create-page .smart-buy-item-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .smart-buy-customer-create-page .remove-item-button {
+        width: 100%;
+    }
+
+    .smart-buy-customer-create-page .add-item-wrapper {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .smart-buy-customer-create-page .add-item-button {
+        width: 100%;
+    }
+
+    .smart-buy-customer-create-page .image-preview-wrapper {
+        min-height: 180px;
+    }
+
+    .smart-buy-customer-create-page .product-image-preview {
+        max-height: 230px;
+    }
+
     .smart-buy-customer-create-page .form-actions {
         justify-content: stretch;
     }
@@ -699,6 +946,14 @@
 
     .smart-buy-customer-create-page .smart-buy-message {
         align-items: flex-start;
+    }
+
+    .smart-buy-customer-create-page .image-preview-wrapper {
+        min-height: 150px;
+    }
+
+    .smart-buy-customer-create-page .product-image-preview {
+        max-height: 200px;
     }
 
     .smart-buy-customer-create-page .form-actions {
