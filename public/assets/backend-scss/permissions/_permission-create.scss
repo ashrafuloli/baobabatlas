@@ -1,0 +1,717 @@
+@use "../common" as *;
+
+
+/*================================*
+* Permission Create Page
+*=================================*/
+
+.permission-create-page {
+    width: 100%;
+}
+
+
+/*================================*
+* Page Header
+*=================================*/
+
+.permission-create-page__header {
+    margin-bottom: 24px;
+}
+
+
+.permission-create-page__header-content {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 24px;
+
+    @include mq(md) {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 18px;
+    }
+}
+
+
+.permission-create-page__heading {
+
+    .permission-create-page__eyebrow {
+        display: inline-block;
+
+        margin-bottom: 7px;
+
+        color: $theme-color;
+
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1;
+
+        letter-spacing: .05em;
+        text-transform: uppercase;
+    }
+
+
+    h1 {
+        margin: 0 0 6px;
+
+        color: $heading-color;
+
+        font-family: $header-fonts;
+        font-size: 24px;
+        font-weight: $head-fw;
+        line-height: 1.25;
+    }
+
+
+    p {
+        margin: 0;
+
+        color: $body-color;
+
+        font-size: 14px;
+        line-height: 1.6;
+    }
+}
+
+
+/*================================*
+* Header Action
+*=================================*/
+
+.permission-create-page__actions {
+    flex-shrink: 0;
+
+
+    @include mq(md) {
+        width: 100%;
+    }
+}
+
+
+.permission-secondary-btn {
+    min-height: 42px;
+
+    padding: 0 16px;
+
+    border: 1px solid argb($dark, .10);
+    border-radius: 7px;
+
+    background: #fff;
+    color: $heading-color;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+
+    text-decoration: none;
+
+    transition: all .2s ease;
+
+
+    i {
+        font-size: 17px;
+        line-height: 1;
+    }
+
+
+    &:hover {
+        border-color: argb($theme-color, .25);
+
+        background: argb($theme-color, .04);
+
+        color: $theme-color;
+    }
+
+
+    @include mq(md) {
+        width: 100%;
+    }
+}
+
+
+/*================================*
+* Create Card
+*=================================*/
+
+.permission-create-card {
+    width: 100%;
+
+    max-width: 760px;
+
+    border: 1px solid argb($dark, .07);
+    border-radius: 12px;
+
+    background: #fff;
+
+    box-shadow: 0 3px 14px argb($dark, .035);
+}
+
+
+/*================================*
+* Card Header
+*=================================*/
+
+.permission-create-card__header {
+    padding: 22px 24px;
+
+    border-bottom: 1px solid argb($dark, .07);
+
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+}
+
+
+.permission-create-card__icon {
+    width: 44px;
+    height: 44px;
+
+    border-radius: 9px;
+
+    background: argb($theme-color, .09);
+    color: $theme-color;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 44px;
+
+
+    i {
+        font-size: 21px;
+        line-height: 1;
+    }
+}
+
+
+.permission-create-card__header {
+
+    h2 {
+        margin: 0 0 4px;
+
+        color: $heading-color;
+
+        font-family: $header-fonts;
+        font-size: 20px;
+        font-weight: 600;
+        line-height: 1.3;
+    }
+
+
+    p {
+        margin: 0;
+
+        color: $body-color;
+
+        font-size: 14px;
+        line-height: 1.5;
+    }
+}
+
+
+/*================================*
+* Form
+*=================================*/
+
+.permission-create-form {
+    padding: 24px;
+}
+
+
+/*================================*
+* Form Group
+*=================================*/
+
+.permission-create-form__group {
+    margin-bottom: 22px;
+}
+
+
+.permission-create-form__group > label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: $heading-color;
+
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+
+
+    span {
+        color: #dc2626;
+    }
+}
+
+
+/*================================*
+* Text Input
+*=================================*/
+
+.permission-create-form__input {
+    position: relative;
+
+
+    i {
+        position: absolute;
+
+        top: 50%;
+        left: 14px;
+
+        color: argb($body-color, 5%);
+
+        font-size: 18px;
+        line-height: 1;
+
+        transform: translateY(-50%);
+
+        pointer-events: none;
+    }
+
+
+    input {
+        width: 100%;
+        height: 46px;
+
+        padding: 0 14px 0 43px;
+
+        border: 1px solid argb($dark, .10);
+        border-radius: 7px;
+
+        outline: none;
+
+        background: #fff;
+        color: $heading-color;
+
+        font-family: $body-fonts;
+        font-size: 14px;
+        line-height: 1.4;
+
+        transition:
+            border-color .2s ease,
+            box-shadow .2s ease;
+
+
+        &::placeholder {
+            color: argb($body-color, 20%);
+        }
+
+
+        &:focus {
+            border-color: argb($theme-color, .45);
+
+            box-shadow:
+                0 0 0 3px argb($theme-color, .08);
+        }
+    }
+}
+
+
+/*================================*
+* Textarea
+*=================================*/
+
+.permission-create-form__textarea {
+    position: relative;
+
+
+    i {
+        position: absolute;
+
+        top: 15px;
+        left: 14px;
+
+        color: argb($body-color, 5%);
+
+        font-size: 18px;
+        line-height: 1;
+
+        pointer-events: none;
+    }
+
+
+    textarea {
+        width: 100%;
+        min-height: 130px;
+
+        padding: 13px 14px 13px 43px;
+
+        border: 1px solid argb($dark, .10);
+        border-radius: 7px;
+
+        outline: none;
+
+        resize: vertical;
+
+        background: #fff;
+        color: $heading-color;
+
+        font-family: $body-fonts;
+        font-size: 14px;
+        line-height: 1.6;
+
+        transition:
+            border-color .2s ease,
+            box-shadow .2s ease;
+
+
+        &::placeholder {
+            color: argb($body-color, 20%);
+        }
+
+
+        &:focus {
+            border-color: argb($theme-color, .45);
+
+            box-shadow:
+                0 0 0 3px argb($theme-color, .08);
+        }
+    }
+}
+
+
+/*================================*
+* Help Text
+*=================================*/
+
+.permission-create-form__help {
+    margin: 8px 0 0;
+
+    color: $body-color;
+
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+
+/*================================*
+* Information Box
+*=================================*/
+
+.permission-create-info {
+    margin-bottom: 24px;
+
+    padding: 16px;
+
+    border: 1px solid argb($info, .14);
+    border-radius: 8px;
+
+    background: argb($info, .045);
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 11px;
+}
+
+
+.permission-create-info__icon {
+    width: 34px;
+    height: 34px;
+
+    border-radius: 7px;
+
+    background: argb($info, .10);
+    color: $info;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 34px;
+
+
+    i {
+        font-size: 17px;
+        line-height: 1;
+    }
+}
+
+
+.permission-create-info__content {
+
+    h3 {
+        margin: 0 0 5px;
+
+        color: $heading-color;
+
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 1.3;
+    }
+
+
+    p {
+        margin: 0;
+
+        color: $body-color;
+
+        font-size: 14px;
+        line-height: 1.6;
+    }
+}
+
+
+/*================================*
+* Form Footer
+*=================================*/
+
+.permission-create-form__footer {
+    padding-top: 20px;
+
+    border-top: 1px solid argb($dark, .07);
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 10px;
+
+
+    @include mq(xs) {
+        flex-direction: column-reverse;
+    }
+}
+
+
+/*================================*
+* Buttons
+*=================================*/
+
+.permission-cancel-btn,
+.permission-submit-btn {
+    min-height: 42px;
+
+    padding: 0 17px;
+
+    border-radius: 7px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    transition: all .2s ease;
+
+
+    i {
+        font-size: 17px;
+        line-height: 1;
+    }
+
+
+    @include mq(xs) {
+        width: 100%;
+    }
+}
+
+
+/*================================*
+* Cancel
+*=================================*/
+
+.permission-cancel-btn {
+    border: 1px solid argb($dark, .10);
+
+    background: #fff;
+
+    color: $body-color;
+
+
+    &:hover {
+        border-color: argb($dark, .18);
+
+        background: argb($dark, .025);
+
+        color: $heading-color;
+    }
+}
+
+
+/*================================*
+* Submit
+*=================================*/
+
+.permission-submit-btn {
+    border: 1px solid $theme-color;
+
+    background: $theme-color;
+
+    color: #fff;
+
+
+    &:hover {
+        border-color: argb($theme-color, 70%);
+
+        background: argb($theme-color, 70%);
+
+        color: #fff;
+    }
+}
+
+
+/*================================*
+* MD
+*=================================*/
+
+@include mq(md) {
+
+    .permission-create-page__header {
+        margin-bottom: 20px;
+    }
+
+
+    .permission-create-card {
+        max-width: 100%;
+    }
+
+
+    .permission-create-form {
+        padding: 20px;
+    }
+
+
+    .permission-create-card__header {
+        padding: 20px;
+    }
+}
+
+
+/*================================*
+* XS
+*=================================*/
+
+@include mq(xs) {
+
+    .permission-create-page__header {
+        margin-bottom: 18px;
+    }
+
+
+    .permission-create-page__heading {
+
+        .permission-create-page__eyebrow {
+            font-size: 14px;
+        }
+
+
+        h1 {
+            font-size: 24px;
+        }
+
+
+        p {
+            font-size: 14px;
+        }
+    }
+
+
+    .permission-create-card__header {
+        padding: 18px 16px;
+    }
+
+
+    .permission-create-card__header {
+
+        h2 {
+            font-size: 18px;
+        }
+
+
+        p {
+            font-size: 14px;
+        }
+    }
+
+
+    .permission-create-form {
+        padding: 18px 16px;
+    }
+
+
+    .permission-create-form__group {
+        margin-bottom: 20px;
+    }
+
+
+    .permission-create-info {
+        padding: 14px;
+    }
+
+
+    .permission-create-info__content {
+
+        h3 {
+            font-size: 16px;
+        }
+
+
+        p {
+            font-size: 14px;
+        }
+    }
+
+
+    .permission-create-form__footer {
+        gap: 8px;
+    }
+}
+
+/*================================*
+* Form Error
+*=================================*/
+
+.permission-create-form__error {
+    margin-top: 7px;
+
+    color: #dc2626;
+
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+
+/*================================*
+* Slug Display
+*=================================*/
+
+.permission-create-info__content {
+
+    code {
+        display: inline-block;
+
+        margin-top: 9px;
+
+        padding: 6px 9px;
+
+        border: 1px solid argb($dark, .07);
+        border-radius: 5px;
+
+        background: #fff;
+
+        color: $body-color;
+
+        font-family: monospace;
+        font-size: 14px;
+        line-height: 1.3;
+    }
+}

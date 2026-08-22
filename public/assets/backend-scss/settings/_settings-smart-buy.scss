@@ -1,0 +1,461 @@
+@use "../common" as *;
+
+
+/* =========================================================
+   Smart Buy Settings Page
+========================================================= */
+
+.settings-smart-buy-page {
+    width: 100%;
+    margin: 0 auto;
+    padding: 24px;
+
+    * {
+        box-sizing: border-box;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+        font-family: inherit;
+    }
+}
+
+
+/* =========================================================
+   Page Header
+========================================================= */
+
+.settings-header {
+    margin-bottom: 24px;
+}
+
+.settings-header-text {
+
+    h1 {
+        margin: 0 0 6px;
+        color: $heading-color;
+        font-size: 24px;
+        line-height: 1.3;
+        font-weight: $head-fw;
+    }
+
+    p {
+        margin: 0;
+        color: $body-color;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+}
+
+
+/* =========================================================
+   Settings Card
+========================================================= */
+
+.settings-card {
+    margin-bottom: 20px;
+    overflow: hidden;
+    border: 1px solid #e8ebef;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 4px 18px rgba(16, 26, 35, 0.04);
+}
+
+.settings-card-header {
+    padding: 20px 22px;
+    border-bottom: 1px solid #edf0f3;
+}
+
+.settings-card-heading {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.settings-card-icon {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: rgba(23, 114, 69, 0.08);
+    color: $theme-color;
+    font-size: 19px;
+}
+
+.settings-card-header {
+
+    h2 {
+        margin: 0 0 3px;
+        color: $heading-color;
+        font-size: 18px;
+        line-height: 1.4;
+        font-weight: $head-fw;
+    }
+
+    p {
+        margin: 0;
+        color: #7b838b;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+}
+
+.settings-card-body {
+    padding: 22px;
+}
+
+
+/* =========================================================
+   Form Grid
+========================================================= */
+
+.settings-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.form-group {
+    min-width: 0;
+
+    &.full-width {
+        grid-column: 1 / -1;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        color: $heading-color;
+        font-size: 14px;
+        line-height: 1.4;
+        font-weight: 600;
+    }
+}
+
+.form-control {
+    width: 100%;
+    min-height: 46px;
+    padding: 10px 13px;
+    border: 1px solid #dfe3e8;
+    border-radius: 8px;
+    outline: none;
+    background: #fff;
+    color: $dark;
+    font-size: 14px;
+    line-height: 1.5;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+
+    &::placeholder {
+        color: #a0a7ae;
+    }
+
+    &:hover {
+        border-color: #cbd0d6;
+    }
+
+    &:focus {
+        border-color: $theme-color;
+        box-shadow: 0 0 0 3px rgba(23, 114, 69, 0.08);
+    }
+}
+
+
+/* =========================================================
+   Preference List
+========================================================= */
+
+.preference-list {
+    width: 100%;
+}
+
+.preference-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 16px 0;
+
+    &:first-child {
+        padding-top: 0;
+    }
+
+    &:last-child {
+        padding-bottom: 0;
+    }
+
+    & + .preference-item {
+        border-top: 1px solid #edf0f3;
+    }
+}
+
+.preference-content {
+    min-width: 0;
+
+    h3 {
+        margin: 0 0 4px;
+        color: $heading-color;
+        font-size: 14px;
+        line-height: 1.4;
+        font-weight: 600;
+    }
+
+    p {
+        margin: 0;
+        color: #858c94;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+}
+
+
+/* =========================================================
+   Inline Setting
+========================================================= */
+
+.inline-setting {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.inline-setting {
+
+    h3 {
+        margin: 0 0 4px;
+        color: $heading-color;
+        font-size: 14px;
+        line-height: 1.4;
+        font-weight: 600;
+    }
+
+    p {
+        margin: 0;
+        color: #858c94;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+}
+
+
+/* =========================================================
+   Switch
+========================================================= */
+
+.switch {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    flex: 0 0 44px;
+    display: inline-block;
+    cursor: pointer;
+
+    input {
+        width: 0;
+        height: 0;
+        opacity: 0;
+
+        &:checked + .slider {
+            background: $theme-color;
+        }
+
+        &:checked + .slider::before {
+            transform: translateX(20px);
+        }
+    }
+
+    .slider {
+        position: absolute;
+        inset: 0;
+        border-radius: 50px;
+        background: #cfd4da;
+        transition: background 0.2s ease;
+
+        &::before {
+            content: "";
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            top: 3px;
+            left: 3px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.16);
+            transition: transform 0.2s ease;
+        }
+    }
+}
+
+
+/* =========================================================
+   Actions
+========================================================= */
+
+.settings-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.cancel-button,
+.save-button {
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 9px 17px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cancel-button {
+    border: 1px solid #e0e4e8;
+    background: #fff;
+    color: #646b73;
+
+    &:hover {
+        border-color: #d2d7dc;
+        background: #f7f8f9;
+    }
+}
+
+.save-button {
+    border: 1px solid $theme-color;
+    background: $theme-color;
+    color: #fff;
+
+    &:hover {
+        border-color: argb($theme-color, 5%);
+        background: argb($theme-color, 5%);
+    }
+}
+
+
+/* =========================================================
+   LG
+========================================================= */
+
+@include mq(lg) {
+
+    .settings-smart-buy-page {
+        padding: 20px;
+    }
+
+    .settings-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-group.full-width {
+        grid-column: auto;
+    }
+}
+
+
+/* =========================================================
+   MD
+========================================================= */
+
+@include mq(md) {
+
+    .settings-smart-buy-page {
+        padding: 18px;
+    }
+}
+
+
+/* =========================================================
+   XS
+========================================================= */
+
+@include mq(xs) {
+
+    .settings-smart-buy-page {
+        padding: 15px;
+    }
+
+    .settings-header {
+        margin-bottom: 18px;
+    }
+
+    .settings-header-text {
+
+        h1 {
+            font-size: 20px;
+        }
+
+        p {
+            font-size: 14px;
+        }
+    }
+
+    .settings-card {
+        margin-bottom: 15px;
+        border-radius: 10px;
+    }
+
+    .settings-card-header {
+        padding: 16px;
+    }
+
+    .settings-card-body {
+        padding: 16px;
+    }
+
+    .settings-card-icon {
+        width: 38px;
+        height: 38px;
+        flex-basis: 38px;
+        font-size: 18px;
+    }
+
+    .settings-card-header {
+
+        h2 {
+            font-size: 17px;
+        }
+
+        p {
+            font-size: 14px;
+        }
+    }
+
+    .preference-item,
+    .inline-setting {
+        align-items: flex-start;
+    }
+
+    .settings-actions {
+        flex-direction: column-reverse;
+    }
+
+    .cancel-button,
+    .save-button {
+        width: 100%;
+    }
+}
+
+
+/* =========================================================
+   SM
+========================================================= */
+
+@include mq(sm) {
+
+    .settings-smart-buy-page {
+        padding: 14px;
+    }
+}

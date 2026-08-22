@@ -1,0 +1,1359 @@
+@use "../common" as *;
+
+
+/*==================================================
+| Page
+==================================================*/
+
+.my-smart-buy-details-page {
+    width: 100%;
+}
+
+
+/*==================================================
+| Header
+==================================================*/
+
+.my-smart-buy-details-header {
+    margin-bottom: 16px;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 20px;
+}
+
+
+.my-smart-buy-details-back {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 5px;
+
+    margin-bottom: 9px;
+
+    color: $body-color;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition: color .2s ease;
+
+
+    &:hover {
+        color: $theme-color;
+    }
+}
+
+
+.my-smart-buy-details-heading {
+    display: flex;
+    align-items: center;
+
+    gap: 11px;
+}
+
+
+.my-smart-buy-details-heading__icon {
+    width: 46px;
+    height: 46px;
+
+    flex: 0 0 46px;
+
+    border-radius: 10px;
+
+    background: argb($theme-color, .08);
+    color: $theme-color;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+
+    i {
+        font-size: 20px;
+    }
+}
+
+
+.my-smart-buy-details-heading > div:last-child {
+    min-width: 0;
+}
+
+
+.my-smart-buy-details-heading > div:last-child > span {
+    display: block;
+
+    margin-bottom: 2px;
+
+    color: $theme-color;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+
+.my-smart-buy-details-heading h1 {
+    margin: 0 0 3px;
+
+    color: $heading-color;
+
+    font-family: $header-fonts;
+    font-size: 24px;
+    font-weight: $head-fw;
+
+    line-height: 1.3;
+}
+
+
+.my-smart-buy-details-heading p {
+    margin: 0;
+
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+}
+
+
+.my-smart-buy-details-status {
+    min-height: 27px;
+
+    padding: 4px 10px;
+
+    border-radius: 20px;
+
+    background: #eaf7ef;
+    color: #2d8752;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 5px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+.my-smart-buy-details-status i {
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: currentColor;
+}
+
+
+/*==================================================
+| Summary
+==================================================*/
+
+.my-smart-buy-details-summary {
+    margin-bottom: 15px;
+
+    padding: 13px 16px;
+
+    border: 1px solid argb($dark, .07);
+    border-radius: 10px;
+
+    background: #fff;
+
+    display: grid;
+
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    gap: 0;
+
+    box-shadow: 0 3px 14px argb($dark, .025);
+}
+
+
+.my-smart-buy-details-summary__item {
+    padding: 2px 15px;
+
+    border-right: 1px solid argb($dark, .06);
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+
+.my-smart-buy-details-summary__item:first-child {
+    padding-left: 0;
+}
+
+
+.my-smart-buy-details-summary__item:last-child {
+    padding-right: 0;
+
+    border-right: 0;
+}
+
+
+.my-smart-buy-details-summary__item span {
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+}
+
+
+.my-smart-buy-details-summary__item strong {
+    color: $heading-color;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+.my-smart-buy-details-summary__item strong.is-success {
+    color: #2d8752;
+}
+
+
+/*==================================================
+| Layout
+==================================================*/
+
+.my-smart-buy-details-layout {
+    display: grid;
+
+    grid-template-columns: minmax(0, 1fr) 300px;
+
+    align-items: start;
+
+    gap: 15px;
+}
+
+
+.my-smart-buy-details-main {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 15px;
+}
+
+
+.my-smart-buy-details-sidebar {
+    min-width: 0;
+
+    position: sticky;
+
+    top: 20px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 14px;
+}
+
+
+/*==================================================
+| Card
+==================================================*/
+
+.my-smart-buy-details-card {
+    overflow: hidden;
+
+    border: 1px solid argb($dark, .07);
+    border-radius: 10px;
+
+    background: #fff;
+
+    box-shadow: 0 3px 14px argb($dark, .025);
+}
+
+
+.my-smart-buy-details-card__header {
+    min-height: 58px;
+
+    padding: 12px 16px;
+
+    border-bottom: 1px solid argb($dark, .06);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+}
+
+
+.my-smart-buy-details-card__header h2 {
+    margin: 0 0 3px;
+
+    color: $heading-color;
+
+    font-family: $header-fonts;
+    font-size: 18px;
+    font-weight: 600;
+
+    line-height: 1.3;
+}
+
+
+.my-smart-buy-details-card__header p {
+    margin: 0;
+
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+
+    line-height: 1.4;
+}
+
+
+/*==================================================
+| Badge
+==================================================*/
+
+.my-smart-buy-details-badge {
+    min-height: 25px;
+
+    padding: 4px 8px;
+
+    border-radius: 20px;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 4px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+.my-smart-buy-details-badge.is-success {
+    background: #eaf7ef;
+    color: #2d8752;
+}
+
+
+.my-smart-buy-details-badge.is-info {
+    background: argb($theme-color, .08);
+    color: $theme-color;
+}
+
+
+/*==================================================
+| Progress
+==================================================*/
+
+.my-smart-buy-details-progress {
+    padding: 18px 20px;
+
+    display: grid;
+
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+
+    gap: 0;
+}
+
+
+.my-smart-buy-details-progress__step {
+    position: relative;
+
+    padding: 0 8px;
+
+    text-align: center;
+}
+
+
+.my-smart-buy-details-progress__step:not(:last-child)::after {
+    content: "";
+
+    position: absolute;
+
+    top: 14px;
+    left: calc(50% + 15px);
+
+    width: calc(100% - 30px);
+    height: 1px;
+
+    background: #e0e4e6;
+}
+
+
+.my-smart-buy-details-progress__step.is-completed:not(:last-child)::after {
+    background: argb($theme-color, .28);
+}
+
+
+.my-smart-buy-details-progress__icon {
+    position: relative;
+    z-index: 2;
+
+    width: 29px;
+    height: 29px;
+
+    margin: 0 auto 7px;
+
+    border: 1px solid #dfe3e5;
+    border-radius: 50%;
+
+    background: #fff;
+    color: #9ba1a5;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+
+    i {
+        font-size: 13px;
+    }
+}
+
+
+.my-smart-buy-details-progress__step.is-completed
+.my-smart-buy-details-progress__icon {
+    border-color: argb($theme-color, .18);
+
+    background: argb($theme-color, .08);
+    color: $theme-color;
+}
+
+
+.my-smart-buy-details-progress__step.is-active
+.my-smart-buy-details-progress__icon {
+    border-color: $theme-color;
+
+    background: $theme-color;
+    color: #fff;
+
+    box-shadow: 0 0 0 4px argb($theme-color, .08);
+}
+
+
+.my-smart-buy-details-progress__step > div:last-child {
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+
+.my-smart-buy-details-progress__step strong {
+    color: $heading-color;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    line-height: 1.3;
+}
+
+
+.my-smart-buy-details-progress__step.is-active strong {
+    color: $theme-color;
+}
+
+
+.my-smart-buy-details-progress__step span {
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+}
+
+
+/*==================================================
+| Product
+==================================================*/
+
+.my-smart-buy-details-product {
+    padding: 16px;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 12px;
+}
+
+
+.my-smart-buy-details-product__icon {
+    width: 60px;
+    height: 60px;
+
+    flex: 0 0 60px;
+
+    border-radius: 9px;
+
+    background: argb($theme-color, .07);
+    color: $theme-color;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+
+    i {
+        font-size: 25px;
+    }
+}
+
+
+.my-smart-buy-details-product__content {
+    min-width: 0;
+}
+
+
+.my-smart-buy-details-product__content > span {
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+}
+
+
+.my-smart-buy-details-product__content h3 {
+    margin: 2px 0 5px;
+
+    color: $heading-color;
+
+    font-size: 18px;
+    font-weight: 600;
+}
+
+
+.my-smart-buy-details-product__content > p {
+    margin: 0 0 11px;
+
+    color: $body-color;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+}
+
+
+.my-smart-buy-details-product__meta {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 7px;
+}
+
+
+.my-smart-buy-details-product__meta > div {
+    min-width: 100px;
+
+    padding: 7px 9px;
+
+    border: 1px solid argb($dark, .055);
+    border-radius: 7px;
+
+    background: #fafbfc;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+
+.my-smart-buy-details-product__meta span {
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+}
+
+
+.my-smart-buy-details-product__meta strong {
+    color: $heading-color;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+/*==================================================
+| Quote
+==================================================*/
+
+.my-smart-buy-details-quote {
+    padding: 9px 16px 14px;
+}
+
+
+.my-smart-buy-details-quote__row {
+    min-height: 39px;
+
+    padding: 7px 0;
+
+    border-bottom: 1px solid argb($dark, .055);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+}
+
+
+.my-smart-buy-details-quote__row span {
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+}
+
+
+.my-smart-buy-details-quote__row strong {
+    color: $heading-color;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+.my-smart-buy-details-quote__row:last-of-type {
+    padding-top: 11px;
+    padding-bottom: 10px;
+
+    border-bottom: 0;
+}
+
+
+.my-smart-buy-details-quote__row:last-of-type span {
+    color: $heading-color;
+
+    font-weight: 600;
+}
+
+
+.my-smart-buy-details-quote__row:last-of-type strong {
+    color: $theme-color;
+
+    font-size: 18px;
+}
+
+
+.my-smart-buy-details-view-link {
+    min-height: 36px;
+
+    margin-top: 4px;
+
+    padding: 0 10px;
+
+    border: 1px solid argb($theme-color, .14);
+    border-radius: 7px;
+
+    background: argb($theme-color, .035);
+    color: $theme-color;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 5px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition: .2s ease;
+
+
+    &:hover {
+        background: argb($theme-color, .08);
+    }
+}
+
+
+/*==================================================
+| Payment
+==================================================*/
+
+.my-smart-buy-details-payment {
+    padding: 14px 16px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+}
+
+
+.my-smart-buy-details-payment__icon {
+    width: 40px;
+    height: 40px;
+
+    flex: 0 0 40px;
+
+    border-radius: 9px;
+
+    background: #eaf7ef;
+    color: #2d8752;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+
+    i {
+        font-size: 19px;
+    }
+}
+
+
+.my-smart-buy-details-payment__content {
+    min-width: 0;
+
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+
+.my-smart-buy-details-payment__content strong {
+    color: $heading-color;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+.my-smart-buy-details-payment__content span {
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+}
+
+
+.my-smart-buy-details-payment__amount {
+    display: flex;
+    flex-direction: column;
+
+    align-items: flex-end;
+
+    gap: 2px;
+}
+
+
+.my-smart-buy-details-payment__amount span {
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+}
+
+
+.my-smart-buy-details-payment__amount strong {
+    color: #2d8752;
+
+    font-size: 18px;
+}
+
+
+/*==================================================
+| Shipment
+==================================================*/
+
+.my-smart-buy-details-shipment {
+    padding: 14px 16px;
+}
+
+
+.my-smart-buy-details-shipment__tracking {
+    padding: 10px;
+
+    border: 1px solid argb($theme-color, .10);
+    border-radius: 8px;
+
+    background: argb($theme-color, .025);
+
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+}
+
+
+.my-smart-buy-details-shipment__tracking > span {
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+}
+
+
+.my-smart-buy-details-shipment__tracking > strong {
+    color: $heading-color;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    letter-spacing: .02em;
+}
+
+
+.my-smart-buy-details-copy {
+    min-height: 28px;
+
+    margin-left: auto;
+
+    padding: 0 7px;
+
+    border: 1px solid argb($dark, .08);
+    border-radius: 6px;
+
+    background: #fff;
+    color: $body-color;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 4px;
+
+    font-family: $body-fonts;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+.my-smart-buy-details-shipment__grid {
+    margin-top: 10px;
+
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 8px;
+}
+
+
+.my-smart-buy-details-shipment__grid > div {
+    padding: 9px;
+
+    border: 1px solid argb($dark, .055);
+    border-radius: 7px;
+
+    background: #fafbfc;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+
+.my-smart-buy-details-shipment__grid span {
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+}
+
+
+.my-smart-buy-details-shipment__grid strong {
+    color: $heading-color;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+.my-smart-buy-details-track-button {
+    min-height: 38px;
+
+    margin-top: 10px;
+
+    padding: 0 11px;
+
+    border-radius: 7px;
+
+    background: $theme-color;
+    color: #fff;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition: .2s ease;
+
+
+    &:hover {
+        background: argb($theme-color, 7%);
+
+        color: #fff;
+    }
+}
+
+
+/*==================================================
+| Address
+==================================================*/
+
+.my-smart-buy-details-address {
+    padding: 15px 16px;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 10px;
+}
+
+
+.my-smart-buy-details-address__icon {
+    width: 38px;
+    height: 38px;
+
+    flex: 0 0 38px;
+
+    border-radius: 8px;
+
+    background: argb($theme-color, .08);
+    color: $theme-color;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+
+    i {
+        font-size: 18px;
+    }
+}
+
+
+.my-smart-buy-details-address > div:last-child {
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+
+.my-smart-buy-details-address strong {
+    color: $heading-color;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+.my-smart-buy-details-address p {
+    margin: 2px 0;
+
+    color: $body-color;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+}
+
+
+.my-smart-buy-details-address span {
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+}
+
+
+/*==================================================
+| Sidebar Actions
+==================================================*/
+
+.my-smart-buy-details-actions {
+    padding: 8px;
+}
+
+
+.my-smart-buy-details-action {
+    min-height: 40px;
+
+    padding: 0 9px;
+
+    border-radius: 7px;
+
+    color: $body-color;
+
+    display: flex;
+    align-items: center;
+
+    gap: 7px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition: .2s ease;
+}
+
+
+.my-smart-buy-details-action > span {
+    flex: 1;
+}
+
+
+.my-smart-buy-details-action:hover {
+    background: #f7f8f9;
+
+    color: $heading-color;
+}
+
+
+.my-smart-buy-details-action.is-primary {
+    background: argb($theme-color, .07);
+    color: $theme-color;
+}
+
+
+.my-smart-buy-details-action.is-primary:hover {
+    background: argb($theme-color, .11);
+
+    color: $theme-color;
+}
+
+
+/*==================================================
+| Request Info
+==================================================*/
+
+.my-smart-buy-details-request-info {
+    padding: 6px 15px 12px;
+}
+
+
+.my-smart-buy-details-request-info > div {
+    padding: 9px 0;
+
+    border-bottom: 1px solid argb($dark, .055);
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+
+.my-smart-buy-details-request-info > div:last-child {
+    border-bottom: 0;
+}
+
+
+.my-smart-buy-details-request-info span {
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+}
+
+
+.my-smart-buy-details-request-info strong {
+    color: $heading-color;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+.my-smart-buy-details-request-info strong.is-success {
+    color: #2d8752;
+}
+
+
+/*==================================================
+| Help
+==================================================*/
+
+.my-smart-buy-details-help {
+    padding: 12px;
+
+    border: 1px solid argb($theme-color, .14);
+    border-radius: 9px;
+
+    background: argb($theme-color, .035);
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 8px;
+}
+
+
+.my-smart-buy-details-help__icon {
+    width: 30px;
+    height: 30px;
+
+    flex: 0 0 30px;
+
+    border-radius: 7px;
+
+    background: argb($theme-color, .08);
+    color: $theme-color;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+
+    i {
+        font-size: 15px;
+    }
+}
+
+
+.my-smart-buy-details-help > div:last-child {
+    min-width: 0;
+}
+
+
+.my-smart-buy-details-help strong {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: $heading-color;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+.my-smart-buy-details-help p {
+    margin: 0 0 7px;
+
+    color: $body-color;
+
+    font-size: 14px;
+
+    line-height: 1.45;
+}
+
+
+.my-smart-buy-details-help a {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 4px;
+
+    color: $theme-color;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-decoration: none;
+}
+
+
+/*==================================================
+| Responsive LG
+==================================================*/
+
+@include mq(lg) {
+
+    .my-smart-buy-details-layout {
+        grid-template-columns: minmax(0, 1fr) 270px;
+    }
+
+}
+
+
+/*==================================================
+| Responsive MD
+==================================================*/
+
+@include mq(md) {
+
+    .my-smart-buy-details-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+
+    .my-smart-buy-details-layout {
+        grid-template-columns: 1fr;
+    }
+
+
+    .my-smart-buy-details-sidebar {
+        position: static;
+
+        display: grid;
+
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+
+    .my-smart-buy-details-help {
+        grid-column: 1 / -1;
+    }
+
+
+    .my-smart-buy-details-progress {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+
+        row-gap: 18px;
+    }
+
+
+    .my-smart-buy-details-progress__step:nth-child(3)::after {
+        display: none;
+    }
+
+}
+
+
+/*==================================================
+| Responsive XS
+==================================================*/
+
+@include mq(xs) {
+
+    .my-smart-buy-details-heading h1 {
+        font-size: 20px;
+    }
+
+
+    .my-smart-buy-details-heading__icon {
+        width: 40px;
+        height: 40px;
+
+        flex-basis: 40px;
+    }
+
+
+    .my-smart-buy-details-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        gap: 10px;
+    }
+
+
+    .my-smart-buy-details-summary__item {
+        padding: 5px 8px;
+
+        border-right: 0;
+    }
+
+
+    .my-smart-buy-details-summary__item:first-child {
+        padding-left: 8px;
+    }
+
+
+    .my-smart-buy-details-summary__item:last-child {
+        padding-right: 8px;
+    }
+
+
+    .my-smart-buy-details-layout {
+        grid-template-columns: 1fr;
+    }
+
+
+    .my-smart-buy-details-sidebar {
+        grid-template-columns: 1fr;
+    }
+
+
+    .my-smart-buy-details-help {
+        grid-column: auto;
+    }
+
+
+    .my-smart-buy-details-progress {
+        grid-template-columns: 1fr;
+
+        gap: 0;
+    }
+
+
+    .my-smart-buy-details-progress__step {
+        min-height: 65px;
+
+        padding-left: 42px;
+
+        padding-right: 0;
+
+        text-align: left;
+    }
+
+
+    .my-smart-buy-details-progress__step:not(:last-child)::after {
+        top: 29px;
+        left: 14px;
+
+        width: 1px;
+        height: calc(100% - 1px);
+    }
+
+
+    .my-smart-buy-details-progress__icon {
+        position: absolute;
+
+        top: 0;
+        left: 0;
+
+        margin: 0;
+    }
+
+
+    .my-smart-buy-details-progress__step > div:last-child {
+        padding-top: 2px;
+    }
+
+
+    .my-smart-buy-details-product {
+        flex-direction: column;
+    }
+
+
+    .my-smart-buy-details-shipment__tracking {
+        align-items: flex-start;
+
+        flex-wrap: wrap;
+    }
+
+
+    .my-smart-buy-details-copy {
+        margin-left: 0;
+    }
+
+
+    .my-smart-buy-details-shipment__grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .my-smart-buy-details-payment {
+        align-items: flex-start;
+
+        flex-wrap: wrap;
+    }
+
+
+    .my-smart-buy-details-payment__amount {
+        width: 100%;
+
+        padding-top: 8px;
+
+        border-top: 1px solid argb($dark, .055);
+
+        align-items: flex-start;
+    }
+
+}

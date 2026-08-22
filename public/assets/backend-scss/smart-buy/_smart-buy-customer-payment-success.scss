@@ -1,0 +1,630 @@
+@use "../common" as *;
+
+
+/*==================================================
+| Page
+==================================================*/
+
+.my-smart-buy-payment-result-page {
+    width: 100%;
+}
+
+
+/*==================================================
+| Header
+==================================================*/
+
+.my-smart-buy-payment-result-header {
+    margin-bottom: 15px;
+}
+
+
+.my-smart-buy-payment-result-back {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 5px;
+
+    color: $body-color;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition: color .2s ease;
+
+
+    &:hover {
+        color: $theme-color;
+    }
+}
+
+
+/*==================================================
+| Main Success Card
+==================================================*/
+
+.my-smart-buy-payment-result-card {
+    max-width: 760px;
+
+    margin: 0 auto 15px;
+
+    padding: 30px;
+
+    border: 1px solid argb($dark, .07);
+    border-radius: 12px;
+
+    background: #fff;
+
+    box-shadow: 0 4px 20px argb($dark, .035);
+
+    text-align: center;
+}
+
+
+/*==================================================
+| Success Icon
+==================================================*/
+
+.my-smart-buy-payment-result-icon {
+    width: 58px;
+    height: 58px;
+
+    margin: 0 auto 12px;
+
+    border-radius: 50%;
+
+    background: #e6f7ed;
+    color: #2d8752;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+
+    i {
+        font-size: 29px;
+    }
+}
+
+
+.my-smart-buy-payment-result-label {
+    display: inline-block;
+
+    margin-bottom: 7px;
+
+    color: #2d8752;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+
+.my-smart-buy-payment-result-card h1 {
+    max-width: 600px;
+
+    margin: 0 auto 7px;
+
+    color: $heading-color;
+
+    font-family: $header-fonts;
+    font-size: 24px;
+    font-weight: $head-fw;
+
+    line-height: 1.3;
+}
+
+
+.my-smart-buy-payment-result-description {
+    max-width: 570px;
+
+    margin: 0 auto 20px;
+
+    color: $body-color;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+}
+
+
+/*==================================================
+| Summary
+==================================================*/
+
+.my-smart-buy-payment-result-summary {
+    margin-bottom: 12px;
+
+    border: 1px solid argb($dark, .065);
+    border-radius: 9px;
+
+    background: #fafbfc;
+
+    display: grid;
+
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    overflow: hidden;
+}
+
+
+.my-smart-buy-payment-result-summary > div {
+    min-height: 68px;
+
+    padding: 10px;
+
+    border-right: 1px solid argb($dark, .055);
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 3px;
+}
+
+
+.my-smart-buy-payment-result-summary > div:last-child {
+    border-right: 0;
+}
+
+
+.my-smart-buy-payment-result-summary span {
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+}
+
+
+.my-smart-buy-payment-result-summary strong {
+    color: $heading-color;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+.my-smart-buy-payment-result-summary strong.is-success {
+    color: #2d8752;
+}
+
+
+/*==================================================
+| Payment Reference
+==================================================*/
+
+.my-smart-buy-payment-result-reference {
+    min-height: 52px;
+
+    margin-bottom: 13px;
+
+    padding: 8px 10px;
+
+    border: 1px solid argb($dark, .065);
+    border-radius: 8px;
+
+    background: #fff;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+
+    text-align: left;
+}
+
+
+.my-smart-buy-payment-result-reference > div {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+
+.my-smart-buy-payment-result-reference span {
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+}
+
+
+.my-smart-buy-payment-result-reference strong {
+    color: $heading-color;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+.my-smart-buy-payment-result-copy {
+    min-height: 32px;
+
+    padding: 0 9px;
+
+    border: 1px solid argb($dark, .08);
+    border-radius: 6px;
+
+    background: #fff;
+    color: $body-color;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 5px;
+
+    font-family: $body-fonts;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: .2s ease;
+
+
+    &:hover {
+        background: #f7f8f9;
+
+        color: $heading-color;
+    }
+}
+
+
+/*==================================================
+| Next Step
+==================================================*/
+
+.my-smart-buy-payment-result-next {
+    margin-bottom: 16px;
+
+    padding: 12px;
+
+    border: 1px solid argb($theme-color, .12);
+    border-radius: 8px;
+
+    background: argb($theme-color, .035);
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 9px;
+
+    text-align: left;
+}
+
+
+.my-smart-buy-payment-result-next__icon {
+    width: 34px;
+    height: 34px;
+
+    flex: 0 0 34px;
+
+    border-radius: 7px;
+
+    background: argb($theme-color, .08);
+    color: $theme-color;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+
+    i {
+        font-size: 17px;
+    }
+}
+
+
+.my-smart-buy-payment-result-next > div:last-child {
+    min-width: 0;
+}
+
+
+.my-smart-buy-payment-result-next strong {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: $heading-color;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+.my-smart-buy-payment-result-next p {
+    margin: 0;
+
+    color: $body-color;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+}
+
+
+/*==================================================
+| Actions
+==================================================*/
+
+.my-smart-buy-payment-result-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+}
+
+
+.my-smart-buy-payment-result-primary,
+.my-smart-buy-payment-result-secondary {
+    min-height: 40px;
+
+    padding: 0 13px;
+
+    border-radius: 7px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition: .2s ease;
+}
+
+
+.my-smart-buy-payment-result-primary {
+    background: $theme-color;
+    color: #fff;
+
+
+    &:hover {
+        background: argb($theme-color, 7%);
+
+        color: #fff;
+    }
+}
+
+
+.my-smart-buy-payment-result-secondary {
+    border: 1px solid argb($dark, .08);
+
+    background: #fff;
+    color: $body-color;
+
+
+    &:hover {
+        background: #f7f8f9;
+
+        color: $heading-color;
+    }
+}
+
+
+/*==================================================
+| Info Grid
+==================================================*/
+
+.my-smart-buy-payment-result-info-grid {
+    max-width: 760px;
+
+    margin: 0 auto;
+
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 15px;
+}
+
+
+.my-smart-buy-payment-result-info-card {
+    min-width: 0;
+
+    padding: 14px;
+
+    border: 1px solid argb($dark, .07);
+    border-radius: 10px;
+
+    background: #fff;
+
+    box-shadow: 0 3px 14px argb($dark, .025);
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 9px;
+}
+
+
+.my-smart-buy-payment-result-info-card__icon {
+    width: 38px;
+    height: 38px;
+
+    flex: 0 0 38px;
+
+    border-radius: 8px;
+
+    background: argb($theme-color, .07);
+    color: $theme-color;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+
+    i {
+        font-size: 18px;
+    }
+}
+
+
+.my-smart-buy-payment-result-info-card > div:last-child {
+    min-width: 0;
+}
+
+
+.my-smart-buy-payment-result-info-card span {
+    display: block;
+
+    margin-bottom: 2px;
+
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+}
+
+
+.my-smart-buy-payment-result-info-card strong {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: $heading-color;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+.my-smart-buy-payment-result-info-card p {
+    margin: 0;
+
+    color: $body-color;
+
+    font-size: 14px;
+
+    line-height: 1.45;
+}
+
+
+.my-smart-buy-payment-result-info-card a {
+    margin-top: 7px;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 4px;
+
+    color: $theme-color;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-decoration: none;
+}
+
+
+/*==================================================
+| Responsive MD
+==================================================*/
+
+@include mq(md) {
+
+    .my-smart-buy-payment-result-card {
+        padding: 24px;
+    }
+
+
+    .my-smart-buy-payment-result-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+
+    .my-smart-buy-payment-result-summary > div {
+        border-right: 0;
+
+        border-bottom: 1px solid argb($dark, .055);
+    }
+
+
+    .my-smart-buy-payment-result-summary > div:nth-child(odd) {
+        border-right: 1px solid argb($dark, .055);
+    }
+
+
+    .my-smart-buy-payment-result-summary > div:nth-last-child(-n + 2) {
+        border-bottom: 0;
+    }
+
+}
+
+
+/*==================================================
+| Responsive XS
+==================================================*/
+
+@include mq(xs) {
+
+    .my-smart-buy-payment-result-card {
+        padding: 18px 14px;
+    }
+
+
+    .my-smart-buy-payment-result-card h1 {
+        font-size: 20px;
+    }
+
+
+    .my-smart-buy-payment-result-summary {
+        grid-template-columns: 1fr;
+    }
+
+
+    .my-smart-buy-payment-result-summary > div,
+    .my-smart-buy-payment-result-summary > div:nth-child(odd) {
+        border-right: 0;
+
+        border-bottom: 1px solid argb($dark, .055);
+    }
+
+
+    .my-smart-buy-payment-result-summary > div:last-child {
+        border-bottom: 0;
+    }
+
+
+    .my-smart-buy-payment-result-reference {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+
+    .my-smart-buy-payment-result-copy {
+        align-self: flex-end;
+    }
+
+
+    .my-smart-buy-payment-result-actions {
+        align-items: stretch;
+
+        flex-direction: column;
+    }
+
+
+    .my-smart-buy-payment-result-primary,
+    .my-smart-buy-payment-result-secondary {
+        width: 100%;
+    }
+
+
+    .my-smart-buy-payment-result-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+}

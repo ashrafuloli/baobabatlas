@@ -1,0 +1,242 @@
+@use "../../common" as *;
+
+
+/*
+|--------------------------------------------------------------------------
+| Out Of Stock Page
+|--------------------------------------------------------------------------
+*/
+
+.inventory-out-of-stock-page {
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Back Button
+    |--------------------------------------------------------------------------
+    */
+
+    .inventory-page__back {
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-height: 42px;
+        padding: 0 14px;
+        border: 1px solid $gray;
+        border-radius: 8px;
+        background: #fff;
+        color: $body-color;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: 0.2s;
+
+
+        i {
+
+            font-size: 17px;
+
+        }
+
+
+        &:hover {
+
+            border-color: argb($theme-color, 0.35);
+            color: $theme-color;
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Out Of Stock Alert
+    |--------------------------------------------------------------------------
+    */
+
+    .inventory-out-of-stock-alert {
+
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin: 18px;
+        padding: 14px 15px;
+        border: 1px solid argb($danger, 0.28);
+        border-radius: 9px;
+        background: argb($danger, 0.045);
+
+
+        &__icon {
+
+            width: 36px;
+            height: 36px;
+            flex: 0 0 36px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: argb($danger, 0.10);
+            color: $danger;
+            font-size: 18px;
+
+        }
+
+
+        strong {
+
+            display: block;
+            margin-bottom: 3px;
+            color: $heading-color;
+            font-size: 14px;
+            line-height: 1.4;
+            font-weight: 600;
+
+        }
+
+
+        p {
+
+            margin: 0;
+            color: $body-color;
+            font-size: 14px;
+            line-height: 1.5;
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Critical Stock Input
+    |--------------------------------------------------------------------------
+    */
+
+    .inventory-stock-input--critical {
+
+        border-color: argb($danger, 0.4);
+        background: argb($danger, 0.025);
+
+
+        input {
+
+            color: $danger;
+
+        }
+
+
+        &:focus-within {
+
+            border-color: $danger;
+            box-shadow: 0 0 0 3px argb($danger, 0.06);
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Warning Filter
+    |--------------------------------------------------------------------------
+    */
+
+    .inventory-filter-link--warning {
+
+        border-color: argb($warning, 0.3);
+        background: argb($warning, 0.05);
+        color: #947000;
+
+
+        &:hover {
+
+            border-color: $warning;
+            color: #947000;
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Out Of Stock Table
+    |--------------------------------------------------------------------------
+    */
+
+    .inventory-out-of-stock-table {
+
+        min-width: 1050px;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Responsive
+|--------------------------------------------------------------------------
+*/
+
+@include mq(md) {
+
+    .inventory-out-of-stock-page {
+
+        .inventory-page__header {
+
+            align-items: flex-start;
+            flex-direction: column;
+
+        }
+
+
+        .inventory-page__back {
+
+            width: fit-content;
+
+        }
+
+
+        .inventory-out-of-stock-alert {
+
+            margin: 14px;
+
+        }
+
+    }
+
+}
+
+
+@include mq(xs) {
+
+    .inventory-out-of-stock-page {
+
+        .inventory-page__header h1 {
+
+            font-size: 24px;
+
+        }
+
+
+        .inventory-out-of-stock-alert {
+
+            padding: 12px;
+
+
+            p {
+
+                font-size: 14px;
+
+            }
+
+        }
+
+    }
+
+}

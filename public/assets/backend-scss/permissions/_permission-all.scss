@@ -1,0 +1,1307 @@
+@use "../common" as *;
+
+
+/*================================*
+* Permission Page
+*=================================*/
+
+.permission-page {
+    width: 100%;
+}
+
+
+/*================================*
+* Page Header
+*=================================*/
+
+.permission-page__header {
+    margin-bottom: 24px;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 24px;
+
+
+    @include mq(md) {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 18px;
+    }
+}
+
+
+.permission-page__heading {
+
+    .permission-page__eyebrow {
+        display: inline-block;
+
+        margin-bottom: 7px;
+
+        color: $theme-color;
+
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1;
+
+        letter-spacing: .05em;
+        text-transform: uppercase;
+    }
+
+
+    h1 {
+        margin: 0 0 6px;
+
+        color: $heading-color;
+
+        font-family: $header-fonts;
+        font-size: 24px;
+        font-weight: $head-fw;
+        line-height: 1.25;
+    }
+
+
+    p {
+        margin: 0;
+
+        color: $body-color;
+
+        font-size: 14px;
+        line-height: 1.6;
+    }
+}
+
+
+/*================================*
+* Header Actions
+*=================================*/
+
+.permission-page__actions {
+    flex-shrink: 0;
+
+
+    @include mq(md) {
+        width: 100%;
+    }
+}
+
+
+.permission-primary-btn {
+    min-height: 42px;
+
+    padding: 0 16px;
+
+    border: 1px solid $theme-color;
+    border-radius: 7px;
+
+    background: $theme-color;
+    color: #fff;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+
+    text-decoration: none;
+
+    transition: all .2s ease;
+
+
+    i {
+        font-size: 17px;
+        line-height: 1;
+    }
+
+
+    &:hover {
+        border-color: argb($theme-color, 70%);
+
+        background: argb($theme-color, 70%);
+
+        color: #fff;
+    }
+
+
+    @include mq(md) {
+        width: 100%;
+    }
+}
+
+
+/*================================*
+* Permission Card
+*=================================*/
+
+.permission-card {
+    width: 100%;
+
+    border: 1px solid argb($dark, .07);
+    border-radius: 12px;
+
+    background: #fff;
+
+    box-shadow: 0 3px 14px argb($dark, .035);
+
+    overflow: hidden;
+}
+
+
+/*================================*
+* Card Header
+*=================================*/
+
+.permission-card__header {
+    min-height: 80px;
+
+    padding: 18px 20px;
+
+    border-bottom: 1px solid argb($dark, .07);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+
+    @include mq(xs) {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 14px;
+    }
+}
+
+
+.permission-card__title {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+}
+
+
+.permission-card__icon {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 8px;
+
+    background: argb($theme-color, .09);
+    color: $theme-color;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 42px;
+
+
+    i {
+        font-size: 20px;
+        line-height: 1;
+    }
+}
+
+
+.permission-card__title {
+
+    h2 {
+        margin: 0 0 4px;
+
+        color: $heading-color;
+
+        font-family: $header-fonts;
+        font-size: 20px;
+        font-weight: 600;
+        line-height: 1.3;
+    }
+
+
+    p {
+        margin: 0;
+
+        color: $body-color;
+
+        font-size: 14px;
+        line-height: 1.5;
+    }
+}
+
+
+/*================================*
+* Permission Count
+*=================================*/
+
+.permission-card__count {
+    display: flex;
+    align-items: center;
+
+    gap: 7px;
+
+    white-space: nowrap;
+
+
+    span {
+        min-width: 34px;
+        min-height: 32px;
+
+        padding: 0 9px;
+
+        border: 1px solid argb($dark, .07);
+        border-radius: 6px;
+
+        background: argb($dark, .025);
+
+        color: $heading-color;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+
+    small {
+        color: $body-color;
+
+        font-size: 14px;
+        line-height: 1.4;
+    }
+}
+
+
+/*================================*
+* Table Wrapper
+*=================================*/
+
+.permission-table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+
+    -webkit-overflow-scrolling: touch;
+}
+
+
+/*================================*
+* Table
+*=================================*/
+
+.permission-table {
+    width: 100%;
+
+    min-width: 950px;
+
+    border-collapse: collapse;
+
+
+    th {
+        padding: 14px 20px;
+
+        border-bottom: 1px solid argb($dark, .07);
+
+        background: argb($dark, .018);
+
+        color: $body-color;
+
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.4;
+
+        text-align: left;
+
+        white-space: nowrap;
+    }
+
+
+    td {
+        padding: 15px 20px;
+
+        border-bottom: 1px solid argb($dark, .055);
+
+        color: $body-color;
+
+        font-size: 14px;
+        line-height: 1.5;
+
+        vertical-align: middle;
+    }
+
+
+    tbody {
+
+        tr {
+            transition: background-color .2s ease;
+
+
+            &:hover {
+                background: argb($theme-color, .018);
+            }
+
+
+            &:last-child {
+
+                td {
+                    border-bottom: 0;
+                }
+            }
+        }
+    }
+}
+
+
+/*================================*
+* Actions Column
+*=================================*/
+
+.permission-table__actions-column {
+    width: 120px;
+
+    text-align: right !important;
+}
+
+
+/*================================*
+* Permission Name
+*=================================*/
+
+.permission-name {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    min-width: 190px;
+}
+
+
+.permission-name__icon {
+    width: 38px;
+    height: 38px;
+
+    border-radius: 8px;
+
+    background: argb($theme-color, .08);
+    color: $theme-color;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 38px;
+
+
+    i {
+        font-size: 18px;
+        line-height: 1;
+    }
+}
+
+
+.permission-name__content {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+
+    strong {
+        margin-bottom: 3px;
+
+        color: $heading-color;
+
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 1.35;
+
+        white-space: nowrap;
+    }
+
+
+    span {
+        color: argb($body-color, 10%);
+
+        font-size: 14px;
+        line-height: 1.3;
+    }
+}
+
+
+/*================================*
+* Permission Slug
+*=================================*/
+
+.permission-slug {
+    display: inline-block;
+
+    max-width: 210px;
+
+    padding: 6px 8px;
+
+    border: 1px solid argb($dark, .06);
+    border-radius: 5px;
+
+    background: argb($dark, .025);
+
+    color: $body-color;
+
+    font-family: monospace;
+    font-size: 14px;
+    line-height: 1.3;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/*================================*
+* Description
+*=================================*/
+
+.permission-description {
+    display: block;
+
+    max-width: 270px;
+
+    color: $body-color;
+
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+
+.permission-description--empty {
+    color: argb($body-color, 18%);
+
+    font-style: italic;
+}
+
+
+/*================================*
+* Role Count
+*=================================*/
+
+.permission-role-count {
+    min-height: 32px;
+
+    padding: 0 9px;
+
+    border: 1px solid argb($info, .12);
+    border-radius: 6px;
+
+    background: argb($info, .06);
+    color: $info;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    white-space: nowrap;
+
+
+    i {
+        font-size: 16px;
+    }
+}
+
+
+/*================================*
+* Date
+*=================================*/
+
+.permission-date {
+    color: $body-color;
+
+    font-size: 14px;
+
+    white-space: nowrap;
+}
+
+
+/*================================*
+* Actions
+*=================================*/
+
+.permission-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 6px;
+}
+
+
+.permission-delete-form {
+    margin: 0;
+    padding: 0;
+}
+
+
+.permission-action {
+    width: 34px;
+    height: 34px;
+
+    padding: 0;
+
+    border: 1px solid argb($dark, .07);
+    border-radius: 6px;
+
+    background: #fff;
+    color: $body-color;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 16px;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    transition: all .2s ease;
+
+
+    i {
+        font-size: 16px;
+        line-height: 1;
+    }
+}
+
+
+/*================================*
+* View Action
+*=================================*/
+
+.permission-action--view {
+
+    &:hover {
+        border-color: argb($info, .20);
+
+        background: argb($info, .07);
+
+        color: $info;
+    }
+}
+
+
+/*================================*
+* Edit Action
+*=================================*/
+
+.permission-action--edit {
+
+    &:hover {
+        border-color: argb($theme-color, .20);
+
+        background: argb($theme-color, .07);
+
+        color: $theme-color;
+    }
+}
+
+
+/*================================*
+* Delete Action
+*=================================*/
+
+.permission-action--delete {
+
+    &:hover {
+        border-color: argb(#dc2626, .20);
+
+        background: argb(#dc2626, .06);
+
+        color: #dc2626;
+    }
+}
+
+
+/*================================*
+* Pagination
+*=================================*/
+
+.permission-pagination {
+    width: 100%;
+
+    padding: 16px 20px;
+
+    border-top: 1px solid argb($dark, .055);
+
+    background: #fff;
+
+    box-sizing: border-box;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Laravel Pagination Navigation
+    |--------------------------------------------------------------------------
+    */
+
+    nav {
+        width: 100%;
+
+        display: block !important;
+
+        margin: 0;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Desktop Pagination Wrapper
+    |--------------------------------------------------------------------------
+    |
+    | Laravel generates:
+    |
+    | 1st div = mobile pagination
+    | 2nd div = desktop pagination
+    |
+    */
+
+    nav > div:nth-child(1) {
+        display: none !important;
+    }
+
+
+    nav > div:nth-child(2) {
+        width: 100%;
+
+        min-height: 36px;
+
+        display: flex !important;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 20px;
+
+        margin: 0 !important;
+
+        box-sizing: border-box;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Result Information
+    |--------------------------------------------------------------------------
+    */
+
+    nav > div:nth-child(2) > div:first-child {
+        flex: 1 1 auto;
+
+        min-width: 0;
+
+        margin: 0 !important;
+    }
+
+
+    nav > div:nth-child(2) > div:first-child p {
+        margin: 0 !important;
+
+        color: $body-color !important;
+
+        font-size: 13px !important;
+        font-weight: 400 !important;
+
+        line-height: 36px !important;
+
+        white-space: nowrap;
+    }
+
+
+    nav > div:nth-child(2) > div:first-child p span {
+        color: $heading-color !important;
+
+        font-weight: 600 !important;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Pagination Controls
+    |--------------------------------------------------------------------------
+    */
+
+    nav > div:nth-child(2) > div:last-child {
+        flex: 0 0 auto;
+
+        margin: 0 !important;
+    }
+
+
+    nav > div:nth-child(2) > div:last-child > span {
+        display: inline-flex !important;
+
+        align-items: center;
+
+        gap: 0;
+
+        margin: 0 !important;
+
+        padding: 0 !important;
+
+        border-radius: 7px;
+
+        box-shadow: none !important;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Pagination Items
+    |--------------------------------------------------------------------------
+    */
+
+    nav a,
+    nav span {
+        min-width: 36px;
+        height: 36px;
+
+        margin: 0 !important;
+
+        padding: 0 10px !important;
+
+        border: 1px solid argb($dark, .08) !important;
+
+        border-radius: 0;
+
+        background: #fff !important;
+
+        color: $body-color !important;
+
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 13px !important;
+        font-weight: 500 !important;
+
+        line-height: 1 !important;
+
+        text-decoration: none !important;
+
+        box-sizing: border-box;
+
+        transition: background-color .2s ease,
+        border-color .2s ease,
+        color .2s ease,
+        box-shadow .2s ease;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | First Pagination Item
+    |--------------------------------------------------------------------------
+    */
+
+    nav > div:nth-child(2) > div:last-child > span > *:first-child {
+
+        border-top-left-radius: 7px !important;
+
+        border-bottom-left-radius: 7px !important;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Last Pagination Item
+    |--------------------------------------------------------------------------
+    */
+
+    nav > div:nth-child(2) > div:last-child > span > *:last-child {
+
+        border-top-right-radius: 7px !important;
+
+        border-bottom-right-radius: 7px !important;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Pagination Links
+    |--------------------------------------------------------------------------
+    */
+
+    nav a {
+
+        &:hover {
+            border-color: argb($theme-color, .22) !important;
+
+            background: argb($theme-color, .055) !important;
+
+            color: $theme-color !important;
+        }
+
+
+        &:focus {
+            outline: none;
+
+            border-color: argb($theme-color, .25) !important;
+
+            box-shadow: 0 0 0 3px argb($theme-color, .08) !important;
+        }
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Current Page
+    |--------------------------------------------------------------------------
+    */
+
+    nav span[aria-current="page"] {
+        padding: 0 !important;
+        border: 0 !important;
+        span {
+            width: 100%;
+
+            border-color: $theme-color !important;
+
+            background: $theme-color !important;
+
+            color: #fff !important;
+            font-weight: 600 !important;
+            cursor: default;
+        }
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Disabled Previous / Next
+    |--------------------------------------------------------------------------
+    */
+
+    nav span[aria-disabled="true"] {
+
+        display: inline-flex !important;
+
+        color: argb($body-color, 22%) !important;
+
+        background: #fff !important;
+
+        cursor: not-allowed;
+    }
+
+
+    nav span[aria-disabled="true"] > span {
+
+        color: argb($body-color, 22%) !important;
+
+        background: #f8f9fa !important;
+
+        cursor: not-allowed;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SVG Icons
+    |--------------------------------------------------------------------------
+    */
+
+    nav svg {
+        width: 16px !important;
+        height: 16px !important;
+
+        margin: 0 !important;
+
+        display: block;
+
+        flex-shrink: 0;
+
+        color: currentColor;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Previous / Next Buttons
+    |--------------------------------------------------------------------------
+    */
+
+    nav a[rel="next"],
+    nav a[rel="prev"],
+    nav a[aria-label*="Next"],
+    nav a[aria-label*="Previous"] {
+
+        font-size: 0 !important;
+    }
+
+
+    nav a[rel="next"] svg,
+    nav a[rel="prev"] svg,
+    nav a[aria-label*="Next"] svg,
+    nav a[aria-label*="Previous"] svg {
+
+        width: 16px !important;
+        height: 16px !important;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Mobile Pagination
+    |--------------------------------------------------------------------------
+    */
+
+    @include mq(xs) {
+
+        padding: 14px 16px;
+
+
+        nav > div:nth-child(1) {
+            width: 100%;
+
+            display: flex !important;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 10px;
+
+            margin: 0 !important;
+        }
+
+
+        nav > div:nth-child(2) {
+            display: none !important;
+        }
+
+
+        nav > div:nth-child(1) a,
+        nav > div:nth-child(1) span {
+
+            min-width: 38px;
+            height: 36px;
+
+            padding: 0 12px !important;
+
+            border: 1px solid argb($dark, .08) !important;
+            border-radius: 7px !important;
+
+            font-size: 13px !important;
+
+            background: #fff !important;
+        }
+
+
+        nav > div:nth-child(1) a {
+
+            color: $heading-color !important;
+
+            &:hover {
+                border-color: argb($theme-color, .22) !important;
+
+                background: argb($theme-color, .055) !important;
+
+                color: $theme-color !important;
+            }
+        }
+
+
+        nav > div:nth-child(1) span {
+
+            color: argb($body-color, 22%) !important;
+
+            background: #f8f9fa !important;
+        }
+    }
+}
+
+
+/*================================*
+* Empty State
+*=================================*/
+
+.permission-empty {
+    min-height: 330px;
+
+    padding: 45px 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-direction: column;
+
+    text-align: center;
+}
+
+
+.permission-empty__icon {
+    width: 58px;
+    height: 58px;
+
+    margin-bottom: 15px;
+
+    border-radius: 50%;
+
+    background: argb($theme-color, .09);
+    color: $theme-color;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+
+    i {
+        font-size: 25px;
+        line-height: 1;
+    }
+}
+
+
+.permission-empty {
+
+    h3 {
+        margin: 0 0 7px;
+
+        color: $heading-color;
+
+        font-family: $header-fonts;
+        font-size: 20px;
+        font-weight: 600;
+        line-height: 1.3;
+    }
+
+
+    p {
+        max-width: 430px;
+
+        margin: 0 0 20px;
+
+        color: $body-color;
+
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+
+    .permission-primary-btn {
+        width: auto;
+    }
+}
+
+
+/*================================*
+* XL
+*=================================*/
+
+@include mq(xl) {
+
+    .permission-table {
+
+        th,
+        td {
+            padding-left: 17px;
+            padding-right: 17px;
+        }
+    }
+
+
+    .permission-description {
+        max-width: 230px;
+    }
+}
+
+
+/*================================*
+* LG
+*=================================*/
+
+@include mq(lg) {
+
+    .permission-page__header {
+        margin-bottom: 20px;
+    }
+
+
+    .permission-table {
+        min-width: 900px;
+    }
+
+
+    .permission-pagination {
+
+        padding-left: 17px;
+        padding-right: 17px;
+    }
+}
+
+
+/*================================*
+* MD
+*=================================*/
+
+@include mq(md) {
+
+    .permission-page__actions {
+        width: 100%;
+    }
+
+
+    .permission-card {
+        border-radius: 10px;
+    }
+
+
+    .permission-card__header {
+        padding: 17px;
+    }
+
+
+    .permission-table {
+
+        th {
+            padding: 13px 16px;
+        }
+
+
+        td {
+            padding: 14px 16px;
+        }
+    }
+
+
+    .permission-pagination {
+        padding: 15px 16px;
+    }
+}
+
+
+/*================================*
+* XS
+*=================================*/
+
+@include mq(xs) {
+
+    .permission-page__header {
+        margin-bottom: 18px;
+    }
+
+
+    .permission-page__heading {
+
+        .permission-page__eyebrow {
+            font-size: 14px;
+        }
+
+
+        h1 {
+            font-size: 24px;
+        }
+
+
+        p {
+            font-size: 14px;
+        }
+    }
+
+
+    .permission-card__header {
+        padding: 16px;
+    }
+
+
+    .permission-card__title {
+        align-items: flex-start;
+    }
+
+
+    .permission-card__title {
+
+        h2 {
+            font-size: 20px;
+        }
+
+
+        p {
+            font-size: 14px;
+        }
+    }
+
+
+    .permission-card__count {
+        width: 100%;
+
+        justify-content: flex-start;
+    }
+
+
+    .permission-table {
+        min-width: 900px;
+
+
+        th {
+            padding: 12px 14px;
+
+            font-size: 14px;
+        }
+
+
+        td {
+            padding: 13px 14px;
+
+            font-size: 14px;
+        }
+    }
+
+
+    .permission-name__content {
+
+        strong {
+            font-size: 16px;
+        }
+
+
+        span {
+            font-size: 14px;
+        }
+    }
+
+
+    .permission-slug {
+        font-size: 14px;
+    }
+
+
+    .permission-description {
+        font-size: 14px;
+    }
+
+
+    .permission-empty {
+        min-height: 280px;
+
+        padding: 35px 16px;
+    }
+
+
+    .permission-empty {
+
+        h3 {
+            font-size: 20px;
+        }
+
+
+        p {
+            font-size: 14px;
+        }
+    }
+}

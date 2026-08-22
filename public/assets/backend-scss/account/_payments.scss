@@ -1,0 +1,2232 @@
+@use "../common" as *;
+
+
+/*
+|--------------------------------------------------------------------------
+| CUSTOMER ACCOUNT PAYMENTS
+|--------------------------------------------------------------------------
+*/
+
+.customer-account-payments-page {
+
+    width: 100%;
+    max-width: 1500px;
+
+    margin: 0 auto;
+
+    padding-bottom: 30px;
+
+    color: $body-color;
+
+    font-size: 14px;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | BREADCRUMB
+    |--------------------------------------------------------------------------
+    */
+
+    .customer-account-payments-breadcrumb {
+
+        display: flex;
+        align-items: center;
+
+        gap: 8px;
+
+        margin-bottom: 20px;
+
+
+        a {
+
+            color: $theme-color !important;
+
+            font-size: 14px !important;
+            font-weight: 600 !important;
+
+            text-decoration: none !important;
+
+        }
+
+
+        span {
+
+            color: #777;
+
+            font-size: 14px;
+
+        }
+
+
+        i {
+
+            color: #aaa;
+
+            font-size: 14px;
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | HEADER
+    |--------------------------------------------------------------------------
+    */
+
+    .customer-account-payments-header {
+
+        margin-bottom: 20px;
+
+
+        &__eyebrow {
+
+            display: block;
+
+            margin-bottom: 5px;
+
+            color: $theme-color;
+
+            font-size: 14px;
+
+            font-weight: 700;
+
+            text-transform: uppercase;
+
+            letter-spacing: .05em;
+
+        }
+
+
+        h1 {
+
+            margin: 0 0 6px !important;
+
+            color: $heading-color !important;
+
+            font-family: $body-fonts !important;
+
+            font-size: 24px !important;
+
+            line-height: 1.3 !important;
+
+            font-weight: 700 !important;
+
+        }
+
+
+        p {
+
+            margin: 0 !important;
+
+            color: #777 !important;
+
+            font-size: 14px !important;
+
+            line-height: 1.5 !important;
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SUMMARY STATS
+    |--------------------------------------------------------------------------
+    */
+
+    .customer-account-payments-stats {
+
+        display: grid;
+
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+        gap: 15px;
+
+        margin-bottom: 20px;
+
+    }
+
+
+    .customer-account-payments-stat {
+
+        min-height: 78px;
+
+        display: flex;
+        align-items: center;
+
+        gap: 12px;
+
+        padding: 14px 16px;
+
+        border: 1px solid $gray;
+
+        border-radius: 9px;
+
+        background: #fff;
+
+
+        &__icon {
+
+            width: 42px;
+            height: 42px;
+
+            flex: 0 0 42px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 8px;
+
+            background: rgba(15, 61, 46, .07);
+
+            color: $theme-color;
+
+            font-size: 19px;
+
+        }
+
+
+        span {
+
+            display: block;
+
+            margin-bottom: 3px;
+
+            color: #888;
+
+            font-size: 14px;
+
+        }
+
+
+        strong {
+
+            display: block;
+
+            color: $heading-color;
+
+            font-size: 20px;
+
+            line-height: 1.2;
+
+            font-weight: 700;
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | MAIN LAYOUT
+    |--------------------------------------------------------------------------
+    */
+
+    .customer-account-payments-layout {
+
+        display: grid;
+
+        grid-template-columns:
+            minmax(0, 1fr)
+            320px;
+
+        gap: 18px;
+
+        align-items: start;
+
+    }
+
+
+    .customer-account-payments-sidebar {
+
+        display: flex;
+        flex-direction: column;
+
+        gap: 14px;
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | COMMON CARD
+    |--------------------------------------------------------------------------
+    */
+
+    .customer-account-payments-card {
+
+        overflow: hidden;
+
+        border: 1px solid $gray;
+
+        border-radius: 10px;
+
+        background: #fff;
+
+
+        &__header {
+
+            min-height: 68px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 15px;
+
+            padding: 13px 16px;
+
+            border-bottom: 1px solid $gray;
+
+
+            span {
+
+                display: block;
+
+                margin-bottom: 3px;
+
+                color: $theme-color;
+
+                font-size: 14px;
+
+                line-height: 1.2;
+
+                font-weight: 700;
+
+                text-transform: uppercase;
+
+                letter-spacing: .04em;
+
+            }
+
+
+            h2 {
+
+                margin: 0 !important;
+
+                color: $heading-color !important;
+
+                font-family: $body-fonts !important;
+
+                font-size: 20px !important;
+
+                line-height: 1.3 !important;
+
+                font-weight: 700 !important;
+
+            }
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | FILTER
+    |--------------------------------------------------------------------------
+    */
+
+    .customer-account-payments-filter {
+
+        position: relative;
+
+
+        select {
+
+            width: 140px;
+
+            height: 36px;
+
+            appearance: none;
+
+            padding: 0 30px 0 11px;
+
+            border: 1px solid #ddd;
+
+            border-radius: 6px;
+
+            outline: none;
+
+            background: #fff;
+
+            color: $heading-color;
+
+            font-family: $body-fonts;
+
+            font-size: 14px;
+
+            cursor: pointer;
+
+
+            &:focus {
+
+                border-color: rgba(15, 61, 46, .35);
+
+                box-shadow:
+                    0 0 0 3px rgba(15, 61, 46, .05);
+
+            }
+
+        }
+
+
+        i {
+
+            position: absolute;
+
+            top: 50%;
+            right: 9px;
+
+            color: #888;
+
+            font-size: 15px;
+
+            transform: translateY(-50%);
+
+            pointer-events: none;
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | TABLE
+    |--------------------------------------------------------------------------
+    */
+
+    .customer-account-payments-table-wrap {
+
+        width: 100%;
+
+        overflow-x: auto;
+
+    }
+
+
+    .customer-account-payments-table {
+
+        width: 100%;
+
+        min-width: 850px;
+
+        border-collapse: collapse;
+
+
+        thead {
+
+            background: #fafafa;
+
+
+            th {
+
+                padding: 11px 14px;
+
+                border-bottom: 1px solid $gray;
+
+                color: #777;
+
+                font-size: 14px;
+
+                line-height: 1.3;
+
+                font-weight: 600;
+
+                text-align: left;
+
+                white-space: nowrap;
+
+            }
+
+        }
+
+
+        tbody {
+
+
+            tr {
+
+                border-bottom: 1px solid #eee;
+
+                transition:
+                    background .2s ease;
+
+
+                &:last-child {
+
+                    border-bottom: 0;
+
+                }
+
+
+                &:hover {
+
+                    background: #fcfdfc;
+
+                }
+
+            }
+
+
+            td {
+
+                padding: 12px 14px;
+
+                color: #666;
+
+                font-size: 14px;
+
+                line-height: 1.35;
+
+                vertical-align: middle;
+
+                white-space: nowrap;
+
+            }
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | TRANSACTION
+    |--------------------------------------------------------------------------
+    */
+
+    .payment-transaction {
+
+        display: flex;
+        align-items: center;
+
+        gap: 9px;
+
+
+        &__icon {
+
+            width: 32px;
+            height: 32px;
+
+            flex: 0 0 32px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 7px;
+
+            background: rgba(15, 61, 46, .07);
+
+            color: $theme-color;
+
+            font-size: 15px;
+
+        }
+
+
+        strong {
+
+            display: block;
+
+            margin-bottom: 2px;
+
+            color: $heading-color;
+
+            font-size: 14px;
+
+            line-height: 1.25;
+
+            font-weight: 700;
+
+        }
+
+
+        span {
+
+            display: block;
+
+            color: #999;
+
+            font-size: 14px;
+
+            line-height: 1.3;
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ORDER LINK
+    |--------------------------------------------------------------------------
+    */
+
+    .payment-order-link {
+
+        color: $theme-color !important;
+
+        font-size: 14px !important;
+
+        font-weight: 600 !important;
+
+        text-decoration: none !important;
+
+
+        &:hover {
+
+            text-decoration: underline !important;
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | PAYMENT METHOD
+    |--------------------------------------------------------------------------
+    */
+
+    .payment-method {
+
+        display: flex;
+        align-items: center;
+
+        gap: 6px;
+
+
+        i {
+
+            color: $theme-color;
+
+            font-size: 15px;
+
+        }
+
+
+        span {
+
+            color: #666;
+
+            font-size: 14px;
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | AMOUNT
+    |--------------------------------------------------------------------------
+    */
+
+    .payment-amount {
+
+        color: $heading-color;
+
+        font-size: 14px;
+
+        font-weight: 700;
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | PAYMENT STATUS
+    |--------------------------------------------------------------------------
+    */
+
+    .payment-status {
+
+        min-height: 25px;
+
+        display: inline-flex;
+        align-items: center;
+
+        padding: 0 8px;
+
+        border-radius: 5px;
+
+        font-size: 14px;
+
+        line-height: 1;
+
+        font-weight: 600;
+
+
+        &.paid {
+
+            background: rgba(15, 61, 46, .08);
+
+            color: $theme-color;
+
+        }
+
+
+        &.pending {
+
+            background: rgba(190, 140, 40, .10);
+
+            color: #9a721e;
+
+        }
+
+
+        &.failed {
+
+            background: rgba(170, 60, 60, .08);
+
+            color: #a34b4b;
+
+        }
+
+
+        &.refunded {
+
+            background: rgba(80, 100, 150, .08);
+
+            color: #536d9e;
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | VIEW BUTTON
+    |--------------------------------------------------------------------------
+    */
+
+    .payment-view-btn {
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        min-height: 30px;
+
+        padding: 0 7px;
+
+        border: 1px solid rgba(15, 61, 46, .12);
+
+        border-radius: 5px;
+
+        color: $theme-color !important;
+
+        font-size: 14px !important;
+
+        font-weight: 600 !important;
+
+        text-decoration: none !important;
+
+
+        &:hover {
+
+            background: rgba(15, 61, 46, .05);
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | MOBILE PAYMENT LIST
+    |--------------------------------------------------------------------------
+    */
+
+    .customer-account-payments-mobile-list {
+
+        display: none;
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | PAGINATION
+    |--------------------------------------------------------------------------
+    */
+
+    .customer-account-payments-pagination {
+
+        min-height: 55px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 15px;
+
+        padding: 10px 16px;
+
+        border-top: 1px solid $gray;
+
+
+        > span {
+
+            color: #888;
+
+            font-size: 14px;
+
+        }
+
+
+        > div {
+
+            display: flex;
+            align-items: center;
+
+            gap: 4px;
+
+
+            button {
+
+                width: 30px;
+                height: 30px;
+
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+
+                padding: 0;
+
+                border: 1px solid #ddd;
+
+                border-radius: 5px;
+
+                background: #fff;
+
+                color: #666;
+
+                font-family: $body-fonts;
+
+                font-size: 14px;
+
+                cursor: pointer;
+
+
+                &:hover:not(:disabled) {
+
+                    border-color: $theme-color;
+
+                    color: $theme-color;
+
+                }
+
+
+                &.active {
+
+                    border-color: $theme-color;
+
+                    background: $theme-color;
+
+                    color: #fff;
+
+                }
+
+
+                &:disabled {
+
+                    opacity: .4;
+
+                    cursor: not-allowed;
+
+                }
+
+            }
+
+
+            > span {
+
+                padding: 0 2px;
+
+                color: #999;
+
+            }
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ADD PAYMENT BUTTON
+    |--------------------------------------------------------------------------
+    */
+
+    .payment-add-btn {
+
+        width: 33px;
+        height: 33px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 0;
+
+        border: 1px solid rgba(15, 61, 46, .2);
+
+        border-radius: 6px;
+
+        background: rgba(15, 61, 46, .04);
+
+        color: $theme-color;
+
+        font-size: 17px;
+
+        cursor: pointer;
+
+
+        &:hover {
+
+            background: $theme-color;
+
+            color: #fff;
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SAVED PAYMENT METHODS
+    |--------------------------------------------------------------------------
+    */
+
+    .saved-payment-method {
+
+        min-height: 68px;
+
+        display: flex;
+        align-items: center;
+
+        gap: 10px;
+
+        padding: 12px 14px;
+
+        border-bottom: 1px solid #eee;
+
+
+        &__brand {
+
+            width: 40px;
+            height: 29px;
+
+            flex: 0 0 40px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            border: 1px solid #ddd;
+
+            border-radius: 5px;
+
+            background: #fff;
+
+            font-size: 13px;
+
+            font-weight: 800;
+
+
+            &.visa {
+
+                color: #1a4f9c;
+
+            }
+
+
+            &.mastercard {
+
+                color: #b55a32;
+
+            }
+
+        }
+
+
+        &__info {
+
+            min-width: 0;
+
+            flex: 1;
+
+
+            strong {
+
+                display: block;
+
+                margin-bottom: 2px;
+
+                overflow: hidden;
+
+                color: $heading-color;
+
+                font-size: 14px;
+
+                line-height: 1.3;
+
+                font-weight: 700;
+
+                text-overflow: ellipsis;
+
+                white-space: nowrap;
+
+            }
+
+
+            span {
+
+                display: block;
+
+                color: #888;
+
+                font-size: 14px;
+
+                line-height: 1.3;
+
+            }
+
+        }
+
+
+        &__actions {
+
+            display: flex;
+            align-items: center;
+
+            gap: 4px;
+
+
+            button {
+
+                width: 27px;
+                height: 27px;
+
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+
+                padding: 0;
+
+                border: 0;
+
+                border-radius: 5px;
+
+                background: transparent;
+
+                color: #888;
+
+                cursor: pointer;
+
+
+                &:hover {
+
+                    background: #f5f5f5;
+
+                    color: $heading-color;
+
+                }
+
+            }
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | DEFAULT BADGE
+    |--------------------------------------------------------------------------
+    */
+
+    .default-badge {
+
+        min-height: 22px;
+
+        display: inline-flex;
+        align-items: center;
+
+        padding: 0 6px;
+
+        border-radius: 4px;
+
+        background: rgba(15, 61, 46, .08);
+
+        color: $theme-color;
+
+        font-size: 14px;
+
+        line-height: 1;
+
+        font-weight: 600;
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ADD PAYMENT METHOD
+    |--------------------------------------------------------------------------
+    */
+
+    .saved-payment-add {
+
+        width: 100%;
+
+        min-height: 44px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        gap: 6px;
+
+        border: 0;
+
+        background: #fff;
+
+        color: $theme-color;
+
+        font-family: $body-fonts;
+
+        font-size: 14px;
+
+        font-weight: 600;
+
+        cursor: pointer;
+
+
+        &:hover {
+
+            background: #fafafa;
+
+        }
+
+
+        i {
+
+            font-size: 16px;
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SECURITY BOX
+    |--------------------------------------------------------------------------
+    */
+
+    .customer-account-payments-security {
+
+        display: flex;
+        align-items: flex-start;
+
+        gap: 10px;
+
+        padding: 13px;
+
+        border: 1px solid rgba(15, 61, 46, .12);
+
+        border-radius: 9px;
+
+        background: rgba(15, 61, 46, .035);
+
+
+        &__icon {
+
+            width: 37px;
+            height: 37px;
+
+            flex: 0 0 37px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 8px;
+
+            background: rgba(15, 61, 46, .08);
+
+            color: $theme-color;
+
+            font-size: 17px;
+
+        }
+
+
+        strong {
+
+            display: block;
+
+            margin-bottom: 3px;
+
+            color: $heading-color;
+
+            font-size: 14px;
+
+            font-weight: 700;
+
+        }
+
+
+        p {
+
+            margin: 0 !important;
+
+            color: #777 !important;
+
+            font-size: 14px !important;
+
+            line-height: 1.45 !important;
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | HELP BOX
+    |--------------------------------------------------------------------------
+    */
+
+    .customer-account-payments-help {
+
+        display: flex;
+        align-items: flex-start;
+
+        gap: 10px;
+
+        padding: 13px;
+
+        border: 1px solid $gray;
+
+        border-radius: 9px;
+
+        background: #fff;
+
+
+        &__icon {
+
+            width: 37px;
+            height: 37px;
+
+            flex: 0 0 37px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 8px;
+
+            background: #f5f5f5;
+
+            color: $heading-color;
+
+            font-size: 17px;
+
+        }
+
+
+        strong {
+
+            display: block;
+
+            margin-bottom: 3px;
+
+            color: $heading-color;
+
+            font-size: 14px;
+
+        }
+
+
+        p {
+
+            margin: 0 0 6px !important;
+
+            color: #777 !important;
+
+            font-size: 14px !important;
+
+            line-height: 1.45 !important;
+
+        }
+
+
+        a {
+
+            display: inline-flex;
+            align-items: center;
+
+            gap: 4px;
+
+            color: $theme-color !important;
+
+            font-size: 14px !important;
+
+            font-weight: 600 !important;
+
+            text-decoration: none !important;
+
+        }
+
+    }
+
+}
+
+
+/*==========================================================================
+| ADD PAYMENT MODAL
+| IMPORTANT: Modal is OUTSIDE .customer-account-payments-page
+===========================================================================*/
+
+.customer-account-payment-modal {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 99999;
+
+    display: none;
+
+    width: 100%;
+    height: 100%;
+
+
+    &.active {
+
+        display: block;
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Overlay
+    |--------------------------------------------------------------------------
+    */
+
+    &__overlay {
+
+        position: absolute;
+
+        inset: 0;
+
+        width: 100%;
+        height: 100%;
+
+        background: rgba(10, 25, 20, .48);
+
+        backdrop-filter: blur(3px);
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Modal Content
+    |--------------------------------------------------------------------------
+    */
+
+    &__content {
+
+        position: relative;
+
+        z-index: 2;
+
+        width: calc(100% - 30px);
+
+        max-width: 500px;
+
+        max-height: calc(100vh - 30px);
+
+        overflow-y: auto;
+
+        margin: 15px auto;
+
+        border: 1px solid #ddd;
+
+        border-radius: 12px;
+
+        background: #fff;
+
+        box-shadow:
+            0 25px 70px rgba(0, 0, 0, .18);
+
+        animation:
+            paymentModalIn .2s ease forwards;
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Header
+    |--------------------------------------------------------------------------
+    */
+
+    &__header {
+
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+
+        gap: 15px;
+
+        padding: 18px 20px;
+
+        border-bottom: 1px solid $gray;
+
+
+        span {
+
+            display: block;
+
+            margin-bottom: 4px;
+
+            color: $theme-color;
+
+            font-size: 14px;
+
+            line-height: 1.2;
+
+            font-weight: 700;
+
+            text-transform: uppercase;
+
+            letter-spacing: .04em;
+
+        }
+
+
+        h2 {
+
+            margin: 0 !important;
+
+            color: $heading-color !important;
+
+            font-family: $body-fonts !important;
+
+            font-size: 22px !important;
+
+            line-height: 1.25 !important;
+
+            font-weight: 700 !important;
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Close
+    |--------------------------------------------------------------------------
+    */
+
+    &__close {
+
+        width: 34px;
+        height: 34px;
+
+        flex: 0 0 34px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 0;
+
+        border: 1px solid #ddd;
+
+        border-radius: 7px;
+
+        background: #fff;
+
+        color: #666;
+
+        font-size: 18px;
+
+        cursor: pointer;
+
+        transition:
+            background .2s ease,
+            border-color .2s ease,
+            color .2s ease;
+
+
+        &:hover {
+
+            border-color: $theme-color;
+
+            background: rgba(15, 61, 46, .05);
+
+            color: $theme-color;
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Form
+    |--------------------------------------------------------------------------
+    */
+
+    &__form {
+
+        display: block;
+
+        padding: 20px;
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Actions
+    |--------------------------------------------------------------------------
+    */
+
+    &__actions {
+
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+
+        gap: 8px;
+
+        margin-top: 20px;
+
+        padding-top: 16px;
+
+        border-top: 1px solid $gray;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Modal Form Groups
+|--------------------------------------------------------------------------
+*/
+
+.customer-account-payment-modal {
+
+    .modal-form-group {
+
+        margin: 0 0 15px;
+
+
+        label {
+
+            display: block;
+
+            margin: 0 0 6px;
+
+            color: $heading-color;
+
+            font-family: $body-fonts;
+
+            font-size: 14px;
+
+            line-height: 1.3;
+
+            font-weight: 600;
+
+        }
+
+
+        input {
+
+            display: block;
+
+            width: 100%;
+
+            height: 43px;
+
+            margin: 0;
+
+            padding: 0 12px;
+
+            border: 1px solid #d9d9d9;
+
+            border-radius: 7px;
+
+            outline: none;
+
+            background: #fff;
+
+            color: $heading-color;
+
+            font-family: $body-fonts;
+
+            font-size: 14px;
+
+            line-height: 43px;
+
+            box-sizing: border-box;
+
+            transition:
+                border-color .2s ease,
+                box-shadow .2s ease;
+
+
+            &::placeholder {
+
+                color: #aaa;
+
+                opacity: 1;
+
+            }
+
+
+            &:focus {
+
+                border-color: rgba(15, 61, 46, .45);
+
+                box-shadow:
+                    0 0 0 3px rgba(15, 61, 46, .06);
+
+            }
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Two Column Inputs
+    |--------------------------------------------------------------------------
+    */
+
+    .modal-form-grid {
+
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 12px;
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Checkbox
+    |--------------------------------------------------------------------------
+    */
+
+    .modal-checkbox {
+
+        display: flex;
+        align-items: center;
+
+        gap: 8px;
+
+        margin: 2px 0 0;
+
+        color: #777;
+
+        font-family: $body-fonts;
+
+        font-size: 14px;
+
+        line-height: 1.4;
+
+        cursor: pointer;
+
+
+        input {
+
+            width: 15px;
+            height: 15px;
+
+            flex: 0 0 15px;
+
+            margin: 0;
+
+            padding: 0;
+
+            accent-color: $theme-color;
+
+            cursor: pointer;
+
+        }
+
+
+        span {
+
+            color: #777;
+
+            font-size: 14px;
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Buttons
+    |--------------------------------------------------------------------------
+    */
+
+    .modal-cancel-btn,
+    .modal-save-btn {
+
+        min-height: 41px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        gap: 6px;
+
+        margin: 0;
+
+        padding: 0 15px;
+
+        border-radius: 7px;
+
+        font-family: $body-fonts;
+
+        font-size: 14px;
+
+        line-height: 1;
+
+        font-weight: 600;
+
+        cursor: pointer;
+
+        box-sizing: border-box;
+
+        transition:
+            background .2s ease,
+            border-color .2s ease,
+            color .2s ease;
+
+    }
+
+
+    .modal-cancel-btn {
+
+        border: 1px solid #ddd;
+
+        background: #fff;
+
+        color: #666;
+
+
+        &:hover {
+
+            border-color: #ccc;
+
+            background: #f8f8f8;
+
+            color: $heading-color;
+
+        }
+
+    }
+
+
+    .modal-save-btn {
+
+        border: 1px solid $theme-color;
+
+        background: $theme-color;
+
+        color: #fff;
+
+
+        &:hover {
+
+            opacity: .92;
+
+        }
+
+
+        i {
+
+            font-size: 15px;
+
+        }
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Body Lock
+|--------------------------------------------------------------------------
+*/
+
+body.payment-modal-open {
+
+    overflow: hidden;
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Modal Animation
+|--------------------------------------------------------------------------
+*/
+
+@keyframes paymentModalIn {
+
+    from {
+
+        opacity: 0;
+
+        transform: translateY(20px) scale(.98);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: translateY(0) scale(1);
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| TABLET
+|--------------------------------------------------------------------------
+*/
+
+@media (max-width: 1100px) {
+
+    .customer-account-payments-page {
+
+        .customer-account-payments-layout {
+
+            grid-template-columns:
+                minmax(0, 1fr)
+                290px;
+
+        }
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| TABLET / SMALL DESKTOP
+|--------------------------------------------------------------------------
+*/
+
+@media (max-width: 900px) {
+
+    .customer-account-payments-page {
+
+        .customer-account-payments-layout {
+
+            grid-template-columns: 1fr;
+
+        }
+
+
+        .customer-account-payments-sidebar {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
+            align-items: start;
+
+        }
+
+
+        .saved-methods-card {
+
+            grid-column: 1 / -1;
+
+        }
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| MOBILE
+|--------------------------------------------------------------------------
+*/
+
+@media (max-width: 768px) {
+
+    .customer-account-payments-page {
+
+        .customer-account-payments-stats {
+
+            grid-template-columns: 1fr;
+
+            gap: 10px;
+
+        }
+
+
+        .customer-account-payments-layout {
+
+            grid-template-columns: 1fr;
+
+        }
+
+
+        .customer-account-payments-sidebar {
+
+            display: flex;
+
+            flex-direction: column;
+
+        }
+
+
+        .customer-account-payments-table-wrap {
+
+            display: none;
+
+        }
+
+
+        .customer-account-payments-mobile-list {
+
+            display: flex;
+
+            flex-direction: column;
+
+        }
+
+
+        .mobile-payment-item {
+
+            padding: 14px;
+
+            border-bottom: 1px solid #eee;
+
+
+            &:last-child {
+
+                border-bottom: 0;
+
+            }
+
+
+            &__top {
+
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                gap: 10px;
+
+                margin-bottom: 10px;
+
+            }
+
+
+            &__bottom {
+
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                gap: 10px;
+
+                margin-bottom: 10px;
+
+
+                > span:first-child {
+
+                    color: #777;
+
+                    font-size: 14px;
+
+                }
+
+            }
+
+        }
+
+
+        .mobile-payment-view {
+
+            min-height: 36px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 5px;
+
+            border: 1px solid #ddd;
+
+            border-radius: 6px;
+
+            color: $theme-color !important;
+
+            font-size: 14px !important;
+
+            font-weight: 600 !important;
+
+            text-decoration: none !important;
+
+        }
+
+
+        .customer-account-payments-pagination {
+
+            align-items: flex-start;
+
+            flex-direction: column;
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Modal Mobile
+    |--------------------------------------------------------------------------
+    */
+
+    .customer-account-payment-modal {
+
+        &__content {
+
+            width: calc(100% - 20px);
+
+            max-height: calc(100vh - 20px);
+
+            margin: 10px auto;
+
+        }
+
+
+        &__header {
+
+            padding: 16px;
+
+        }
+
+
+        &__form {
+
+            padding: 16px;
+
+        }
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| SMALL MOBILE
+|--------------------------------------------------------------------------
+*/
+
+@media (max-width: 575px) {
+
+    .customer-account-payments-page {
+
+        .customer-account-payments-header {
+
+            h1 {
+
+                font-size: 22px !important;
+
+            }
+
+        }
+
+
+        .customer-account-payments-card__header {
+
+            padding: 13px 14px;
+
+        }
+
+
+        .customer-account-payments-card__header h2 {
+
+            font-size: 19px !important;
+
+        }
+
+
+        .customer-account-payments-filter select {
+
+            width: 130px;
+
+        }
+
+
+        .customer-account-payments-stat {
+
+            min-height: 70px;
+
+            padding: 12px;
+
+        }
+
+
+        .customer-account-payments-stat__icon {
+
+            width: 38px;
+            height: 38px;
+
+            flex-basis: 38px;
+
+        }
+
+
+        .customer-account-payments-stat strong {
+
+            font-size: 19px;
+
+        }
+
+
+        .saved-payment-method {
+
+            padding: 12px 14px;
+
+        }
+
+
+        .default-badge {
+
+            display: none;
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Modal Small Mobile
+    |--------------------------------------------------------------------------
+    */
+
+    .customer-account-payment-modal {
+
+        &__header {
+
+            h2 {
+
+                font-size: 20px !important;
+
+            }
+
+        }
+
+
+        .modal-form-grid {
+
+            grid-template-columns: 1fr;
+
+            gap: 0;
+
+        }
+
+
+        &__actions {
+
+            flex-direction: column-reverse;
+
+        }
+
+
+        .modal-cancel-btn,
+        .modal-save-btn {
+
+            width: 100%;
+
+        }
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| VERY SMALL MOBILE
+|--------------------------------------------------------------------------
+*/
+
+@media (max-width: 380px) {
+
+    .customer-account-payments-page {
+
+        .customer-account-payments-header h1 {
+
+            font-size: 21px !important;
+
+        }
+
+
+        .customer-account-payments-filter select {
+
+            width: 120px;
+
+        }
+
+
+        .payment-transaction__icon {
+
+            width: 30px;
+            height: 30px;
+
+            flex-basis: 30px;
+
+        }
+
+    }
+
+}

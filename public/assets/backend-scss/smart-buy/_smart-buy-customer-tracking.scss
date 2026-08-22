@@ -1,0 +1,1058 @@
+@use "../common" as *;
+
+
+/*==================================================
+| Page
+==================================================*/
+
+.my-smart-buy-tracking-page {
+    width: 100%;
+}
+
+
+/*==================================================
+| Header
+==================================================*/
+
+.my-smart-buy-tracking-header {
+    margin-bottom: 16px;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 20px;
+}
+
+
+.my-smart-buy-tracking-back {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 5px;
+
+    margin-bottom: 9px;
+
+    color: $body-color;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition: color .2s ease;
+
+
+    &:hover {
+        color: $theme-color;
+    }
+}
+
+
+.my-smart-buy-tracking-heading {
+    display: flex;
+    align-items: center;
+
+    gap: 11px;
+}
+
+
+.my-smart-buy-tracking-heading__icon {
+    width: 46px;
+    height: 46px;
+
+    flex: 0 0 46px;
+
+    border-radius: 10px;
+
+    background: argb($theme-color, .08);
+    color: $theme-color;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+
+    i {
+        font-size: 20px;
+    }
+}
+
+
+.my-smart-buy-tracking-heading > div:last-child {
+    min-width: 0;
+}
+
+
+.my-smart-buy-tracking-heading > div:last-child > span {
+    display: block;
+
+    margin-bottom: 2px;
+
+    color: $theme-color;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+
+.my-smart-buy-tracking-heading h1 {
+    margin: 0 0 3px;
+
+    color: $heading-color;
+
+    font-family: $header-fonts;
+    font-size: 24px;
+    font-weight: $head-fw;
+
+    line-height: 1.3;
+}
+
+
+.my-smart-buy-tracking-heading p {
+    margin: 0;
+
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+}
+
+
+.my-smart-buy-tracking-status {
+    min-height: 27px;
+
+    padding: 4px 10px;
+
+    border-radius: 20px;
+
+    background: #eaf7ef;
+    color: #2d8752;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 5px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+.my-smart-buy-tracking-status i {
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: currentColor;
+}
+
+
+/*==================================================
+| Overview
+==================================================*/
+
+.my-smart-buy-tracking-overview {
+    margin-bottom: 15px;
+
+    padding: 14px 16px;
+
+    border: 1px solid argb($theme-color, .12);
+    border-radius: 10px;
+
+    background: argb($theme-color, .035);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+}
+
+
+.my-smart-buy-tracking-overview__main {
+    min-width: 0;
+}
+
+
+.my-smart-buy-tracking-overview__main > span,
+.my-smart-buy-tracking-overview__delivery > span {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+}
+
+
+.my-smart-buy-tracking-number {
+    display: flex;
+    align-items: center;
+
+    gap: 7px;
+}
+
+
+.my-smart-buy-tracking-number strong {
+    color: $heading-color;
+
+    font-size: 18px;
+    font-weight: 700;
+
+    letter-spacing: .01em;
+}
+
+
+.my-smart-buy-tracking-overview__main p {
+    margin: 4px 0 0;
+
+    color: $body-color;
+
+    font-size: 14px;
+}
+
+
+.my-smart-buy-tracking-copy {
+    min-height: 29px;
+
+    padding: 0 8px;
+
+    border: 1px solid argb($dark, .08);
+    border-radius: 6px;
+
+    background: #fff;
+    color: $body-color;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 4px;
+
+    font-family: $body-fonts;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: .2s ease;
+
+
+    &:hover {
+        color: $theme-color;
+        border-color: argb($theme-color, .2);
+    }
+}
+
+
+.my-smart-buy-tracking-overview__delivery {
+    min-width: 190px;
+
+    padding-left: 18px;
+
+    border-left: 1px solid argb($dark, .08);
+}
+
+
+.my-smart-buy-tracking-overview__delivery strong {
+    display: block;
+
+    color: $heading-color;
+
+    font-size: 18px;
+    font-weight: 700;
+}
+
+
+.my-smart-buy-tracking-overview__delivery small {
+    display: block;
+
+    margin-top: 2px;
+
+    color: #2d8752;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+/*==================================================
+| Layout
+==================================================*/
+
+.my-smart-buy-tracking-layout {
+    display: grid;
+
+    grid-template-columns: minmax(0, 1fr) 300px;
+
+    align-items: start;
+
+    gap: 15px;
+}
+
+
+.my-smart-buy-tracking-main {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 15px;
+}
+
+
+.my-smart-buy-tracking-sidebar {
+    min-width: 0;
+
+    position: sticky;
+
+    top: 20px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 14px;
+}
+
+
+/*==================================================
+| Card
+==================================================*/
+
+.my-smart-buy-tracking-card {
+    overflow: hidden;
+
+    border: 1px solid argb($dark, .07);
+    border-radius: 10px;
+
+    background: #fff;
+
+    box-shadow: 0 3px 14px argb($dark, .025);
+}
+
+
+.my-smart-buy-tracking-card__header {
+    min-height: 58px;
+
+    padding: 12px 16px;
+
+    border-bottom: 1px solid argb($dark, .06);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+}
+
+
+.my-smart-buy-tracking-card__header h2 {
+    margin: 0 0 3px;
+
+    color: $heading-color;
+
+    font-family: $header-fonts;
+    font-size: 18px;
+    font-weight: 600;
+
+    line-height: 1.3;
+}
+
+
+.my-smart-buy-tracking-card__header p {
+    margin: 0;
+
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+
+    line-height: 1.4;
+}
+
+
+.my-smart-buy-tracking-badge {
+    min-height: 25px;
+
+    padding: 4px 8px;
+
+    border-radius: 15px;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 4px;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+.my-smart-buy-tracking-badge.is-transit {
+    background: #eaf4fb;
+    color: #2877a9;
+}
+
+
+/*==================================================
+| Current Status
+==================================================*/
+
+.my-smart-buy-tracking-current {
+    padding: 15px 16px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+}
+
+
+.my-smart-buy-tracking-current__icon {
+    width: 46px;
+    height: 46px;
+
+    flex: 0 0 46px;
+
+    border-radius: 9px;
+
+    background: #eaf4fb;
+    color: #2877a9;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+
+    i {
+        font-size: 22px;
+    }
+}
+
+
+.my-smart-buy-tracking-current > div:last-child {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+
+.my-smart-buy-tracking-current strong {
+    color: $heading-color;
+
+    font-size: 15px;
+    font-weight: 600;
+}
+
+
+.my-smart-buy-tracking-current span {
+    color: $body-color;
+
+    font-size: 14px;
+
+    line-height: 1.45;
+}
+
+
+.my-smart-buy-tracking-current small {
+    margin-top: 2px;
+
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+}
+
+
+/*==================================================
+| Timeline
+==================================================*/
+
+.my-smart-buy-tracking-timeline {
+    padding: 15px 16px 16px;
+}
+
+
+.my-smart-buy-tracking-event {
+    position: relative;
+
+    min-height: 70px;
+
+    padding-left: 46px;
+}
+
+
+.my-smart-buy-tracking-event:not(:last-child)::before {
+    content: "";
+
+    position: absolute;
+
+    top: 31px;
+    bottom: -1px;
+
+    left: 14px;
+
+    width: 1px;
+
+    background: #dfe4e6;
+}
+
+
+.my-smart-buy-tracking-event__marker {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 30px;
+    height: 30px;
+
+    border: 1px solid #dfe4e6;
+    border-radius: 50%;
+
+    background: #fff;
+    color: #9ca4a8;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 1;
+
+
+    i {
+        font-size: 15px;
+    }
+}
+
+
+.my-smart-buy-tracking-event.is-completed
+.my-smart-buy-tracking-event__marker {
+    border-color: #bde2c9;
+
+    background: #eaf7ef;
+    color: #2d8752;
+}
+
+
+.my-smart-buy-tracking-event.is-current
+.my-smart-buy-tracking-event__marker {
+    border-color: #b9d9ed;
+
+    background: #eaf4fb;
+    color: #2877a9;
+}
+
+
+.my-smart-buy-tracking-event__content {
+    padding-bottom: 18px;
+}
+
+
+.my-smart-buy-tracking-event__content > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+}
+
+
+.my-smart-buy-tracking-event__content strong {
+    color: $heading-color;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+.my-smart-buy-tracking-event__content span {
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+
+    white-space: nowrap;
+}
+
+
+.my-smart-buy-tracking-event__content span.is-pending {
+    color: #a36a00;
+}
+
+
+.my-smart-buy-tracking-event__content p {
+    max-width: 620px;
+
+    margin: 4px 0 0;
+
+    color: $body-color;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+}
+
+
+/*==================================================
+| Updates
+==================================================*/
+
+.my-smart-buy-tracking-updates {
+    padding: 10px 16px 15px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+
+.my-smart-buy-tracking-update {
+    padding: 10px;
+
+    border: 1px solid argb($dark, .055);
+    border-radius: 8px;
+
+    background: #fafbfc;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 9px;
+}
+
+
+.my-smart-buy-tracking-update__icon {
+    width: 34px;
+    height: 34px;
+
+    flex: 0 0 34px;
+
+    border-radius: 7px;
+
+    background: argb($theme-color, .07);
+    color: $theme-color;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+
+    i {
+        font-size: 17px;
+    }
+}
+
+
+.my-smart-buy-tracking-update > div:last-child {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+
+.my-smart-buy-tracking-update strong {
+    color: $heading-color;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+.my-smart-buy-tracking-update span {
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+}
+
+
+.my-smart-buy-tracking-update p {
+    margin: 2px 0 0;
+
+    color: $body-color;
+
+    font-size: 14px;
+
+    line-height: 1.45;
+}
+
+
+/*==================================================
+| Details
+==================================================*/
+
+.my-smart-buy-tracking-details {
+    padding: 7px 15px 12px;
+}
+
+
+.my-smart-buy-tracking-details > div {
+    padding: 8px 0;
+
+    border-bottom: 1px solid argb($dark, .055);
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+
+.my-smart-buy-tracking-details > div:last-child {
+    border-bottom: 0;
+}
+
+
+.my-smart-buy-tracking-details span {
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+}
+
+
+.my-smart-buy-tracking-details strong {
+    color: $heading-color;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+/*==================================================
+| Address
+==================================================*/
+
+.my-smart-buy-tracking-address {
+    padding: 14px 15px;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 9px;
+}
+
+
+.my-smart-buy-tracking-address__icon {
+    width: 37px;
+    height: 37px;
+
+    flex: 0 0 37px;
+
+    border-radius: 8px;
+
+    background: argb($theme-color, .07);
+    color: $theme-color;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+
+    i {
+        font-size: 18px;
+    }
+}
+
+
+.my-smart-buy-tracking-address > div:last-child {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+
+.my-smart-buy-tracking-address strong {
+    color: $heading-color;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+.my-smart-buy-tracking-address p {
+    margin: 2px 0;
+
+    color: $body-color;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+}
+
+
+.my-smart-buy-tracking-address span {
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+}
+
+
+/*==================================================
+| Request
+==================================================*/
+
+.my-smart-buy-tracking-request {
+    padding: 7px 15px 12px;
+}
+
+
+.my-smart-buy-tracking-request > div {
+    padding: 8px 0;
+
+    border-bottom: 1px solid argb($dark, .055);
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+
+.my-smart-buy-tracking-request span {
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+}
+
+
+.my-smart-buy-tracking-request strong {
+    color: $heading-color;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+.my-smart-buy-tracking-request strong.is-transit {
+    color: #2877a9;
+}
+
+
+.my-smart-buy-tracking-request > a {
+    margin-top: 8px;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 4px;
+
+    color: $theme-color;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-decoration: none;
+}
+
+
+/*==================================================
+| Help
+==================================================*/
+
+.my-smart-buy-tracking-help {
+    padding: 12px;
+
+    border: 1px solid argb($theme-color, .14);
+    border-radius: 9px;
+
+    background: argb($theme-color, .035);
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 8px;
+}
+
+
+.my-smart-buy-tracking-help__icon {
+    width: 30px;
+    height: 30px;
+
+    flex: 0 0 30px;
+
+    border-radius: 7px;
+
+    background: argb($theme-color, .08);
+    color: $theme-color;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+
+    i {
+        font-size: 15px;
+    }
+}
+
+
+.my-smart-buy-tracking-help > div:last-child {
+    min-width: 0;
+}
+
+
+.my-smart-buy-tracking-help strong {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: $heading-color;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+.my-smart-buy-tracking-help p {
+    margin: 0 0 7px;
+
+    color: $body-color;
+
+    font-size: 14px;
+
+    line-height: 1.45;
+}
+
+
+.my-smart-buy-tracking-help a {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 4px;
+
+    color: $theme-color;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-decoration: none;
+}
+
+
+/*==================================================
+| Responsive LG
+==================================================*/
+
+@include mq(lg) {
+
+    .my-smart-buy-tracking-layout {
+        grid-template-columns: minmax(0, 1fr) 270px;
+    }
+
+}
+
+
+/*==================================================
+| Responsive MD
+==================================================*/
+
+@include mq(md) {
+
+    .my-smart-buy-tracking-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+
+    .my-smart-buy-tracking-overview {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+
+    .my-smart-buy-tracking-overview__delivery {
+        width: 100%;
+
+        padding: 10px 0 0;
+
+        border-top: 1px solid argb($dark, .08);
+        border-left: 0;
+    }
+
+
+    .my-smart-buy-tracking-layout {
+        grid-template-columns: 1fr;
+    }
+
+
+    .my-smart-buy-tracking-sidebar {
+        position: static;
+
+        display: grid;
+
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+
+    .my-smart-buy-tracking-help {
+        grid-column: 1 / -1;
+    }
+
+}
+
+
+/*==================================================
+| Responsive XS
+==================================================*/
+
+@include mq(xs) {
+
+    .my-smart-buy-tracking-heading h1 {
+        font-size: 20px;
+    }
+
+
+    .my-smart-buy-tracking-heading__icon {
+        width: 40px;
+        height: 40px;
+
+        flex-basis: 40px;
+    }
+
+
+    .my-smart-buy-tracking-number {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+
+    .my-smart-buy-tracking-sidebar {
+        grid-template-columns: 1fr;
+    }
+
+
+    .my-smart-buy-tracking-help {
+        grid-column: auto;
+    }
+
+
+    .my-smart-buy-tracking-event__content > div {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 2px;
+    }
+
+
+    .my-smart-buy-tracking-event__content span {
+        white-space: normal;
+    }
+
+}

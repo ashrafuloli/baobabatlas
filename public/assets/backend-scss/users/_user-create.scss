@@ -1,0 +1,2264 @@
+@use "../common" as *;
+
+
+/*==============================================================
+* Users - Add User
+*==============================================================*/
+
+.add-user-page {
+    width: 100%;
+}
+
+
+/*==============================================================
+* Page Header
+*==============================================================*/
+
+.add-user-page__header {
+    margin-bottom: 26px;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 25px;
+
+    @include mq(xl) {
+        margin-bottom: 24px;
+    }
+
+    @include mq(md) {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 17px;
+    }
+
+    @include mq(xs) {
+        margin-bottom: 20px;
+        gap: 15px;
+    }
+}
+
+
+.add-user-page__heading {
+
+    .add-user-page__eyebrow {
+        display: inline-block;
+
+        margin-bottom: 7px;
+
+        color: $theme-color;
+
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1;
+
+        letter-spacing: .08em;
+        text-transform: uppercase;
+    }
+
+    h1 {
+        margin: 0 0 5px;
+
+        color: $heading-color;
+
+        font-family: $header-fonts;
+        font-size: 24px;
+        font-weight: $head-fw;
+        line-height: 1.25;
+
+        @include mq(xs) {
+            font-size: 22px;
+        }
+    }
+
+    p {
+        margin: 0;
+
+        color: $body-color;
+
+        font-size: 14px;
+        line-height: 1.6;
+    }
+}
+
+
+/*==============================================================
+* Header Action
+*==============================================================*/
+
+.add-user-page__actions {
+    flex-shrink: 0;
+
+    @include mq(md) {
+        width: 100%;
+    }
+}
+
+
+.add-user-back-btn {
+    min-height: 40px;
+
+    padding: 0 14px;
+
+    border: 1px solid $gray;
+    border-radius: 7px;
+
+    background: #fff;
+    color: $heading-color;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    font-family: $body-fonts;
+    font-size: 14px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition:
+        border-color .2s ease,
+        color .2s ease,
+        box-shadow .2s ease;
+
+    i {
+        font-size: 16px;
+    }
+
+    &:hover {
+        border-color: $theme-color;
+        color: $theme-color;
+
+        box-shadow:
+            0 3px 12px
+            argb($theme-color, .08);
+    }
+
+    @include mq(xs) {
+        width: 100%;
+    }
+}
+
+
+/*==============================================================
+* Validation Alert
+*==============================================================*/
+
+.add-user-validation-alert {
+    margin-bottom: 20px;
+
+    padding: 14px 16px;
+
+    border: 1px solid argb($danger, .14);
+    border-radius: 9px;
+
+    background: argb($danger, .035);
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 11px;
+
+    &__icon {
+        width: 32px;
+        height: 32px;
+
+        border-radius: 7px;
+
+        background: argb($danger, .10);
+        color: $danger;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        flex: 0 0 32px;
+
+        i {
+            font-size: 16px;
+        }
+    }
+
+    strong {
+        display: block;
+
+        margin-bottom: 5px;
+
+        color: $heading-color;
+
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    ul {
+        margin: 0;
+        padding-left: 17px;
+    }
+
+    li {
+        margin-bottom: 3px;
+
+        color: $body-color;
+
+        font-size: 14px;
+        line-height: 1.5;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    @include mq(xs) {
+        padding: 12px;
+    }
+}
+
+
+/*==============================================================
+* Form Layout
+*==============================================================*/
+
+.add-user-layout {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        315px;
+
+    gap: 20px;
+
+    align-items: start;
+
+    @include mq(xl) {
+        grid-template-columns:
+            minmax(0, 1fr)
+            300px;
+    }
+
+    @include mq(lg) {
+        grid-template-columns:
+            minmax(0, 1fr)
+            285px;
+    }
+
+    @include mq(md) {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+.add-user-main,
+.add-user-sidebar {
+    min-width: 0;
+}
+
+
+.add-user-main {
+    display: flex;
+    flex-direction: column;
+
+    gap: 18px;
+}
+
+
+.add-user-sidebar {
+    display: flex;
+    flex-direction: column;
+
+    gap: 16px;
+}
+
+
+/*==============================================================
+* Card
+*==============================================================*/
+
+.add-user-card {
+    overflow: hidden;
+
+    border: 1px solid argb($dark, .07);
+    border-radius: 10px;
+
+    background: #fff;
+
+    box-shadow:
+        0 3px 14px
+        argb($dark, .035);
+
+    @include mq(xs) {
+        border-radius: 9px;
+    }
+}
+
+
+.add-user-card__header {
+    min-height: 67px;
+
+    padding: 16px 20px;
+
+    border-bottom: 1px solid argb($dark, .07);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    h2 {
+        margin: 0 0 3px;
+
+        color: $heading-color;
+
+        font-size: 18px;
+        font-weight: $head-fw;
+        line-height: 1.3;
+    }
+
+    p {
+        margin: 0;
+
+        color: $body-color;
+
+        font-size: 14px;
+        line-height: 1.45;
+    }
+
+    > i {
+        color: $theme-color;
+        font-size: 18px;
+    }
+
+    @include mq(xs) {
+        padding: 15px 16px;
+
+        h2 {
+            font-size: 18px;
+        }
+    }
+}
+
+
+.add-user-card__body {
+    padding: 20px;
+
+    @include mq(xs) {
+        padding: 16px;
+    }
+}
+
+
+/*==============================================================
+* Form Grid
+*==============================================================*/
+
+.add-user-form-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 17px 16px;
+
+    @include mq(xs) {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+}
+
+
+/*==============================================================
+* Form Fields
+*==============================================================*/
+
+.add-user-field {
+    min-width: 0;
+
+    &--full {
+        grid-column: 1 / -1;
+    }
+}
+
+
+.add-user-field > label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: $heading-color;
+
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+
+    > span {
+        margin-left: 2px;
+        color: $danger;
+    }
+}
+
+
+.add-user-field__help {
+    display: block;
+
+    margin: 7px 0 0;
+
+    color: $body-color;
+
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+
+/*==============================================================
+* Inputs
+*==============================================================*/
+
+.add-user-input {
+    position: relative;
+
+    width: 100%;
+
+    > i {
+        position: absolute;
+
+        top: 50%;
+        left: 12px;
+
+        z-index: 2;
+
+        color: $body-color;
+
+        font-size: 16px;
+        line-height: 1;
+
+        transform: translateY(-50%);
+
+        pointer-events: none;
+    }
+
+    input,
+    select,
+    textarea {
+        width: 100%;
+
+        border: 1px solid $gray;
+        border-radius: 7px;
+
+        outline: none;
+
+        background: #fff;
+        color: $heading-color;
+
+        font-family: $body-fonts;
+        font-size: 14px;
+
+        transition:
+            border-color .2s ease,
+            box-shadow .2s ease,
+            background-color .2s ease;
+
+        &:hover {
+            border-color: argb($gray, 7%);
+        }
+
+        &:focus {
+            border-color: $theme-color;
+
+            box-shadow:
+                0 0 0 3px
+                argb($theme-color, .07);
+        }
+
+        &::placeholder {
+            color: argb($body-color, 15%);
+        }
+    }
+
+    input,
+    select {
+        height: 42px;
+
+        padding: 0 38px 0 37px;
+
+        line-height: 1;
+    }
+
+    select {
+        appearance: none;
+        -webkit-appearance: none;
+
+        cursor: pointer;
+    }
+
+    textarea {
+        min-height: 115px;
+
+        padding: 12px 13px 12px 37px;
+
+        line-height: 1.55;
+
+        resize: vertical;
+    }
+
+    .add-user-select-icon {
+        position: absolute;
+
+        top: 50%;
+        right: 11px;
+        left: auto;
+
+        z-index: 2;
+
+        color: $body-color;
+
+        font-size: 17px;
+
+        transform: translateY(-50%);
+
+        pointer-events: none;
+    }
+}
+
+
+/*==============================================================
+* Password Toggle
+*==============================================================*/
+
+.add-user-password-toggle {
+    position: absolute;
+
+    top: 50%;
+    right: 9px;
+
+    width: 28px;
+    height: 28px;
+
+    padding: 0;
+
+    border: 0;
+
+    background: transparent;
+    color: $body-color;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    transform: translateY(-50%);
+
+    cursor: pointer;
+
+    transition: color .2s ease;
+
+    i {
+        font-size: 15px;
+    }
+
+    &:hover {
+        color: $theme-color;
+    }
+
+    &:focus-visible {
+        outline: 2px solid argb($theme-color, .25);
+        outline-offset: 2px;
+    }
+}
+
+
+/*==============================================================
+* Form Error
+*==============================================================*/
+
+.form-error {
+    display: block;
+
+    margin-top: 5px;
+
+    color: $danger;
+
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+
+/*==============================================================
+* Upload Box
+*==============================================================*/
+
+.add-user-upload {
+    position: relative;
+
+    min-height: 88px;
+
+    padding: 13px 14px;
+
+    border: 1px dashed argb($theme-color, .30);
+    border-radius: 8px;
+
+    background: argb($theme-color, .025);
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    cursor: pointer;
+
+    transition:
+        border-color .2s ease,
+        background-color .2s ease;
+
+    input[type="file"] {
+        position: absolute;
+
+        inset: 0;
+
+        width: 100%;
+        height: 100%;
+
+        opacity: 0;
+
+        cursor: pointer;
+    }
+
+    &:hover {
+        border-color: $theme-color;
+        background: argb($theme-color, .05);
+    }
+
+    &__icon {
+        width: 42px;
+        height: 42px;
+
+        border-radius: 8px;
+
+        background: argb($theme-color, .10);
+        color: $theme-color;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        flex: 0 0 42px;
+
+        i {
+            font-size: 20px;
+        }
+    }
+
+    &__content {
+        min-width: 0;
+        flex: 1;
+
+        strong {
+            display: block;
+
+            margin-bottom: 3px;
+
+            color: $heading-color;
+
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        small {
+            display: block;
+
+            color: $body-color;
+
+            font-size: 14px;
+            line-height: 1.5;
+        }
+    }
+
+    &__button {
+        min-height: 32px;
+
+        padding: 0 11px;
+
+        border: 1px solid $gray;
+        border-radius: 6px;
+
+        background: #fff;
+        color: $heading-color;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 14px;
+        font-weight: 600;
+
+        flex-shrink: 0;
+    }
+
+    @include mq(xs) {
+        align-items: flex-start;
+
+        &__button {
+            display: none;
+        }
+    }
+}
+
+
+/*==============================================================
+* Password Info
+*==============================================================*/
+
+.add-user-password-info {
+    margin-top: 18px;
+
+    padding: 12px 13px;
+
+    border: 1px solid argb($theme-color, .10);
+    border-radius: 8px;
+
+    background: argb($theme-color, .035);
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 9px;
+
+    > i {
+        color: $theme-color;
+
+        font-size: 16px;
+
+        flex: 0 0 auto;
+    }
+
+    strong {
+        display: block;
+
+        margin-bottom: 3px;
+
+        color: $heading-color;
+
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    p {
+        margin: 0;
+
+        color: $body-color;
+
+        font-size: 14px;
+        line-height: 1.5;
+    }
+}
+
+
+/*==============================================================
+* Checkbox
+*==============================================================*/
+
+.add-user-checkbox {
+    position: relative;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 10px;
+
+    cursor: pointer;
+
+    input {
+        position: absolute;
+
+        opacity: 0;
+
+        pointer-events: none;
+    }
+
+    &__box {
+        width: 19px;
+        height: 19px;
+
+        border: 1px solid $gray;
+        border-radius: 5px;
+
+        background: #fff;
+        color: #fff;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        flex: 0 0 19px;
+
+        transition:
+            border-color .2s ease,
+            background-color .2s ease;
+
+        i {
+            font-size: 13px;
+            opacity: 0;
+        }
+    }
+
+    input:checked + &__box {
+        border-color: $theme-color;
+        background: $theme-color;
+
+        i {
+            opacity: 1;
+        }
+    }
+
+    &__content {
+        min-width: 0;
+
+        strong {
+            display: block;
+
+            margin-bottom: 3px;
+
+            color: $heading-color;
+
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        small {
+            display: block;
+
+            color: $body-color;
+
+            font-size: 14px;
+            line-height: 1.5;
+        }
+    }
+}
+
+
+/*==============================================================
+* Custom Single Role Dropdown
+*==============================================================*/
+
+.add-user-role-dropdown {
+    position: relative;
+
+    width: 100%;
+
+
+    /*----------------------------------------------------------
+    Trigger
+    ----------------------------------------------------------*/
+
+    &__trigger {
+        position: relative;
+
+        width: 100%;
+        min-height: 42px;
+
+        padding: 0 42px 0 37px;
+
+        border: 1px solid $gray;
+        border-radius: 7px;
+
+        outline: none;
+
+        background: #fff;
+        color: $heading-color;
+
+        display: flex;
+        align-items: center;
+
+        font-family: $body-fonts;
+        font-size: 14px;
+        font-weight: 400;
+
+        line-height: 1.4;
+
+        text-align: left;
+
+        cursor: pointer;
+
+        transition:
+            border-color .2s ease,
+            box-shadow .2s ease,
+            background-color .2s ease;
+
+        &:hover {
+            border-color: argb($gray, 7%);
+        }
+
+        &:focus,
+        &[aria-expanded="true"] {
+            border-color: $theme-color;
+
+            box-shadow:
+                0 0 0 3px
+                argb($theme-color, .07);
+        }
+    }
+
+
+    /*----------------------------------------------------------
+    Left Icon
+    ----------------------------------------------------------*/
+
+    &__icon {
+        position: absolute;
+
+        top: 50%;
+        left: 12px;
+
+        width: 18px;
+        height: 18px;
+
+        color: $body-color;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        transform: translateY(-50%);
+
+        pointer-events: none;
+
+        i {
+            font-size: 16px;
+            line-height: 1;
+        }
+    }
+
+
+    /*----------------------------------------------------------
+    Selected Text
+    ----------------------------------------------------------*/
+
+    &__selected {
+        display: block;
+
+        width: 100%;
+
+        overflow: hidden;
+
+        color: argb($body-color, 5%);
+
+        font-size: 14px;
+        font-weight: 400;
+
+        line-height: 1.4;
+
+        white-space: nowrap;
+        text-overflow: ellipsis;
+
+        &.has-selection {
+            color: $heading-color;
+            font-weight: 500;
+        }
+    }
+
+
+    /*----------------------------------------------------------
+    Arrow
+    ----------------------------------------------------------*/
+
+    &__arrow {
+        position: absolute;
+
+        top: 50%;
+        right: 11px;
+
+        color: $body-color;
+
+        font-size: 18px;
+        line-height: 1;
+
+        transform: translateY(-50%);
+
+        transition: transform .2s ease;
+
+        pointer-events: none;
+    }
+
+
+    /*----------------------------------------------------------
+    Dropdown Menu
+    ----------------------------------------------------------*/
+
+    &__menu {
+        position: absolute;
+
+        top: calc(100% + 6px);
+        left: 0;
+
+        z-index: 999;
+
+        width: 100%;
+
+        max-height: 240px;
+
+        padding: 6px;
+
+        overflow-y: auto;
+
+        border: 1px solid argb($dark, .09);
+        border-radius: 8px;
+
+        background: #fff;
+
+        box-shadow:
+            0 10px 30px
+            argb($dark, .12);
+
+        visibility: hidden;
+        opacity: 0;
+
+        transform: translateY(-6px);
+
+        pointer-events: none;
+
+        transition:
+            opacity .18s ease,
+            transform .18s ease,
+            visibility .18s ease;
+
+
+        &::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+
+            background:
+                argb($dark, .15);
+        }
+    }
+
+
+    /*----------------------------------------------------------
+    Open
+    ----------------------------------------------------------*/
+
+    &.is-open {
+
+        .add-user-role-dropdown__menu {
+            visibility: visible;
+
+            opacity: 1;
+
+            transform: translateY(0);
+
+            pointer-events: auto;
+        }
+
+        .add-user-role-dropdown__arrow {
+            transform:
+                translateY(-50%)
+                rotate(180deg);
+        }
+    }
+}
+
+
+/*==============================================================
+* Single Role Option
+*==============================================================*/
+
+.add-user-role-option {
+    position: relative;
+
+    width: 100%;
+    min-height: 42px;
+
+    padding: 0 10px;
+
+    border-radius: 6px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    cursor: pointer;
+
+    transition:
+        background-color .15s ease;
+
+
+    &:hover {
+        background:
+            argb($theme-color, .05);
+    }
+
+
+    /*----------------------------------------------------------
+    Hidden Radio
+    ----------------------------------------------------------*/
+
+    input[type="radio"] {
+        position: absolute;
+
+        width: 1px;
+        height: 1px;
+
+        margin: -1px;
+        padding: 0;
+
+        overflow: hidden;
+
+        border: 0;
+
+        opacity: 0;
+
+        clip: rect(0 0 0 0);
+
+        pointer-events: none;
+    }
+
+
+    /*----------------------------------------------------------
+    Radio Circle
+    ----------------------------------------------------------*/
+
+    &__check {
+        position: relative;
+
+        width: 18px;
+        height: 18px;
+
+        border: 1px solid $gray;
+        border-radius: 50%;
+
+        background: #fff;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        flex: 0 0 18px;
+
+        transition:
+            border-color .15s ease,
+            background-color .15s ease,
+            box-shadow .15s ease;
+
+
+        &::after {
+            content: "";
+
+            width: 8px;
+            height: 8px;
+
+            border-radius: 50%;
+
+            background: #fff;
+
+            opacity: 0;
+
+            transform: scale(.5);
+
+            transition:
+                opacity .15s ease,
+                transform .15s ease;
+        }
+    }
+
+
+    /*----------------------------------------------------------
+    Role Name
+    ----------------------------------------------------------*/
+
+    &__name {
+        min-width: 0;
+
+        color: $heading-color;
+
+        font-size: 14px;
+        font-weight: 400;
+
+        line-height: 1.4;
+    }
+
+
+    /*----------------------------------------------------------
+    Selected
+    ----------------------------------------------------------*/
+
+    input[type="radio"]:checked + &__check {
+        border-color: $theme-color;
+
+        background: $theme-color;
+
+        box-shadow:
+            0 2px 5px
+            argb($theme-color, .12);
+
+        &::after {
+            opacity: 1;
+
+            transform: scale(1);
+        }
+    }
+
+    input[type="radio"]:checked ~ &__name {
+        color: $theme-color;
+
+        font-weight: 600;
+    }
+
+
+    /*----------------------------------------------------------
+    Focus
+    ----------------------------------------------------------*/
+
+    input[type="radio"]:focus-visible + &__check {
+        outline:
+            2px solid
+            argb($theme-color, .25);
+
+        outline-offset: 2px;
+    }
+
+
+    /*----------------------------------------------------------
+    Selected Row
+    ----------------------------------------------------------*/
+
+    &:has(input[type="radio"]:checked) {
+        background:
+            argb($theme-color, .035);
+    }
+}
+
+
+/*==============================================================
+* Empty Role State
+*==============================================================*/
+
+.add-user-role-empty {
+    min-height: 70px;
+
+    padding: 15px;
+
+    color: $body-color;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    font-size: 14px;
+
+    line-height: 1.4;
+
+    text-align: center;
+
+    i {
+        font-size: 18px;
+    }
+}
+
+
+/*==============================================================
+* Account Summary
+*==============================================================*/
+
+.add-user-summary {
+    padding: 7px 20px 17px;
+}
+
+
+.add-user-summary__item {
+    min-height: 45px;
+
+    border-bottom:
+        1px solid
+        argb($dark, .06);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+
+    &:last-child {
+        border-bottom: 0;
+    }
+
+    span {
+        color: $body-color;
+
+        font-size: 14px;
+    }
+
+    strong {
+        color: $heading-color;
+
+        font-size: 14px;
+        font-weight: 600;
+
+        text-align: right;
+
+        &.is-active {
+            color: $success;
+        }
+
+        &.is-inactive {
+            color: $body-color;
+        }
+
+        &.is-suspended {
+            color: $danger;
+        }
+    }
+}
+
+
+/*==============================================================
+* Permissions
+*==============================================================*/
+
+.add-user-permissions {
+    padding: 8px 20px 17px;
+}
+
+
+.add-user-permissions > div {
+    min-height: 39px;
+
+    border-bottom:
+        1px solid
+        argb($dark, .06);
+
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    &:last-child {
+        border-bottom: 0;
+    }
+
+    > span:last-child {
+        color: $heading-color;
+
+        font-size: 14px;
+        font-weight: 500;
+    }
+}
+
+
+.add-user-permission-icon {
+    width: 22px;
+    height: 22px;
+
+    border-radius: 6px;
+
+    background: argb($success, .10);
+    color: $success;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 22px;
+
+    i {
+        font-size: 13px;
+    }
+}
+
+
+/*==============================================================
+* Information Box
+*==============================================================*/
+
+.add-user-info-box {
+    padding: 15px;
+
+    border: 1px solid argb($theme-color, .12);
+    border-radius: 9px;
+
+    background: argb($theme-color, .035);
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 10px;
+
+    &__icon {
+        width: 33px;
+        height: 33px;
+
+        border-radius: 8px;
+
+        background: argb($theme-color, .10);
+        color: $theme-color;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        flex: 0 0 33px;
+
+        i {
+            font-size: 15px;
+        }
+    }
+
+    strong {
+        display: block;
+
+        margin-bottom: 4px;
+
+        color: $heading-color;
+
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.35;
+    }
+
+    p {
+        margin: 0;
+
+        color: $body-color;
+
+        font-size: 14px;
+        line-height: 1.5;
+    }
+}
+
+
+/*==============================================================
+* Form Actions
+*==============================================================*/
+
+.add-user-form-actions {
+    margin-top: 20px;
+
+    padding: 16px 20px;
+
+    border: 1px solid argb($dark, .07);
+    border-radius: 10px;
+
+    background: #fff;
+
+    box-shadow:
+        0 3px 14px
+        argb($dark, .035);
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 9px;
+
+    @include mq(xs) {
+        padding: 14px 16px;
+
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+}
+
+
+.add-user-cancel-btn,
+.add-user-submit-btn {
+    min-height: 40px;
+
+    padding: 0 16px;
+
+    border-radius: 7px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    font-family: $body-fonts;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    line-height: 1;
+
+    text-decoration: none;
+
+    transition:
+        border-color .2s ease,
+        background-color .2s ease,
+        color .2s ease,
+        box-shadow .2s ease;
+
+    i {
+        font-size: 16px;
+    }
+
+    @include mq(xs) {
+        width: 100%;
+    }
+}
+
+
+.add-user-cancel-btn {
+    border: 1px solid $gray;
+
+    background: #fff;
+    color: $heading-color;
+
+    &:hover {
+        border-color: $theme-color;
+        color: $theme-color;
+    }
+}
+
+
+.add-user-submit-btn {
+    border: 1px solid $theme-color;
+
+    background: $theme-color;
+    color: #fff;
+
+    cursor: pointer;
+
+    &:hover {
+        border-color:
+            argb($theme-color, 70%);
+
+        background:
+            argb($theme-color, 70%);
+
+        color: #fff;
+
+        box-shadow:
+            0 5px 15px
+            argb($theme-color, .15);
+    }
+
+    &.is-loading {
+        pointer-events: none;
+
+        opacity: .7;
+
+        i {
+            animation:
+                edit-user-spin
+                .8s linear infinite;
+        }
+    }
+}
+
+
+/*==============================================================
+* Edit User
+*==============================================================*/
+
+.edit-user-current-image {
+    margin-bottom: 12px;
+
+    padding: 12px;
+
+    border: 1px solid argb($dark, .07);
+    border-radius: 8px;
+
+    background: #fff;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+
+    &__preview {
+        width: 52px;
+        height: 52px;
+
+        overflow: hidden;
+
+        border: 1px solid argb($dark, .07);
+        border-radius: 8px;
+
+        background: $light;
+
+        flex: 0 0 52px;
+
+        img {
+            width: 100%;
+            height: 100%;
+
+            object-fit: cover;
+
+            display: block;
+        }
+    }
+
+
+    &__content {
+        min-width: 0;
+
+        strong {
+            display: block;
+
+            margin-bottom: 3px;
+
+            color: $heading-color;
+
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        small {
+            display: block;
+
+            color: $body-color;
+
+            font-size: 14px;
+            line-height: 1.5;
+        }
+    }
+
+    @include mq(xs) {
+        padding: 10px;
+        gap: 10px;
+
+        &__preview {
+            width: 46px;
+            height: 46px;
+
+            flex-basis: 46px;
+        }
+    }
+}
+
+
+/*==============================================================
+* Edit User Status
+*==============================================================*/
+
+.edit-user-status {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 5px;
+
+    &__dot {
+        width: 6px;
+        height: 6px;
+
+        border-radius: 50%;
+
+        background: currentColor;
+    }
+
+    &--active {
+        color: $success;
+    }
+
+    &--inactive {
+        color: $body-color;
+    }
+
+    &--suspended {
+        color: $danger;
+    }
+}
+
+
+/*==============================================================
+* Edit User Danger Box
+*==============================================================*/
+
+.edit-user-danger-box {
+    padding: 15px;
+
+    border: 1px solid argb($danger, .12);
+    border-radius: 9px;
+
+    background: argb($danger, .025);
+
+    display: grid;
+
+    grid-template-columns:
+        auto
+        minmax(0, 1fr)
+        auto;
+
+    align-items: center;
+
+    gap: 10px;
+
+    &__icon {
+        width: 34px;
+        height: 34px;
+
+        border-radius: 8px;
+
+        background: argb($danger, .10);
+        color: $danger;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        flex: 0 0 34px;
+
+        i {
+            font-size: 16px;
+        }
+    }
+
+    > div:not(.edit-user-danger-box__icon) {
+        min-width: 0;
+
+        strong {
+            display: block;
+
+            margin-bottom: 3px;
+
+            color: $heading-color;
+
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.35;
+        }
+
+        p {
+            margin: 0;
+
+            color: $body-color;
+
+            font-size: 14px;
+            line-height: 1.5;
+        }
+    }
+
+    @include mq(xs) {
+        grid-template-columns:
+            auto
+            minmax(0, 1fr);
+
+        align-items: start;
+
+        .edit-user-delete-btn {
+            grid-column: 1 / -1;
+
+            width: 100%;
+        }
+    }
+}
+
+
+/*==============================================================
+* Delete Button
+*==============================================================*/
+
+.edit-user-delete-btn {
+    min-height: 32px;
+
+    padding: 0 11px;
+
+    border: 1px solid argb($danger, .20);
+    border-radius: 6px;
+
+    background: #fff;
+    color: $danger;
+
+    font-family: $body-fonts;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+
+    cursor: pointer;
+
+    transition:
+        border-color .2s ease,
+        background-color .2s ease,
+        color .2s ease,
+        box-shadow .2s ease;
+
+    i {
+        font-size: 14px;
+    }
+
+    &:hover {
+        border-color: $danger;
+
+        background: $danger;
+        color: #fff;
+
+        box-shadow:
+            0 4px 12px
+            argb($danger, .15);
+    }
+
+    &:focus-visible {
+        outline:
+            2px solid
+            argb($danger, .25);
+
+        outline-offset: 2px;
+    }
+}
+
+
+/*==============================================================
+* Edit Save Button
+*==============================================================*/
+
+.edit-user-save-btn {
+    min-height: 40px;
+
+    padding: 0 16px;
+
+    border: 1px solid $theme-color;
+    border-radius: 7px;
+
+    background: $theme-color;
+    color: #fff;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    font-family: $body-fonts;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        border-color .2s ease,
+        background-color .2s ease,
+        box-shadow .2s ease;
+
+    i {
+        font-size: 16px;
+    }
+
+    &:hover {
+        border-color:
+            argb($theme-color, 70%);
+
+        background:
+            argb($theme-color, 70%);
+
+        box-shadow:
+            0 5px 15px
+            argb($theme-color, .15);
+    }
+
+    &:focus-visible {
+        outline:
+            2px solid
+            argb($theme-color, .25);
+
+        outline-offset: 2px;
+    }
+
+    @include mq(xs) {
+        width: 100%;
+    }
+}
+
+
+/*==============================================================
+* Existing User Badge
+*==============================================================*/
+
+.edit-user-existing-badge {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 5px;
+
+    margin-left: 7px;
+
+    padding: 3px 7px;
+
+    border-radius: 5px;
+
+    background: argb($success, .08);
+    color: $success;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    line-height: 1;
+
+    i {
+        font-size: 11px;
+    }
+}
+
+
+/*==============================================================
+* User ID
+*==============================================================*/
+
+.edit-user-id {
+    display: inline-flex;
+    align-items: center;
+
+    min-height: 24px;
+
+    padding: 0 7px;
+
+    border-radius: 5px;
+
+    background: argb($theme-color, .07);
+    color: $theme-color;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    line-height: 1;
+}
+
+
+/*==============================================================
+* Readonly Input
+*==============================================================*/
+
+.add-user-input {
+
+    input[readonly] {
+        background: $light;
+
+        color: $body-color;
+
+        cursor: not-allowed;
+
+        &:focus {
+            border-color: $gray;
+
+            box-shadow: none;
+        }
+    }
+}
+
+
+/*==============================================================
+* Disabled Input
+*==============================================================*/
+
+.add-user-input {
+
+    input:disabled,
+    select:disabled,
+    textarea:disabled {
+        background: $light;
+
+        color: argb($body-color, 5%);
+
+        cursor: not-allowed;
+
+        opacity: .75;
+    }
+}
+
+
+/*==============================================================
+* Profile Preview
+*==============================================================*/
+
+.edit-user-profile-preview {
+    position: relative;
+
+    width: 64px;
+    height: 64px;
+
+    overflow: hidden;
+
+    border: 2px solid #fff;
+    border-radius: 50%;
+
+    background: $light;
+
+    box-shadow:
+        0 3px 12px
+        argb($dark, .10);
+
+    img {
+        width: 100%;
+        height: 100%;
+
+        object-fit: cover;
+
+        display: block;
+    }
+}
+
+
+/*==============================================================
+* Verification
+*==============================================================*/
+
+.edit-user-verification {
+    display: flex;
+    align-items: center;
+
+    gap: 7px;
+
+    margin-top: 8px;
+
+    &__icon {
+        width: 22px;
+        height: 22px;
+
+        border-radius: 6px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &__text {
+
+        strong {
+            display: block;
+
+            margin-bottom: 2px;
+
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        span {
+            display: block;
+
+            color: $body-color;
+
+            font-size: 14px;
+        }
+    }
+
+    &--verified {
+
+        .edit-user-verification__icon {
+            background: argb($success, .10);
+            color: $success;
+        }
+
+        .edit-user-verification__text strong {
+            color: $success;
+        }
+    }
+
+    &--pending {
+
+        .edit-user-verification__icon {
+            background: argb($warning, .10);
+            color: $warning;
+        }
+
+        .edit-user-verification__text strong {
+            color: $warning;
+        }
+    }
+}
+
+
+/*==============================================================
+* Loading Animation
+*==============================================================*/
+
+@keyframes edit-user-spin {
+
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/*==============================================================
+* Responsive
+*==============================================================*/
+
+@include mq(md) {
+
+    .add-user-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .add-user-sidebar {
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        align-items: start;
+    }
+
+    .add-user-info-box {
+        grid-column: 1 / -1;
+    }
+}
+
+
+@include mq(xs) {
+
+    .add-user-page__header {
+        margin-bottom: 20px;
+    }
+
+    .add-user-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .add-user-field--full {
+        grid-column: auto;
+    }
+
+    .add-user-sidebar {
+        display: flex;
+
+        flex-direction: column;
+    }
+
+    .add-user-form-actions {
+        margin-top: 16px;
+    }
+
+
+    /*----------------------------------------------------------
+    Role Dropdown Mobile
+    ----------------------------------------------------------*/
+
+    .add-user-role-dropdown {
+
+        &__trigger {
+            min-height: 42px;
+
+            padding-left: 37px;
+
+            font-size: 14px;
+        }
+
+        &__menu {
+            max-height: 220px;
+        }
+    }
+
+
+    .add-user-role-option {
+        min-height: 42px;
+
+        padding: 0 9px;
+
+        &__name {
+            font-size: 14px;
+        }
+
+        &__check {
+            width: 18px;
+            height: 18px;
+
+            flex-basis: 18px;
+        }
+    }
+
+
+    .add-user-upload {
+        min-height: 80px;
+    }
+
+
+    .edit-user-current-image {
+
+        &__content {
+
+            strong {
+                font-size: 14px;
+            }
+
+            small {
+                font-size: 14px;
+            }
+        }
+    }
+
+
+    .edit-user-danger-box {
+
+        padding: 12px;
+
+        gap: 8px;
+
+        &__icon {
+            width: 30px;
+            height: 30px;
+
+            flex-basis: 30px;
+
+            i {
+                font-size: 14px;
+            }
+        }
+    }
+
+
+    .edit-user-delete-btn {
+        min-height: 36px;
+
+        font-size: 14px;
+    }
+
+
+    .add-user-card__header {
+
+        h2 {
+            font-size: 18px;
+        }
+
+        p {
+            font-size: 14px;
+        }
+    }
+
+
+    .add-user-field > label {
+        font-size: 14px;
+    }
+
+
+    .add-user-input {
+
+        input,
+        select,
+        textarea {
+            font-size: 14px;
+        }
+    }
+
+
+    .add-user-form-actions {
+
+        .add-user-cancel-btn,
+        .add-user-submit-btn {
+            font-size: 14px;
+        }
+    }
+}

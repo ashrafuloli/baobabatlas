@@ -1,0 +1,235 @@
+@function argb($color, $opacity: 0.3) {
+    @return rgba($color, $opacity);
+}
+
+@function px_rem($target, $context: 16px) {
+  @return ($target / $context) * 1rem;
+}
+
+@mixin display($value, $align: null, $justify: null) {
+  @if $value == 'flex' {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+  } @else if $value == 'grid' {
+    display: -ms-grid;
+    display: grid;
+  } @else {
+    display: $value;
+  }
+
+  @if $align {
+    @if $align == 'space-between' {
+      -webkit-align-content: space-between;
+      -ms-flex-line-pack: justify;
+      align-content: space-between;
+    } @else if $align == 'flex-start' {
+      -webkit-box-align: start;
+      -webkit-align-items: flex-start;
+      -ms-flex-align: start;
+      align-items: flex-start;
+    } @else if $align == 'flex-end' {
+      -webkit-box-align: end;
+      -webkit-align-items: flex-end;
+      -ms-flex-align: end;
+      align-items: flex-end;
+    } @else {
+      -webkit-box-align: $align;
+      -webkit-align-items: $align;
+      -ms-flex-align: $align;
+      align-items: $align;
+    }
+  }
+
+  @if $justify {
+    @if $justify == 'space-between' {
+      -webkit-box-pack: justify;
+      -webkit-justify-content: space-between;
+      -ms-flex-pack: justify;
+      justify-content: space-between;
+    } @else if $justify == 'flex-start' {
+      -webkit-box-pack: start;
+      -webkit-justify-content: flex-start;
+      -ms-flex-pack: start;
+      justify-content: flex-start;
+    } @else if $justify == 'flex-end' {
+      -webkit-box-pack: end;
+      -webkit-justify-content: flex-end;
+      -ms-flex-pack: end;
+      justify-content: flex-end;
+    } @else {
+      -webkit-box-pack: $justify;
+      -webkit-justify-content: $justify;
+      -ms-flex-pack: $justify;
+      justify-content: $justify;
+    }
+  }
+}
+
+@mixin flex($value) {
+  @if $value == 'none' {
+    -webkit-box-flex: 0;
+    -webkit-flex: none;
+    -ms-flex: none;
+    flex: none;
+  } @else if $value == 'auto' {
+    -webkit-box-flex: 1;
+    -webkit-flex: auto;
+    -ms-flex: auto;
+    flex: auto;
+  } @else if $value == '1' {
+    -webkit-box-flex: 1;
+    -webkit-flex: auto;
+    -ms-flex: auto;
+    flex: auto;
+  } @else {
+    -webkit-box-flex: $value;
+    -webkit-flex: $value;
+    -ms-flex: $value;
+    flex: $value;
+  }
+}
+
+@mixin flex-wrap($value) {
+  @if $value == 'wrap' {
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+  } @else {
+    -webkit-flex-wrap: $value;
+    -ms-flex-wrap: $value;
+    flex-wrap: $value;
+  }
+}
+
+@mixin flex-direction($value) {
+  @if $value == 'row' {
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
+    flex-direction: row;
+  } @else if $value == 'column' {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+  } @else if $value == 'row-reverse' {
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: reverse;
+    -webkit-flex-direction: row-reverse;
+    -ms-flex-direction: row-reverse;
+    flex-direction: row-reverse;
+  } @else if $value == 'column-reverse' {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: reverse;
+    -webkit-flex-direction: column-reverse;
+    -ms-flex-direction: column-reverse;
+    flex-direction: column-reverse;
+  } @else {
+    -webkit-flex-wrap: $value;
+    -ms-flex-wrap: $value;
+    flex-wrap: $value;
+  }
+}
+
+@mixin box-shadow($value) {
+  -webkit-box-shadow: $value;
+  box-shadow: $value;
+}
+
+@mixin drop-shadow($value) {
+  -webkit-box-shadow: $value;
+  box-shadow: $value;
+}
+
+@mixin input-accent($value) {
+  accent-color: $value;
+}
+
+@mixin appearance($value) {
+  -webkit-appearance: $value;
+  -moz-appearance: $value;
+  appearance: $value;
+}
+
+@mixin transition($time) {
+  -webkit-transition: all $time linear 0s;
+  -o-transition: all $time linear 0s;
+  transition: all $time linear 0s;
+}
+
+@mixin transform($value) {
+  -webkit-transform: $value;
+  -ms-transform: $value;
+  transform: $value;
+}
+
+@mixin placeholder {
+  &::-webkit-input-placeholder {
+    @content;
+  }
+  &:-moz-placeholder {
+    @content;
+  }
+  &::-moz-placeholder {
+    @content;
+  }
+  &:-ms-input-placeholder {
+    @content;
+  }
+}
+
+@mixin mq($value) {
+  @if $value=='xxl' {
+    @media (min-width: 1400px) and (max-width: 1700px) {
+      @content;
+    }
+  }
+  @if $value=='xl' {
+    @media (min-width: 1200px) and (max-width: 1399px) {
+      @content;
+    }
+  }
+  @if $value=='lg' {
+    @media (min-width: 992px) and (max-width: 1199px) {
+      @content;
+    }
+  }
+  @if $value=='md' {
+    @media (min-width: 768px) and (max-width: 991px) {
+      @content;
+    }
+  }
+  @if $value=='xs' {
+    @media (max-width: 767px) {
+      @content;
+    }
+  }
+  @if $value=='sm' {
+    @media (min-width: 480px) and (max-width: 767px) {
+      @content;
+    }
+  }
+}
+
+@mixin cmq($min, $max) {
+  @media (min-width: $min) and (max-width: $max) {
+    @content;
+  }
+}
+
+@mixin cmmq($min) {
+  @media (min-width: $min) {
+    @content;
+  }
+}
+
+@mixin cmaq($max) {
+  @media (max-width: $max) {
+    @content;
+  }
+}
+

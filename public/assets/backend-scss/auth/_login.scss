@@ -1,0 +1,433 @@
+@use "../common" as *;
+
+
+/*================================*
+* Login Section
+*=================================*/
+
+.login-section{
+    min-height: 100vh;
+    padding: 80px 0;
+    background: $light;
+    display: flex;
+    align-items: center;
+
+    @include mq(lg){
+        padding: 60px 0;
+    }
+
+    @include mq(md){
+        padding: 50px 0;
+    }
+
+    @include mq(xs){
+        padding: 30px 0;
+    }
+
+
+    /*================================*
+    * Login Card
+    *=================================*/
+
+    .login-card{
+        width: 100%;
+        padding: 42px;
+        border: 1px solid argb($dark, .06);
+        border-radius: 14px;
+        background: #fff;
+        box-shadow: 0 10px 35px argb($dark, .07);
+
+        @include mq(md){
+            padding: 32px;
+        }
+
+        @include mq(xs){
+            padding: 25px 18px;
+            border-radius: 11px;
+        }
+    }
+
+
+    /*================================*
+    * Login Header
+    *=================================*/
+
+    .login-header{
+        margin-bottom: 30px;
+        text-align: center;
+
+        .login-logo{
+            margin-bottom: 22px;
+
+            a{
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            img{
+                width: auto;
+                max-width: 155px;
+                max-height: 55px;
+                height: auto;
+                object-fit: contain;
+
+                @include mq(xs){
+                    max-width: 135px;
+                    max-height: 48px;
+                }
+            }
+        }
+
+        .login-heading{
+
+            h2{
+                margin: 0 0 8px;
+                color: $heading-color;
+                font-family: $header-fonts;
+                font-size: 24px;
+                font-weight: $head-fw;
+                line-height: 1.25;
+            }
+
+            p{
+                max-width: 390px;
+                margin: 0 auto;
+                color: $body-color;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        }
+
+        @include mq(xs){
+            margin-bottom: 24px;
+        }
+    }
+
+
+    /*================================*
+    * Login Form
+    *=================================*/
+
+    .login-form{
+        width: 100%;
+    }
+
+
+    /*================================*
+    * Form Group
+    *=================================*/
+
+    .form-group{
+        margin-bottom: 20px;
+
+        > label{
+            display: block;
+            margin-bottom: 8px;
+            color: $heading-color;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        @include mq(md){
+            margin-bottom: 18px;
+        }
+
+        @include mq(xs){
+            margin-bottom: 17px;
+        }
+    }
+
+
+    /*================================*
+    * Input Group
+    *=================================*/
+
+    .input-group{
+        position: relative;
+        width: 100%;
+
+        > i{
+            position: absolute;
+            top: 50%;
+            left: 16px;
+            z-index: 2;
+            color: $theme-color;
+            font-size: 17px;
+            line-height: 1;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        input{
+            width: 100%;
+            height: 52px;
+            margin: 0;
+            padding: 0 16px 0 46px;
+            border: 1px solid $gray;
+            border-radius: 8px !important;
+            outline: none;
+            background: #fff;
+            color: $heading-color;
+            font-family: $body-fonts;
+            font-size: 14px;
+            line-height: 1;
+            box-shadow: none;
+            transition:
+                border-color .2s ease,
+                box-shadow .2s ease;
+
+            &::placeholder{
+                color: argb($body-color, 18%);
+            }
+
+            &:hover{
+                border-color: argb($gray, 5%);
+            }
+
+            &:focus{
+                border-color: $theme-color;
+                box-shadow: 0 0 0 3px argb($theme-color, .10);
+            }
+        }
+
+        &.input-group--password{
+
+            input{
+                padding-right: 48px;
+            }
+        }
+
+        @include mq(md){
+
+            input{
+                height: 50px;
+            }
+        }
+
+        @include mq(xs){
+
+            > i{
+                left: 14px;
+                font-size: 16px;
+            }
+
+            input{
+                height: 48px;
+                padding-left: 42px;
+                font-size: 14px;
+            }
+
+            &.input-group--password{
+
+                input{
+                    padding-right: 44px;
+                }
+            }
+        }
+    }
+
+
+    /*================================*
+    * Password Toggle
+    *=================================*/
+
+    .password-toggle{
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        color: $body-color;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transform: translateY(-50%);
+        cursor: pointer;
+        @include transition(0.2s);
+
+        i{
+            position: static;
+            font-size: 17px;
+            line-height: 1;
+            transform: none;
+            pointer-events: none;
+        }
+
+        &:hover{
+            background: argb($theme-color, .06);
+            color: $theme-color;
+        }
+
+        &:focus-visible{
+            outline: 2px solid argb($theme-color, .20);
+            outline-offset: 1px;
+        }
+
+        @include mq(xs){
+            right: 7px;
+            width: 30px;
+            height: 30px;
+        }
+    }
+
+
+    /*================================*
+    * Login Options
+    *=================================*/
+
+    .login-options{
+        margin: 20px 0 22px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+
+        .remember{
+            margin: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: $body-color;
+            font-size: 14px;
+            line-height: 1.4;
+            cursor: pointer;
+
+            input{
+                width: 15px;
+                height: 15px;
+                margin: 0;
+                @include input-accent($theme-color);
+                cursor: pointer;
+            }
+        }
+
+        > a{
+            color: $theme-color;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.4;
+            text-decoration: none;
+            @include transition(0.2s);
+
+            &:hover{
+                color: $theme-color-2;
+                text-decoration: underline;
+            }
+        }
+
+        @include mq(xs){
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 10px;
+        }
+    }
+
+
+    /*================================*
+    * Form Error
+    *=================================*/
+
+    .form-error{
+        display: block;
+        margin-top: 6px;
+        color: $danger;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+
+    /*================================*
+    * Login Submit
+    *=================================*/
+
+    .login-submit{
+        width: 100%;
+        min-height: 52px;
+        padding: 0 20px;
+        border: 1px solid $theme-color;
+        border-radius: 8px !important;
+        background: $theme-color;
+        color: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-family: $body-fonts;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1;
+        cursor: pointer;
+        @include transition(0.2s);
+
+        i{
+            font-size: 17px;
+        }
+
+        &:hover{
+            border-color: argb($theme-color, .80);
+            background: argb($theme-color, .80);
+            color: #fff;
+        }
+
+        &:active{
+            @include transform(translateY(1px));
+        }
+
+        &:focus-visible{
+            outline: none;
+            box-shadow: 0 0 0 3px argb($theme-color, .15);
+        }
+
+        @include mq(xs){
+            min-height: 49px;
+            font-size: 14px;
+        }
+    }
+
+
+    /*================================*
+    * Login Footer
+    *=================================*/
+
+    .login-footer{
+        margin-top: 24px;
+        padding-top: 20px;
+        border-top: 1px solid argb($dark, .07);
+        text-align: center;
+
+        p{
+            margin: 0;
+            color: $body-color;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        a{
+            margin-left: 4px;
+            color: $theme-color;
+            font-weight: 600;
+            text-decoration: none;
+            @include transition(0.2s);
+
+            &:hover{
+                color: $theme-color-2;
+                text-decoration: underline;
+            }
+        }
+
+        @include mq(xs){
+            margin-top: 20px;
+            padding-top: 17px;
+
+            p{
+                font-size: 14px;
+            }
+        }
+    }
+}

@@ -1,0 +1,1130 @@
+@use "../../common" as *;
+
+
+/*
+|--------------------------------------------------------------------------
+| Categories Page
+|--------------------------------------------------------------------------
+*/
+
+.categories-page {
+
+    width: 100%;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Header
+    |--------------------------------------------------------------------------
+    */
+
+    &__header {
+
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 28px;
+
+
+        h1 {
+
+            margin: 4px 0 6px;
+            color: $heading-color;
+            font-size: 24px;
+            line-height: 1.3;
+            font-weight: $head-fw;
+
+        }
+
+
+        p {
+
+            margin: 0;
+            color: $body-color;
+            font-size: 14px;
+            line-height: 1.6;
+
+        }
+
+    }
+
+
+    &__eyebrow {
+
+        display: block;
+        color: $theme-color;
+        font-size: 14px;
+        line-height: 1.4;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+
+    }
+
+
+    &__add-btn {
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-height: 44px;
+        padding: 0 18px;
+        border-radius: 8px;
+        background: $theme-color;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: 0.25s;
+
+
+        i {
+
+            font-size: 18px;
+
+        }
+
+
+        &:hover {
+
+            background: argb($theme-color, 0.85);
+            color: #fff;
+
+        }
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Statistics
+|--------------------------------------------------------------------------
+*/
+
+.categories-stats {
+
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 24px;
+
+}
+
+
+.categories-stat-card {
+
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 19px;
+    border: 1px solid $gray;
+    border-radius: 12px;
+    background: #fff;
+    transition: 0.25s;
+
+
+    &:hover {
+
+        border-color: argb($theme-color, 0.35);
+        box-shadow: 0 8px 25px argb($dark, 0.05);
+
+    }
+
+
+    &__icon {
+
+        width: 45px;
+        height: 45px;
+        flex: 0 0 45px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9px;
+        background: argb($theme-color, 0.09);
+        color: $theme-color;
+        font-size: 20px;
+
+
+        &.active {
+
+            background: argb($success, 0.10);
+            color: $success;
+
+        }
+
+
+        &.products {
+
+            background: argb($info, 0.10);
+            color: #087f99;
+
+        }
+
+
+        &.empty {
+
+            background: argb($warning, 0.12);
+            color: #947000;
+
+        }
+
+    }
+
+
+    span {
+
+        display: block;
+        margin-bottom: 5px;
+        color: $body-color;
+        font-size: 14px;
+        line-height: 1.4;
+
+    }
+
+
+    strong {
+
+        display: block;
+        color: $heading-color;
+        font-size: 24px;
+        line-height: 1.2;
+        font-weight: $head-fw;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Main Card
+|--------------------------------------------------------------------------
+*/
+
+.categories-card {
+
+    overflow: hidden;
+    border: 1px solid $gray;
+    border-radius: 12px;
+    background: #fff;
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Toolbar
+|--------------------------------------------------------------------------
+*/
+
+.categories-toolbar {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 18px 20px;
+    border-bottom: 1px solid argb($gray, 0.7);
+
+
+    &__actions {
+
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Search
+|--------------------------------------------------------------------------
+*/
+
+.categories-search {
+
+    position: relative;
+    width: 100%;
+    max-width: 360px;
+
+
+    i {
+
+        position: absolute;
+        top: 50%;
+        left: 13px;
+        transform: translateY(-50%);
+        color: #888;
+        font-size: 18px;
+        pointer-events: none;
+
+    }
+
+
+    input {
+
+        width: 100%;
+        height: 42px;
+        padding: 0 14px 0 40px;
+        border: 1px solid $gray;
+        border-radius: 8px;
+        outline: none;
+        background: #fff;
+        color: $heading-color;
+        font-family: $body-fonts;
+        font-size: 14px;
+
+
+        &::placeholder {
+
+            color: #999;
+
+        }
+
+
+        &:focus {
+
+            border-color: argb($theme-color, 0.55);
+            box-shadow: 0 0 0 3px argb($theme-color, 0.07);
+
+        }
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Select
+|--------------------------------------------------------------------------
+*/
+
+.categories-select {
+
+    min-width: 160px;
+    height: 42px;
+    padding: 0 30px 0 14px;
+    border: 1px solid $gray;
+    border-radius: 8px;
+    outline: none;
+    background: #fff;
+    color: $body-color;
+    font-family: $body-fonts;
+    font-size: 14px;
+    cursor: pointer;
+
+
+    &:focus {
+
+        border-color: argb($theme-color, 0.55);
+        box-shadow: 0 0 0 3px argb($theme-color, 0.07);
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Filter Button
+|--------------------------------------------------------------------------
+*/
+
+.categories-filter-btn {
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    height: 42px;
+    padding: 0 14px;
+    border: 1px solid $gray;
+    border-radius: 8px;
+    background: #fff;
+    color: $body-color;
+    font-family: $body-fonts;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s;
+
+
+    i {
+
+        font-size: 18px;
+
+    }
+
+
+    &:hover {
+
+        border-color: argb($theme-color, 0.4);
+        color: $theme-color;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Table
+|--------------------------------------------------------------------------
+*/
+
+.categories-table-wrapper {
+
+    width: 100%;
+    overflow-x: auto;
+
+}
+
+
+.categories-table {
+
+    width: 100%;
+    min-width: 1100px;
+    border-collapse: collapse;
+
+
+    th,
+    td {
+
+        padding: 15px 18px;
+        border-bottom: 1px solid argb($gray, 0.65);
+        text-align: left;
+        vertical-align: middle;
+        font-size: 14px;
+        line-height: 1.5;
+
+    }
+
+
+    th {
+
+        background: $light;
+        color: $body-color;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+
+    }
+
+
+    td {
+
+        color: $body-color;
+
+    }
+
+
+    tbody tr {
+
+        transition: 0.2s;
+
+
+        &:hover {
+
+            background: argb($theme-color, 0.025);
+
+        }
+
+    }
+
+
+    tbody tr:last-child td {
+
+        border-bottom: 0;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Category Info
+|--------------------------------------------------------------------------
+*/
+
+.category-info {
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 280px;
+
+
+    &__icon {
+
+        width: 48px;
+        height: 48px;
+        flex: 0 0 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9px;
+        background: argb($theme-color, 0.09);
+        color: $theme-color;
+        font-size: 20px;
+
+
+        &.fashion {
+
+            background: argb($theme-color-2, 0.12);
+            color: $theme-color-2;
+
+        }
+
+
+        &.home {
+
+            background: argb($info, 0.10);
+            color: #087f99;
+
+        }
+
+
+        &.beauty {
+
+            background: argb($danger, 0.10);
+            color: $danger;
+
+        }
+
+
+        &.sports {
+
+            background: argb($success, 0.10);
+            color: $success;
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Subcategory Icon
+        |--------------------------------------------------------------------------
+        */
+
+        &.subcategory {
+
+            background: argb($theme-color, 0.06);
+            color: $theme-color;
+
+        }
+
+    }
+
+
+    &__content {
+
+        min-width: 0;
+
+
+        strong {
+
+            display: block;
+            margin-bottom: 4px;
+            color: $heading-color;
+            font-size: 14px;
+            line-height: 1.4;
+            font-weight: 600;
+
+        }
+
+
+        span {
+
+            display: block;
+            color: $body-color;
+            font-size: 14px;
+            line-height: 1.4;
+
+        }
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Child Category Info
+|--------------------------------------------------------------------------
+*/
+
+.category-info--child {
+
+    min-width: 300px;
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Child Connector
+|--------------------------------------------------------------------------
+*/
+
+.category-info__connector {
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 48px;
+    flex: 0 0 20px;
+    color: #aaa;
+    font-size: 18px;
+    line-height: 1;
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Child Category Row
+|--------------------------------------------------------------------------
+*/
+
+.category-row--child {
+
+    background: rgba(0, 0, 0, 0.012);
+
+
+    td {
+
+        border-bottom-color: argb($gray, 0.5);
+
+    }
+
+
+    &:hover {
+
+        background: argb($theme-color, 0.035);
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Category Type
+|--------------------------------------------------------------------------
+*/
+
+.category-type {
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: fit-content;
+    min-height: 28px;
+    padding: 4px 9px;
+    border-radius: 20px;
+    font-size: 14px;
+    line-height: 1.3;
+    font-weight: 600;
+    white-space: nowrap;
+
+
+    i {
+
+        font-size: 15px;
+        line-height: 1;
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Main Category
+    |--------------------------------------------------------------------------
+    */
+
+    &--parent {
+
+        background: argb($theme-color, 0.08);
+        color: $theme-color;
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Subcategory
+    |--------------------------------------------------------------------------
+    */
+
+    &--child {
+
+        background: argb($body-color, 0.08);
+        color: $body-color;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Parent Category
+|--------------------------------------------------------------------------
+*/
+
+.category-parent {
+
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: $body-color;
+    font-size: 14px;
+    line-height: 1.4;
+    white-space: nowrap;
+
+
+    i {
+
+        color: $theme-color;
+        font-size: 15px;
+        line-height: 1;
+
+    }
+
+}
+
+
+.category-parent-empty {
+
+    color: #999;
+    font-size: 14px;
+    line-height: 1.4;
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Product Count
+|--------------------------------------------------------------------------
+*/
+
+.category-product-count {
+
+    color: $heading-color;
+    font-size: 14px;
+    font-weight: 600;
+
+
+    &.empty {
+
+        color: #947000;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Status
+|--------------------------------------------------------------------------
+*/
+
+.category-status {
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 28px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 14px;
+    line-height: 1.3;
+    font-weight: 600;
+
+
+    i {
+
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+
+    }
+
+
+    &.active {
+
+        background: argb($success, 0.10);
+        color: $success;
+
+    }
+
+
+    &.inactive {
+
+        background: argb($body-color, 0.10);
+        color: $body-color;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Actions
+|--------------------------------------------------------------------------
+*/
+
+.category-actions {
+
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+
+    a,
+    button {
+
+        width: 34px;
+        height: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid transparent;
+        border-radius: 7px;
+        background: transparent;
+        color: $body-color;
+        font-size: 18px;
+        text-decoration: none;
+        cursor: pointer;
+        transition: 0.2s;
+
+
+        &:hover {
+
+            border-color: argb($theme-color, 0.25);
+            background: argb($theme-color, 0.06);
+            color: $theme-color;
+
+        }
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Pagination
+|--------------------------------------------------------------------------
+*/
+
+.categories-pagination {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 16px 20px;
+
+
+    &__info {
+
+        color: $body-color;
+        font-size: 14px;
+
+    }
+
+
+    &__buttons {
+
+        display: flex;
+        align-items: center;
+        gap: 5px;
+
+
+        button {
+
+            width: 34px;
+            height: 34px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid $gray;
+            border-radius: 7px;
+            background: #fff;
+            color: $body-color;
+            font-family: $body-fonts;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+
+
+            &:hover {
+
+                border-color: argb($theme-color, 0.35);
+                color: $theme-color;
+
+            }
+
+
+            &.active {
+
+                border-color: $theme-color;
+                background: $theme-color;
+                color: #fff;
+
+            }
+
+
+            &:disabled {
+
+                opacity: 0.45;
+                cursor: not-allowed;
+
+            }
+
+        }
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Responsive - XL
+|--------------------------------------------------------------------------
+*/
+
+@include mq(xl) {
+
+    .categories-stats {
+
+        grid-template-columns: repeat(2, 1fr);
+
+    }
+
+
+    .categories-toolbar {
+
+        align-items: stretch;
+        flex-direction: column;
+
+    }
+
+
+    .categories-search {
+
+        max-width: 100%;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Responsive - LG
+|--------------------------------------------------------------------------
+*/
+
+@include mq(lg) {
+
+    .categories-stats {
+
+        grid-template-columns: repeat(2, 1fr);
+
+    }
+
+
+    .categories-toolbar__actions {
+
+        width: 100%;
+
+    }
+
+
+    .categories-select {
+
+        flex: 1;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Responsive - MD
+|--------------------------------------------------------------------------
+*/
+
+@include mq(md) {
+
+    .categories-page__header {
+
+        align-items: flex-start;
+        flex-direction: column;
+
+    }
+
+
+    .categories-page__add-btn {
+
+        width: 100%;
+
+    }
+
+
+    .categories-toolbar__actions {
+
+        flex-wrap: wrap;
+
+    }
+
+
+    .categories-select {
+
+        min-width: 0;
+        flex: 1;
+
+    }
+
+
+    .categories-filter-btn {
+
+        flex: 0 0 auto;
+
+    }
+
+
+    .categories-pagination {
+
+        align-items: flex-start;
+        flex-direction: column;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Responsive - XS
+|--------------------------------------------------------------------------
+*/
+
+@include mq(xs) {
+
+    .categories-page__header h1 {
+
+        font-size: 24px;
+
+    }
+
+
+    .categories-stats {
+
+        grid-template-columns: 1fr;
+        gap: 12px;
+
+    }
+
+
+    .categories-stat-card {
+
+        padding: 16px;
+
+    }
+
+
+    .categories-toolbar {
+
+        padding: 15px;
+
+    }
+
+
+    .categories-toolbar__actions {
+
+        display: grid;
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .categories-select,
+    .categories-filter-btn {
+
+        width: 100%;
+
+    }
+
+
+    .categories-pagination {
+
+        padding: 15px;
+
+    }
+
+
+    .categories-pagination__buttons {
+
+        width: 100%;
+        justify-content: center;
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Child Category Mobile
+    |--------------------------------------------------------------------------
+    */
+
+    .category-info--child {
+
+        min-width: 230px;
+
+    }
+
+
+    .category-info__connector {
+
+        width: 16px;
+        flex: 0 0 16px;
+        font-size: 16px;
+
+    }
+
+
+    .category-type {
+
+        font-size: 14px;
+        padding: 4px 8px;
+
+    }
+
+
+    .category-parent {
+
+        font-size: 14px;
+
+    }
+
+}

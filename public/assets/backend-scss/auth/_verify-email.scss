@@ -1,0 +1,373 @@
+@use "../common" as *;
+
+
+/*================================*
+* Verify Email Section
+*=================================*/
+
+.verify-email-section {
+    min-height: 100vh;
+    padding: 70px 0;
+    background: $light;
+    display: flex;
+    align-items: center;
+
+    @include mq(lg) {
+        padding: 60px 0;
+    }
+
+    @include mq(md) {
+        padding: 50px 0;
+    }
+
+    @include mq(xs) {
+        padding: 30px 0;
+    }
+
+
+    /*================================*
+    * Verify Email Card
+    *=================================*/
+
+    .verify-email-card {
+        width: 100%;
+        padding: 40px;
+        border: 1px solid argb($dark, .06);
+        border-radius: 14px;
+        background: #fff;
+        box-shadow: 0 10px 35px argb($dark, .07);
+
+        @include mq(md) {
+            padding: 32px;
+        }
+
+        @include mq(xs) {
+            padding: 25px 18px;
+            border-radius: 11px;
+        }
+    }
+
+
+    /*================================*
+    * Card Header
+    *=================================*/
+
+    .card-header {
+        margin-bottom: 26px;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        text-align: center;
+
+
+        /*================================*
+        * Logo
+        *=================================*/
+
+        .card-logo {
+            margin-bottom: 18px;
+
+            a {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            img {
+                width: auto;
+                max-width: 155px;
+                max-height: 55px;
+                height: auto;
+                object-fit: contain;
+
+                @include mq(xs) {
+                    max-width: 135px;
+                    max-height: 48px;
+                }
+            }
+        }
+
+
+        /*================================*
+        * Header Icon
+        *=================================*/
+
+        .icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 16px;
+            border: 1px solid argb($theme-color, .10);
+            border-radius: 50%;
+            background: argb($theme-color, .08);
+            color: $theme-color;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            i {
+                font-size: 23px;
+                line-height: 1;
+            }
+
+            @include mq(xs) {
+                width: 50px;
+                height: 50px;
+                margin-bottom: 14px;
+
+                i {
+                    font-size: 21px;
+                }
+            }
+        }
+
+
+        /*================================*
+        * Heading
+        *=================================*/
+
+        h2 {
+            margin: 0 0 7px;
+            color: $heading-color;
+            font-family: $header-fonts;
+            font-size: 24px;
+            font-weight: $head-fw;
+            line-height: 1.25;
+        }
+
+
+        /*================================*
+        * Description
+        *=================================*/
+
+        p {
+            max-width: 410px;
+            margin: 0 auto;
+            color: $body-color;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+    }
+
+
+    /*================================*
+    * Verification Content
+    *=================================*/
+
+    .verification-content {
+        width: 100%;
+    }
+
+
+    /*================================*
+    * Verification Message
+    *=================================*/
+
+    .verification-message {
+        padding: 14px;
+        border: 1px solid argb($theme-color, .12);
+        border-radius: 8px;
+        background: argb($theme-color, .035);
+        display: flex;
+        align-items: flex-start;
+        gap: 11px;
+
+        .verification-message__icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 7px;
+            background: argb($theme-color, .09);
+            color: $theme-color;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 34px;
+
+            i {
+                font-size: 17px;
+                line-height: 1;
+            }
+        }
+
+        .verification-message__content {
+            min-width: 0;
+
+            strong {
+                display: block;
+                margin-bottom: 3px;
+                color: $heading-color;
+                font-size: 14px;
+                font-weight: 600;
+                line-height: 1.4;
+            }
+
+            p {
+                margin: 0;
+                color: $body-color;
+                font-size: 14px;
+                line-height: 1.55;
+            }
+        }
+    }
+
+
+    /*================================*
+    * Resend Form
+    *=================================*/
+
+    .resend-form {
+        margin: 16px 0 0;
+    }
+
+
+    /*================================*
+    * Resend Button
+    *=================================*/
+
+    .resend-btn {
+        width: 100%;
+        min-height: 50px;
+        padding: 0 18px;
+        border: 1px solid $gray;
+        border-radius: 8px !important;
+        background: #fff;
+        color: $heading-color;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-family: $body-fonts;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1;
+        cursor: pointer;
+        transition:
+            border-color .2s ease,
+            background-color .2s ease,
+            color .2s ease,
+            box-shadow .2s ease;
+
+        i {
+            color: $theme-color;
+            font-size: 17px;
+            transition: transform .2s ease;
+        }
+
+        &:hover {
+            border-color: $theme-color;
+            background: argb($theme-color, .035);
+            color: $theme-color;
+
+            i {
+                transform: rotate(45deg);
+            }
+        }
+
+        &:active {
+
+            i {
+                transform: rotate(180deg);
+            }
+        }
+
+        &:focus-visible {
+            outline: none;
+            border-color: $theme-color;
+            box-shadow: 0 0 0 3px argb($theme-color, .10);
+        }
+
+        @include mq(xs) {
+            min-height: 48px;
+        }
+    }
+
+
+    /*================================*
+    * Card Footer
+    *=================================*/
+
+    .card-footer {
+        margin-top: 24px;
+        padding: 19px 0 0;
+        border-top: 1px solid argb($dark, .07);
+        background: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+
+
+        /*================================*
+        * Logout Form
+        *=================================*/
+
+        .logout-form {
+            margin: 0;
+
+            button {
+                padding: 0;
+                border: 0;
+                background: transparent;
+                color: $body-color;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 7px;
+                font-family: $body-fonts;
+                font-size: 14px;
+                font-weight: 600;
+                line-height: 1.5;
+                cursor: pointer;
+                transition: color .2s ease;
+
+                i {
+                    font-size: 16px;
+                    line-height: 1;
+                }
+
+                &:hover {
+                    color: $danger;
+                }
+
+                &:focus-visible {
+                    outline: 2px solid argb($theme-color, .20);
+                    outline-offset: 3px;
+                    border-radius: 4px;
+                }
+            }
+        }
+
+
+        /*================================*
+        * Back To Login
+        *=================================*/
+
+        > a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            color: $theme-color;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.5;
+            text-decoration: none;
+            transition: color .2s ease;
+
+            i {
+                font-size: 16px;
+                line-height: 1;
+            }
+
+            &:hover {
+                color: $theme-color-2;
+            }
+        }
+
+        @include mq(xs) {
+            margin-top: 20px;
+            padding-top: 17px;
+            flex-direction: column;
+            gap: 12px;
+        }
+    }
+}

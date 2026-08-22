@@ -1,0 +1,785 @@
+@use "../../common" as *;
+
+
+/*
+|--------------------------------------------------------------------------
+| Create Shipment Page
+|--------------------------------------------------------------------------
+*/
+
+.shipment-create-page {
+
+    width: 100%;
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Page Header
+|--------------------------------------------------------------------------
+*/
+
+.shipment-create-page__header {
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 25px;
+    margin-bottom: 22px;
+
+}
+
+
+.shipment-create-page__eyebrow {
+
+    display: block;
+    margin-bottom: 5px;
+    color: $theme-color;
+    font-size: 14px;
+    line-height: 1.4;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+
+}
+
+
+.shipment-create-page__header h1 {
+
+    margin: 0 0 6px;
+    color: $heading-color;
+    font-size: 24px;
+    line-height: 1.3;
+    font-weight: $head-fw;
+
+}
+
+
+.shipment-create-page__header p {
+
+    margin: 0;
+    color: $body-color;
+    font-size: 14px;
+    line-height: 1.5;
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Back
+|--------------------------------------------------------------------------
+*/
+
+.shipment-create-back {
+
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 14px;
+    color: $body-color;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.2s;
+
+
+    i {
+
+        font-size: 17px;
+
+    }
+
+
+    &:hover {
+
+        color: $theme-color;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Header Actions
+|--------------------------------------------------------------------------
+*/
+
+.shipment-create-page__actions {
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+}
+
+
+.shipment-create-btn {
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 42px;
+    padding: 0 15px;
+    border: 1px solid $gray;
+    border-radius: 8px;
+    font-family: $body-fonts;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: 0.2s;
+
+
+    i {
+
+        font-size: 17px;
+
+    }
+
+
+    &--secondary {
+
+        background: #fff;
+        color: $body-color;
+
+
+        &:hover {
+
+            border-color: argb($theme-color, 0.35);
+            color: $theme-color;
+
+        }
+
+    }
+
+
+    &--primary {
+
+        border-color: $theme-color;
+        background: $theme-color;
+        color: #fff;
+
+
+        &:hover {
+
+            border-color: $theme-color;
+            background: $theme-color;
+            color: #fff;
+            opacity: 0.92;
+
+        }
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Main Grid
+|--------------------------------------------------------------------------
+*/
+
+.shipment-create-grid {
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    align-items: start;
+    gap: 20px;
+
+}
+
+
+.shipment-create-main,
+.shipment-create-sidebar {
+
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Card
+|--------------------------------------------------------------------------
+*/
+
+.shipment-create-card {
+
+    overflow: hidden;
+    border: 1px solid $gray;
+    border-radius: 11px;
+    background: #fff;
+
+
+    &__header {
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 16px 18px;
+        border-bottom: 1px solid argb($gray, 0.7);
+
+
+        h2 {
+
+            margin: 0;
+            color: $heading-color;
+            font-size: 18px;
+            line-height: 1.4;
+            font-weight: 700;
+
+        }
+
+
+        span {
+
+            display: block;
+            margin-top: 3px;
+            color: $body-color;
+            font-size: 14px;
+            line-height: 1.5;
+
+        }
+
+    }
+
+
+    &__body {
+
+        padding: 18px;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Form Grid
+|--------------------------------------------------------------------------
+*/
+
+.shipment-form-grid {
+
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 17px;
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Form Group
+|--------------------------------------------------------------------------
+*/
+
+.shipment-form-group {
+
+    display: flex;
+    flex-direction: column;
+
+
+    &--full {
+
+        grid-column: 1 / -1;
+
+    }
+
+
+    label {
+
+        display: block;
+        margin-bottom: 7px;
+        color: $heading-color;
+        font-size: 14px;
+        line-height: 1.4;
+        font-weight: 600;
+
+
+        span {
+
+            color: $danger;
+
+        }
+
+    }
+
+
+    input,
+    select,
+    textarea {
+
+        width: 100%;
+        border: 1px solid $gray;
+        border-radius: 8px;
+        outline: none;
+        background: #fff;
+        color: $heading-color;
+        font-family: $body-fonts;
+        font-size: 14px;
+        transition: 0.2s;
+
+
+        &::placeholder {
+
+            color: #999;
+
+        }
+
+
+        &:focus {
+
+            border-color: argb($theme-color, 0.5);
+            box-shadow: 0 0 0 3px argb($theme-color, 0.06);
+
+        }
+
+    }
+
+
+    input,
+    select {
+
+        height: 44px;
+        padding: 0 12px;
+
+    }
+
+
+    textarea {
+
+        min-height: 120px;
+        padding: 11px 12px;
+        resize: vertical;
+        line-height: 1.5;
+
+    }
+
+
+    small {
+
+        margin-top: 6px;
+        color: #888;
+        font-size: 14px;
+        line-height: 1.4;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Status Preview
+|--------------------------------------------------------------------------
+*/
+
+.shipment-status-preview {
+
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+
+
+    &__icon {
+
+        width: 42px;
+        height: 42px;
+        flex: 0 0 42px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9px;
+        background: argb($theme-color, 0.08);
+        color: $theme-color;
+        font-size: 19px;
+
+    }
+
+
+    strong {
+
+        display: block;
+        margin-bottom: 3px;
+        color: $heading-color;
+        font-size: 14px;
+        font-weight: 600;
+
+    }
+
+
+    span {
+
+        display: block;
+        color: $body-color;
+        font-size: 14px;
+        line-height: 1.5;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Order Preview
+|--------------------------------------------------------------------------
+*/
+
+.shipment-order-preview {
+
+    padding: 17px 18px;
+
+}
+
+
+.shipment-order-preview__top {
+
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid argb($gray, 0.65);
+
+}
+
+
+.shipment-order-preview__icon {
+
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    background: argb($theme-color, 0.08);
+    color: $theme-color;
+    font-size: 18px;
+
+}
+
+
+.shipment-order-preview__top {
+
+    strong {
+
+        display: block;
+        margin-bottom: 3px;
+        color: $heading-color;
+        font-size: 14px;
+        font-weight: 600;
+
+    }
+
+
+    span {
+
+        display: block;
+        color: $body-color;
+        font-size: 14px;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Order Details
+|--------------------------------------------------------------------------
+*/
+
+.shipment-order-preview__details {
+
+    padding: 4px 0;
+
+
+    > div {
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 10px 0;
+        border-bottom: 1px solid argb($gray, 0.6);
+
+
+        &:last-child {
+
+            border-bottom: 0;
+
+        }
+
+
+        span {
+
+            color: $body-color;
+            font-size: 14px;
+
+        }
+
+
+        strong {
+
+            color: $heading-color;
+            font-size: 14px;
+            font-weight: 600;
+
+        }
+
+    }
+
+}
+
+
+.shipment-order-paid {
+
+    color: $success !important;
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Order View
+|--------------------------------------------------------------------------
+*/
+
+.shipment-order-view {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-top: 13px;
+    margin-top: 4px;
+    border-top: 1px solid argb($gray, 0.65);
+    color: $theme-color;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+
+
+    i {
+
+        font-size: 16px;
+
+    }
+
+
+    &:hover {
+
+        text-decoration: underline;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Checklist
+|--------------------------------------------------------------------------
+*/
+
+.shipment-checklist {
+
+    display: flex;
+    flex-direction: column;
+    padding: 8px 0;
+
+
+    > div {
+
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 10px 18px;
+
+
+        i {
+
+            color: $success;
+            font-size: 17px;
+
+        }
+
+
+        span {
+
+            color: $body-color;
+            font-size: 14px;
+
+        }
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Responsive XL
+|--------------------------------------------------------------------------
+*/
+
+@include mq(xl) {
+
+    .shipment-create-grid {
+
+        grid-template-columns: minmax(0, 1fr) 290px;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Responsive LG
+|--------------------------------------------------------------------------
+*/
+
+@include mq(lg) {
+
+    .shipment-create-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .shipment-create-sidebar {
+
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Responsive MD
+|--------------------------------------------------------------------------
+*/
+
+@include mq(md) {
+
+    .shipment-create-page__header {
+
+        align-items: flex-start;
+        flex-direction: column;
+
+    }
+
+
+    .shipment-create-page__actions {
+
+        width: 100%;
+
+    }
+
+
+    .shipment-create-btn {
+
+        flex: 1;
+
+    }
+
+
+    .shipment-create-sidebar {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Responsive XS
+|--------------------------------------------------------------------------
+*/
+
+@include mq(xs) {
+
+    .shipment-create-page__header h1 {
+
+        font-size: 24px;
+
+    }
+
+
+    .shipment-create-page__header p {
+
+        font-size: 14px;
+
+    }
+
+
+    .shipment-create-page__actions {
+
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+
+    }
+
+
+    .shipment-create-btn {
+
+        width: 100%;
+        padding: 0 9px;
+
+    }
+
+
+    .shipment-create-card__header {
+
+        padding: 14px;
+
+    }
+
+
+    .shipment-create-card__body {
+
+        padding: 14px;
+
+    }
+
+
+    .shipment-form-grid {
+
+        grid-template-columns: 1fr;
+        gap: 15px;
+
+    }
+
+
+    .shipment-form-group--full {
+
+        grid-column: auto;
+
+    }
+
+
+    .shipment-order-preview {
+
+        padding: 14px;
+
+    }
+
+}

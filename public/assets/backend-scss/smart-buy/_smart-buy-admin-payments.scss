@@ -1,0 +1,1244 @@
+@use "../common" as *;
+
+.smart-buy-payments-page {
+
+    width: 100%;
+    max-width: 100%;
+
+    padding: 24px;
+
+    font-size: 14px;
+
+
+    * {
+        box-sizing: border-box;
+    }
+
+
+    a {
+        text-decoration: none;
+    }
+
+
+    button,
+    input,
+    select {
+        font: inherit;
+    }
+
+
+    // =========================================================
+    // Breadcrumb
+    // =========================================================
+
+    .smart-buy-payments-breadcrumb {
+
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        margin-bottom: 18px;
+
+        font-size: 14px;
+
+        a {
+            color: #64748b;
+            transition: color .2s ease;
+
+            &:hover {
+                color: #12355B;
+            }
+        }
+
+        i {
+            color: #94a3b8;
+            font-size: 16px;
+        }
+
+        span {
+            color: #12355B;
+            font-weight: 600;
+        }
+
+    }
+
+
+    // =========================================================
+    // Header
+    // =========================================================
+
+    .smart-buy-payments-header {
+
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+
+        gap: 24px;
+
+        margin-bottom: 28px;
+    }
+
+
+    .smart-buy-payments-header__content {
+
+        .smart-buy-payments-eyebrow {
+
+            display: inline-flex;
+
+            margin-bottom: 7px;
+
+            color: #C8A646;
+
+            font-size: 14px;
+            font-weight: 700;
+
+            letter-spacing: .04em;
+        }
+
+
+        h1 {
+
+            margin: 0;
+
+            color: #12355B;
+
+            font-size: 24px;
+            line-height: 1.25;
+            font-weight: 700;
+        }
+
+
+        p {
+
+            max-width: 680px;
+
+            margin: 8px 0 0;
+
+            color: #64748b;
+
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+    }
+
+
+    // =========================================================
+    // Stats
+    // =========================================================
+
+    .smart-buy-payment-stats {
+
+        display: grid;
+
+        grid-template-columns:
+            repeat(5, minmax(0, 1fr));
+
+        gap: 16px;
+
+        margin-bottom: 24px;
+    }
+
+
+    .smart-buy-payment-stat {
+
+        display: flex;
+        align-items: flex-start;
+
+        gap: 13px;
+
+        min-width: 0;
+
+        padding: 18px;
+
+        background: #fff;
+
+        border: 1px solid #e5e7eb;
+
+        border-radius: 14px;
+
+        box-shadow:
+            0 2px 8px rgba(15, 23, 42, .035);
+
+        transition:
+            transform .2s ease,
+            box-shadow .2s ease;
+
+        &:hover {
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 8px 22px rgba(15, 23, 42, .06);
+        }
+    }
+
+
+    .smart-buy-payment-stat__icon {
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        flex: 0 0 42px;
+
+        width: 42px;
+        height: 42px;
+
+        border-radius: 11px;
+
+        font-size: 20px;
+
+
+        &.total {
+            background: #eef4fa;
+            color: #12355B;
+        }
+
+
+        &.paid {
+            background: #ecfdf5;
+            color: #047857;
+        }
+
+
+        &.pending {
+            background: #fffbeb;
+            color: #b45309;
+        }
+
+
+        &.failed {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+
+        &.refunded {
+            background: #f5f3ff;
+            color: #6d28d9;
+        }
+
+    }
+
+
+    .smart-buy-payment-stat__content {
+
+        min-width: 0;
+
+
+        span {
+
+            display: block;
+
+            margin-bottom: 5px;
+
+            color: #64748b;
+
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+
+        strong {
+
+            display: block;
+
+            margin-bottom: 4px;
+
+            color: #12355B;
+
+            font-size: 22px;
+            line-height: 1.2;
+            font-weight: 700;
+        }
+
+
+        small {
+
+            display: block;
+
+            color: #94a3b8;
+
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+    }
+
+
+    // =========================================================
+    // Main Card
+    // =========================================================
+
+    .smart-buy-payments-card {
+
+        overflow: hidden;
+
+        background: #fff;
+
+        border: 1px solid #e5e7eb;
+
+        border-radius: 16px;
+
+        box-shadow:
+            0 2px 10px rgba(15, 23, 42, .035);
+    }
+
+
+    // =========================================================
+    // Toolbar
+    // =========================================================
+
+    .smart-buy-payments-toolbar {
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 20px;
+
+        padding: 20px 22px;
+
+        border-bottom: 1px solid #edf0f3;
+    }
+
+
+    .smart-buy-payments-toolbar__title {
+
+        display: flex;
+        align-items: center;
+
+        gap: 10px;
+
+        min-width: 0;
+
+
+        h2 {
+
+            margin: 0;
+
+            color: #12355B;
+
+            font-size: 18px;
+            line-height: 1.3;
+            font-weight: 700;
+        }
+
+
+        > span {
+
+            display: inline-flex;
+
+            padding: 4px 8px;
+
+            color: #64748b;
+
+            background: #f8fafc;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 6px;
+
+            font-size: 14px;
+            line-height: 1.2;
+        }
+
+    }
+
+
+    .smart-buy-payments-toolbar__actions {
+
+        display: flex;
+        align-items: center;
+
+        gap: 10px;
+
+        flex-wrap: wrap;
+    }
+
+
+    .smart-buy-payment-search {
+
+        position: relative;
+
+        width: 220px;
+
+
+        i {
+
+            position: absolute;
+
+            top: 50%;
+            left: 12px;
+
+            z-index: 1;
+
+            transform: translateY(-50%);
+
+            color: #94a3b8;
+
+            font-size: 17px;
+
+            pointer-events: none;
+        }
+
+
+        input {
+
+            width: 100%;
+            height: 40px;
+
+            padding:
+                0 12px 0 38px;
+
+            color: #12355B;
+
+            background: #fff;
+
+            border: 1px solid #dfe4ea;
+
+            border-radius: 9px;
+
+            outline: none;
+
+            font-size: 14px;
+
+            transition:
+                border-color .2s ease,
+                box-shadow .2s ease;
+
+
+            &::placeholder {
+                color: #a1aab5;
+            }
+
+
+            &:focus {
+
+                border-color: #12355B;
+
+                box-shadow:
+                    0 0 0 3px rgba(
+                        18,
+                        53,
+                        91,
+                        .08
+                    );
+            }
+        }
+
+    }
+
+
+    .smart-buy-payment-filter {
+
+        position: relative;
+
+        display: flex;
+        align-items: center;
+
+
+        i {
+
+            position: absolute;
+
+            left: 11px;
+
+            z-index: 1;
+
+            color: #64748b;
+
+            font-size: 16px;
+
+            pointer-events: none;
+        }
+
+
+        select {
+
+            width: 145px;
+            height: 40px;
+
+            padding:
+                0 30px 0 34px;
+
+            color: #334155;
+
+            background: #fff;
+
+            border: 1px solid #dfe4ea;
+
+            border-radius: 9px;
+
+            outline: none;
+
+            appearance: none;
+
+            cursor: pointer;
+
+            font-size: 14px;
+
+            transition:
+                border-color .2s ease,
+                box-shadow .2s ease;
+
+
+            &:focus {
+
+                border-color: #12355B;
+
+                box-shadow:
+                    0 0 0 3px rgba(
+                        18,
+                        53,
+                        91,
+                        .08
+                    );
+            }
+        }
+
+
+        &::after {
+
+            content: "\ea4e";
+
+            position: absolute;
+
+            right: 10px;
+
+            color: #94a3b8;
+
+            font-family: "remixicon";
+
+            font-size: 15px;
+
+            pointer-events: none;
+        }
+
+    }
+
+
+    // =========================================================
+    // Table
+    // =========================================================
+
+    .smart-buy-payments-table-wrapper {
+
+        width: 100%;
+
+        overflow-x: auto;
+
+        scrollbar-width: thin;
+    }
+
+
+    .smart-buy-payments-table {
+
+        width: 100%;
+
+        min-width: 1050px;
+
+        border-collapse: collapse;
+
+
+        thead {
+
+            background: #f8fafc;
+        }
+
+
+        th {
+
+            padding:
+                12px 18px;
+
+            color: #64748b;
+
+            border-bottom:
+                1px solid #e5e7eb;
+
+            text-align: left;
+
+            white-space: nowrap;
+
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.4;
+        }
+
+
+        td {
+
+            padding:
+                15px 18px;
+
+            color: #475569;
+
+            border-bottom:
+                1px solid #edf0f3;
+
+            vertical-align: middle;
+
+            font-size: 14px;
+            line-height: 1.45;
+        }
+
+
+        tbody tr {
+
+            transition:
+                background .15s ease;
+
+
+            &:hover {
+                background: #fafcff;
+            }
+
+
+            &:last-child td {
+                border-bottom: 0;
+            }
+        }
+
+    }
+
+
+    // =========================================================
+    // Payment ID
+    // =========================================================
+
+    .smart-buy-payment-id {
+
+        display: flex;
+        flex-direction: column;
+
+        gap: 3px;
+
+
+        strong {
+
+            color: #12355B;
+
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+
+        span {
+
+            color: #94a3b8;
+
+            font-size: 14px;
+        }
+
+    }
+
+
+    // =========================================================
+    // Request
+    // =========================================================
+
+    .smart-buy-payment-request {
+
+        display: flex;
+        flex-direction: column;
+
+        gap: 3px;
+
+
+        strong {
+
+            color: #12355B;
+
+            font-size: 14px;
+            font-weight: 700;
+
+            transition: color .2s ease;
+        }
+
+
+        span {
+
+            color: #64748b;
+
+            font-size: 14px;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            max-width: 170px;
+
+            text-overflow: ellipsis;
+        }
+
+
+        &:hover {
+
+            strong {
+                color: #C8A646;
+            }
+        }
+
+    }
+
+
+    // =========================================================
+    // Customer
+    // =========================================================
+
+    .smart-buy-payment-customer {
+
+        display: flex;
+        align-items: center;
+
+        gap: 10px;
+
+        min-width: 190px;
+
+
+        > div:last-child {
+
+            min-width: 0;
+        }
+    }
+
+
+    .smart-buy-payment-avatar {
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        flex: 0 0 34px;
+
+        width: 34px;
+        height: 34px;
+
+        color: #12355B;
+
+        background: #eef4fa;
+
+        border-radius: 50%;
+
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+
+    .smart-buy-payment-customer strong {
+
+        display: block;
+
+        margin-bottom: 2px;
+
+        color: #334155;
+
+        font-size: 14px;
+        font-weight: 600;
+
+        white-space: nowrap;
+
+        overflow: hidden;
+
+        max-width: 155px;
+
+        text-overflow: ellipsis;
+    }
+
+
+    .smart-buy-payment-customer span {
+
+        display: block;
+
+        color: #94a3b8;
+
+        font-size: 14px;
+
+        white-space: nowrap;
+
+        overflow: hidden;
+
+        max-width: 155px;
+
+        text-overflow: ellipsis;
+    }
+
+
+    // =========================================================
+    // Amount
+    // =========================================================
+
+    .smart-buy-payment-amount {
+
+        color: #12355B;
+
+        font-size: 14px;
+        font-weight: 700;
+
+        white-space: nowrap;
+    }
+
+
+    // =========================================================
+    // Payment Method
+    // =========================================================
+
+    .smart-buy-payment-method {
+
+        display: inline-flex;
+        align-items: center;
+
+        gap: 7px;
+
+        color: #475569;
+
+        white-space: nowrap;
+
+
+        i {
+
+            color: #64748b;
+
+            font-size: 16px;
+        }
+
+    }
+
+
+    // =========================================================
+    // Date
+    // =========================================================
+
+    .smart-buy-payment-date {
+
+        color: #64748b;
+
+        white-space: nowrap;
+    }
+
+
+    // =========================================================
+    // Status
+    // =========================================================
+
+    .smart-buy-payment-status {
+
+        display: inline-flex;
+        align-items: center;
+
+        padding:
+            5px 9px;
+
+        border-radius: 999px;
+
+        white-space: nowrap;
+
+        font-size: 14px;
+        font-weight: 600;
+
+
+        &.paid {
+
+            color: #047857;
+
+            background: #ecfdf5;
+        }
+
+
+        &.pending {
+
+            color: #b45309;
+
+            background: #fffbeb;
+        }
+
+
+        &.failed {
+
+            color: #dc2626;
+
+            background: #fef2f2;
+        }
+
+
+        &.refunded {
+
+            color: #6d28d9;
+
+            background: #f5f3ff;
+        }
+
+    }
+
+
+    // =========================================================
+    // Action
+    // =========================================================
+
+    .smart-buy-payment-action {
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 34px;
+        height: 34px;
+
+        color: #64748b;
+
+        background: #f8fafc;
+
+        border: 1px solid #e5e7eb;
+
+        border-radius: 8px;
+
+        font-size: 17px;
+
+        transition:
+            color .2s ease,
+            background .2s ease,
+            border-color .2s ease;
+
+
+        &:hover {
+
+            color: #fff;
+
+            background: #12355B;
+
+            border-color: #12355B;
+        }
+    }
+
+
+    // =========================================================
+    // Empty State
+    // =========================================================
+
+    .smart-buy-payments-empty {
+
+        min-height: 260px;
+
+        align-items: center;
+        justify-content: center;
+
+        flex-direction: column;
+
+        padding: 40px 20px;
+
+        text-align: center;
+    }
+
+
+    .smart-buy-payments-empty__icon {
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 54px;
+        height: 54px;
+
+        margin-bottom: 14px;
+
+        color: #64748b;
+
+        background: #f8fafc;
+
+        border: 1px solid #e5e7eb;
+
+        border-radius: 14px;
+
+        font-size: 24px;
+    }
+
+
+    .smart-buy-payments-empty h3 {
+
+        margin: 0 0 6px;
+
+        color: #12355B;
+
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+
+    .smart-buy-payments-empty p {
+
+        margin: 0;
+
+        color: #94a3b8;
+
+        font-size: 14px;
+    }
+
+
+    // =========================================================
+    // Pagination
+    // =========================================================
+
+    .smart-buy-payments-pagination {
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 20px;
+
+        padding: 16px 22px;
+
+        border-top: 1px solid #edf0f3;
+    }
+
+
+    .smart-buy-payments-pagination__info {
+
+        color: #64748b;
+
+        font-size: 14px;
+
+
+        strong {
+            color: #334155;
+            font-weight: 600;
+        }
+    }
+
+
+    .smart-buy-payments-pagination__buttons {
+
+        display: flex;
+        align-items: center;
+
+        gap: 5px;
+    }
+
+
+    .pagination-button {
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        min-width: 34px;
+        height: 34px;
+
+        padding: 0 8px;
+
+        color: #475569;
+
+        background: #fff;
+
+        border: 1px solid #e5e7eb;
+
+        border-radius: 8px;
+
+        cursor: pointer;
+
+        font-size: 14px;
+
+        transition:
+            color .2s ease,
+            background .2s ease,
+            border-color .2s ease;
+
+
+        &:hover:not(.disabled):not(.active) {
+
+            color: #12355B;
+
+            border-color: #12355B;
+        }
+
+
+        &.active {
+
+            color: #fff;
+
+            background: #12355B;
+
+            border-color: #12355B;
+        }
+
+
+        &.disabled {
+
+            color: #cbd5e1;
+
+            background: #f8fafc;
+
+            cursor: not-allowed;
+        }
+
+
+        i {
+            font-size: 17px;
+        }
+    }
+
+
+    .pagination-dots {
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        min-width: 25px;
+
+        color: #94a3b8;
+
+        font-size: 14px;
+    }
+
+
+    // =========================================================
+    // Responsive
+    // =========================================================
+
+    @media (max-width: 1400px) {
+
+        .smart-buy-payment-stats {
+
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+        }
+
+    }
+
+
+    @media (max-width: 1100px) {
+
+        .smart-buy-payments-toolbar {
+
+            align-items: flex-start;
+
+            flex-direction: column;
+        }
+
+
+        .smart-buy-payments-toolbar__actions {
+
+            width: 100%;
+        }
+
+
+        .smart-buy-payment-search {
+
+            flex: 1;
+
+            min-width: 220px;
+        }
+
+    }
+
+
+    @media (max-width: 800px) {
+
+        padding: 18px;
+
+
+        .smart-buy-payment-stats {
+
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+        }
+
+
+        .smart-buy-payments-header__content {
+
+            h1 {
+                font-size: 22px;
+            }
+        }
+
+
+        .smart-buy-payments-pagination {
+
+            align-items: flex-start;
+
+            flex-direction: column;
+        }
+
+    }
+
+
+    @media (max-width: 560px) {
+
+        padding: 14px;
+
+
+        .smart-buy-payment-stats {
+
+            grid-template-columns: 1fr;
+        }
+
+
+        .smart-buy-payment-stat {
+
+            padding: 15px;
+        }
+
+
+        .smart-buy-payments-toolbar {
+
+            padding: 16px;
+        }
+
+
+        .smart-buy-payments-toolbar__title {
+
+            align-items: flex-start;
+
+            flex-direction: column;
+
+            gap: 6px;
+        }
+
+
+        .smart-buy-payments-toolbar__actions {
+
+            align-items: stretch;
+
+            flex-direction: column;
+        }
+
+
+        .smart-buy-payment-search {
+
+            width: 100%;
+            min-width: 0;
+        }
+
+
+        .smart-buy-payment-filter {
+
+            width: 100%;
+
+
+            select {
+                width: 100%;
+            }
+        }
+
+
+        .smart-buy-payments-pagination {
+
+            padding: 14px 16px;
+        }
+
+
+        .smart-buy-payments-pagination__buttons {
+
+            width: 100%;
+
+            overflow-x: auto;
+
+            padding-bottom: 2px;
+        }
+
+    }
+
+}

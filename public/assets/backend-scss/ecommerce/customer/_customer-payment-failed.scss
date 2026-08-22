@@ -1,0 +1,662 @@
+@use "../../common" as *;
+
+
+/*
+|--------------------------------------------------------------------------
+| CUSTOMER PAYMENT RESULT
+|--------------------------------------------------------------------------
+*/
+
+.customer-payment-result-page {
+
+    width: 100%;
+    max-width: 1200px;
+
+    margin: 0 auto;
+
+    color: $body-color;
+
+    font-size: 14px;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | BREADCRUMB
+    |--------------------------------------------------------------------------
+    */
+
+    .customer-payment-result-breadcrumb {
+
+        display: flex;
+        align-items: center;
+
+        gap: 8px;
+
+        margin-bottom: 22px;
+
+
+        a {
+
+            color: $theme-color !important;
+
+            font-size: 14px !important;
+            font-weight: 600 !important;
+
+            text-decoration: none !important;
+
+        }
+
+
+        span {
+
+            color: #777;
+
+            font-size: 14px;
+
+        }
+
+
+        i {
+
+            color: #aaa;
+
+            font-size: 14px;
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | RESULT CARD
+    |--------------------------------------------------------------------------
+    */
+
+    .customer-payment-result-card {
+
+        max-width: 780px;
+
+        margin: 0 auto;
+
+        padding: 42px 40px;
+
+        border: 1px solid $gray;
+        border-radius: 14px;
+
+        background: #fff;
+
+        text-align: center;
+
+
+        &__icon {
+
+            width: 68px;
+            height: 68px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            margin-bottom: 18px;
+
+            border-radius: 50%;
+
+            background: rgba(190, 65, 65, .09);
+
+            color: #b84d4d;
+
+            font-size: 32px;
+
+        }
+
+
+        &__eyebrow {
+
+            display: block;
+
+            margin-bottom: 7px;
+
+            color: #b84d4d;
+
+            font-size: 14px;
+
+            font-weight: 700;
+
+            text-transform: uppercase;
+
+            letter-spacing: .05em;
+
+        }
+
+
+        h1 {
+
+            margin: 0 0 10px !important;
+
+            color: $heading-color !important;
+
+            font-family: $body-fonts !important;
+
+            font-size: 24px !important;
+
+            line-height: 1.3 !important;
+
+            font-weight: 700 !important;
+
+        }
+
+
+        &__description {
+
+            max-width: 590px;
+
+            margin: 0 auto 25px !important;
+
+            color: #777 !important;
+
+            font-size: 14px !important;
+
+            line-height: 1.65 !important;
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ORDER INFO
+    |--------------------------------------------------------------------------
+    */
+
+    .customer-payment-result-order {
+
+        display: grid;
+
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+        margin-bottom: 20px;
+
+        border: 1px solid $gray;
+        border-radius: 9px;
+
+        background: #fafafa;
+
+
+        > div {
+
+            padding: 14px;
+
+            border-right: 1px solid $gray;
+
+
+            &:last-child {
+                border-right: 0;
+            }
+
+        }
+
+
+        span {
+
+            display: block;
+
+            margin-bottom: 4px;
+
+            color: #999;
+
+            font-size: 14px;
+
+        }
+
+
+        strong {
+
+            display: block;
+
+            color: $heading-color;
+
+            font-size: 14px;
+
+            font-weight: 700;
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ALERT
+    |--------------------------------------------------------------------------
+    */
+
+    .customer-payment-result-alert {
+
+        display: flex;
+
+        align-items: flex-start;
+
+        gap: 11px;
+
+        margin-bottom: 23px;
+
+        padding: 14px;
+
+        border: 1px solid rgba(190, 65, 65, .16);
+        border-radius: 8px;
+
+        background: rgba(190, 65, 65, .045);
+
+        text-align: left;
+
+
+        > i {
+
+            flex: 0 0 auto;
+
+            margin-top: 1px;
+
+            color: #b84d4d;
+
+            font-size: 19px;
+
+        }
+
+
+        strong {
+
+            display: block;
+
+            margin-bottom: 4px;
+
+            color: #9f4040;
+
+            font-size: 14px;
+
+            font-weight: 700;
+
+        }
+
+
+        p {
+
+            margin: 0 !important;
+
+            color: #777 !important;
+
+            font-size: 14px !important;
+
+            line-height: 1.55 !important;
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ACTIONS
+    |--------------------------------------------------------------------------
+    */
+
+    .customer-payment-result-actions {
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        gap: 9px;
+
+        margin-bottom: 18px;
+
+    }
+
+
+    .customer-payment-result-btn {
+
+        min-height: 43px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        gap: 7px;
+
+        padding: 0 15px;
+
+        border: 1px solid #ddd;
+        border-radius: 7px;
+
+        background: #fff;
+
+        color: $heading-color !important;
+
+        font-size: 14px !important;
+        font-weight: 600 !important;
+
+        text-decoration: none !important;
+
+        transition:
+            border-color .2s ease,
+            background .2s ease,
+            color .2s ease;
+
+
+        i {
+            font-size: 16px;
+        }
+
+
+        &:hover {
+
+            border-color: $theme-color;
+
+            color: $theme-color !important;
+
+        }
+
+
+        &.primary {
+
+            border-color: $theme-color;
+
+            background: $theme-color;
+
+            color: #fff !important;
+
+
+            &:hover {
+
+                border-color: $heading-color;
+
+                background: $heading-color;
+
+                color: #fff !important;
+
+            }
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | BACK LINK
+    |--------------------------------------------------------------------------
+    */
+
+    .customer-payment-result-back {
+
+        display: inline-flex;
+        align-items: center;
+
+        gap: 5px;
+
+        color: #777 !important;
+
+        font-size: 14px !important;
+
+        font-weight: 600 !important;
+
+        text-decoration: none !important;
+
+
+        &:hover {
+
+            color: $theme-color !important;
+
+        }
+
+
+        i {
+            font-size: 15px;
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | HELP
+    |--------------------------------------------------------------------------
+    */
+
+    .customer-payment-result-help {
+
+        max-width: 780px;
+
+        display: flex;
+        align-items: center;
+
+        gap: 12px;
+
+        margin: 18px auto 0;
+
+        padding: 15px 17px;
+
+        border: 1px solid $gray;
+        border-radius: 10px;
+
+        background: #fff;
+
+
+        &__icon {
+
+            width: 40px;
+            height: 40px;
+
+            flex: 0 0 40px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 8px;
+
+            background: rgba(15, 61, 46, .07);
+
+            color: $theme-color;
+
+            font-size: 18px;
+
+        }
+
+
+        h2 {
+
+            margin: 0 0 3px !important;
+
+            color: $heading-color !important;
+
+            font-family: $body-fonts !important;
+
+            font-size: 16px !important;
+
+            font-weight: 700 !important;
+
+        }
+
+
+        p {
+
+            margin: 0 !important;
+
+            color: #777 !important;
+
+            font-size: 14px !important;
+
+            line-height: 1.5 !important;
+
+        }
+
+
+        > a {
+
+            display: inline-flex;
+            align-items: center;
+
+            gap: 5px;
+
+            margin-left: auto;
+
+            flex: 0 0 auto;
+
+            color: $theme-color !important;
+
+            font-size: 14px !important;
+
+            font-weight: 600 !important;
+
+            text-decoration: none !important;
+
+
+            i {
+                font-size: 15px;
+            }
+
+        }
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| TABLET
+|--------------------------------------------------------------------------
+*/
+
+@media (max-width: 768px) {
+
+    .customer-payment-result-page {
+
+        .customer-payment-result-card {
+
+            padding: 35px 25px;
+
+        }
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| MOBILE
+|--------------------------------------------------------------------------
+*/
+
+@media (max-width: 575px) {
+
+    .customer-payment-result-page {
+
+        .customer-payment-result-card {
+
+            padding: 30px 16px;
+
+            border-radius: 10px;
+
+        }
+
+
+        .customer-payment-result-card__icon {
+
+            width: 58px;
+            height: 58px;
+
+            font-size: 27px;
+
+        }
+
+
+        .customer-payment-result-card h1 {
+
+            font-size: 22px !important;
+
+        }
+
+
+        .customer-payment-result-order {
+
+            grid-template-columns: 1fr;
+
+        }
+
+
+        .customer-payment-result-order > div {
+
+            border-right: 0;
+
+            border-bottom: 1px solid $gray;
+
+
+            &:last-child {
+
+                border-bottom: 0;
+
+            }
+
+        }
+
+
+        .customer-payment-result-actions {
+
+            flex-direction: column;
+
+        }
+
+
+        .customer-payment-result-btn {
+
+            width: 100%;
+
+        }
+
+
+        .customer-payment-result-help {
+
+            align-items: flex-start;
+
+            flex-wrap: wrap;
+
+        }
+
+
+        .customer-payment-result-help > a {
+
+            width: 100%;
+
+            margin-left: 52px;
+
+        }
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| VERY SMALL MOBILE
+|--------------------------------------------------------------------------
+*/
+
+@media (max-width: 380px) {
+
+    .customer-payment-result-page {
+
+        .customer-payment-result-card h1 {
+
+            font-size: 21px !important;
+
+        }
+
+    }
+
+}

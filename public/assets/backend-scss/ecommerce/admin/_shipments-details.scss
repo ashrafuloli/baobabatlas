@@ -1,0 +1,1346 @@
+@use "../../common" as *;
+
+
+/*
+|--------------------------------------------------------------------------
+| Shipment Details Page
+|--------------------------------------------------------------------------
+*/
+
+.shipment-details-page {
+
+    width: 100%;
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Header
+|--------------------------------------------------------------------------
+*/
+
+.shipment-details-page__header {
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 25px;
+    margin-bottom: 22px;
+
+}
+
+
+.shipment-details-page__eyebrow {
+
+    display: block;
+    margin-bottom: 5px;
+    color: $theme-color;
+    font-size: 14px;
+    line-height: 1.4;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Back
+|--------------------------------------------------------------------------
+*/
+
+.shipment-details-back {
+
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 15px;
+    color: $body-color;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.2s;
+
+
+    i {
+
+        font-size: 17px;
+
+    }
+
+
+    &:hover {
+
+        color: $theme-color;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Title
+|--------------------------------------------------------------------------
+*/
+
+.shipment-details-title {
+
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+
+    h1 {
+
+        margin: 0 0 5px;
+        color: $heading-color;
+        font-size: 24px;
+        line-height: 1.3;
+        font-weight: $head-fw;
+
+    }
+
+
+    p {
+
+        margin: 0;
+        color: $body-color;
+        font-size: 14px;
+        line-height: 1.5;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Main Status
+|--------------------------------------------------------------------------
+*/
+
+.shipment-main-status {
+
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 30px;
+    padding: 5px 11px;
+    border-radius: 20px;
+    font-size: 14px;
+    line-height: 1.3;
+    font-weight: 600;
+    white-space: nowrap;
+
+
+    i {
+
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: currentColor;
+
+    }
+
+
+    &--processing {
+
+        background: argb($info, 0.10);
+        color: #087f99;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Header Actions
+|--------------------------------------------------------------------------
+*/
+
+.shipment-details-page__actions {
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+}
+
+
+.shipment-action-btn {
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 42px;
+    padding: 0 14px;
+    border: 1px solid $gray;
+    border-radius: 8px;
+    background: #fff;
+    color: $body-color;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: 0.2s;
+
+
+    i {
+
+        font-size: 17px;
+
+    }
+
+
+    &:hover {
+
+        border-color: argb($theme-color, 0.35);
+        color: $theme-color;
+
+    }
+
+
+    &--primary {
+
+        border-color: $theme-color;
+        background: $theme-color;
+        color: #fff;
+
+
+        &:hover {
+
+            border-color: $theme-color;
+            background: $theme-color;
+            color: #fff;
+            opacity: 0.92;
+
+        }
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Summary
+|--------------------------------------------------------------------------
+*/
+
+.shipment-summary {
+
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-bottom: 20px;
+    border: 1px solid $gray;
+    border-radius: 11px;
+    background: #fff;
+
+}
+
+
+.shipment-summary__item {
+
+    padding: 17px 18px;
+    border-right: 1px solid argb($gray, 0.7);
+
+
+    &:last-child {
+
+        border-right: 0;
+
+    }
+
+
+    span {
+
+        display: block;
+        margin-bottom: 5px;
+        color: $body-color;
+        font-size: 14px;
+
+    }
+
+
+    strong,
+    a {
+
+        display: block;
+        color: $heading-color;
+        font-size: 16px;
+        line-height: 1.4;
+        font-weight: 700;
+        text-decoration: none;
+
+    }
+
+
+    a {
+
+        color: $theme-color;
+
+
+        &:hover {
+
+            text-decoration: underline;
+
+        }
+
+    }
+
+}
+
+
+.shipment-summary__success {
+
+    color: $success !important;
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Main Grid
+|--------------------------------------------------------------------------
+*/
+
+.shipment-details-grid {
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 330px;
+    align-items: start;
+    gap: 20px;
+
+}
+
+
+.shipment-details-main,
+.shipment-details-sidebar {
+
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Card
+|--------------------------------------------------------------------------
+*/
+
+.shipment-details-card {
+
+    overflow: hidden;
+    border: 1px solid $gray;
+    border-radius: 11px;
+    background: #fff;
+
+
+    &__header {
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 16px 18px;
+        border-bottom: 1px solid argb($gray, 0.7);
+
+
+        h2 {
+
+            margin: 0;
+            color: $heading-color;
+            font-size: 18px;
+            line-height: 1.4;
+            font-weight: 700;
+
+        }
+
+
+        > div > span {
+
+            display: block;
+            margin-top: 3px;
+            color: $body-color;
+            font-size: 14px;
+
+        }
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Shipment Information
+|--------------------------------------------------------------------------
+*/
+
+.shipment-info-grid {
+
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+}
+
+
+.shipment-info-item {
+
+    padding: 16px 18px;
+    border-right: 1px solid argb($gray, 0.6);
+    border-bottom: 1px solid argb($gray, 0.6);
+
+
+    &:nth-child(even) {
+
+        border-right: 0;
+
+    }
+
+
+    &:nth-last-child(-n + 2) {
+
+        border-bottom: 0;
+
+    }
+
+
+    > span:first-child {
+
+        display: block;
+        margin-bottom: 5px;
+        color: $body-color;
+        font-size: 14px;
+
+    }
+
+
+    > strong {
+
+        display: block;
+        color: $heading-color;
+        font-size: 14px;
+        line-height: 1.4;
+        font-weight: 600;
+
+    }
+
+
+    > a {
+
+        color: $theme-color;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+
+
+        &:hover {
+
+            text-decoration: underline;
+
+        }
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Status
+|--------------------------------------------------------------------------
+*/
+
+.shipment-status {
+
+    display: inline-flex !important;
+    align-items: center;
+    gap: 6px;
+    width: fit-content;
+    min-height: 27px;
+    padding: 4px 9px;
+    border-radius: 20px;
+    font-size: 14px !important;
+    line-height: 1.3;
+    font-weight: 600 !important;
+
+
+    i {
+
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+
+    }
+
+
+    &--processing {
+
+        background: argb($info, 0.10);
+        color: #087f99;
+
+    }
+
+
+    &--pending {
+
+        background: argb($warning, 0.12);
+        color: #947000;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Tracking
+|--------------------------------------------------------------------------
+*/
+
+.shipment-tracking {
+
+    padding: 20px 20px 20px 28px;
+
+}
+
+
+.shipment-tracking__item {
+
+    position: relative;
+    display: flex;
+    gap: 13px;
+    min-height: 82px;
+
+
+    &:not(:last-child)::before {
+
+        content: "";
+        position: absolute;
+        top: 30px;
+        left: 13px;
+        width: 1px;
+        height: calc(100% - 5px);
+        background: $gray;
+
+    }
+
+
+    &--completed:not(:last-child)::before {
+
+        background: $success;
+
+    }
+
+
+    &--active:not(:last-child)::before {
+
+        background: $gray;
+
+    }
+
+}
+
+
+.shipment-tracking__indicator {
+
+    position: relative;
+    z-index: 2;
+    width: 28px;
+    height: 28px;
+    flex: 0 0 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid $gray;
+    border-radius: 50%;
+    background: #fff;
+    color: #999;
+    font-size: 14px;
+
+
+    .shipment-tracking__item--completed & {
+
+        border-color: $success;
+        background: $success;
+        color: #fff;
+
+    }
+
+
+    .shipment-tracking__item--active & {
+
+        border-color: $theme-color;
+        background: $theme-color;
+        color: #fff;
+
+    }
+
+}
+
+
+.shipment-tracking__content {
+
+    padding-bottom: 20px;
+
+
+    strong {
+
+        display: block;
+        margin-bottom: 3px;
+        color: $heading-color;
+        font-size: 14px;
+        line-height: 1.4;
+        font-weight: 600;
+
+    }
+
+
+    span {
+
+        display: block;
+        margin-bottom: 4px;
+        color: $body-color;
+        font-size: 14px;
+        line-height: 1.5;
+
+    }
+
+
+    small {
+
+        display: block;
+        color: #888;
+        font-size: 14px;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Address
+|--------------------------------------------------------------------------
+*/
+
+.shipment-address {
+
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    padding: 18px;
+
+}
+
+
+.shipment-address__icon {
+
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    background: argb($theme-color, 0.08);
+    color: $theme-color;
+    font-size: 19px;
+
+}
+
+
+.shipment-address__content {
+
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+
+    strong {
+
+        margin-bottom: 2px;
+        color: $heading-color;
+        font-size: 14px;
+        font-weight: 600;
+
+    }
+
+
+    span {
+
+        color: $body-color;
+        font-size: 14px;
+        line-height: 1.5;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Items Table
+|--------------------------------------------------------------------------
+*/
+
+.shipment-items-table-wrapper {
+
+    width: 100%;
+    overflow-x: auto;
+
+}
+
+
+.shipment-items-table {
+
+    width: 100%;
+    min-width: 650px;
+    border-collapse: collapse;
+
+
+    th,
+    td {
+
+        padding: 14px 18px;
+        border-bottom: 1px solid argb($gray, 0.65);
+        text-align: left;
+        vertical-align: middle;
+        font-size: 14px;
+
+    }
+
+
+    th {
+
+        background: $light;
+        color: $body-color;
+        font-weight: 600;
+        white-space: nowrap;
+
+    }
+
+
+    td {
+
+        color: $body-color;
+
+    }
+
+
+    tbody tr:last-child td {
+
+        border-bottom: 0;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Product
+|--------------------------------------------------------------------------
+*/
+
+.shipment-product {
+
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 280px;
+
+
+    &__image {
+
+        width: 52px;
+        height: 52px;
+        flex: 0 0 52px;
+        overflow: hidden;
+        border: 1px solid $gray;
+        border-radius: 8px;
+        background: #f7f7f7;
+
+
+        img {
+
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+
+        }
+
+    }
+
+
+    strong {
+
+        display: block;
+        margin-bottom: 3px;
+        color: $heading-color;
+        font-size: 14px;
+        font-weight: 600;
+
+    }
+
+
+    span {
+
+        display: block;
+        color: $body-color;
+        font-size: 14px;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Quantity
+|--------------------------------------------------------------------------
+*/
+
+.shipment-quantity {
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 30px;
+    padding: 0 8px;
+    border: 1px solid $gray;
+    border-radius: 6px;
+    color: $heading-color;
+    font-size: 14px;
+    font-weight: 600;
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Customer
+|--------------------------------------------------------------------------
+*/
+
+.shipment-customer {
+
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 17px 18px;
+
+
+    &__avatar {
+
+        width: 48px;
+        height: 48px;
+        flex: 0 0 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: argb($theme-color, 0.08);
+        color: $theme-color;
+        font-size: 14px;
+        font-weight: 700;
+
+    }
+
+
+    strong {
+
+        display: block;
+        margin-bottom: 3px;
+        color: $heading-color;
+        font-size: 14px;
+        font-weight: 600;
+
+    }
+
+
+    span {
+
+        display: block;
+        color: $body-color;
+        font-size: 14px;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Customer Contact
+|--------------------------------------------------------------------------
+*/
+
+.shipment-customer-contact {
+
+    padding: 0 18px 17px;
+
+
+    > div {
+
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding-top: 11px;
+        margin-top: 11px;
+        border-top: 1px solid argb($gray, 0.6);
+
+
+        i {
+
+            color: $theme-color;
+            font-size: 17px;
+
+        }
+
+
+        span {
+
+            overflow: hidden;
+            color: $body-color;
+            font-size: 14px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+        }
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Carrier
+|--------------------------------------------------------------------------
+*/
+
+.shipment-carrier-box {
+
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 17px 18px;
+
+
+    &__icon {
+
+        width: 44px;
+        height: 44px;
+        flex: 0 0 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9px;
+        background: argb($theme-color, 0.08);
+        color: $theme-color;
+        font-size: 19px;
+
+    }
+
+
+    strong {
+
+        display: block;
+        margin-bottom: 3px;
+        color: $heading-color;
+        font-size: 14px;
+        font-weight: 600;
+
+    }
+
+
+    span {
+
+        display: block;
+        color: $body-color;
+        font-size: 14px;
+
+    }
+
+}
+
+
+.shipment-carrier-details {
+
+    padding: 0 18px 17px;
+
+
+    > div {
+
+        padding-top: 11px;
+        margin-top: 11px;
+        border-top: 1px solid argb($gray, 0.6);
+
+
+        span {
+
+            display: block;
+            margin-bottom: 4px;
+            color: $body-color;
+            font-size: 14px;
+
+        }
+
+
+        strong {
+
+            display: block;
+            color: $heading-color;
+            font-size: 14px;
+            font-weight: 600;
+
+        }
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Quick Actions
+|--------------------------------------------------------------------------
+*/
+
+.shipment-quick-actions {
+
+    display: flex;
+    flex-direction: column;
+    padding: 7px 0;
+
+}
+
+
+.shipment-quick-action {
+
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 11px 18px;
+    color: $body-color;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.2s;
+
+
+    i {
+
+        width: 20px;
+        color: $theme-color;
+        font-size: 17px;
+        text-align: center;
+
+    }
+
+
+    &:hover {
+
+        background: argb($theme-color, 0.04);
+        color: $theme-color;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Note
+|--------------------------------------------------------------------------
+*/
+
+.shipment-note {
+
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    padding: 17px 18px;
+
+
+    i {
+
+        margin-top: 2px;
+        color: $theme-color;
+        font-size: 17px;
+
+    }
+
+
+    p {
+
+        margin: 0;
+        color: $body-color;
+        font-size: 14px;
+        line-height: 1.6;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Responsive XL
+|--------------------------------------------------------------------------
+*/
+
+@include mq(xl) {
+
+    .shipment-details-grid {
+
+        grid-template-columns: minmax(0, 1fr) 300px;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Responsive LG
+|--------------------------------------------------------------------------
+*/
+
+@include mq(lg) {
+
+    .shipment-details-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .shipment-details-sidebar {
+
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Responsive MD
+|--------------------------------------------------------------------------
+*/
+
+@include mq(md) {
+
+    .shipment-details-page__header {
+
+        align-items: flex-start;
+        flex-direction: column;
+
+    }
+
+
+    .shipment-details-page__actions {
+
+        width: 100%;
+
+    }
+
+
+    .shipment-action-btn {
+
+        flex: 1;
+
+    }
+
+
+    .shipment-details-title {
+
+        align-items: flex-start;
+        flex-direction: column;
+
+    }
+
+
+    .shipment-summary {
+
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    }
+
+
+    .shipment-summary__item {
+
+        border-right: 0;
+        border-bottom: 1px solid argb($gray, 0.7);
+
+
+        &:nth-child(odd) {
+
+            border-right: 1px solid argb($gray, 0.7);
+
+        }
+
+
+        &:nth-last-child(-n + 2) {
+
+            border-bottom: 0;
+
+        }
+
+    }
+
+
+    .shipment-details-sidebar {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Responsive XS
+|--------------------------------------------------------------------------
+*/
+
+@include mq(xs) {
+
+    .shipment-details-title h1 {
+
+        font-size: 24px;
+
+    }
+
+
+    .shipment-summary {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .shipment-summary__item {
+
+        border-right: 0 !important;
+        border-bottom: 1px solid argb($gray, 0.7);
+
+
+        &:last-child {
+
+            border-bottom: 0;
+
+        }
+
+    }
+
+
+    .shipment-details-page__actions {
+
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+
+    }
+
+
+    .shipment-action-btn {
+
+        width: 100%;
+        padding: 0 9px;
+
+    }
+
+
+    .shipment-details-card__header {
+
+        padding: 14px;
+
+    }
+
+
+    .shipment-info-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .shipment-info-item {
+
+        border-right: 0 !important;
+
+
+        &:last-child {
+
+            border-bottom: 0;
+
+        }
+
+    }
+
+
+    .shipment-tracking {
+
+        padding: 18px 14px 18px 18px;
+
+    }
+
+
+    .shipment-address {
+
+        padding: 14px;
+
+    }
+
+
+    .shipment-customer {
+
+        padding: 14px;
+
+    }
+
+
+    .shipment-customer-contact {
+
+        padding: 0 14px 14px;
+
+    }
+
+
+    .shipment-carrier-box {
+
+        padding: 14px;
+
+    }
+
+
+    .shipment-carrier-details {
+
+        padding: 0 14px 14px;
+
+    }
+
+
+    .shipment-note {
+
+        padding: 14px;
+
+    }
+
+}

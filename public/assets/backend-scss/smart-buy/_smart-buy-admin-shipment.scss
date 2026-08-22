@@ -1,0 +1,1073 @@
+@use "../common" as *;
+
+
+/*==================================================
+| Page
+==================================================*/
+
+.smart-buy-shipment-page {
+    width: 100%;
+}
+
+
+/*==================================================
+| Header
+==================================================*/
+
+.smart-buy-shipment-header {
+    margin-bottom: 16px;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 20px;
+}
+
+
+.smart-buy-shipment-header > div:first-child {
+    min-width: 0;
+}
+
+
+.smart-buy-shipment-back {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 5px;
+
+    margin-bottom: 9px;
+
+    color: $body-color;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition: color .2s ease;
+
+
+    &:hover {
+        color: $theme-color;
+    }
+}
+
+
+.smart-buy-shipment-heading {
+    display: flex;
+    align-items: center;
+
+    gap: 11px;
+}
+
+
+.smart-buy-shipment-heading__icon {
+    width: 46px;
+    height: 46px;
+
+    flex: 0 0 46px;
+
+    border-radius: 10px;
+
+    background: argb($theme-color, .08);
+    color: $theme-color;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+
+    i {
+        font-size: 20px;
+    }
+}
+
+
+.smart-buy-shipment-heading > div:last-child {
+    min-width: 0;
+}
+
+
+.smart-buy-shipment-heading > div:last-child > span {
+    display: block;
+
+    margin-bottom: 2px;
+
+    color: $theme-color;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+
+.smart-buy-shipment-heading h1 {
+    margin: 0 0 3px;
+
+    color: $heading-color;
+
+    font-family: $header-fonts;
+    font-size: 24px;
+    font-weight: $head-fw;
+
+    line-height: 1.3;
+}
+
+
+.smart-buy-shipment-heading p {
+    margin: 0;
+
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+}
+
+
+.smart-buy-shipment-status {
+    min-height: 26px;
+
+    padding: 4px 9px;
+
+    border-radius: 20px;
+
+    background: #eaf7ef;
+    color: #2d8752;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 5px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+.smart-buy-shipment-status i {
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: currentColor;
+}
+
+
+/*==================================================
+| Layout
+==================================================*/
+
+.smart-buy-shipment-layout {
+    display: grid;
+
+    grid-template-columns: minmax(0, 1fr) 300px;
+
+    align-items: start;
+
+    gap: 15px;
+}
+
+
+.smart-buy-shipment-main {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 15px;
+}
+
+
+.smart-buy-shipment-sidebar {
+    min-width: 0;
+
+    position: sticky;
+
+    top: 20px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 14px;
+}
+
+
+/*==================================================
+| Card
+==================================================*/
+
+.smart-buy-shipment-card {
+    overflow: hidden;
+
+    border: 1px solid argb($dark, .07);
+    border-radius: 10px;
+
+    background: #fff;
+
+    box-shadow: 0 3px 14px argb($dark, .025);
+}
+
+
+.smart-buy-shipment-card__header {
+    min-height: 58px;
+
+    padding: 12px 16px;
+
+    border-bottom: 1px solid argb($dark, .06);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+}
+
+
+.smart-buy-shipment-card__header h2 {
+    margin: 0 0 3px;
+
+    color: $heading-color;
+
+    font-family: $header-fonts;
+    font-size: 18px;
+    font-weight: 600;
+
+    line-height: 1.3;
+}
+
+
+.smart-buy-shipment-card__header p {
+    margin: 0;
+
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+
+    line-height: 1.4;
+}
+
+
+.smart-buy-shipment-card__body {
+    padding: 16px;
+}
+
+
+/*==================================================
+| Grid
+==================================================*/
+
+.smart-buy-shipment-grid {
+    display: grid;
+
+    gap: 12px;
+
+    margin-bottom: 13px;
+}
+
+
+.smart-buy-shipment-grid:last-child {
+    margin-bottom: 0;
+}
+
+
+.smart-buy-shipment-grid--two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+
+.smart-buy-shipment-grid--three {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+
+/*==================================================
+| Field
+==================================================*/
+
+.smart-buy-shipment-field {
+    margin-bottom: 13px;
+}
+
+
+.smart-buy-shipment-grid .smart-buy-shipment-field {
+    margin-bottom: 0;
+}
+
+
+.smart-buy-shipment-field:last-child {
+    margin-bottom: 0;
+}
+
+
+.smart-buy-shipment-field label {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: $heading-color;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    line-height: 1.35;
+}
+
+
+.smart-buy-shipment-field label span {
+    color: #d45c5c;
+}
+
+
+.smart-buy-shipment-field input,
+.smart-buy-shipment-field select,
+.smart-buy-shipment-field textarea {
+    width: 100%;
+
+    border: 1px solid argb($dark, .10);
+    border-radius: 7px;
+
+    outline: none;
+
+    background: #fff;
+    color: $heading-color;
+
+    font-family: $body-fonts;
+    font-size: 14px;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+
+.smart-buy-shipment-field input,
+.smart-buy-shipment-field select {
+    height: 39px;
+
+    padding: 0 10px;
+}
+
+
+.smart-buy-shipment-field textarea {
+    min-height: 105px;
+
+    padding: 9px 10px;
+
+    resize: vertical;
+
+    line-height: 1.5;
+}
+
+
+.smart-buy-shipment-field input::placeholder,
+.smart-buy-shipment-field textarea::placeholder {
+    color: argb($body-color, 0.2);
+}
+
+
+.smart-buy-shipment-field input:focus,
+.smart-buy-shipment-field select:focus,
+.smart-buy-shipment-field textarea:focus {
+    border-color: argb($theme-color, .35);
+
+    box-shadow: 0 0 0 3px argb($theme-color, .06);
+}
+
+
+/*==================================================
+| Unit Input
+==================================================*/
+
+.smart-buy-shipment-unit-input {
+    position: relative;
+}
+
+
+.smart-buy-shipment-unit-input input {
+    padding-right: 42px;
+}
+
+
+.smart-buy-shipment-unit-input > span {
+    position: absolute;
+
+    top: 50%;
+    right: 11px;
+
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+    font-weight: 600;
+
+    transform: translateY(-50%);
+
+    pointer-events: none;
+}
+
+
+/*==================================================
+| Recipient
+==================================================*/
+
+.smart-buy-shipment-recipient {
+    margin-bottom: 14px;
+
+    padding: 10px;
+
+    border: 1px solid argb($dark, .055);
+    border-radius: 8px;
+
+    background: #fafbfc;
+
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+}
+
+
+.smart-buy-shipment-recipient__icon {
+    width: 36px;
+    height: 36px;
+
+    flex: 0 0 36px;
+
+    border-radius: 50%;
+
+    background: argb($theme-color, .08);
+    color: $theme-color;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+
+    i {
+        font-size: 16px;
+    }
+}
+
+
+.smart-buy-shipment-recipient > div:last-child {
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+
+.smart-buy-shipment-recipient span {
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+}
+
+
+.smart-buy-shipment-recipient strong {
+    color: $heading-color;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+.smart-buy-shipment-recipient small {
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+}
+
+
+/*==================================================
+| Footer Counter
+==================================================*/
+
+.smart-buy-shipment-field-footer {
+    margin-top: 4px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+}
+
+
+.smart-buy-shipment-field-footer span {
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+
+    line-height: 1.35;
+}
+
+
+.smart-buy-shipment-field-footer span:last-child {
+    color: argb($body-color, 0.8);
+
+    white-space: nowrap;
+}
+
+
+/*==================================================
+| Checkbox
+==================================================*/
+
+.smart-buy-shipment-checkbox {
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 8px;
+
+    color: $body-color;
+
+    font-size: 14px;
+
+    cursor: pointer;
+}
+
+
+.smart-buy-shipment-checkbox input {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+
+    opacity: 0;
+}
+
+
+.smart-buy-shipment-checkbox__box {
+    width: 17px;
+    height: 17px;
+
+    flex: 0 0 17px;
+
+    border: 1px solid #cfd4d7;
+    border-radius: 4px;
+
+    background: #fff;
+}
+
+
+.smart-buy-shipment-checkbox input:checked
+~ .smart-buy-shipment-checkbox__box {
+    border-color: $theme-color;
+
+    background: $theme-color;
+}
+
+
+.smart-buy-shipment-checkbox input:checked
+~ .smart-buy-shipment-checkbox__box::after {
+    content: "";
+
+    display: block;
+
+    width: 7px;
+    height: 4px;
+
+    margin: 4px 0 0 4px;
+
+    border-left: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+
+    transform: rotate(-45deg);
+}
+
+
+/*==================================================
+| Status Note
+==================================================*/
+
+.smart-buy-shipment-status-note {
+    margin-top: 10px;
+
+    padding: 9px;
+
+    border-radius: 7px;
+
+    background: #f7f9fa;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 7px;
+}
+
+
+.smart-buy-shipment-status-note > i {
+    color: $theme-color;
+
+    font-size: 15px;
+}
+
+
+.smart-buy-shipment-status-note p {
+    margin: 0;
+
+    color: argb($body-color, 0.8);
+
+    font-size: 14px;
+
+    line-height: 1.45;
+}
+
+
+/*==================================================
+| Summary
+==================================================*/
+
+.smart-buy-shipment-summary {
+    padding: 5px 15px 8px;
+}
+
+
+.smart-buy-shipment-summary > div {
+    min-height: 42px;
+
+    padding: 7px 0;
+
+    border-bottom: 1px solid argb($dark, .055);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+}
+
+
+.smart-buy-shipment-summary > div:last-child {
+    border-bottom: 0;
+}
+
+
+.smart-buy-shipment-summary span {
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+}
+
+
+.smart-buy-shipment-summary strong {
+    max-width: 155px;
+
+    overflow: hidden;
+
+    color: $heading-color;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/*==================================================
+| Tracking Preview
+==================================================*/
+
+.smart-buy-shipment-tracking-preview {
+    padding: 14px 15px 16px;
+}
+
+
+.smart-buy-shipment-tracking-line {
+    position: relative;
+
+    min-height: 60px;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 9px;
+}
+
+
+.smart-buy-shipment-tracking-line:not(:last-child)::after {
+    content: "";
+
+    position: absolute;
+
+    top: 29px;
+    left: 14px;
+
+    width: 1px;
+    height: 42px;
+
+    background: #e2e5e7;
+}
+
+
+.smart-buy-shipment-tracking-dot {
+    position: relative;
+    z-index: 1;
+
+    width: 29px;
+    height: 29px;
+
+    flex: 0 0 29px;
+
+    border: 1px solid #e0e3e5;
+    border-radius: 50%;
+
+    background: #fff;
+    color: #9aa0a5;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+
+    i {
+        font-size: 13px;
+    }
+}
+
+
+.smart-buy-shipment-tracking-dot.is-active {
+    border-color: argb($theme-color, .18);
+
+    background: argb($theme-color, .08);
+    color: $theme-color;
+}
+
+
+.smart-buy-shipment-tracking-line > div:last-child {
+    padding-top: 1px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+
+.smart-buy-shipment-tracking-line strong {
+    color: $heading-color;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+.smart-buy-shipment-tracking-line span {
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+
+    line-height: 1.35;
+}
+
+
+/*==================================================
+| Notice
+==================================================*/
+
+.smart-buy-shipment-notice {
+    padding: 12px;
+
+    border: 1px solid #e9dfc7;
+    border-radius: 9px;
+
+    background: #fffaf0;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 8px;
+}
+
+
+.smart-buy-shipment-notice__icon {
+    width: 29px;
+    height: 29px;
+
+    flex: 0 0 29px;
+
+    border-radius: 7px;
+
+    background: #fff0c9;
+    color: #a67516;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.smart-buy-shipment-notice strong {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: #765615;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+.smart-buy-shipment-notice p {
+    margin: 0;
+
+    color: #876f42;
+
+    font-size: 14px;
+
+    line-height: 1.45;
+}
+
+
+/*==================================================
+| Footer
+==================================================*/
+
+.smart-buy-shipment-footer {
+    margin-top: 15px;
+
+    padding: 12px 15px;
+
+    border: 1px solid argb($dark, .07);
+    border-radius: 10px;
+
+    background: #fff;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    box-shadow: 0 3px 14px argb($dark, .025);
+}
+
+
+.smart-buy-shipment-footer > div:first-child {
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+
+.smart-buy-shipment-footer > div:first-child span {
+    color: $heading-color;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+.smart-buy-shipment-footer > div:first-child small {
+    color: argb($body-color, 0.2);
+
+    font-size: 14px;
+}
+
+
+.smart-buy-shipment-footer__actions {
+    display: flex;
+    align-items: center;
+
+    gap: 7px;
+}
+
+
+.smart-buy-shipment-cancel,
+.smart-buy-shipment-create {
+    min-height: 38px;
+
+    padding: 0 12px;
+
+    border-radius: 7px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+
+    font-family: $body-fonts;
+    font-size: 14px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    cursor: pointer;
+}
+
+
+.smart-buy-shipment-cancel {
+    color: $body-color;
+
+
+    &:hover {
+        background: #f7f8f9;
+
+        color: $heading-color;
+    }
+}
+
+
+.smart-buy-shipment-create {
+    border: 1px solid $theme-color;
+
+    background: $theme-color;
+    color: #fff;
+
+    transition: .2s ease;
+
+
+    &:hover {
+        border-color: argb($theme-color, 7%);
+
+        background: argb($theme-color, 7%);
+    }
+}
+
+
+.smart-buy-shipment-create:disabled {
+    opacity: .65;
+
+    cursor: wait;
+}
+
+
+/*==================================================
+| Loading
+==================================================*/
+
+.smart-buy-shipment-spin {
+    animation: smartBuyShipmentSpin .8s linear infinite;
+}
+
+
+@keyframes smartBuyShipmentSpin {
+
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+/*==================================================
+| Responsive LG
+==================================================*/
+
+@include mq(lg) {
+
+    .smart-buy-shipment-layout {
+        grid-template-columns: minmax(0, 1fr) 270px;
+    }
+
+}
+
+
+/*==================================================
+| Responsive MD
+==================================================*/
+
+@include mq(md) {
+
+    .smart-buy-shipment-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+
+    .smart-buy-shipment-layout {
+        grid-template-columns: 1fr;
+    }
+
+
+    .smart-buy-shipment-sidebar {
+        position: static;
+
+        display: grid;
+
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+
+    .smart-buy-shipment-notice {
+        grid-column: 1 / -1;
+    }
+
+}
+
+
+/*==================================================
+| Responsive XS
+==================================================*/
+
+@include mq(xs) {
+
+    .smart-buy-shipment-heading h1 {
+        font-size: 20px;
+    }
+
+
+    .smart-buy-shipment-heading__icon {
+        width: 40px;
+        height: 40px;
+
+        flex-basis: 40px;
+    }
+
+
+    .smart-buy-shipment-grid--two,
+    .smart-buy-shipment-grid--three {
+        grid-template-columns: 1fr;
+    }
+
+
+    .smart-buy-shipment-card__body {
+        padding: 13px;
+    }
+
+
+    .smart-buy-shipment-sidebar {
+        grid-template-columns: 1fr;
+    }
+
+
+    .smart-buy-shipment-notice {
+        grid-column: auto;
+    }
+
+
+    .smart-buy-shipment-footer {
+        align-items: stretch;
+
+        flex-direction: column;
+    }
+
+
+    .smart-buy-shipment-footer__actions {
+        width: 100%;
+    }
+
+
+    .smart-buy-shipment-cancel,
+    .smart-buy-shipment-create {
+        flex: 1;
+    }
+
+}

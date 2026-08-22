@@ -1,0 +1,108 @@
+@use "default";
+@use "customize-bootstrap";
+@use "layout/layout";
+
+@use "auth/login";
+@use "auth/register";
+@use "auth/forgot-password";
+@use "auth/reset-password";
+@use "auth/verify-email";
+
+@use "tracking/tracking-all";
+@use "tracking/tracking-details";
+
+@use "users/user-all";
+@use "users/user-deatils";
+@use "users/user-create";
+
+@use "profile/profile-all";
+
+@use "settings/settings-general";
+@use "settings/settings-ecommerce";
+@use "settings/settings-smart-buy";
+@use "settings/audit-logs-index";
+@use "settings/audit-logs-details";
+
+@use "reports/reports-all";
+@use "reports/reports-ecommerce";
+@use "reports/reports-smart-buy";
+
+@use "notifications/notifications-all";
+
+@use "dashboard/dashboard-admin";
+@use "dashboard/dashboard-customer";
+
+@use "payments/payments-all";
+@use "payments/payments-ecommerce";
+@use "payments/payments-smart-buy";
+@use "payments/payments-failed";
+@use "payments/payments-details";
+
+@use "roles/roles-all";
+@use "roles/role-create";
+@use "roles/role-details";
+@use "roles/roles-permission";
+
+
+@use "permissions/permission-all";
+@use "permissions/permission-create";
+@use "permissions/permission-details";
+
+
+@use "account/payments";
+
+// smart-buy
+@use "smart-buy/smart-buy-admin-index";
+@use "smart-buy/smart-buy-admin-details";
+@use "smart-buy/smart-buy-admin-edit";
+@use "smart-buy/smart-buy-admin-quote";
+@use "smart-buy/smart-buy-admin-purchase";
+@use "smart-buy/smart-buy-admin-shipment";
+@use "smart-buy/smart-buy-admin-payments";
+
+@use "smart-buy/smart-buy-customer-create";
+@use "smart-buy/smart-buy-customer-confirmation";
+@use "smart-buy/smart-buy-customer-my-requests";
+@use "smart-buy/smart-buy-customer-details";
+@use "smart-buy/smart-buy-customer-quote";
+@use "smart-buy/smart-buy-customer-tracking";
+@use "smart-buy/smart-buy-customer-payment";
+@use "smart-buy/smart-buy-customer-payment-success";
+@use "smart-buy/smart-buy-customer-payment-failed";
+
+
+//Ecommerce
+@use "ecommerce/customer/customer-shop";
+@use "ecommerce/customer/customer-product-details";
+@use "ecommerce/customer/customer-cart";
+@use "ecommerce/customer/customer-checkout";
+@use "ecommerce/customer/customer-payment";
+@use "ecommerce/customer/customer-payment-success";
+@use "ecommerce/customer/customer-payment-failed";
+@use "ecommerce/customer/customer-orders";
+@use "ecommerce/customer/customer-order-details";
+@use "ecommerce/customer/customer-shipment";
+@use "ecommerce/customer/customer-tracking";
+
+@use "ecommerce/admin/products-index";
+@use "ecommerce/admin/products-create";
+@use "ecommerce/admin/products-details";
+@use "ecommerce/admin/products-edit";
+
+@use "ecommerce/admin/categories-index";
+@use "ecommerce/admin/categories-create";
+@use "ecommerce/admin/categories-details";
+@use "ecommerce/admin/categories-edit";
+
+@use "ecommerce/admin/inventory-index";
+@use "ecommerce/admin/inventory-low-stock";
+@use "ecommerce/admin/inventory-out-of-stock";
+
+@use "ecommerce/admin/orders-index";
+@use "ecommerce/admin/orders-details";
+
+@use "ecommerce/admin/payments-index";
+
+@use "ecommerce/admin/shipments-index";
+@use "ecommerce/admin/shipments-create";
+@use "ecommerce/admin/shipments-details";

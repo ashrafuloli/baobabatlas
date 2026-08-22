@@ -1,0 +1,941 @@
+@use "../common" as *;
+
+
+/*==================================================
+| Tracking Page
+==================================================*/
+
+.tracking-page {
+    width: 100%;
+}
+
+
+/*==================================================
+| Page Header
+==================================================*/
+
+.tracking-page__header {
+    margin-bottom: 18px;
+}
+
+
+.tracking-page__eyebrow {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: $theme-color;
+
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.3;
+
+    letter-spacing: .05em;
+    text-transform: uppercase;
+}
+
+
+.tracking-page__header h1 {
+    margin: 0 0 4px;
+
+    color: $heading-color;
+
+    font-family: $header-fonts;
+    font-size: 24px;
+    font-weight: $head-fw;
+    line-height: 1.3;
+}
+
+
+.tracking-page__header p {
+    margin: 0;
+
+    color: $body-color;
+
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+
+/*==================================================
+| Search Card
+==================================================*/
+
+.tracking-search-card {
+    margin-bottom: 15px;
+
+    padding: 18px;
+
+    border: 1px solid argb($theme-color, .10);
+    border-radius: 10px;
+
+    background: linear-gradient(
+        135deg,
+        argb($theme-color, .055),
+        #fff
+    );
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 13px;
+
+    box-shadow: 0 3px 14px argb($dark, .025);
+}
+
+
+.tracking-search-card__icon {
+    width: 43px;
+    height: 43px;
+
+    flex: 0 0 43px;
+
+    border-radius: 9px;
+
+    background: argb($theme-color, .09);
+    color: $theme-color;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+
+    i {
+        font-size: 20px;
+    }
+}
+
+
+.tracking-search-card__content {
+    min-width: 0;
+
+    flex: 1;
+}
+
+
+.tracking-search-card__content h2 {
+    margin: 0 0 3px;
+
+    color: $heading-color;
+
+    font-family: $header-fonts;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+
+.tracking-search-card__content > p {
+    margin: 0 0 13px;
+
+    color: $body-color;
+
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+
+.tracking-search-form {
+    width: 100%;
+
+    display: flex;
+    align-items: stretch;
+
+    gap: 8px;
+}
+
+
+.tracking-search-input {
+    position: relative;
+
+    flex: 1;
+
+    min-width: 0;
+}
+
+
+.tracking-search-input > i {
+    position: absolute;
+
+    top: 50%;
+    left: 12px;
+
+    color: argb($body-color, 10%);
+
+    font-size: 14px;
+
+    transform: translateY(-50%);
+
+    pointer-events: none;
+}
+
+
+.tracking-search-input input {
+    width: 100%;
+    height: 42px;
+
+    padding: 0 12px 0 35px;
+
+    border: 1px solid argb($dark, .10);
+    border-radius: 7px;
+
+    outline: none;
+
+    background: #fff;
+    color: $heading-color;
+
+    font-family: $body-fonts;
+    font-size: 14px;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+
+.tracking-search-input input::placeholder {
+    color: argb($body-color, 18%);
+}
+
+
+.tracking-search-input input:focus {
+    border-color: argb($theme-color, .35);
+
+    box-shadow: 0 0 0 3px argb($theme-color, .06);
+}
+
+
+.tracking-search-btn {
+    height: 42px;
+
+    padding: 0 14px;
+
+    border: 1px solid $theme-color;
+    border-radius: 7px;
+
+    background: $theme-color;
+    color: #fff;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    font-family: $body-fonts;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+
+    transition:
+        background-color .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease;
+
+
+    i {
+        font-size: 14px;
+    }
+
+
+    &:hover {
+        border-color: argb($theme-color, 70%);
+
+        background: argb($theme-color, 70%);
+
+        box-shadow: 0 5px 14px argb($theme-color, .12);
+    }
+}
+
+
+.tracking-search-help {
+    margin-top: 8px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 5px;
+
+    color: argb($body-color, 0.8);
+
+    font-size: 14px;
+    line-height: 1.35;
+
+
+    i {
+        color: $theme-color;
+
+        font-size: 14px;
+    }
+}
+
+
+/*==================================================
+| Statistics
+==================================================*/
+
+.tracking-stats {
+    margin-bottom: 15px;
+
+    display: grid;
+
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    gap: 12px;
+}
+
+
+.tracking-stat-card {
+    min-width: 0;
+
+    padding: 13px;
+
+    border: 1px solid argb($dark, .07);
+    border-radius: 9px;
+
+    background: #fff;
+
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    box-shadow: 0 3px 14px argb($dark, .025);
+}
+
+
+.tracking-stat-card__icon {
+    width: 35px;
+    height: 35px;
+
+    flex: 0 0 35px;
+
+    border-radius: 8px;
+
+    background: argb($theme-color, .07);
+    color: $theme-color;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+
+    i {
+        font-size: 16px;
+    }
+}
+
+
+.tracking-stat-card__icon--blue {
+    background: #edf3ff;
+    color: #4a70ad;
+}
+
+
+.tracking-stat-card__icon--green {
+    background: #e8f7ef;
+    color: #26834b;
+}
+
+
+.tracking-stat-card__icon--orange {
+    background: #fff4dc;
+    color: #ad7711;
+}
+
+
+.tracking-stat-card > div:last-child {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+
+.tracking-stat-card span {
+    color: argb($body-color, 10%);
+
+    font-size: 14px;
+    line-height: 1.3;
+}
+
+
+.tracking-stat-card strong {
+    color: $heading-color;
+
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+
+/*==================================================
+| Main Card
+==================================================*/
+
+.tracking-card {
+    overflow: hidden;
+
+    border: 1px solid argb($dark, .07);
+    border-radius: 10px;
+
+    background: #fff;
+
+    box-shadow: 0 3px 14px argb($dark, .035);
+}
+
+
+.tracking-card__header {
+    min-height: 58px;
+
+    padding: 12px 16px;
+
+    border-bottom: 1px solid argb($dark, .065);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+}
+
+
+.tracking-card__header h2 {
+    margin: 0 0 3px;
+
+    color: $heading-color;
+
+    font-family: $header-fonts;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+
+.tracking-card__header p {
+    margin: 0;
+
+    color: argb($body-color, 0.8);
+
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+
+.tracking-card__action {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 5px;
+
+    color: $theme-color;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+
+
+    i {
+        font-size: 14px;
+    }
+
+
+    &:hover {
+        color: argb($theme-color, 0.8);
+    }
+}
+
+
+/*==================================================
+| Table
+==================================================*/
+
+.tracking-table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+}
+
+
+.tracking-table {
+    width: 100%;
+
+    min-width: 850px;
+
+    border-collapse: collapse;
+}
+
+
+.tracking-table th {
+    height: 40px;
+
+    padding: 0 13px;
+
+    border-bottom: 1px solid argb($dark, .06);
+
+    background: #fafbfc;
+    color: argb($body-color, 7%);
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-align: left;
+
+    white-space: nowrap;
+}
+
+
+.tracking-table td {
+    height: 61px;
+
+    padding: 8px 13px;
+
+    border-bottom: 1px solid argb($dark, .055);
+
+    vertical-align: middle;
+}
+
+
+.tracking-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+
+.tracking-table tbody tr {
+    transition: background-color .2s ease;
+}
+
+
+.tracking-table tbody tr:hover {
+    background: #fcfdfd;
+}
+
+
+/*==================================================
+| Tracking Number
+==================================================*/
+
+.tracking-number {
+    color: $theme-color;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+
+/*==================================================
+| Shipment
+==================================================*/
+
+.tracking-shipment {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+}
+
+
+.tracking-shipment__icon {
+    width: 31px;
+    height: 31px;
+
+    flex: 0 0 31px;
+
+    border-radius: 7px;
+
+    background: argb($theme-color, .06);
+    color: $theme-color;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+
+    i {
+        font-size: 14px;
+    }
+}
+
+
+.tracking-shipment > div:last-child {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+
+.tracking-shipment strong {
+    overflow: hidden;
+
+    color: $heading-color;
+
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.3;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+.tracking-shipment span {
+    overflow: hidden;
+
+    color: argb($body-color, 10%);
+
+    font-size: 14px;
+    line-height: 1.3;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/*==================================================
+| Location
+==================================================*/
+
+.tracking-location {
+    display: flex;
+    align-items: center;
+
+    gap: 5px;
+
+    color: $body-color;
+
+    font-size: 14px;
+
+    white-space: nowrap;
+
+
+    i {
+        color: argb($body-color, 0.8);
+
+        font-size: 14px;
+    }
+}
+
+
+/*==================================================
+| Status
+==================================================*/
+
+.tracking-status {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 5px;
+
+    min-height: 24px;
+
+    padding: 3px 8px;
+
+    border-radius: 20px;
+
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.2;
+
+    white-space: nowrap;
+}
+
+
+.tracking-status > i {
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: currentColor;
+}
+
+
+.tracking-status--transit {
+    background: #edf3ff;
+    color: #4a70ad;
+}
+
+
+.tracking-status--delivered {
+    background: #e8f7ef;
+    color: #26834b;
+}
+
+
+.tracking-status--pending {
+    background: #fff4dc;
+    color: #ad7711;
+}
+
+
+.tracking-date {
+    color: $body-color;
+
+    font-size: 14px;
+
+    white-space: nowrap;
+}
+
+
+/*==================================================
+| View Button
+==================================================*/
+
+.tracking-view-btn {
+    width: 31px;
+    height: 31px;
+
+    border: 1px solid argb($dark, .08);
+    border-radius: 7px;
+
+    background: #fff;
+    color: $body-color;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    text-decoration: none;
+
+    transition:
+        border-color .2s ease,
+        background-color .2s ease,
+        color .2s ease;
+
+
+    i {
+        font-size: 14px;
+    }
+
+
+    &:hover {
+        border-color: argb($theme-color, .20);
+
+        background: argb($theme-color, .05);
+
+        color: $theme-color;
+    }
+}
+
+
+/*==================================================
+| Card Footer
+==================================================*/
+
+.tracking-card__footer {
+    min-height: 47px;
+
+    padding: 8px 13px;
+
+    border-top: 1px solid argb($dark, .055);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+}
+
+
+.tracking-card__footer > span {
+    color: argb($body-color, 10%);
+
+    font-size: 14px;
+}
+
+
+.tracking-card__footer > a {
+    color: $theme-color;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+
+    i {
+        margin-left: 3px;
+
+        font-size: 14px;
+    }
+
+
+    &:hover {
+        color: argb($theme-color, 0.8);
+    }
+}
+
+
+/*==================================================
+| Empty State
+==================================================*/
+
+.tracking-empty-state {
+    display: none;
+
+    margin-top: 15px;
+
+    padding: 40px 20px;
+
+    border: 1px solid argb($dark, .07);
+    border-radius: 10px;
+
+    background: #fff;
+
+    text-align: center;
+
+    box-shadow: 0 3px 14px argb($dark, .025);
+}
+
+
+.tracking-empty-state__icon {
+    width: 48px;
+    height: 48px;
+
+    margin: 0 auto 10px;
+
+    border-radius: 50%;
+
+    background: argb($theme-color, .07);
+    color: $theme-color;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+
+    i {
+        font-size: 20px;
+    }
+}
+
+
+.tracking-empty-state h2 {
+    margin: 0 0 5px;
+
+    color: $heading-color;
+
+    font-family: $header-fonts;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+
+.tracking-empty-state p {
+    max-width: 430px;
+
+    margin: 0 auto;
+
+    color: $body-color;
+
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+
+/*==================================================
+| Responsive - LG
+==================================================*/
+
+@include mq(lg) {
+
+    .tracking-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+/*==================================================
+| Responsive - MD
+==================================================*/
+
+@include mq(md) {
+
+    .tracking-search-card {
+        align-items: flex-start;
+    }
+
+}
+
+
+/*==================================================
+| Responsive - XS
+==================================================*/
+
+@include mq(xs) {
+
+    .tracking-page__header h1 {
+        font-size: 20px;
+    }
+
+
+    .tracking-search-card {
+        padding: 14px;
+
+        flex-direction: column;
+    }
+
+
+    .tracking-search-card__icon {
+        width: 38px;
+        height: 38px;
+
+        flex-basis: 38px;
+    }
+
+
+    .tracking-search-form {
+        flex-direction: column;
+    }
+
+
+    .tracking-search-btn {
+        width: 100%;
+    }
+
+
+    .tracking-stats {
+        grid-template-columns: 1fr;
+
+        gap: 8px;
+    }
+
+
+    .tracking-card__header {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        padding: 12px 13px;
+    }
+
+
+    .tracking-card__footer {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        padding: 10px 13px;
+    }
+}
