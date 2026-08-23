@@ -371,7 +371,7 @@
                         <td>
 
                             <a
-                                href="{{ route('smart-buy-details', 125) }}"
+                                href="{{ route('smart-buy.details', 125) }}"
                                 class="smart-buy-payment-request"
                             >
 
@@ -456,7 +456,7 @@
                         <td>
 
                             <a
-                                href="{{ route('smart-buy-details', 125) }}"
+                                href="{{ route('smart-buy.details', 125) }}"
                                 class="smart-buy-payment-action"
                                 aria-label="View payment"
                             >
@@ -495,7 +495,7 @@
                         <td>
 
                             <a
-                                href="{{ route('smart-buy-details', 124) }}"
+                                href="{{ route('smart-buy.details', 124) }}"
                                 class="smart-buy-payment-request"
                             >
 
@@ -580,7 +580,7 @@
                         <td>
 
                             <a
-                                href="{{ route('smart-buy-details', 124) }}"
+                                href="{{ route('smart-buy.details', 124) }}"
                                 class="smart-buy-payment-action"
                             >
 
@@ -618,7 +618,7 @@
                         <td>
 
                             <a
-                                href="{{ route('smart-buy-details', 123) }}"
+                                href="{{ route('smart-buy.details', 123) }}"
                                 class="smart-buy-payment-request"
                             >
 
@@ -703,7 +703,7 @@
                         <td>
 
                             <a
-                                href="{{ route('smart-buy-details', 123) }}"
+                                href="{{ route('smart-buy.details', 123) }}"
                                 class="smart-buy-payment-action"
                             >
 
@@ -741,7 +741,7 @@
                         <td>
 
                             <a
-                                href="{{ route('smart-buy-details', 122) }}"
+                                href="{{ route('smart-buy.details', 122) }}"
                                 class="smart-buy-payment-request"
                             >
 
@@ -826,7 +826,7 @@
                         <td>
 
                             <a
-                                href="{{ route('smart-buy-details', 122) }}"
+                                href="{{ route('smart-buy.details', 122) }}"
                                 class="smart-buy-payment-action"
                             >
 
@@ -864,7 +864,7 @@
                         <td>
 
                             <a
-                                href="{{ route('smart-buy-details', 121) }}"
+                                href="{{ route('smart-buy.details', 121) }}"
                                 class="smart-buy-payment-request"
                             >
 
@@ -949,7 +949,7 @@
                         <td>
 
                             <a
-                                href="{{ route('smart-buy-details', 121) }}"
+                                href="{{ route('smart-buy.details', 121) }}"
                                 class="smart-buy-payment-action"
                             >
 

@@ -11,55 +11,97 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('smart_buy_items', function (Blueprint $table) {
+        Schema::create('smart_buy_shipments', function (Blueprint $table) {
 
             $table->id();
 
 
             /*
             |--------------------------------------------------------------------------
-            | Parent Smart Buy Request
+            | Smart Buy Request
             |--------------------------------------------------------------------------
             */
 
             $table->foreignId('smart_buy_request_id')
+                ->unique()
                 ->constrained('smart_buy_requests')
                 ->cascadeOnDelete();
 
 
             /*
             |--------------------------------------------------------------------------
-            | Product Information
+            | Shipment Information
             |--------------------------------------------------------------------------
             */
 
-            $table->string('product_url', 2048);
+            $table->string('tracking_number')
+                ->nullable()
+                ->index();
 
-            $table->string('product_name');
-
-            $table->unsignedInteger('quantity')
-                ->default(1);
-
-            $table->string('size')
+            $table->string('carrier')
                 ->nullable();
 
-            $table->string('color')
+            $table->string('tracking_url')
                 ->nullable();
 
 
             /*
             |--------------------------------------------------------------------------
-            | Product Image
+            | Shipping Status
+            |--------------------------------------------------------------------------
+            |
+            | pending
+            | preparing
+            | shipped
+            | in_transit
+            | delivered
+            | cancelled
+            |
+            */
+
+            $table->string('status')
+                ->default('pending')
+                ->index();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Shipping Dates
             |--------------------------------------------------------------------------
             */
 
-            $table->string('product_image')
+            $table->timestamp('shipped_at')
+                ->nullable();
+
+            $table->timestamp('estimated_delivery_at')
+                ->nullable();
+
+            $table->timestamp('delivered_at')
                 ->nullable();
 
 
             /*
             |--------------------------------------------------------------------------
-            | Additional Information
+            | Delivery Information
+            |--------------------------------------------------------------------------
+            */
+
+            $table->string('country')
+                ->nullable();
+
+            $table->string('city')
+                ->nullable();
+
+            $table->string('zip_code')
+                ->nullable();
+
+            $table->text('delivery_address')
+                ->nullable();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Additional Notes
             |--------------------------------------------------------------------------
             */
 
@@ -69,19 +111,14 @@ return new class extends Migration
 
             /*
             |--------------------------------------------------------------------------
-            | Item Status
+            | Created By
             |--------------------------------------------------------------------------
-            |
-            | pending
-            | quoted
-            | purchased
-            | unavailable
-            |
             */
 
-            $table->string('status')
-                ->default('pending')
-                ->index();
+            $table->foreignId('created_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
 
 
             /*
@@ -101,6 +138,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('smart_buy_items');
+        Schema::dropIfExists('smart_buy_shipments');
     }
 };

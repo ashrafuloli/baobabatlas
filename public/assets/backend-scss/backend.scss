@@ -55,7 +55,9 @@
 @use "smart-buy/smart-buy-admin-index";
 @use "smart-buy/smart-buy-admin-details";
 @use "smart-buy/smart-buy-admin-edit";
-@use "smart-buy/smart-buy-admin-quote";
+@use "smart-buy/smart-buy-admin-quote-create";
+@use "smart-buy/smart-buy-admin-quote-show";
+@use "smart-buy/smart-buy-admin-quote-edit";
 @use "smart-buy/smart-buy-admin-purchase";
 @use "smart-buy/smart-buy-admin-shipment";
 @use "smart-buy/smart-buy-admin-payments";

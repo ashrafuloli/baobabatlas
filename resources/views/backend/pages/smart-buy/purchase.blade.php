@@ -12,7 +12,7 @@
             <div>
 
                 <a
-                    href="{{ route('smart-buy-details', 1) }}"
+                    href="{{ route('smart-buy.details', 1) }}"
                     class="smart-buy-purchase-back"
                 >
                     <i class="ri-arrow-left-line"></i>
@@ -784,7 +784,7 @@
                 <div class="smart-buy-purchase-footer__actions">
 
                     <a
-                        href="{{ route('smart-buy-details', 1) }}"
+                        href="{{ route('smart-buy.details', 1) }}"
                         class="smart-buy-purchase-cancel"
                         id="cancelPurchase"
                     >

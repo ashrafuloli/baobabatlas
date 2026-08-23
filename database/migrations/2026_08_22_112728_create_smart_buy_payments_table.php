@@ -11,78 +11,109 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('smart_buy_requests', function (Blueprint $table) {
+        Schema::create('smart_buy_payments', function (Blueprint $table) {
 
             $table->id();
 
 
             /*
             |--------------------------------------------------------------------------
-            | Customer
+            | Smart Buy Request
             |--------------------------------------------------------------------------
             */
 
-            $table->foreignId('user_id')
-                ->nullable()
-                ->constrained()
-                ->nullOnDelete();
+            $table->foreignId('smart_buy_request_id')
+                ->unique()
+                ->constrained('smart_buy_requests')
+                ->cascadeOnDelete();
 
 
             /*
             |--------------------------------------------------------------------------
-            | Request Number
+            | Smart Buy Quote
             |--------------------------------------------------------------------------
             */
 
-            $table->string('request_number')
+            $table->foreignId('smart_buy_quote_id')
+                ->constrained('smart_buy_quotes')
+                ->cascadeOnDelete();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Payment Number
+            |--------------------------------------------------------------------------
+            */
+
+            $table->string('payment_number')
                 ->unique();
 
 
             /*
             |--------------------------------------------------------------------------
-            | Customer Information
+            | Amount
             |--------------------------------------------------------------------------
             */
 
-            $table->string('first_name');
-
-            $table->string('last_name');
-
-            $table->string('phone');
-
-            $table->string('email');
+            $table->decimal(
+                'amount',
+                15,
+                2
+            );
 
 
             /*
             |--------------------------------------------------------------------------
-            | Delivery Information
+            | Currency
             |--------------------------------------------------------------------------
             */
 
-            $table->string('country');
+            $table->string('currency', 10)
+                ->default('USD');
 
-            $table->string('city');
 
-            $table->string('zip_code')
+            /*
+            |--------------------------------------------------------------------------
+            | Payment Method
+            |--------------------------------------------------------------------------
+            */
+
+            $table->string('payment_method')
                 ->nullable();
 
-            $table->text('delivery_address');
+
+            /*
+            |--------------------------------------------------------------------------
+            | Payment Gateway
+            |--------------------------------------------------------------------------
+            */
+
+            $table->string('payment_gateway')
+                ->nullable();
 
 
             /*
             |--------------------------------------------------------------------------
-            | Request Status
+            | Transaction Reference
+            |--------------------------------------------------------------------------
+            */
+
+            $table->string('transaction_id')
+                ->nullable()
+                ->index();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Payment Status
             |--------------------------------------------------------------------------
             |
             | pending
-            | quote_sent
-            | quote_accepted
-            | quote_rejected
-            | payment_completed
-            | product_purchased
-            | in_transit
+            | processing
             | completed
+            | failed
             | cancelled
+            | refunded
             |
             */
 
@@ -93,57 +124,21 @@ return new class extends Migration
 
             /*
             |--------------------------------------------------------------------------
-            | Status Management
+            | Payment Dates
             |--------------------------------------------------------------------------
             */
 
-            $table->timestamp('status_updated_at')
-                ->nullable();
-
-            $table->foreignId('status_updated_by')
-                ->nullable()
-                ->constrained('users')
-                ->nullOnDelete();
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Admin Notes
-            |--------------------------------------------------------------------------
-            */
-
-            $table->text('admin_notes')
+            $table->timestamp('paid_at')
                 ->nullable();
 
 
             /*
             |--------------------------------------------------------------------------
-            | Important Workflow Dates
+            | Additional Notes
             |--------------------------------------------------------------------------
             */
 
-            $table->timestamp('quoted_at')
-                ->nullable();
-
-            $table->timestamp('quote_accepted_at')
-                ->nullable();
-
-            $table->timestamp('quote_rejected_at')
-                ->nullable();
-
-            $table->timestamp('payment_completed_at')
-                ->nullable();
-
-            $table->timestamp('product_purchased_at')
-                ->nullable();
-
-            $table->timestamp('shipped_at')
-                ->nullable();
-
-            $table->timestamp('completed_at')
-                ->nullable();
-
-            $table->timestamp('cancelled_at')
+            $table->text('notes')
                 ->nullable();
 
 
@@ -164,6 +159,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('smart_buy_requests');
+        Schema::dropIfExists('smart_buy_payments');
     }
 };

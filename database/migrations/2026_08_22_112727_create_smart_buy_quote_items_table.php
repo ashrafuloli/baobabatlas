@@ -11,20 +11,32 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('smart_buy_items', function (Blueprint $table) {
+        Schema::create('smart_buy_quote_items', function (Blueprint $table) {
 
             $table->id();
 
 
             /*
             |--------------------------------------------------------------------------
-            | Parent Smart Buy Request
+            | Quote
             |--------------------------------------------------------------------------
             */
 
-            $table->foreignId('smart_buy_request_id')
-                ->constrained('smart_buy_requests')
+            $table->foreignId('smart_buy_quote_id')
+                ->constrained('smart_buy_quotes')
                 ->cascadeOnDelete();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Original Smart Buy Item
+            |--------------------------------------------------------------------------
+            */
+
+            $table->foreignId('smart_buy_item_id')
+                ->nullable()
+                ->constrained('smart_buy_items')
+                ->nullOnDelete();
 
 
             /*
@@ -33,55 +45,40 @@ return new class extends Migration
             |--------------------------------------------------------------------------
             */
 
-            $table->string('product_url', 2048);
-
             $table->string('product_name');
 
             $table->unsignedInteger('quantity')
                 ->default(1);
 
-            $table->string('size')
-                ->nullable();
-
-            $table->string('color')
-                ->nullable();
-
 
             /*
             |--------------------------------------------------------------------------
-            | Product Image
+            | Pricing
             |--------------------------------------------------------------------------
             */
 
-            $table->string('product_image')
-                ->nullable();
+            $table->decimal(
+                'unit_price',
+                15,
+                2
+            )->default(0);
+
+
+            $table->decimal(
+                'total_price',
+                15,
+                2
+            )->default(0);
 
 
             /*
             |--------------------------------------------------------------------------
-            | Additional Information
+            | Additional Notes
             |--------------------------------------------------------------------------
             */
 
             $table->text('notes')
                 ->nullable();
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Item Status
-            |--------------------------------------------------------------------------
-            |
-            | pending
-            | quoted
-            | purchased
-            | unavailable
-            |
-            */
-
-            $table->string('status')
-                ->default('pending')
-                ->index();
 
 
             /*
@@ -101,6 +98,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('smart_buy_items');
+        Schema::dropIfExists('smart_buy_quote_items');
     }
 };

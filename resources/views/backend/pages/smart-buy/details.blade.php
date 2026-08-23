@@ -4,546 +4,437 @@
 
 @section('content')
 
+    @php
+
+        $statusLabels = [
+            'pending' => 'Pending',
+            'quote_sent' => 'Quote Sent',
+            'quote_accepted' => 'Quote Accepted',
+            'quote_rejected' => 'Quote Rejected',
+            'payment_pending' => 'Payment Pending',
+            'payment_completed' => 'Payment Completed',
+            'product_purchased' => 'Product Purchased',
+            'in_transit' => 'In Transit',
+            'completed' => 'Completed',
+            'cancelled' => 'Cancelled',
+        ];
+
+        $statusClasses = [
+            'pending' => 'status-pending',
+            'quote_sent' => 'status-info',
+            'quote_accepted' => 'status-success',
+            'quote_rejected' => 'status-danger',
+            'payment_pending' => 'status-warning',
+            'payment_completed' => 'status-success',
+            'product_purchased' => 'status-info',
+            'in_transit' => 'status-info',
+            'completed' => 'status-success',
+            'cancelled' => 'status-danger',
+        ];
+
+        $quote =
+            $smartBuy->latestQuote
+            ?? $smartBuy->quote;
+
+        $hasQuote = !empty($quote);
+
+    @endphp
+
+
     <div class="smart-buy-details-page">
 
-        {{-- ==========================================================
-        | Page Header
-        =========================================================== --}}
 
-        <div class="smart-buy-details-header">
+        {{-- ============================================================
+            PAGE HEADER
+        ============================================================ --}}
 
-            <div class="smart-buy-details-header__left">
+        <div class="smart-buy-page-header">
+
+            <div class="header-left">
 
                 <a
                     href="{{ route('smart-buy') }}"
-                    class="smart-buy-details-back"
+                    class="back-link"
                 >
                     <i class="ri-arrow-left-line"></i>
 
                     <span>
-                    Back to Smart Buy
-                </span>
+                        Back to Smart Buy
+                    </span>
                 </a>
 
 
-                <div class="smart-buy-details-title">
-
-                    <div class="smart-buy-details-title__icon">
-
-                        <i class="ri-shopping-bag-3-line"></i>
-
-                    </div>
-
+                <div class="request-title-row">
 
                     <div>
 
-                    <span class="smart-buy-details-eyebrow">
-                        Smart Buy Request
-                    </span>
+                        <span class="request-label">
+                            Smart Buy Request
+                        </span>
 
                         <h1>
-                            SB-2026-00128
+                            {{ $smartBuy->request_number }}
                         </h1>
 
-                        <p>
-                            Created Aug 16, 2026 · Request #128
-                        </p>
-
                     </div>
+
+
+                    <span
+                        class="status-badge {{ $statusClasses[$smartBuy->status] ?? 'status-pending' }}"
+                    >
+                        {{ $statusLabels[$smartBuy->status] ?? ucwords(str_replace('_', ' ', $smartBuy->status)) }}
+                    </span>
 
                 </div>
 
             </div>
 
 
-            <div class="smart-buy-details-header__actions">
+            <div class="header-actions">
 
-            <span class="smart-buy-details-status smart-buy-details-status--pending">
+                @if(!$hasQuote)
 
-                <i></i>
+                    <a
+                        href="{{ route('smart-buy.quote.create' , $smartBuy->id ) }}"
+                        class="btn btn-primary"
+                    >
+                        <i class="ri-file-add-line"></i>
 
-                Pending Review
+                        <span>
+                            Create Quote
+                        </span>
+                    </a>
 
-            </span>
+                @else
+
+                    <a
+                        href="{{ route('smart-buy.quote.show' , $quote->id ) }}"
+                        class="btn btn-secondary"
+                    >
+                        <i class="ri-eye-line"></i>
+
+                        <span>
+                            View Quote
+                        </span>
+                    </a>
 
 
-                <a
-                    href="{{ route('smart-buy-edit', 1) }}"
-                    class="smart-buy-details-outline-btn"
+                    <a
+                        href="{{ route('smart-buy.quote.edit' , $quote->id ) }}"
+                        class="btn btn-primary"
+                    >
+                        <i class="ri-edit-line"></i>
+
+                        <span>
+                            Edit Quote
+                        </span>
+                    </a>
+
+                @endif
+
+
+                <button
+                    type="button"
+                    class="btn btn-outline"
+                    onclick="document.getElementById('status-section').scrollIntoView({ behavior: 'smooth' })"
                 >
-
-                    <i class="ri-edit-line"></i>
+                    <i class="ri-pencil-line"></i>
 
                     <span>
-                    Edit Request
-                </span>
-
-                </a>
-
-
-                <a
-                    href="{{ route('smart-buy-admin-quote', 1) }}"
-                    class="smart-buy-details-primary-btn"
-                >
-
-                    <i class="ri-file-edit-line"></i>
-
-                    <span>
-                    Prepare Quote
-                </span>
-
-                </a>
+                        Update Status
+                    </span>
+                </button>
 
             </div>
 
         </div>
 
 
+        {{-- ============================================================
+            MAIN GRID
+        ============================================================ --}}
 
-        {{-- ==========================================================
-        | Progress
-        =========================================================== --}}
+        <div class="smart-buy-content-grid">
 
-        <section class="smart-buy-details-progress-card">
 
-            <div class="smart-buy-details-progress-header">
+            {{-- ========================================================
+                LEFT COLUMN
+            ======================================================== --}}
 
-                <div>
+            <div class="main-column">
 
-                <span>
-                    Request Progress
-                </span>
 
-                    <strong>
-                        Pending Review
-                    </strong>
+                {{-- ====================================================
+                    REQUESTED PRODUCTS
+                ==================================================== --}}
 
-                </div>
+                <div class="smart-buy-card">
 
-                <span>
-                Step 1 of 6
-            </span>
+                    <div class="card-header">
 
-            </div>
+                        <div class="card-heading">
 
-
-            <div class="smart-buy-details-progress">
-
-                <div class="smart-buy-details-progress__line">
-
-                    <span style="width: 10%;"></span>
-
-                </div>
-
-
-                <div class="smart-buy-details-progress-step smart-buy-details-progress-step--active">
-
-                <span>
-                    <i class="ri-file-list-3-line"></i>
-                </span>
-
-                    <strong>
-                        Request
-                    </strong>
-
-                </div>
-
-
-                <div class="smart-buy-details-progress-step">
-
-                <span>
-                    <i class="ri-file-edit-line"></i>
-                </span>
-
-                    <strong>
-                        Quote
-                    </strong>
-
-                </div>
-
-
-                <div class="smart-buy-details-progress-step">
-
-                <span>
-                    <i class="ri-bank-card-line"></i>
-                </span>
-
-                    <strong>
-                        Payment
-                    </strong>
-
-                </div>
-
-
-                <div class="smart-buy-details-progress-step">
-
-                <span>
-                    <i class="ri-shopping-cart-2-line"></i>
-                </span>
-
-                    <strong>
-                        Purchase
-                    </strong>
-
-                </div>
-
-
-                <div class="smart-buy-details-progress-step">
-
-                <span>
-                    <i class="ri-truck-line"></i>
-                </span>
-
-                    <strong>
-                        Shipment
-                    </strong>
-
-                </div>
-
-
-                <div class="smart-buy-details-progress-step">
-
-                <span>
-                    <i class="ri-checkbox-circle-line"></i>
-                </span>
-
-                    <strong>
-                        Completed
-                    </strong>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        {{-- ==========================================================
-        | Main Layout
-        =========================================================== --}}
-
-        <div class="smart-buy-details-layout">
-
-
-            {{-- ======================================================
-            | Main Content
-            ======================================================= --}}
-
-            <div class="smart-buy-details-main">
-
-
-                {{-- ==================================================
-                | Product Request
-                =================================================== --}}
-
-                <section class="smart-buy-details-card">
-
-                    <div class="smart-buy-details-card__header">
-
-                        <div>
-
-                            <h2>
-                                Product Request
-                            </h2>
-
-                            <p>
-                                Product information provided by the customer.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="smart-buy-product-details">
-
-                        <div class="smart-buy-product-details__image">
-
-                            <i class="ri-shopping-bag-3-line"></i>
-
-                        </div>
-
-
-                        <div class="smart-buy-product-details__content">
-
-                            <div class="smart-buy-product-details__top">
-
-                                <div>
-
-                                <span>
-                                    Product
-                                </span>
-
-                                    <h3>
-                                        MacBook Pro 14-inch
-                                    </h3>
-
-                                </div>
-
-
-                                <span class="smart-buy-product-tag">
-                                Electronics
-                            </span>
-
+                            <div class="card-icon">
+                                <i class="ri-shopping-bag-3-line"></i>
                             </div>
 
+                            <div>
 
-                            <p>
-                                Apple MacBook Pro 14-inch with M-series chip, 16GB RAM and 512GB storage.
-                                Customer requested this product from an international supplier.
-                            </p>
+                                <h2>
+                                    Requested Products
+                                </h2>
 
-
-                            <div class="smart-buy-product-meta">
-
-                                <div>
-
-                                <span>
-                                    Quantity
-                                </span>
-
-                                    <strong>
-                                        1 Unit
-                                    </strong>
-
-                                </div>
-
-
-                                <div>
-
-                                <span>
-                                    Preferred Condition
-                                </span>
-
-                                    <strong>
-                                        Brand New
-                                    </strong>
-
-                                </div>
-
-
-                                <div>
-
-                                <span>
-                                    Preferred Source
-                                </span>
-
-                                    <strong>
-                                        Official Retailer
-                                    </strong>
-
-                                </div>
+                                <p>
+                                    Products requested by the customer
+                                </p>
 
                             </div>
 
                         </div>
 
-                    </div>
 
-                </section>
+                        <span class="item-count">
 
+                            {{ $smartBuy->items->count() }}
 
+                            {{ Str::plural('Item', $smartBuy->items->count()) }}
 
-                {{-- ==================================================
-                | Delivery Information
-                =================================================== --}}
-
-                <section class="smart-buy-details-card">
-
-                    <div class="smart-buy-details-card__header">
-
-                        <div>
-
-                            <h2>
-                                Delivery Information
-                            </h2>
-
-                            <p>
-                                Destination and shipping information provided by the customer.
-                            </p>
-
-                        </div>
+                        </span>
 
                     </div>
 
 
-                    <div class="smart-buy-delivery-grid">
+                    <div class="requested-products">
 
-                        <div class="smart-buy-info-item">
+                        @forelse($smartBuy->items as $index => $item)
 
-                        <span>
-                            Recipient Name
-                        </span>
+                            @php
 
-                            <strong>
-                                John Doe
-                            </strong>
+                                $image =
+                                    $item->image
+                                    ?? $item->product_image
+                                    ?? $item->image_url
+                                    ?? null;
 
-                        </div>
-
-
-                        <div class="smart-buy-info-item">
-
-                        <span>
-                            Phone Number
-                        </span>
-
-                            <strong>
-                                +224 620 000 000
-                            </strong>
-
-                        </div>
+                            @endphp
 
 
-                        <div class="smart-buy-info-item smart-buy-info-item--full">
-
-                        <span>
-                            Delivery Address
-                        </span>
-
-                            <strong>
-                                24 Rue de Paris, Conakry, Guinea
-                            </strong>
-
-                        </div>
+                            <div class="requested-product">
 
 
-                        <div class="smart-buy-info-item">
-
-                        <span>
-                            Country
-                        </span>
-
-                            <strong>
-                                Guinea
-                            </strong>
-
-                        </div>
+                                <div class="product-main-row">
 
 
-                        <div class="smart-buy-info-item">
+                                    {{-- Product Image / Number --}}
 
-                        <span>
-                            City
-                        </span>
+                                    <div class="product-image-wrap">
 
-                            <strong>
-                                Conakry
-                            </strong>
+                                        @if($image)
 
-                        </div>
+                                            <img
+                                                src="{{ asset($image) }}"
+                                                alt="{{ $item->product_name ?? 'Product' }}"
+                                                class="product-image"
+                                            >
+
+                                        @else
+
+                                            <div class="product-number">
+
+                                                {{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
+
+                                            </div>
+
+                                        @endif
+
+                                    </div>
 
 
-                        <div class="smart-buy-info-item">
+                                    {{-- Product Information --}}
 
-                        <span>
-                            Postal Code
-                        </span>
+                                    <div class="product-info">
 
-                            <strong>
-                                001
-                            </strong>
+                                        <div class="product-title-row">
 
-                        </div>
+                                            <h3>
+                                                {{ $item->product_name ?? 'Product Request' }}
+                                            </h3>
+
+
+                                            <div class="product-quantity">
+
+                                                <span>
+                                                    Qty:
+                                                </span>
+
+                                                <strong>
+                                                    {{ $item->quantity ?? 1 }}
+                                                </strong>
+
+                                            </div>
+
+                                        </div>
+
+
+                                        @if(!empty($item->product_url))
+
+                                            <a
+                                                href="{{ $item->product_url }}"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                class="view-product"
+                                            >
+                                                <i class="ri-external-link-line"></i>
+
+                                                View Product
+                                            </a>
+
+                                        @endif
+
+
+
+                                        {{-- Product Attributes --}}
+
+                                        <div class="product-meta">
+
+                                            <span class="product-meta-item">
+
+                                                <span class="meta-label">
+                                                    Qty:
+                                                </span>
+
+                                                <strong>
+                                                    {{ $item->quantity ?? 1 }}
+                                                </strong>
+
+                                            </span>
+
+
+                                            @if(!empty($item->size))
+
+                                                <span class="product-meta-item">
+
+                                                    <span class="meta-label">
+                                                        Size:
+                                                    </span>
+
+                                                    <strong>
+                                                        {{ $item->size }}
+                                                    </strong>
+
+                                                </span>
+
+                                            @endif
+
+
+                                            @if(!empty($item->color))
+
+                                                <span class="product-meta-item">
+
+                                                    <span class="meta-label">
+                                                        Color:
+                                                    </span>
+
+                                                    <strong>
+                                                        {{ $item->color }}
+                                                    </strong>
+
+                                                </span>
+
+                                            @endif
+
+
+                                            @if(!empty($item->variant))
+
+                                                <span class="product-meta-item">
+
+                                                    <span class="meta-label">
+                                                        Variant:
+                                                    </span>
+
+                                                    <strong>
+                                                        {{ $item->variant }}
+                                                    </strong>
+
+                                                </span>
+
+                                            @endif
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                {{-- Product Notes --}}
+
+                                @if(!empty($item->notes))
+
+                                    <div class="product-notes">
+
+                                        <strong>
+                                            Notes:
+                                        </strong>
+
+                                        <span>
+                                            {{ $item->notes }}
+                                        </span>
+
+                                    </div>
+
+                                @endif
+
+
+                            </div>
+
+                        @empty
+
+                            <div class="empty-state small-empty">
+
+                                <div class="empty-icon">
+                                    <i class="ri-inbox-line"></i>
+                                </div>
+
+                                <h3>
+                                    No products found
+                                </h3>
+
+                                <p>
+                                    No products have been added to this request.
+                                </p>
+
+                            </div>
+
+                        @endforelse
 
                     </div>
 
-                </section>
+                </div>
 
 
+                {{-- ====================================================
+                    QUOTE DETAILS
+                ==================================================== --}}
 
-                {{-- ==================================================
-                | Customer Notes
-                =================================================== --}}
+                <div class="smart-buy-card">
 
-                <section class="smart-buy-details-card">
+                    <div class="card-header">
 
-                    <div class="smart-buy-details-card__header">
+                        <div class="card-heading">
 
-                        <div>
-
-                            <h2>
-                                Customer Notes
-                            </h2>
-
-                            <p>
-                                Additional information submitted with this request.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="smart-buy-customer-note">
-
-                        <i class="ri-chat-quote-line"></i>
-
-                        <p>
-                            Please make sure the product is brand new and comes with the original
-                            manufacturer warranty. I would prefer the fastest available shipping option.
-                        </p>
-
-                    </div>
-
-                </section>
-
-
-
-                {{-- ==================================================
-                | Request Timeline
-                =================================================== --}}
-
-                <section class="smart-buy-details-card">
-
-                    <div class="smart-buy-details-card__header">
-
-                        <div>
-
-                            <h2>
-                                Request Timeline
-                            </h2>
-
-                            <p>
-                                Activity and status changes for this Smart Buy request.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="smart-buy-details-timeline">
-
-
-                        <div class="smart-buy-details-timeline-item smart-buy-details-timeline-item--active">
-
-                            <div class="smart-buy-details-timeline-item__indicator">
-
-                            <span>
+                            <div class="card-icon">
                                 <i class="ri-file-list-3-line"></i>
-                            </span>
-
                             </div>
 
+                            <div>
 
-                            <div class="smart-buy-details-timeline-item__content">
-
-                                <div>
-
-                                    <h3>
-                                        Request Submitted
-                                    </h3>
-
-                                    <time>
-                                        Aug 16, 2026 · 09:42 AM
-                                    </time>
-
-                                </div>
+                                <h2>
+                                    Quote Details
+                                </h2>
 
                                 <p>
-                                    Customer submitted a new Smart Buy request.
+                                    Latest quote and pricing information
                                 </p>
 
                             </div>
@@ -551,35 +442,127 @@
                         </div>
 
 
+                        @if($quote)
 
-                        <div class="smart-buy-details-timeline-item">
-
-                            <div class="smart-buy-details-timeline-item__indicator">
-
-                            <span>
-                                <i class="ri-user-line"></i>
+                            <span
+                                class="quote-status-badge {{ $statusClasses[$quote->status] ?? 'status-pending' }}"
+                            >
+                                {{ ucwords(str_replace('_', ' ', $quote->status ?? 'pending')) }}
                             </span>
+
+                        @else
+
+                            <span class="quote-status-badge pending">
+                                No Quote
+                            </span>
+
+                        @endif
+
+                    </div>
+
+
+                    @if($quote)
+
+                        {{-- Quote Summary --}}
+
+                        <div class="quote-summary-grid">
+
+                            <div class="quote-summary-item">
+
+                                <span>
+                                    Quote Number
+                                </span>
+
+                                <strong>
+                                    {{ $quote->quote_number ?? ('#' . $quote->id) }}
+                                </strong>
 
                             </div>
 
 
-                            <div class="smart-buy-details-timeline-item__content">
+                            <div class="quote-summary-item">
 
-                                <div>
+                                <span>
+                                    Total Amount
+                                </span>
 
-                                    <h3>
-                                        Request Received
-                                    </h3>
+                                <strong class="quote-total">
 
-                                    <time>
-                                        Aug 16, 2026 · 09:43 AM
-                                    </time>
+                                    {{ $quote->currency ?? 'USD' }}
 
-                                </div>
+                                    {{ number_format(
+                                        $quote->total_amount
+                                        ?? $quote->amount
+                                        ?? 0,
+                                        2
+                                    ) }}
 
-                                <p>
-                                    Request was received by the Baobab Atlas system.
-                                </p>
+                                </strong>
+
+                            </div>
+
+
+                            <div class="quote-summary-item">
+
+                                <span>
+                                    Created
+                                </span>
+
+                                <strong>
+
+                                    {{ optional($quote->created_at)->format('M d, Y') ?? '—' }}
+
+                                </strong>
+
+                            </div>
+
+
+                            <div class="quote-summary-item">
+
+                                <span>
+                                    Last Updated
+                                </span>
+
+                                <strong>
+
+                                    {{ optional($quote->updated_at)->diffForHumans() ?? '—' }}
+
+                                </strong>
+
+                            </div>
+
+
+                            <div class="quote-summary-item">
+
+                                <span>
+                                    Items
+                                </span>
+
+                                <strong>
+
+                                    {{ optional($quote->quoteItems)->count() ?? 0 }}
+
+                                    {{ Str::plural(
+                                        'Item',
+                                        optional($quote->quoteItems)->count() ?? 0
+                                    ) }}
+
+                                </strong>
+
+                            </div>
+
+
+                            <div class="quote-summary-item">
+
+                                <span>
+                                    Status
+                                </span>
+
+                                <strong>
+
+                                    {{ ucwords(str_replace('_', ' ', $quote->status ?? 'pending')) }}
+
+                                </strong>
 
                             </div>
 
@@ -587,30 +570,245 @@
 
 
 
-                        <div class="smart-buy-details-timeline-item smart-buy-details-timeline-item--future">
+                        {{-- Quote Items --}}
 
-                            <div class="smart-buy-details-timeline-item__indicator">
+                        <div class="quote-items-box">
 
-                            <span>
-                                <i class="ri-file-edit-line"></i>
-                            </span>
+                            <div class="quote-items-header">
+
+                                <div>
+                                    <h3>
+                                        Quote Items
+                                    </h3>
+
+                                    <p>
+                                        Product pricing breakdown
+                                    </p>
+                                </div>
 
                             </div>
 
 
-                            <div class="smart-buy-details-timeline-item__content">
+                            <div class="quote-items-table">
 
-                                <div>
 
-                                    <h3>
-                                        Quote Preparation
-                                    </h3>
+                                <div class="quote-table-head">
 
                                     <span>
-                                    Waiting for admin action
-                                </span>
+                                        Product
+                                    </span>
+
+                                    <span>
+                                        Quantity
+                                    </span>
+
+                                    <span>
+                                        Unit Price
+                                    </span>
+
+                                    <span>
+                                        Total
+                                    </span>
 
                                 </div>
+
+
+                                @forelse($quote->quoteItems as $quoteItem)
+
+                                    @php
+
+                                        $product =
+                                            $quoteItem->smartBuyItem;
+
+                                        $quantity =
+                                            $quoteItem->quantity ?? 1;
+
+                                        $unitPrice =
+                                            $quoteItem->unit_price
+                                            ?? $quoteItem->price
+                                            ?? 0;
+
+                                        $lineTotal =
+                                            $quoteItem->total_amount
+                                            ?? $quoteItem->total
+                                            ?? (
+                                                $unitPrice * $quantity
+                                            );
+
+                                    @endphp
+
+
+                                    <div class="quote-table-row">
+
+                                        <div class="quote-product-name">
+
+                                            <strong>
+
+                                                {{ optional($product)->product_name
+                                                    ?? optional($product)->name
+                                                    ?? 'Product' }}
+
+                                            </strong>
+
+                                        </div>
+
+
+                                        <div>
+
+                                            {{ $quantity }}
+
+                                        </div>
+
+
+                                        <div>
+
+                                            {{ $quote->currency ?? 'USD' }}
+
+                                            {{ number_format($unitPrice, 2) }}
+
+                                        </div>
+
+
+                                        <div class="quote-line-total">
+
+                                            {{ $quote->currency ?? 'USD' }}
+
+                                            {{ number_format($lineTotal, 2) }}
+
+                                        </div>
+
+                                    </div>
+
+                                @empty
+
+                                    <div class="quote-table-empty">
+
+                                        <i class="ri-file-search-line"></i>
+
+                                        <span>
+                                            No quote items found.
+                                        </span>
+
+                                    </div>
+
+                                @endforelse
+
+                            </div>
+
+                        </div>
+
+
+
+                        {{-- Quote Notes --}}
+
+                        @if(!empty($quote->notes))
+
+                            <div class="quote-notes">
+
+                                <div class="quote-notes-icon">
+                                    <i class="ri-sticky-note-line"></i>
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        Quote Notes
+                                    </strong>
+
+                                    <p>
+                                        {{ $quote->notes }}
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        @endif
+
+
+
+                        {{-- Quote Actions --}}
+
+                        <div class="quote-action-bottom">
+
+                            <a
+                                href="{{ route('smart-buy.quote.show' , $quote->id ) }}"
+                                class="btn btn-secondary"
+                            >
+                                <i class="ri-eye-line"></i>
+
+                                View Full Quote
+                            </a>
+
+
+                            <a
+                                href="{{ route('smart-buy.quote.edit' , $quote->id ) }}"
+                                class="btn btn-primary"
+                            >
+                                <i class="ri-edit-line"></i>
+
+                                Edit Quote
+                            </a>
+
+                        </div>
+
+                    @else
+
+                        {{-- Empty Quote State --}}
+
+                        <div class="quote-empty-state">
+
+                            <div class="empty-icon">
+                                <i class="ri-file-add-line"></i>
+                            </div>
+
+                            <h3>
+                                No quote created yet
+                            </h3>
+
+                            <p>
+                                Create a quote and add pricing for the requested products.
+                            </p>
+
+                            <a
+                                href="{{ route('smart-buy.quote.create' , $smartBuy->id ) }}"
+                                class="btn btn-primary"
+                            >
+                                <i class="ri-add-circle-line"></i>
+
+                                Create Quote
+                            </a>
+
+                        </div>
+
+                    @endif
+
+                </div>
+
+
+                {{-- ====================================================
+                    PAYMENT DETAILS
+                ==================================================== --}}
+
+                <div class="smart-buy-card">
+
+                    <div class="card-header">
+
+                        <div class="card-heading">
+
+                            <div class="card-icon">
+                                <i class="ri-bank-card-line"></i>
+                            </div>
+
+                            <div>
+
+                                <h2>
+                                    Payment Details
+                                </h2>
+
+                                <p>
+                                    Payment information for this request
+                                </p>
 
                             </div>
 
@@ -618,325 +816,480 @@
 
                     </div>
 
-                </section>
+
+                    @if($smartBuy->payment)
+
+                        <div class="info-grid">
+
+                            <div class="info-item">
+
+                                <span>
+                                    Amount
+                                </span>
+
+                                <strong>
+
+                                    {{ $smartBuy->payment->currency ?? 'USD' }}
+
+                                    {{ number_format(
+                                        $smartBuy->payment->amount ?? 0,
+                                        2
+                                    ) }}
+
+                                </strong>
+
+                            </div>
+
+
+                            <div class="info-item">
+
+                                <span>
+                                    Status
+                                </span>
+
+                                <strong>
+
+                                    {{ ucfirst(
+                                        str_replace(
+                                            '_',
+                                            ' ',
+                                            $smartBuy->payment->status ?? '—'
+                                        )
+                                    ) }}
+
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    @else
+
+                        <div class="empty-state">
+
+                            <div class="empty-icon">
+                                <i class="ri-bank-card-line"></i>
+                            </div>
+
+                            <h3>
+                                No payment recorded
+                            </h3>
+
+                            <p>
+                                Payment information will appear here once added.
+                            </p>
+
+                        </div>
+
+                    @endif
+
+                </div>
+
+
+                {{-- ====================================================
+                    SHIPPING
+                ==================================================== --}}
+
+                <div class="smart-buy-card">
+
+                    <div class="card-header">
+
+                        <div class="card-heading">
+
+                            <div class="card-icon">
+                                <i class="ri-truck-line"></i>
+                            </div>
+
+                            <div>
+
+                                <h2>
+                                    Shipping & Tracking
+                                </h2>
+
+                                <p>
+                                    Shipment and delivery information
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    @if($smartBuy->shipment)
+
+                        <div class="info-grid">
+
+                            <div class="info-item">
+
+                                <span>
+                                    Carrier
+                                </span>
+
+                                <strong>
+                                    {{ $smartBuy->shipment->carrier ?? '—' }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="info-item">
+
+                                <span>
+                                    Tracking Number
+                                </span>
+
+                                <strong>
+                                    {{ $smartBuy->shipment->tracking_number ?? '—' }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    @else
+
+                        <div class="empty-state">
+
+                            <div class="empty-icon">
+                                <i class="ri-truck-line"></i>
+                            </div>
+
+                            <h3>
+                                No shipment information
+                            </h3>
+
+                            <p>
+                                Shipment and tracking information will appear here.
+                            </p>
+
+                        </div>
+
+                    @endif
+
+                </div>
+
 
             </div>
 
 
+            {{-- ========================================================
+                RIGHT SIDEBAR
+            ======================================================== --}}
 
-            {{-- ======================================================
-            | Sidebar
-            ======================================================= --}}
-
-            <aside class="smart-buy-details-sidebar">
+            <aside class="sidebar-column">
 
 
-                {{-- ==================================================
-                | Customer
-                =================================================== --}}
+                {{-- Customer Information --}}
 
-                <section class="smart-buy-details-card">
+                <div class="smart-buy-card sidebar-card">
 
-                    <div class="smart-buy-details-card__header">
+                    <div class="card-header">
 
-                        <div>
+                        <div class="card-heading">
 
-                            <h2>
-                                Customer
-                            </h2>
+                            <div class="card-icon">
+                                <i class="ri-user-3-line"></i>
+                            </div>
+
+                            <div>
+
+                                <h2>
+                                    Customer Information
+                                </h2>
+
+                            </div>
 
                         </div>
 
                     </div>
 
 
-                    <div class="smart-buy-customer-profile">
+                    <div class="customer-profile">
 
-                        <div class="smart-buy-customer-profile__avatar">
-                            JD
+                        <div class="customer-avatar">
+
+                            {{ strtoupper(
+                                substr(
+                                    $smartBuy->first_name ?? 'U',
+                                    0,
+                                    1
+                                )
+                            ) }}
+
                         </div>
 
 
                         <div>
 
-                            <strong>
-                                John Doe
-                            </strong>
+                            <h3>
+
+                                {{ $smartBuy->first_name }}
+
+                                {{ $smartBuy->last_name }}
+
+                            </h3>
+
 
                             <span>
-                            Customer
-                        </span>
+
+                                {{ $smartBuy->user
+                                    ? 'Registered Customer'
+                                    : 'Guest Customer' }}
+
+                            </span>
 
                         </div>
 
                     </div>
 
 
-                    <div class="smart-buy-customer-contact">
+                    <div class="sidebar-info-list">
 
-                        <div>
+
+                        <div class="sidebar-info-row">
 
                             <i class="ri-mail-line"></i>
 
-                            <span>
-                            john@example.com
-                        </span>
+                            <div>
+
+                                <span>
+                                    Email
+                                </span>
+
+                                <strong>
+                                    {{ $smartBuy->email ?? '—' }}
+                                </strong>
+
+                            </div>
 
                         </div>
 
 
-                        <div>
+                        <div class="sidebar-info-row">
 
                             <i class="ri-phone-line"></i>
 
-                            <span>
-                            +224 620 000 000
-                        </span>
+                            <div>
+
+                                <span>
+                                    Phone
+                                </span>
+
+                                <strong>
+                                    {{ $smartBuy->phone ?? '—' }}
+                                </strong>
+
+                            </div>
 
                         </div>
-
-                    </div>
-
-                </section>
-
-
-
-                {{-- ==================================================
-                | Request Summary
-                =================================================== --}}
-
-                <section class="smart-buy-details-card">
-
-                    <div class="smart-buy-details-card__header">
-
-                        <div>
-
-                            <h2>
-                                Request Summary
-                            </h2>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="smart-buy-summary">
-
-                        <div>
-
-                        <span>
-                            Request ID
-                        </span>
-
-                            <strong>
-                                SB-2026-00128
-                            </strong>
-
-                        </div>
-
-
-                        <div>
-
-                        <span>
-                            Service
-                        </span>
-
-                            <strong>
-                                Smart Buy
-                            </strong>
-
-                        </div>
-
-
-                        <div>
-
-                        <span>
-                            Quantity
-                        </span>
-
-                            <strong>
-                                1 Unit
-                            </strong>
-
-                        </div>
-
-
-                        <div>
-
-                        <span>
-                            Estimated Product
-                        </span>
-
-                            <strong>
-                                $2,200.00
-                            </strong>
-
-                        </div>
-
-
-                        <div>
-
-                        <span>
-                            Shipping
-                        </span>
-
-                            <strong>
-                                TBD
-                            </strong>
-
-                        </div>
-
-
-                        <div class="smart-buy-summary__total">
-
-                        <span>
-                            Estimated Total
-                        </span>
-
-                            <strong>
-                                $2,450.00
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-
-
-                {{-- ==================================================
-                | Quick Actions
-                =================================================== --}}
-
-                <section class="smart-buy-details-card">
-
-                    <div class="smart-buy-details-card__header">
-
-                        <div>
-
-                            <h2>
-                                Quick Actions
-                            </h2>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="smart-buy-quick-actions">
-
-                        <a
-                            href="{{ route('smart-buy-admin-quote', 1) }}"
-                            class="smart-buy-quick-action"
-                        >
-
-                        <span class="smart-buy-quick-action__icon">
-
-                            <i class="ri-file-edit-line"></i>
-
-                        </span>
-
-                            <span>
-                            Prepare Quote
-                        </span>
-
-                            <i class="ri-arrow-right-s-line"></i>
-
-                        </a>
-
-
-                        <a
-                            href="{{ route('smart-buy-edit', 1) }}"
-                            class="smart-buy-quick-action"
-                        >
-
-                        <span class="smart-buy-quick-action__icon">
-
-                            <i class="ri-edit-line"></i>
-
-                        </span>
-
-                            <span>
-                            Edit Request
-                        </span>
-
-                            <i class="ri-arrow-right-s-line"></i>
-
-                        </a>
-
-
-                        <a
-                            href="{{ route('smart-buy-purchase', 1) }}"
-                            class="smart-buy-quick-action"
-                        >
-
-                        <span class="smart-buy-quick-action__icon">
-
-                            <i class="ri-shopping-cart-2-line"></i>
-
-                        </span>
-
-                            <span>
-                            Purchase Product
-                        </span>
-
-                            <i class="ri-arrow-right-s-line"></i>
-
-                        </a>
-
-
-                        <a
-                            href="{{ route('smart-buy-shipment', 1) }}"
-                            class="smart-buy-quick-action"
-                        >
-
-                        <span class="smart-buy-quick-action__icon">
-
-                            <i class="ri-truck-line"></i>
-
-                        </span>
-
-                            <span>
-                            Manage Shipment
-                        </span>
-
-                            <i class="ri-arrow-right-s-line"></i>
-
-                        </a>
-
-                    </div>
-
-                </section>
-
-
-
-                {{-- ==================================================
-                | Important Notice
-                =================================================== --}}
-
-                <div class="smart-buy-details-notice">
-
-                    <div class="smart-buy-details-notice__icon">
-
-                        <i class="ri-information-line"></i>
-
-                    </div>
-
-
-                    <div>
-
-                        <strong>
-                            Review Before Quoting
-                        </strong>
-
-                        <p>
-                            Verify the product, quantity and destination details before preparing the customer quote.
-                        </p>
 
                     </div>
 
                 </div>
+
+
+                {{-- Delivery Address --}}
+
+                <div class="smart-buy-card sidebar-card">
+
+                    <div class="card-header">
+
+                        <div class="card-heading">
+
+                            <div class="card-icon">
+                                <i class="ri-map-pin-line"></i>
+                            </div>
+
+                            <div>
+
+                                <h2>
+                                    Delivery Address
+                                </h2>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="address-content">
+
+                        <p>
+                            {{ $smartBuy->delivery_address ?? '—' }}
+                        </p>
+
+                        <p>
+
+                            {{ $smartBuy->city ?? '' }}
+
+                            {{ $smartBuy->zip_code
+                                ? ', ' . $smartBuy->zip_code
+                                : '' }}
+
+                        </p>
+
+                        <strong>
+                            {{ $smartBuy->country ?? '—' }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                {{-- Request Information --}}
+
+                <div class="smart-buy-card sidebar-card">
+
+                    <div class="card-header">
+
+                        <div class="card-heading">
+
+                            <div class="card-icon">
+                                <i class="ri-information-line"></i>
+                            </div>
+
+                            <div>
+
+                                <h2>
+                                    Request Information
+                                </h2>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="request-info-list">
+
+                        <div>
+
+                            <span>
+                                Request ID
+                            </span>
+
+                            <strong>
+                                {{ $smartBuy->request_number }}
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Created
+                            </span>
+
+                            <strong>
+
+                                {{ optional(
+                                    $smartBuy->created_at
+                                )->format('M d, Y') }}
+
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Last Updated
+                            </span>
+
+                            <strong>
+
+                                {{ optional(
+                                    $smartBuy->updated_at
+                                )->diffForHumans() }}
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                {{-- Update Status --}}
+
+                <div
+                    class="smart-buy-card sidebar-card"
+                    id="status-section"
+                >
+
+                    <div class="card-header">
+
+                        <div class="card-heading">
+
+                            <div class="card-icon">
+                                <i class="ri-refresh-line"></i>
+                            </div>
+
+                            <div>
+
+                                <h2>
+                                    Update Status
+                                </h2>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <form
+                        action="{{ url('/portal/smart-buy/' . $smartBuy->id . '/status') }}"
+                        method="POST"
+                        class="status-form"
+                    >
+
+                        @csrf
+
+                        @method('PATCH')
+
+
+                        <select name="status">
+
+                            @foreach($statusLabels as $value => $label)
+
+                                <option
+                                    value="{{ $value }}"
+                                    @selected($smartBuy->status === $value)
+                                >
+
+                                    {{ $label }}
+
+                                </option>
+
+                            @endforeach
+
+                        </select>
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-save-status"
+                        >
+
+                            <i class="ri-check-line"></i>
+
+                            Save Status
+
+                        </button>
+
+                    </form>
+
+                </div>
+
 
             </aside>
 

@@ -10,7 +10,153 @@ use Illuminate\Support\Facades\DB;
 class MySmartBuyController extends Controller
 {
     /**
-     * Show the Smart Buy request form.
+     * Display customer's Smart Buy requests.
+     */
+    public function index(Request $request)
+    {
+        $query = SmartBuyRequest::query()
+            ->where('user_id', auth()->id())
+            ->with([
+                'items',
+                'quote',
+                'latestQuote',
+                'payment',
+                'shipment',
+            ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Search
+        |--------------------------------------------------------------------------
+        */
+
+        if ($request->filled('search')) {
+
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+
+                $q->where(
+                    'request_number',
+                    'like',
+                    "%{$search}%"
+                )
+
+                    ->orWhere(
+                        'first_name',
+                        'like',
+                        "%{$search}%"
+                    )
+
+                    ->orWhere(
+                        'last_name',
+                        'like',
+                        "%{$search}%"
+                    );
+
+            });
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Status Filter
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $request->filled('status')
+            && $request->status !== 'all'
+        ) {
+
+            $query->where(
+                'status',
+                $request->status
+            );
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Requests
+        |--------------------------------------------------------------------------
+        */
+
+        $smartBuys = $query
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Statistics
+        |--------------------------------------------------------------------------
+        */
+
+        $totalRequests = SmartBuyRequest::where(
+            'user_id',
+            auth()->id()
+        )->count();
+
+
+        $pendingRequests = SmartBuyRequest::where(
+            'user_id',
+            auth()->id()
+        )
+            ->where(
+                'status',
+                'pending'
+            )
+            ->count();
+
+
+        $activeRequests = SmartBuyRequest::where(
+            'user_id',
+            auth()->id()
+        )
+            ->whereIn(
+                'status',
+                [
+                    'quote_sent',
+                    'quote_accepted',
+                    'payment_completed',
+                    'product_purchased',
+                    'in_transit',
+                ]
+            )
+            ->count();
+
+
+        $completedRequests = SmartBuyRequest::where(
+            'user_id',
+            auth()->id()
+        )
+            ->where(
+                'status',
+                'completed'
+            )
+            ->count();
+
+
+        return view(
+            'backend.pages.my-smart-buy.my-requests',
+            compact(
+                'smartBuys',
+                'totalRequests',
+                'pendingRequests',
+                'activeRequests',
+                'completedRequests'
+            )
+        );
+    }
+
+
+    /**
+     * Show Smart Buy request form.
      */
     public function create()
     {
@@ -21,7 +167,7 @@ class MySmartBuyController extends Controller
 
 
     /**
-     * Store a new Smart Buy request.
+     * Store new Smart Buy request.
      */
     public function store(Request $request)
     {
@@ -148,19 +294,14 @@ class MySmartBuyController extends Controller
         $smartBuyRequest = DB::transaction(
             function () use ($validated) {
 
-                /*
-                |--------------------------------------------------------------------------
-                | Generate Request Number
-                |--------------------------------------------------------------------------
-                */
-
                 $lastRequest = SmartBuyRequest::latest(
                     'id'
-                )->first();
+                )->lockForUpdate()->first();
 
                 $nextId = $lastRequest
                     ? $lastRequest->id + 1
                     : 1;
+
 
                 $requestNumber = 'SB-' . str_pad(
                         $nextId,
@@ -172,71 +313,79 @@ class MySmartBuyController extends Controller
 
                 /*
                 |--------------------------------------------------------------------------
-                | Create Smart Buy Request
+                | Create Request
                 |--------------------------------------------------------------------------
                 */
 
-                $smartBuyRequest = SmartBuyRequest::create([
+                $smartBuyRequest =
+                    SmartBuyRequest::create([
 
-                    'user_id' => auth()->id(),
+                        'user_id' =>
+                            auth()->id(),
 
-                    'request_number' => $requestNumber,
+                        'request_number' =>
+                            $requestNumber,
 
-                    'first_name' => $validated['first_name'],
+                        'first_name' =>
+                            $validated['first_name'],
 
-                    'last_name' => $validated['last_name'],
+                        'last_name' =>
+                            $validated['last_name'],
 
-                    'phone' => $validated['phone'],
+                        'phone' =>
+                            $validated['phone'],
 
-                    'email' => $validated['email'],
+                        'email' =>
+                            $validated['email'],
 
-                    'country' => $validated['country'],
+                        'country' =>
+                            $validated['country'],
 
-                    'city' => $validated['city'],
+                        'city' =>
+                            $validated['city'],
 
-                    'zip_code' => $validated['zip_code'] ?? null,
+                        'zip_code' =>
+                            $validated['zip_code'] ?? null,
 
-                    'delivery_address' =>
-                        $validated['delivery_address'],
+                        'delivery_address' =>
+                            $validated['delivery_address'],
 
-                    'status' => 'pending',
+                        'status' =>
+                            'pending',
 
-                ]);
+                    ]);
 
 
                 /*
                 |--------------------------------------------------------------------------
-                | Create Smart Buy Items
+                | Create Items
                 |--------------------------------------------------------------------------
                 */
 
-                foreach ($validated['items'] as $item) {
+                foreach (
+                    $validated['items']
+                    as $item
+                ) {
 
                     $productImage = null;
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Upload Product Image
-                    |--------------------------------------------------------------------------
-                    */
-
                     if (
-                        isset($item['product_image'])
-                        && $item['product_image']
+                        isset(
+                            $item['product_image']
+                        )
+                        &&
+                        $item['product_image']
                     ) {
-                        $productImage = $item['product_image']->store(
-                            'smart-buy/products',
-                            'public'
-                        );
+
+                        $productImage =
+                            $item['product_image']->store(
+                                'smart-buy/products',
+                                'public'
+                            );
+
                     }
 
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Create Item
-                    |--------------------------------------------------------------------------
-                    */
 
                     $smartBuyRequest
                         ->items()
@@ -264,9 +413,12 @@ class MySmartBuyController extends Controller
                                 $item['notes'] ?? null,
 
                         ]);
+
                 }
 
+
                 return $smartBuyRequest;
+
             }
         );
 
@@ -282,21 +434,32 @@ class MySmartBuyController extends Controller
             );
     }
 
+
     /**
-     * Show a Smart Buy request details.
+     * Show Smart Buy request details.
      */
     public function details($id)
     {
-        $smartBuyRequest = SmartBuyRequest::with([
-            'items',
-        ])
-            ->where('id', $id)
-            ->where('user_id', auth()->id())
+        $smartBuy = SmartBuyRequest::where(
+            'id',
+            $id
+        )
+            ->where(
+                'user_id',
+                auth()->id()
+            )
+            ->with([
+                'items',
+                'quote.quoteItems.smartBuyItem',
+                'latestQuote.quoteItems.smartBuyItem',
+                'payment',
+                'shipment',
+            ])
             ->firstOrFail();
 
         return view(
             'backend.pages.my-smart-buy.details',
-            compact('smartBuyRequest')
+            compact('smartBuy')
         );
     }
 }

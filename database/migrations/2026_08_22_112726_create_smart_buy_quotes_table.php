@@ -11,140 +11,134 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('smart_buy_requests', function (Blueprint $table) {
+        Schema::create('smart_buy_quotes', function (Blueprint $table) {
 
             $table->id();
 
 
             /*
             |--------------------------------------------------------------------------
-            | Customer
+            | Smart Buy Request
             |--------------------------------------------------------------------------
             */
 
-            $table->foreignId('user_id')
-                ->nullable()
-                ->constrained()
-                ->nullOnDelete();
+            $table->foreignId('smart_buy_request_id')
+                ->unique()
+                ->constrained('smart_buy_requests')
+                ->cascadeOnDelete();
 
 
             /*
             |--------------------------------------------------------------------------
-            | Request Number
+            | Quote Number
             |--------------------------------------------------------------------------
             */
 
-            $table->string('request_number')
+            $table->string('quote_number')
                 ->unique();
 
 
             /*
             |--------------------------------------------------------------------------
-            | Customer Information
+            | Pricing
             |--------------------------------------------------------------------------
             */
 
-            $table->string('first_name');
+            $table->decimal(
+                'product_total',
+                15,
+                2
+            )->default(0);
 
-            $table->string('last_name');
 
-            $table->string('phone');
+            $table->decimal(
+                'service_fee',
+                15,
+                2
+            )->default(0);
 
-            $table->string('email');
+
+            $table->decimal(
+                'shipping_fee',
+                15,
+                2
+            )->default(0);
+
+
+            $table->decimal(
+                'total_amount',
+                15,
+                2
+            )->default(0);
 
 
             /*
             |--------------------------------------------------------------------------
-            | Delivery Information
+            | Currency
             |--------------------------------------------------------------------------
             */
 
-            $table->string('country');
-
-            $table->string('city');
-
-            $table->string('zip_code')
-                ->nullable();
-
-            $table->text('delivery_address');
+            $table->string('currency', 10)
+                ->default('USD');
 
 
             /*
             |--------------------------------------------------------------------------
-            | Request Status
+            | Quote Status
             |--------------------------------------------------------------------------
             |
-            | pending
-            | quote_sent
-            | quote_accepted
-            | quote_rejected
-            | payment_completed
-            | product_purchased
-            | in_transit
-            | completed
-            | cancelled
+            | draft
+            | sent
+            | accepted
+            | rejected
+            | expired
             |
             */
 
             $table->string('status')
-                ->default('pending')
+                ->default('draft')
                 ->index();
 
 
             /*
             |--------------------------------------------------------------------------
-            | Status Management
+            | Additional Information
             |--------------------------------------------------------------------------
             */
 
-            $table->timestamp('status_updated_at')
+            $table->text('notes')
                 ->nullable();
 
-            $table->foreignId('status_updated_by')
+
+            /*
+            |--------------------------------------------------------------------------
+            | Quote Dates
+            |--------------------------------------------------------------------------
+            */
+
+            $table->timestamp('sent_at')
+                ->nullable();
+
+            $table->timestamp('accepted_at')
+                ->nullable();
+
+            $table->timestamp('rejected_at')
+                ->nullable();
+
+            $table->timestamp('expires_at')
+                ->nullable();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Created By
+            |--------------------------------------------------------------------------
+            */
+
+            $table->foreignId('created_by')
                 ->nullable()
                 ->constrained('users')
                 ->nullOnDelete();
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Admin Notes
-            |--------------------------------------------------------------------------
-            */
-
-            $table->text('admin_notes')
-                ->nullable();
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Important Workflow Dates
-            |--------------------------------------------------------------------------
-            */
-
-            $table->timestamp('quoted_at')
-                ->nullable();
-
-            $table->timestamp('quote_accepted_at')
-                ->nullable();
-
-            $table->timestamp('quote_rejected_at')
-                ->nullable();
-
-            $table->timestamp('payment_completed_at')
-                ->nullable();
-
-            $table->timestamp('product_purchased_at')
-                ->nullable();
-
-            $table->timestamp('shipped_at')
-                ->nullable();
-
-            $table->timestamp('completed_at')
-                ->nullable();
-
-            $table->timestamp('cancelled_at')
-                ->nullable();
 
 
             /*
@@ -164,6 +158,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('smart_buy_requests');
+        Schema::dropIfExists('smart_buy_quotes');
     }
 };

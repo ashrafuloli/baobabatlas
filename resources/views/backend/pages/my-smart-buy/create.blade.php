@@ -14,7 +14,7 @@
                 <div>
 
                     <a
-                        href="{{ route('smart-buy') }}"
+                        href="{{ route('my-smart-buy') }}"
                         class="back-link"
                     >
                         <i class="ri-arrow-left-line"></i>

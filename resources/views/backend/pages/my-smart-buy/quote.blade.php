@@ -4,276 +4,459 @@
 
 @section('content')
 
-    <div class="my-smart-buy-quote-page">
+    <div class="my-smart-buy-quote">
 
         {{-- ==========================================================
-        | Header
+        | Page Header
         =========================================================== --}}
+        <div class="page-header">
 
-        <div class="my-smart-buy-quote-header">
-
-            <div>
+            <div class="page-header-left">
 
                 <a
-                    href="{{ route('my-smart-buy-details', $smartBuy) }}"
-                    class="my-smart-buy-quote-back"
+                    href="{{ route('my-smart-buy-details', $smartBuy->id) }}"
+                    class="back-btn"
                 >
                     <i class="ri-arrow-left-line"></i>
-                    <span>Back to Request</span>
                 </a>
 
 
-                <div class="my-smart-buy-quote-heading">
+                <div class="page-header-content">
 
-                    <div class="my-smart-buy-quote-heading__icon">
+                    <span class="page-label">
+                        Smart Buy Request
+                    </span>
 
-                        <i class="ri-file-list-3-line"></i>
-
-                    </div>
-
-
-                    <div>
-
-                        <span>My Smart Buy</span>
-
-                        <h1>
-                            Quote
-                        </h1>
-
-                        <p>
-                            Review the quote prepared for your Smart Buy request.
-                        </p>
-
-                    </div>
+                    <h1>
+                        Quote {{ $quote->quote_number ?? $smartBuy->request_number }}
+                    </h1>
 
                 </div>
 
             </div>
 
 
-            <span class="my-smart-buy-quote-status is-pending">
+            <div class="quote-status">
 
-            <i></i>
+                <i class="ri-file-list-3-line"></i>
 
-            Awaiting Your Response
+                <span>
+                    {{ ucfirst(str_replace('_', ' ', $quote->status)) }}
+                </span>
 
-        </span>
+            </div>
 
         </div>
-
-
-
-        {{-- ==========================================================
-        | Quote Notice
-        =========================================================== --}}
-
-        <section class="my-smart-buy-quote-notice">
-
-            <div class="my-smart-buy-quote-notice__icon">
-
-                <i class="ri-information-line"></i>
-
-            </div>
-
-
-            <div>
-
-                <strong>
-                    Your quote is ready
-                </strong>
-
-                <p>
-                    Please review the quote details below. If everything looks
-                    correct, accept the quote to continue to payment.
-                </p>
-
-            </div>
-
-        </section>
-
 
 
         {{-- ==========================================================
         | Main Layout
         =========================================================== --}}
-
-        <div class="my-smart-buy-quote-layout">
+        <div class="quote-layout">
 
 
             {{-- ======================================================
-            | Main
+            | Main Content
             ======================================================= --}}
+            <div class="quote-main-content">
 
-            <div class="my-smart-buy-quote-main">
+
+                {{-- Quote Summary --}}
+                <div class="quote-card">
+
+                    <div class="card-header">
+
+                        <div class="card-title">
+
+                            <div class="card-icon">
+                                <i class="ri-file-text-line"></i>
+                            </div>
+
+                            <div>
+
+                                <h2>
+                                    Quote Summary
+                                </h2>
+
+                                <p>
+                                    Review the quote details before making your decision.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="quote-summary-grid">
+
+
+                        <div class="summary-item">
+
+                            <span>
+                                Quote Number
+                            </span>
+
+                            <strong>
+                                {{ $quote->quote_number ?? 'N/A' }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="summary-item">
+
+                            <span>
+                                Quote Date
+                            </span>
+
+                            <strong>
+                                {{ $quote->created_at?->format('M d, Y') ?? 'N/A' }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="summary-item">
+
+                            <span>
+                                Valid Until
+                            </span>
+
+                            <strong>
+
+                                @if ($quote->expires_at)
+
+                                    {{ $quote->expires_at->format('M d, Y') }}
+
+                                @else
+
+                                    Not specified
+
+                                @endif
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="summary-item">
+
+                            <span>
+                                Status
+                            </span>
+
+                            <strong class="status-text status-{{ $quote->status }}">
+
+                                {{ ucfirst(str_replace('_', ' ', $quote->status)) }}
+
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
 
 
                 {{-- ==================================================
-                | Request Information
+                | Requested Products
                 =================================================== --}}
+                <div class="quote-card">
 
-                <section class="my-smart-buy-quote-card">
+                    <div class="card-header">
 
-                    <div class="my-smart-buy-quote-card__header">
+                        <div class="card-title">
 
-                        <div>
+                            <div class="card-icon">
+                                <i class="ri-shopping-bag-3-line"></i>
+                            </div>
 
-                            <h2>
-                                Request Information
-                            </h2>
+                            <div>
 
-                            <p>
-                                Details related to your Smart Buy request.
-                            </p>
+                                <h2>
+                                    Requested Products
+                                </h2>
 
-                        </div>
+                                <p>
+                                    Products included in this Smart Buy request.
+                                </p>
 
-                    </div>
-
-
-                    <div class="my-smart-buy-quote-request">
-
-                        <div>
-
-                        <span>
-                            Request ID
-                        </span>
-
-                            <strong>
-                                SB-2026-00128
-                            </strong>
-
-                        </div>
-
-
-                        <div>
-
-                        <span>
-                            Product
-                        </span>
-
-                            <strong>
-                                MacBook Pro 14-inch
-                            </strong>
-
-                        </div>
-
-
-                        <div>
-
-                        <span>
-                            Quantity
-                        </span>
-
-                            <strong>
-                                1 Unit
-                            </strong>
-
-                        </div>
-
-
-                        <div>
-
-                        <span>
-                            Quote Date
-                        </span>
-
-                            <strong>
-                                Aug 16, 2026
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-
-
-                {{-- ==================================================
-                | Product
-                =================================================== --}}
-
-                <section class="my-smart-buy-quote-card">
-
-                    <div class="my-smart-buy-quote-card__header">
-
-                        <div>
-
-                            <h2>
-                                Product
-                            </h2>
-
-                            <p>
-                                Product requested through Smart Buy.
-                            </p>
+                            </div>
 
                         </div>
 
                     </div>
 
 
-                    <div class="my-smart-buy-quote-product">
+                    <div class="products-list">
 
-                        <div class="my-smart-buy-quote-product__icon">
+                        @forelse ($quote->quoteItems as $quoteItem)
 
-                            <i class="ri-macbook-line"></i>
+                            @php
 
-                        </div>
+                                $item =
+                                    $quoteItem->smartBuyItem;
+
+                                $productName =
+                                    $quoteItem->product_name
+                                    ?? $item?->product_name
+                                    ?? 'Product';
+
+                                $quantity =
+                                    $quoteItem->quantity
+                                    ?? $item?->quantity
+                                    ?? 1;
+
+                                $itemTotal =
+                                    $quoteItem->total_price
+                                    ?? (
+                                        (float) ($quoteItem->unit_price ?? 0)
+                                        *
+                                        (int) $quantity
+                                    );
+
+                            @endphp
 
 
-                        <div class="my-smart-buy-quote-product__content">
-
-                        <span>
-                            Product
-                        </span>
-
-                            <h3>
-                                MacBook Pro 14-inch
-                            </h3>
-
-                            <p>
-                                Apple MacBook Pro 14-inch with M-series chip,
-                                16GB RAM and 512GB storage.
-                            </p>
+                            <div class="product-item">
 
 
-                            <div class="my-smart-buy-quote-product__meta">
+                                {{-- Product Image --}}
+                                <div class="product-image">
 
-                                <div>
+                                    @if (
+                                        $item
+                                        &&
+                                        !empty($item->product_image)
+                                    )
 
-                                <span>
-                                    Quantity
-                                </span>
+                                        <img
+                                            src="{{ asset('storage/' . $item->product_image) }}"
+                                            alt="{{ $productName }}"
+                                        >
+
+                                    @else
+
+                                        <div class="product-placeholder">
+
+                                            <i class="ri-image-line"></i>
+
+                                        </div>
+
+                                    @endif
+
+                                </div>
+
+
+                                {{-- Product Information --}}
+                                <div class="product-info">
+
+                                    <h3>
+                                        {{ $productName }}
+                                    </h3>
+
+
+                                    @if (
+                                        $item
+                                        &&
+                                        !empty($item->product_url)
+                                    )
+
+                                        <a
+                                            href="{{ $item->product_url }}"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="product-link"
+                                        >
+
+                                            <i class="ri-external-link-line"></i>
+
+                                            <span>
+                                                View Product
+                                            </span>
+
+                                        </a>
+
+                                    @endif
+
+
+                                    <div class="product-meta">
+
+
+                                        @if (
+                                            $item
+                                            &&
+                                            !empty($item->color)
+                                        )
+
+                                            <div class="meta-item">
+
+                                                <i class="ri-palette-line"></i>
+
+                                                <span>
+
+                                                    Color:
+
+                                                    <strong>
+                                                        {{ $item->color }}
+                                                    </strong>
+
+                                                </span>
+
+                                            </div>
+
+                                        @endif
+
+
+                                        @if (
+                                            $item
+                                            &&
+                                            !empty($item->size)
+                                        )
+
+                                            <div class="meta-item">
+
+                                                <i class="ri-ruler-line"></i>
+
+                                                <span>
+
+                                                    Size:
+
+                                                    <strong>
+                                                        {{ $item->size }}
+                                                    </strong>
+
+                                                </span>
+
+                                            </div>
+
+                                        @endif
+
+
+                                        <div class="meta-item">
+
+                                            <i class="ri-shopping-cart-line"></i>
+
+                                            <span>
+
+                                                Quantity:
+
+                                                <strong>
+                                                    {{ $quantity }}
+                                                </strong>
+
+                                            </span>
+
+                                        </div>
+
+
+                                    </div>
+
+
+                                    @if (
+                                        $quoteItem->notes
+                                        ||
+                                        ($item && $item->notes)
+                                    )
+
+                                        <div class="product-notes">
+
+                                            <i class="ri-information-line"></i>
+
+                                            <span>
+
+                                                {{
+                                                    $quoteItem->notes
+                                                    ?? $item?->notes
+                                                }}
+
+                                            </span>
+
+                                        </div>
+
+                                    @endif
+
+                                </div>
+
+
+                                {{-- Product Price --}}
+                                <div class="product-price">
+
+                                    <span>
+                                        Unit Price
+                                    </span>
 
                                     <strong>
-                                        1 Unit
+                                        ${{ number_format((float) ($quoteItem->unit_price ?? 0), 2) }}
                                     </strong>
+
+
+                                    <div class="product-price-total">
+
+                                        <span>
+                                            Item Total
+                                        </span>
+
+                                        <strong>
+                                            ${{ number_format((float) $itemTotal, 2) }}
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+
+                        @empty
+
+                            <div class="empty-state">
+
+                                <i class="ri-shopping-bag-line"></i>
+
+                                <p>
+                                    No products found.
+                                </p>
+
+                            </div>
+
+                        @endforelse
+
+                    </div>
+
+                </div>
+
+
+                {{-- ==================================================
+                | Quote Notes
+                =================================================== --}}
+                @if ($quote->notes)
+
+                    <div class="quote-card quote-notes-card">
+
+                        <div class="card-header">
+
+                            <div class="card-title">
+
+                                <div class="card-icon">
+
+                                    <i class="ri-sticky-note-line"></i>
 
                                 </div>
 
 
                                 <div>
 
-                                <span>
-                                    Condition
-                                </span>
+                                    <h2>
+                                        Additional Notes
+                                    </h2>
 
-                                    <strong>
-                                        Brand New
-                                    </strong>
-
-                                </div>
-
-
-                                <div>
-
-                                <span>
-                                    Category
-                                </span>
-
-                                    <strong>
-                                        Electronics
-                                    </strong>
+                                    <p>
+                                        Information provided with your quote.
+                                    </p>
 
                                 </div>
 
@@ -281,488 +464,410 @@
 
                         </div>
 
-                    </div>
 
-                </section>
+                        <div class="quote-notes">
 
-
-
-                {{-- ==================================================
-                | Quote Breakdown
-                =================================================== --}}
-
-                <section class="my-smart-buy-quote-card">
-
-                    <div class="my-smart-buy-quote-card__header">
-
-                        <div>
-
-                            <h2>
-                                Quote Breakdown
-                            </h2>
-
-                            <p>
-                                Complete cost breakdown for your request.
-                            </p>
+                            {{ $quote->notes }}
 
                         </div>
 
                     </div>
 
+                @endif
 
-                    <div class="my-smart-buy-quote-breakdown">
-
-
-                        <div class="my-smart-buy-quote-breakdown__row">
-
-                            <div>
-
-                                <strong>
-                                    Product Cost
-                                </strong>
-
-                                <span>
-                                Cost of requested product
-                            </span>
-
-                            </div>
-
-                            <strong>
-                                $2,200.00
-                            </strong>
-
-                        </div>
-
-
-                        <div class="my-smart-buy-quote-breakdown__row">
-
-                            <div>
-
-                                <strong>
-                                    Smart Buy Service Fee
-                                </strong>
-
-                                <span>
-                                Service and purchasing assistance
-                            </span>
-
-                            </div>
-
-                            <strong>
-                                $100.00
-                            </strong>
-
-                        </div>
-
-
-                        <div class="my-smart-buy-quote-breakdown__row">
-
-                            <div>
-
-                                <strong>
-                                    Estimated Shipping
-                                </strong>
-
-                                <span>
-                                Estimated international shipping cost
-                            </span>
-
-                            </div>
-
-                            <strong>
-                                $150.00
-                            </strong>
-
-                        </div>
-
-
-                        <div class="my-smart-buy-quote-breakdown__row">
-
-                            <div>
-
-                                <strong>
-                                    Customs & Handling
-                                </strong>
-
-                                <span>
-                                Estimated customs and handling charges
-                            </span>
-
-                            </div>
-
-                            <strong>
-                                $0.00
-                            </strong>
-
-                        </div>
-
-
-                        <div class="my-smart-buy-quote-breakdown__total">
-
-                            <div>
-
-                            <span>
-                                Total Quote
-                            </span>
-
-                                <small>
-                                    Amount required to proceed
-                                </small>
-
-                            </div>
-
-
-                            <strong>
-                                $2,450.00
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-
-
-                {{-- ==================================================
-                | Delivery Information
-                =================================================== --}}
-
-                <section class="my-smart-buy-quote-card">
-
-                    <div class="my-smart-buy-quote-card__header">
-
-                        <div>
-
-                            <h2>
-                                Delivery Information
-                            </h2>
-
-                            <p>
-                                Destination used for this quote.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="my-smart-buy-quote-delivery">
-
-                        <div class="my-smart-buy-quote-delivery__icon">
-
-                            <i class="ri-map-pin-line"></i>
-
-                        </div>
-
-
-                        <div>
-
-                            <strong>
-                                John Doe
-                            </strong>
-
-                            <p>
-                                24 Rue de Paris<br>
-                                Conakry, Guinea<br>
-                                ZIP: 001
-                            </p>
-
-                            <span>
-                            +224 600 000 000
-                        </span>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-
-
-                {{-- ==================================================
-                | Terms
-                =================================================== --}}
-
-                <section class="my-smart-buy-quote-card">
-
-                    <div class="my-smart-buy-quote-card__header">
-
-                        <div>
-
-                            <h2>
-                                Quote Terms
-                            </h2>
-
-                            <p>
-                                Please review these important conditions.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="my-smart-buy-quote-terms">
-
-                        <div>
-
-                            <i class="ri-checkbox-circle-line"></i>
-
-                            <span>
-                            This quote is valid for 7 days from the quote date.
-                        </span>
-
-                        </div>
-
-
-                        <div>
-
-                            <i class="ri-checkbox-circle-line"></i>
-
-                            <span>
-                            Shipping costs are estimated and may change if the
-                            actual shipping cost differs.
-                        </span>
-
-                        </div>
-
-
-                        <div>
-
-                            <i class="ri-checkbox-circle-line"></i>
-
-                            <span>
-                            Additional customs or government charges may apply
-                            where applicable.
-                        </span>
-
-                        </div>
-
-
-                        <div>
-
-                            <i class="ri-checkbox-circle-line"></i>
-
-                            <span>
-                            Product availability is subject to supplier
-                            availability at the time of purchase.
-                        </span>
-
-                        </div>
-
-                    </div>
-
-                </section>
 
             </div>
-
 
 
             {{-- ======================================================
             | Sidebar
             ======================================================= --}}
-
-            <aside class="my-smart-buy-quote-sidebar">
-
-
-                {{-- ==================================================
-                | Quote Summary
-                =================================================== --}}
-
-                <section class="my-smart-buy-quote-card">
-
-                    <div class="my-smart-buy-quote-card__header">
-
-                        <div>
-
-                            <h2>
-                                Quote Summary
-                            </h2>
-
-                        </div>
-
-                    </div>
+            <aside class="quote-sidebar">
 
 
-                    <div class="my-smart-buy-quote-summary">
+                {{-- Quote Details --}}
+                <div class="quote-card price-card">
 
-                        <div>
+                    <div class="card-header">
 
-                        <span>
-                            Product Cost
-                        </span>
+                        <div class="card-title">
 
-                            <strong>
-                                $2,200.00
-                            </strong>
+                            <div class="card-icon">
 
-                        </div>
+                                <i class="ri-calculator-line"></i>
 
-
-                        <div>
-
-                        <span>
-                            Service Fee
-                        </span>
-
-                            <strong>
-                                $100.00
-                            </strong>
-
-                        </div>
+                            </div>
 
 
-                        <div>
+                            <div>
 
-                        <span>
-                            Shipping
-                        </span>
+                                <h2>
+                                    Quote Details
+                                </h2>
 
-                            <strong>
-                                $150.00
-                            </strong>
+                                <p>
+                                    Price breakdown.
+                                </p>
 
-                        </div>
-
-
-                        <div class="is-total">
-
-                        <span>
-                            Total
-                        </span>
-
-                            <strong>
-                                $2,450.00
-                            </strong>
+                            </div>
 
                         </div>
 
                     </div>
 
 
-                    {{-- Accept Quote --}}
-
-                    <div class="my-smart-buy-quote-action">
-
-                        <form
-                            action="{{ route('smart-buy-quote-accept', $smartBuy) }}"
-                            method="POST"
-                        >
-
-                            @csrf
-
-                            <button
-                                type="submit"
-                                class="my-smart-buy-quote-accept"
-                                id="acceptQuoteButton"
-                            >
-
-                                <i class="ri-check-line"></i>
-
-                                <span>
-                                Accept Quote
-                            </span>
-
-                            </button>
-
-                        </form>
+                    <div class="price-breakdown">
 
 
-                        <a
-                            href="{{ route('my-smart-buy-details', $smartBuy) }}"
-                            class="my-smart-buy-quote-secondary"
-                        >
-
-                            <i class="ri-arrow-left-line"></i>
-
-                            Back to Request
-
-                        </a>
-
-                    </div>
-
-                </section>
-
-
-
-                {{-- ==================================================
-                | Quote Status
-                =================================================== --}}
-
-                <section class="my-smart-buy-quote-card">
-
-                    <div class="my-smart-buy-quote-card__header">
-
-                        <div>
-
-                            <h2>
-                                Quote Status
-                            </h2>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="my-smart-buy-quote-status-card">
-
-                        <div class="my-smart-buy-quote-status-card__icon">
-
-                            <i class="ri-time-line"></i>
-
-                        </div>
-
-
-                        <div>
-
-                            <strong>
-                                Awaiting Your Response
-                            </strong>
+                        <div class="price-row">
 
                             <span>
-                            Valid until Aug 23, 2026
-                        </span>
+                                Product Cost
+                            </span>
+
+                            <strong>
+
+                                ${{ number_format((float) ($quote->product_total ?? 0), 2) }}
+
+                            </strong>
 
                         </div>
 
-                    </div>
 
-                </section>
+                        @if ((float) ($quote->service_fee ?? 0) > 0)
+
+                            <div class="price-row">
+
+                                <span>
+                                    Service Fee
+                                </span>
+
+                                <strong>
+
+                                    ${{ number_format((float) $quote->service_fee, 2) }}
+
+                                </strong>
+
+                            </div>
+
+                        @endif
 
 
+                        @if ((float) ($quote->shipping_fee ?? 0) > 0)
 
-                {{-- ==================================================
-                | Support
-                =================================================== --}}
+                            <div class="price-row">
 
-                <div class="my-smart-buy-quote-help">
+                                <span>
+                                    Shipping Fee
+                                </span>
 
-                    <div class="my-smart-buy-quote-help__icon">
+                                <strong>
 
-                        <i class="ri-customer-service-2-line"></i>
+                                    ${{ number_format((float) $quote->shipping_fee, 2) }}
 
-                    </div>
+                                </strong>
+
+                            </div>
+
+                        @endif
 
 
-                    <div>
+                        <div class="price-divider"></div>
 
-                        <strong>
-                            Have Questions?
-                        </strong>
 
-                        <p>
-                            Contact our support team before accepting the quote.
-                        </p>
+                        <div class="price-total">
 
-                        <a href="#">
-                            Contact Support
-                            <i class="ri-arrow-right-line"></i>
-                        </a>
+                            <span>
+                                Total Amount
+                            </span>
+
+                            <strong>
+
+                                ${{ number_format((float) ($quote->total_amount ?? 0), 2) }}
+
+                            </strong>
+
+                        </div>
+
 
                     </div>
 
                 </div>
+
+
+                {{-- ==================================================
+                | Quote Actions
+                =================================================== --}}
+                @if ($smartBuy->status === 'quote_sent')
+
+                    <div class="quote-card quote-action-card">
+
+                        <div class="card-header">
+
+                            <div class="card-title">
+
+                                <div class="card-icon">
+
+                                    <i class="ri-checkbox-circle-line"></i>
+
+                                </div>
+
+
+                                <div>
+
+                                    <h2>
+                                        Your Decision
+                                    </h2>
+
+                                    <p>
+                                        Accept or reject this quote.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="quote-actions">
+
+
+                            {{-- Accept Quote --}}
+                            <form
+                                action="{{ route('my-smart-buy-quote-accept', $smartBuy->id) }}"
+                                method="POST"
+                                data-accept-form
+                            >
+
+                                @csrf
+
+
+                                <button
+                                    type="submit"
+                                    class="quote-btn quote-btn-success"
+                                >
+
+                                    <i class="ri-checkbox-circle-line"></i>
+
+                                    <span>
+                                        Accept Quote
+                                    </span>
+
+                                </button>
+
+                            </form>
+
+
+                            {{-- Reject Quote --}}
+                            <button
+                                type="button"
+                                class="quote-btn quote-btn-danger"
+                                data-show-reject
+                            >
+
+                                <i class="ri-close-circle-line"></i>
+
+                                <span>
+                                    Reject Quote
+                                </span>
+
+                            </button>
+
+
+                        </div>
+
+
+                        {{-- Reject Form --}}
+                        <div
+                            class="reject-quote-box"
+                            data-reject-box
+                            @if ($errors->has('reason'))
+                                style="display: block;"
+                            @else
+                                style="display: none;"
+                            @endif
+                        >
+
+                            <form
+                                action="{{ route('my-smart-buy-quote-reject', $smartBuy->id) }}"
+                                method="POST"
+                                data-reject-form
+                            >
+
+                                @csrf
+
+
+                                <div class="form-group">
+
+                                    <label for="reason">
+
+                                        <span>
+                                            Reason for rejection
+                                        </span>
+
+                                        <small>
+                                            Optional
+                                        </small>
+
+                                    </label>
+
+
+                                    <textarea
+                                        id="reason"
+                                        name="reason"
+                                        rows="4"
+                                        placeholder="Tell us why you are rejecting this quote..."
+                                    >{{ old('reason') }}</textarea>
+
+
+                                    @error('reason')
+
+                                    <small class="text-danger">
+
+                                        {{ $message }}
+
+                                    </small>
+
+                                    @enderror
+
+                                </div>
+
+
+                                <div class="reject-form-actions">
+
+
+                                    <button
+                                        type="button"
+                                        class="quote-btn quote-btn-light"
+                                        data-cancel-reject
+                                    >
+
+                                        <i class="ri-arrow-go-back-line"></i>
+
+                                        <span>
+                                            Cancel
+                                        </span>
+
+                                    </button>
+
+
+                                    <button
+                                        type="submit"
+                                        class="quote-btn quote-btn-danger"
+                                    >
+
+                                        <i class="ri-close-circle-line"></i>
+
+                                        <span>
+                                            Confirm Rejection
+                                        </span>
+
+                                    </button>
+
+
+                                </div>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                @elseif ($smartBuy->status === 'quote_accepted')
+
+                    <div class="quote-card quote-decision-card accepted">
+
+                        <i class="ri-checkbox-circle-fill"></i>
+
+                        <div>
+
+                            <h3>
+                                Quote Accepted
+                            </h3>
+
+                            <p>
+                                You have accepted this quote.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="quote-card quote-action-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <div class="card-icon">
+                                    <i class="fa-solid fa-credit-card"></i>
+                                </div>
+
+                                <div>
+
+                                    <h2>
+                                        Payment Required
+                                    </h2>
+
+                                    <p>
+                                        Your quote has been accepted. Please proceed with payment to continue your Smart Buy request.
+                                    </p>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="quote-actions">
+                            <a href="{{ route('smart-buy-payment', $smartBuy->id) }}"
+                               class="quote-btn quote-btn-success">
+                                <i class="fa-solid fa-credit-card"></i>
+                                <span>Make Payment</span>
+                            </a>
+                        </div>
+                    </div>
+
+                @elseif ($smartBuy->status === 'quote_rejected')
+
+                    <div class="quote-card quote-decision-card rejected">
+
+                        <i class="ri-close-circle-fill"></i>
+
+                        <div>
+
+                            <h3>
+                                Quote Rejected
+                            </h3>
+
+                            <p>
+                                You have rejected this quote.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                @endif
+
+
+                {{-- Help --}}
+                <div class="help-card">
+
+                    <div class="help-icon">
+
+                        <i class="ri-question-line"></i>
+
+                    </div>
+
+
+                    <h3>
+                        Need Help?
+                    </h3>
+
+                    <p>
+                        If you have questions about this quote, please contact our support team.
+                    </p>
+
+                </div>
+
 
             </aside>
 
@@ -776,48 +881,200 @@
 @push('scripts')
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
 
-            const form =
-                document.querySelector(
-                    '.my-smart-buy-quote-action form'
-                );
+        (function () {
 
-            const button =
-                document.getElementById('acceptQuoteButton');
+            const initMySmartBuyQuote = function () {
 
-
-            if (!form || !button) {
-                return;
-            }
+                const quotePage =
+                    document.querySelector(
+                        '.my-smart-buy-quote'
+                    );
 
 
-            form.addEventListener('submit', function (event) {
-
-                const confirmed = window.confirm(
-                    'Are you sure you want to accept this quote and continue to payment?'
-                );
-
-
-                if (!confirmed) {
-
-                    event.preventDefault();
-
+                if (!quotePage) {
                     return;
+                }
+
+
+                const showRejectButton =
+                    quotePage.querySelector(
+                        '[data-show-reject]'
+                    );
+
+
+                const rejectBox =
+                    quotePage.querySelector(
+                        '[data-reject-box]'
+                    );
+
+
+                const cancelRejectButton =
+                    quotePage.querySelector(
+                        '[data-cancel-reject]'
+                    );
+
+
+                const acceptForm =
+                    quotePage.querySelector(
+                        '[data-accept-form]'
+                    );
+
+
+                const rejectForm =
+                    quotePage.querySelector(
+                        '[data-reject-form]'
+                    );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Show Reject Form
+                |--------------------------------------------------------------------------
+                */
+
+                if (
+                    showRejectButton
+                    &&
+                    rejectBox
+                ) {
+
+                    showRejectButton.addEventListener(
+                        'click',
+                        function () {
+
+                            rejectBox.style.display =
+                                'block';
+
+
+                            showRejectButton.style.display =
+                                'none';
+
+
+                            const textarea =
+                                rejectBox.querySelector(
+                                    'textarea'
+                                );
+
+
+                            textarea?.focus();
+
+                        }
+                    );
 
                 }
 
 
-                button.disabled = true;
+                /*
+                |--------------------------------------------------------------------------
+                | Cancel Reject
+                |--------------------------------------------------------------------------
+                */
 
-                button.innerHTML = `
-            <i class="ri-loader-4-line"></i>
-            <span>Processing...</span>
-        `;
+                if (
+                    cancelRejectButton
+                    &&
+                    rejectBox
+                    &&
+                    showRejectButton
+                ) {
 
-            });
+                    cancelRejectButton.addEventListener(
+                        'click',
+                        function () {
 
-        });
+                            rejectBox.style.display =
+                                'none';
+
+
+                            showRejectButton.style.display =
+                                'inline-flex';
+
+                        }
+                    );
+
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Accept Confirmation
+                |--------------------------------------------------------------------------
+                */
+
+                if (acceptForm) {
+
+                    acceptForm.addEventListener(
+                        'submit',
+                        function (event) {
+
+                            const confirmed =
+                                window.confirm(
+                                    'Are you sure you want to accept this quote?'
+                                );
+
+
+                            if (!confirmed) {
+
+                                event.preventDefault();
+
+                            }
+
+                        }
+                    );
+
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Reject Confirmation
+                |--------------------------------------------------------------------------
+                */
+
+                if (rejectForm) {
+
+                    rejectForm.addEventListener(
+                        'submit',
+                        function (event) {
+
+                            const confirmed =
+                                window.confirm(
+                                    'Are you sure you want to reject this quote?'
+                                );
+
+
+                            if (!confirmed) {
+
+                                event.preventDefault();
+
+                            }
+
+                        }
+                    );
+
+                }
+
+            };
+
+
+            if (
+                document.readyState === 'loading'
+            ) {
+
+                document.addEventListener(
+                    'DOMContentLoaded',
+                    initMySmartBuyQuote
+                );
+
+            } else {
+
+                initMySmartBuyQuote();
+
+            }
+
+        })();
+
     </script>
 
 @endpush

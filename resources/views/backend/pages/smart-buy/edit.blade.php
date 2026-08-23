@@ -15,7 +15,7 @@
             <div>
 
                 <a
-                    href="{{ route('smart-buy-details', 1) }}"
+                    href="{{ route('smart-buy.details', 1) }}"
                     class="smart-buy-edit-back"
                 >
                     <i class="ri-arrow-left-line"></i>
@@ -66,7 +66,7 @@
             id="smartBuyEditForm"
             class="smart-buy-edit-form"
             method="POST"
-            action="{{ route('smart-buy-details', 1) }}"
+            action="{{ route('smart-buy.details', 1) }}"
         >
 
             @csrf
@@ -894,7 +894,7 @@
                 <div class="smart-buy-edit-footer__actions">
 
                     <a
-                        href="{{ route('smart-buy-details', 1) }}"
+                        href="{{ route('smart-buy.details', 1) }}"
                         class="smart-buy-edit-cancel"
                         id="cancelEdit"
                     >

@@ -4,44 +4,386 @@
 
 @section('content')
 
-    <div class="my-smart-buy-payment-page">
+    <div class="smart-buy-payment-page">
 
         {{-- ==========================================================
-        | Header
+        | Page Header
         =========================================================== --}}
+        <div class="smart-buy-payment-page__header">
 
-        <div class="my-smart-buy-payment-header">
+            <div class="smart-buy-payment-page__heading">
 
-            <div>
+                <div class="smart-buy-payment-page__heading-icon">
+                    <i class="ri-secure-payment-line"></i>
+                </div>
 
-                <a
-                    href="{{ route('smart-buy-quote', $smartBuy) }}"
-                    class="my-smart-buy-payment-back"
-                >
-                    <i class="ri-arrow-left-line"></i>
-                    <span>Back to Quote</span>
-                </a>
+                <div>
+
+                    <span class="smart-buy-payment-page__eyebrow">
+                        Smart Buy
+                    </span>
+
+                    <h1>
+                        Complete Payment
+                    </h1>
+
+                    <p>
+                        Review your quote and complete the next step for
+                        <strong>
+                            {{ $smartBuy->request_number }}
+                        </strong>
+                    </p>
+
+                </div>
+
+            </div>
 
 
-                <div class="my-smart-buy-payment-heading">
+            <a
+                href="{{ route('my-smart-buy-quote', $smartBuy->id) }}"
+                class="smart-buy-payment-page__back-btn"
+            >
+                <i class="ri-arrow-left-line"></i>
 
-                    <div class="my-smart-buy-payment-heading__icon">
+                <span>
+                    Back to Quote
+                </span>
+            </a>
 
-                        <i class="ri-bank-card-line"></i>
+        </div>
+
+
+        {{-- ==========================================================
+        | Alerts
+        =========================================================== --}}
+        @if (session('success'))
+
+            <div class="smart-buy-payment-page__alert smart-buy-payment-page__alert--success">
+
+                <div class="smart-buy-payment-page__alert-icon">
+                    <i class="ri-checkbox-circle-line"></i>
+                </div>
+
+                <div>
+                    {{ session('success') }}
+                </div>
+
+            </div>
+
+        @endif
+
+
+        @if (session('error'))
+
+            <div class="smart-buy-payment-page__alert smart-buy-payment-page__alert--error">
+
+                <div class="smart-buy-payment-page__alert-icon">
+                    <i class="ri-error-warning-line"></i>
+                </div>
+
+                <div>
+                    {{ session('error') }}
+                </div>
+
+            </div>
+
+        @endif
+
+
+        {{-- ==========================================================
+        | Payment Content
+        =========================================================== --}}
+        <div class="smart-buy-payment-page__layout">
+
+
+            {{-- ======================================================
+            | Main Content
+            ======================================================= --}}
+            <div class="smart-buy-payment-page__main">
+
+
+                {{-- Request Information --}}
+                <div class="smart-buy-payment-page__card">
+
+                    <div class="smart-buy-payment-page__card-header">
+
+                        <div class="smart-buy-payment-page__card-title">
+
+                            <div class="smart-buy-payment-page__card-icon">
+                                <i class="ri-file-list-3-line"></i>
+                            </div>
+
+                            <div>
+
+                                <h2>
+                                    Request Information
+                                </h2>
+
+                                <p>
+                                    Details about your Smart Buy request.
+                                </p>
+
+                            </div>
+
+                        </div>
 
                     </div>
 
 
+                    <div class="smart-buy-payment-page__info-grid">
+
+
+                        <div class="smart-buy-payment-page__info-item">
+
+                            <span>
+                                Request Number
+                            </span>
+
+                            <strong>
+                                {{ $smartBuy->request_number }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="smart-buy-payment-page__info-item">
+
+                            <span>
+                                Quote Number
+                            </span>
+
+                            <strong>
+                                {{ $quote->quote_number }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="smart-buy-payment-page__info-item">
+
+                            <span>
+                                Customer
+                            </span>
+
+                            <strong>
+                                {{ $smartBuy->first_name }}
+                                {{ $smartBuy->last_name }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="smart-buy-payment-page__info-item">
+
+                            <span>
+                                Destination
+                            </span>
+
+                            <strong>
+
+                                @if ($smartBuy->city)
+                                    {{ $smartBuy->city }}
+                                @endif
+
+                                @if ($smartBuy->country)
+
+                                    {{ $smartBuy->city ? ',' : '' }}
+
+                                    {{ $countries[$smartBuy->country] ?? $smartBuy->country }}
+
+                                @endif
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                {{-- Products --}}
+                <div class="smart-buy-payment-page__card">
+
+                    <div class="smart-buy-payment-page__card-header">
+
+                        <div class="smart-buy-payment-page__card-title">
+
+                            <div class="smart-buy-payment-page__card-icon">
+                                <i class="ri-shopping-bag-3-line"></i>
+                            </div>
+
+                            <div>
+
+                                <h2>
+                                    Quote Items
+                                </h2>
+
+                                <p>
+                                    Review the products included in your quote.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <span class="smart-buy-payment-page__item-count">
+
+                            {{ $quote->quoteItems->count() }}
+
+                            {{ $quote->quoteItems->count() === 1 ? 'Item' : 'Items' }}
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="smart-buy-payment-page__items">
+
+                        @forelse ($quote->quoteItems as $item)
+
+                            <div class="smart-buy-payment-page__item">
+
+
+                                <div class="smart-buy-payment-page__item-left">
+
+
+                                    <div class="smart-buy-payment-page__item-image">
+
+                                        @if (
+                                            $item->smartBuyItem &&
+                                            !empty($item->smartBuyItem->product_image)
+                                        )
+
+                                            <img
+                                                src="{{ asset( $item->smartBuyItem->product_image) }}"
+                                                alt="{{ $item->product_name }}"
+                                            >
+
+                                        @else
+
+                                            <div class="smart-buy-payment-page__image-placeholder">
+
+                                                <i class="ri-image-line"></i>
+
+                                            </div>
+
+                                        @endif
+
+                                    </div>
+
+
+                                    <div class="smart-buy-payment-page__item-content">
+
+                                        <h3>
+                                            {{ $item->product_name }}
+                                        </h3>
+
+
+                                        <div class="smart-buy-payment-page__item-meta">
+
+                                            <span>
+
+                                                <i class="ri-stack-line"></i>
+
+                                                Qty:
+
+                                                <strong>
+                                                    {{ $item->quantity }}
+                                                </strong>
+
+                                            </span>
+
+
+                                            <span>
+
+                                                <i class="ri-price-tag-3-line"></i>
+
+                                                Unit Price:
+
+                                                <strong>
+                                                    ${{ number_format($item->unit_price, 2) }}
+                                                </strong>
+
+                                            </span>
+
+                                        </div>
+
+
+                                        @if (!empty($item->notes))
+
+                                            <div class="smart-buy-payment-page__item-note">
+
+                                                <i class="ri-sticky-note-line"></i>
+
+                                                <span>
+                                                    {{ $item->notes }}
+                                                </span>
+
+                                            </div>
+
+                                        @endif
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="smart-buy-payment-page__item-total">
+
+                                    <span>
+                                        Item Total
+                                    </span>
+
+                                    <strong>
+                                        ${{ number_format($item->total_price, 2) }}
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        @empty
+
+                            <div class="smart-buy-payment-page__empty-state">
+
+                                <div class="smart-buy-payment-page__empty-icon">
+                                    <i class="ri-shopping-bag-line"></i>
+                                </div>
+
+                                <strong>
+                                    No items found
+                                </strong>
+
+                                <p>
+                                    No products are available for this quote.
+                                </p>
+
+                            </div>
+
+                        @endforelse
+
+                    </div>
+
+                </div>
+
+
+                {{-- Payment Notice --}}
+                <div class="smart-buy-payment-page__notice">
+
+                    <div class="smart-buy-payment-page__notice-icon">
+                        <i class="ri-shield-check-line"></i>
+                    </div>
+
                     <div>
 
-                        <span>My Smart Buy</span>
-
-                        <h1>
-                            Payment
-                        </h1>
+                        <h3>
+                            Secure Payment
+                        </h3>
 
                         <p>
-                            Complete your payment to continue with your request.
+                            Your Smart Buy request will move forward after the required payment is completed.
                         </p>
 
                     </div>
@@ -51,808 +393,165 @@
             </div>
 
 
-            <span class="my-smart-buy-payment-secure">
-
-            <i class="ri-lock-line"></i>
-
-            Secure Checkout
-
-        </span>
-
-        </div>
-
-
-
-        {{-- ==========================================================
-        | Payment Notice
-        =========================================================== --}}
-
-        <section class="my-smart-buy-payment-notice">
-
-            <div class="my-smart-buy-payment-notice__icon">
-
-                <i class="ri-shield-check-line"></i>
-
-            </div>
-
-
-            <div>
-
-                <strong>
-                    Your quote has been accepted
-                </strong>
-
-                <p>
-                    Complete the payment below so we can proceed with purchasing
-                    your requested product.
-                </p>
-
-            </div>
-
-        </section>
-
-
-
-        {{-- ==========================================================
-        | Layout
-        =========================================================== --}}
-
-        <div class="my-smart-buy-payment-layout">
-
-
-            {{-- ======================================================
-            | Payment Form
-            ======================================================= --}}
-
-            <div class="my-smart-buy-payment-main">
-
-
-                {{-- ==================================================
-                | Payment Method
-                =================================================== --}}
-
-                <section class="my-smart-buy-payment-card">
-
-                    <div class="my-smart-buy-payment-card__header">
-
-                        <div>
-
-                            <h2>
-                                Payment Method
-                            </h2>
-
-                            <p>
-                                Choose how you would like to pay.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="my-smart-buy-payment-methods">
-
-
-                        {{-- Card --}}
-                        <label
-                            class="my-smart-buy-payment-method is-selected"
-                            data-payment-method="card"
-                        >
-
-                            <input
-                                type="radio"
-                                name="payment_method"
-                                value="card"
-                                checked
-                            >
-
-
-                            <div class="my-smart-buy-payment-method__radio">
-
-                                <span></span>
-
-                            </div>
-
-
-                            <div class="my-smart-buy-payment-method__icon">
-
-                                <i class="ri-bank-card-line"></i>
-
-                            </div>
-
-
-                            <div class="my-smart-buy-payment-method__content">
-
-                                <strong>
-                                    Credit / Debit Card
-                                </strong>
-
-                                <span>
-                                Visa, Mastercard, American Express
-                            </span>
-
-                            </div>
-
-                        </label>
-
-
-
-                        {{-- Bank --}}
-                        <label
-                            class="my-smart-buy-payment-method"
-                            data-payment-method="bank"
-                        >
-
-                            <input
-                                type="radio"
-                                name="payment_method"
-                                value="bank"
-                            >
-
-
-                            <div class="my-smart-buy-payment-method__radio">
-
-                                <span></span>
-
-                            </div>
-
-
-                            <div class="my-smart-buy-payment-method__icon">
-
-                                <i class="ri-bank-line"></i>
-
-                            </div>
-
-
-                            <div class="my-smart-buy-payment-method__content">
-
-                                <strong>
-                                    Bank Transfer
-                                </strong>
-
-                                <span>
-                                Pay using a bank transfer
-                            </span>
-
-                            </div>
-
-                        </label>
-
-
-
-                        {{-- Mobile Wallet --}}
-                        <label
-                            class="my-smart-buy-payment-method"
-                            data-payment-method="wallet"
-                        >
-
-                            <input
-                                type="radio"
-                                name="payment_method"
-                                value="wallet"
-                            >
-
-
-                            <div class="my-smart-buy-payment-method__radio">
-
-                                <span></span>
-
-                            </div>
-
-
-                            <div class="my-smart-buy-payment-method__icon">
-
-                                <i class="ri-wallet-3-line"></i>
-
-                            </div>
-
-
-                            <div class="my-smart-buy-payment-method__content">
-
-                                <strong>
-                                    Digital Wallet
-                                </strong>
-
-                                <span>
-                                Pay using an available digital wallet
-                            </span>
-
-                            </div>
-
-                        </label>
-
-                    </div>
-
-                </section>
-
-
-
-                {{-- ==================================================
-                | Card Details
-                =================================================== --}}
-
-                <section
-                    class="my-smart-buy-payment-card"
-                    id="cardPaymentSection"
-                >
-
-                    <div class="my-smart-buy-payment-card__header">
-
-                        <div>
-
-                            <h2>
-                                Card Details
-                            </h2>
-
-                            <p>
-                                Enter your card information securely.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="my-smart-buy-payment-form">
-
-
-                        <div class="my-smart-buy-payment-field">
-
-                            <label for="card_name">
-                                Cardholder Name
-                            </label>
-
-                            <input
-                                type="text"
-                                id="card_name"
-                                name="card_name"
-                                placeholder="Enter cardholder name"
-                                autocomplete="cc-name"
-                            >
-
-                        </div>
-
-
-
-                        <div class="my-smart-buy-payment-field">
-
-                            <label for="card_number">
-                                Card Number
-                            </label>
-
-                            <div class="my-smart-buy-payment-input-icon">
-
-                                <i class="ri-bank-card-line"></i>
-
-                                <input
-                                    type="text"
-                                    id="card_number"
-                                    name="card_number"
-                                    placeholder="1234 5678 9012 3456"
-                                    inputmode="numeric"
-                                    autocomplete="cc-number"
-                                    maxlength="19"
-                                >
-
-                            </div>
-
-                        </div>
-
-
-
-                        <div class="my-smart-buy-payment-fields-row">
-
-                            <div class="my-smart-buy-payment-field">
-
-                                <label for="expiry">
-                                    Expiry Date
-                                </label>
-
-                                <input
-                                    type="text"
-                                    id="expiry"
-                                    name="expiry"
-                                    placeholder="MM / YY"
-                                    inputmode="numeric"
-                                    autocomplete="cc-exp"
-                                    maxlength="7"
-                                >
-
-                            </div>
-
-
-                            <div class="my-smart-buy-payment-field">
-
-                                <label for="cvv">
-
-                                    CVV
-
-                                    <span
-                                        title="3 or 4 digit security code"
-                                    >
-                                    <i class="ri-question-line"></i>
-                                </span>
-
-                                </label>
-
-                                <input
-                                    type="password"
-                                    id="cvv"
-                                    name="cvv"
-                                    placeholder="•••"
-                                    inputmode="numeric"
-                                    autocomplete="cc-csc"
-                                    maxlength="4"
-                                >
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-
-
-                {{-- ==================================================
-                | Billing Information
-                =================================================== --}}
-
-                <section class="my-smart-buy-payment-card">
-
-                    <div class="my-smart-buy-payment-card__header">
-
-                        <div>
-
-                            <h2>
-                                Billing Information
-                            </h2>
-
-                            <p>
-                                Information associated with this payment.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="my-smart-buy-payment-form">
-
-
-                        <div class="my-smart-buy-payment-fields-row">
-
-                            <div class="my-smart-buy-payment-field">
-
-                                <label for="billing_first_name">
-                                    First Name
-                                </label>
-
-                                <input
-                                    type="text"
-                                    id="billing_first_name"
-                                    name="billing_first_name"
-                                    value="John"
-                                >
-
-                            </div>
-
-
-                            <div class="my-smart-buy-payment-field">
-
-                                <label for="billing_last_name">
-                                    Last Name
-                                </label>
-
-                                <input
-                                    type="text"
-                                    id="billing_last_name"
-                                    name="billing_last_name"
-                                    value="Doe"
-                                >
-
-                            </div>
-
-                        </div>
-
-
-
-                        <div class="my-smart-buy-payment-field">
-
-                            <label for="billing_address">
-                                Address
-                            </label>
-
-                            <input
-                                type="text"
-                                id="billing_address"
-                                name="billing_address"
-                                value="24 Rue de Paris"
-                            >
-
-                        </div>
-
-
-
-                        <div class="my-smart-buy-payment-fields-row">
-
-                            <div class="my-smart-buy-payment-field">
-
-                                <label for="billing_city">
-                                    City
-                                </label>
-
-                                <input
-                                    type="text"
-                                    id="billing_city"
-                                    name="billing_city"
-                                    value="Conakry"
-                                >
-
-                            </div>
-
-
-                            <div class="my-smart-buy-payment-field">
-
-                                <label for="billing_zip">
-                                    ZIP Code
-                                </label>
-
-                                <input
-                                    type="text"
-                                    id="billing_zip"
-                                    name="billing_zip"
-                                    value="001"
-                                >
-
-                            </div>
-
-                        </div>
-
-
-
-                        <div class="my-smart-buy-payment-field">
-
-                            <label for="billing_country">
-                                Country
-                            </label>
-
-                            <select
-                                id="billing_country"
-                                name="billing_country"
-                            >
-
-                                <option value="GN" selected>
-                                    Guinea
-                                </option>
-
-                                <option value="US">
-                                    United States
-                                </option>
-
-                                <option value="CA">
-                                    Canada
-                                </option>
-
-                                <option value="GB">
-                                    United Kingdom
-                                </option>
-
-                                <option value="AU">
-                                    Australia
-                                </option>
-
-                            </select>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-
-
-                {{-- ==================================================
-                | Security
-                =================================================== --}}
-
-                <section class="my-smart-buy-payment-security">
-
-                    <i class="ri-shield-check-line"></i>
-
-                    <div>
-
-                        <strong>
-                            Your payment is secure
-                        </strong>
-
-                        <p>
-                            Your payment information is encrypted and securely
-                            processed. We never store your full card details.
-                        </p>
-
-                    </div>
-
-                </section>
-
-            </div>
-
-
-
             {{-- ======================================================
             | Sidebar
             ======================================================= --}}
+            <aside class="smart-buy-payment-page__sidebar">
 
-            <aside class="my-smart-buy-payment-sidebar">
+
+                <div class="smart-buy-payment-page__summary-card">
 
 
-                {{-- ==================================================
-                | Order Summary
-                =================================================== --}}
-
-                <section class="my-smart-buy-payment-card">
-
-                    <div class="my-smart-buy-payment-card__header">
+                    <div class="smart-buy-payment-page__summary-header">
 
                         <div>
 
+                            <span>
+                                Payment Summary
+                            </span>
+
                             <h2>
-                                Order Summary
+                                Amount Due
                             </h2>
 
+                        </div>
+
+
+                        <div class="smart-buy-payment-page__summary-icon">
+                            <i class="ri-wallet-3-line"></i>
                         </div>
 
                     </div>
 
 
-                    <div class="my-smart-buy-payment-summary">
+                    <div class="smart-buy-payment-page__summary-body">
 
 
-                        <div class="my-smart-buy-payment-summary__product">
+                        <div class="smart-buy-payment-page__summary-row">
 
-                            <div class="my-smart-buy-payment-summary__product-icon">
-
-                                <i class="ri-macbook-line"></i>
-
-                            </div>
-
-
-                            <div>
-
-                                <strong>
-                                    MacBook Pro 14-inch
-                                </strong>
-
-                                <span>
-                                Qty: 1 Unit
+                            <span>
+                                Product Total
                             </span>
 
-                            </div>
+                            <strong>
+                                ${{ number_format($quote->product_total, 2) }}
+                            </strong>
 
                         </div>
 
 
-
-                        <div class="my-smart-buy-payment-summary__rows">
-
-                            <div>
-
-                            <span>
-                                Product Cost
-                            </span>
-
-                                <strong>
-                                    $2,200.00
-                                </strong>
-
-                            </div>
-
-
-                            <div>
+                        <div class="smart-buy-payment-page__summary-row">
 
                             <span>
                                 Service Fee
                             </span>
 
-                                <strong>
-                                    $100.00
-                                </strong>
-
-                            </div>
-
-
-                            <div>
-
-                            <span>
-                                Estimated Shipping
-                            </span>
-
-                                <strong>
-                                    $150.00
-                                </strong>
-
-                            </div>
-
-
-                            <div>
-
-                            <span>
-                                Customs & Handling
-                            </span>
-
-                                <strong>
-                                    $0.00
-                                </strong>
-
-                            </div>
+                            <strong>
+                                ${{ number_format($quote->service_fee, 2) }}
+                            </strong>
 
                         </div>
 
 
+                        <div class="smart-buy-payment-page__summary-row">
 
-                        <div class="my-smart-buy-payment-summary__total">
+                            <span>
+                                Shipping Fee
+                            </span>
+
+                            <strong>
+                                ${{ number_format($quote->shipping_fee, 2) }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="smart-buy-payment-page__total">
 
                         <span>
                             Total Amount
                         </span>
 
-                            <strong>
-                                $2,450.00
-                            </strong>
-
-                        </div>
+                        <strong>
+                            ${{ number_format($quote->total_amount, 2) }}
+                        </strong>
 
                     </div>
 
-                </section>
 
+                    <div class="smart-buy-payment-page__payment-info">
 
-
-                {{-- ==================================================
-                | Payment Action
-                =================================================== --}}
-
-                <section class="my-smart-buy-payment-card">
-
-                    <div class="my-smart-buy-payment-action">
-
-                        <div class="my-smart-buy-payment-action__amount">
-
-                        <span>
-                            Amount to Pay
-                        </span>
-
-                            <strong>
-                                $2,450.00
-                            </strong>
-
+                        <div class="smart-buy-payment-page__payment-info-icon">
+                            <i class="ri-information-line"></i>
                         </div>
+
+                        <p>
+                            Please review all quote details before proceeding.
+                        </p>
+
+                    </div>
+
+
+                    {{-- Payment Form --}}
+                    <form
+                        action="{{ route('smart-buy.payment.store', $smartBuy->id) }}"
+                        method="POST"
+                        class="smart-buy-payment-page__payment-form"
+                    >
+
+                        @csrf
 
 
                         <button
-                            type="button"
-                            class="my-smart-buy-payment-submit"
-                            id="payNowButton"
+                            type="submit"
+                            class="smart-buy-payment-page__pay-btn"
                         >
 
-                            <i class="ri-lock-line"></i>
+                            <i class="ri-secure-payment-line"></i>
 
                             <span>
-                            Pay $2,450.00
-                        </span>
+                                Proceed to Payment
+                            </span>
 
                         </button>
 
-
-                        <a
-                            href="{{ route('smart-buy-quote', $smartBuy) }}"
-                            class="my-smart-buy-payment-cancel"
-                        >
-
-                            Cancel & Back to Quote
-
-                        </a>
-
-                    </div>
-
-                </section>
+                    </form>
 
 
+                    <a
+                        href="{{ route('my-smart-buy-quote', $smartBuy->id) }}"
+                        class="smart-buy-payment-page__quote-link"
+                    >
 
-                {{-- ==================================================
-                | Request Info
-                =================================================== --}}
-
-                <section class="my-smart-buy-payment-card">
-
-                    <div class="my-smart-buy-payment-card__header">
-
-                        <div>
-
-                            <h2>
-                                Request
-                            </h2>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="my-smart-buy-payment-request">
-
-                        <div>
+                        <i class="ri-file-list-3-line"></i>
 
                         <span>
-                            Request ID
+                            Review Quote
                         </span>
 
-                            <strong>
-                                SB-2026-00128
-                            </strong>
+                    </a>
 
-                        </div>
+                </div>
 
 
-                        <div>
+                {{-- Help Card --}}
+                <div class="smart-buy-payment-page__help-card">
 
-                        <span>
-                            Status
-                        </span>
-
-                            <strong class="is-success">
-                                Quote Accepted
-                            </strong>
-
-                        </div>
-
-
-                        <div>
-
-                        <span>
-                            Quote Valid Until
-                        </span>
-
-                            <strong>
-                                Aug 23, 2026
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-
-
-                {{-- ==================================================
-                | Help
-                =================================================== --}}
-
-                <div class="my-smart-buy-payment-help">
-
-                    <div class="my-smart-buy-payment-help__icon">
-
+                    <div class="smart-buy-payment-page__help-icon">
                         <i class="ri-customer-service-2-line"></i>
-
                     </div>
-
 
                     <div>
 
-                        <strong>
+                        <h3>
                             Need Help?
-                        </strong>
+                        </h3>
 
                         <p>
-                            Contact support if you have any questions about your
-                            payment.
+                            Contact support if you have questions about your quote or payment.
                         </p>
-
-                        <a href="#">
-                            Contact Support
-                            <i class="ri-arrow-right-line"></i>
-                        </a>
 
                     </div>
 
@@ -865,252 +564,3 @@
     </div>
 
 @endsection
-
-
-@push('scripts')
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-
-            /*
-            |--------------------------------------------------------------------------
-            | Payment Method
-            |--------------------------------------------------------------------------
-            */
-
-            const methods =
-                document.querySelectorAll(
-                    '.my-smart-buy-payment-method'
-                );
-
-            const cardSection =
-                document.getElementById(
-                    'cardPaymentSection'
-                );
-
-
-            methods.forEach(function (method) {
-
-                method.addEventListener('click', function () {
-
-                    methods.forEach(function (item) {
-
-                        item.classList.remove(
-                            'is-selected'
-                        );
-
-                    });
-
-
-                    method.classList.add(
-                        'is-selected'
-                    );
-
-
-                    const input =
-                        method.querySelector(
-                            'input[type="radio"]'
-                        );
-
-
-                    if (!input) {
-                        return;
-                    }
-
-
-                    if (input.value === 'card') {
-
-                        cardSection.style.display = '';
-
-                    } else {
-
-                        cardSection.style.display = 'none';
-
-                    }
-
-                });
-
-            });
-
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Card Number Formatting
-            |--------------------------------------------------------------------------
-            */
-
-            const cardNumber =
-                document.getElementById(
-                    'card_number'
-                );
-
-
-            cardNumber?.addEventListener(
-                'input',
-                function () {
-
-                    let value =
-                        this.value
-                            .replace(/\D/g, '')
-                            .substring(0, 16);
-
-
-                    value =
-                        value.match(/.{1,4}/g)?.join(' ')
-                        || value;
-
-
-                    this.value = value;
-
-                }
-            );
-
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Expiry Formatting
-            |--------------------------------------------------------------------------
-            */
-
-            const expiry =
-                document.getElementById(
-                    'expiry'
-                );
-
-
-            expiry?.addEventListener(
-                'input',
-                function () {
-
-                    let value =
-                        this.value
-                            .replace(/\D/g, '')
-                            .substring(0, 4);
-
-
-                    if (value.length >= 3) {
-
-                        value =
-                            value.substring(0, 2)
-                            + ' / '
-                            + value.substring(2);
-
-                    }
-
-
-                    this.value = value;
-
-                }
-            );
-
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | CVV
-            |--------------------------------------------------------------------------
-            */
-
-            const cvv =
-                document.getElementById(
-                    'cvv'
-                );
-
-
-            cvv?.addEventListener(
-                'input',
-                function () {
-
-                    this.value =
-                        this.value
-                            .replace(/\D/g, '')
-                            .substring(0, 4);
-
-                }
-            );
-
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Pay Button
-            |--------------------------------------------------------------------------
-            */
-
-            const payButton =
-                document.getElementById(
-                    'payNowButton'
-                );
-
-
-            payButton?.addEventListener(
-                'click',
-                function () {
-
-                    const selectedMethod =
-                        document.querySelector(
-                            '.my-smart-buy-payment-method.is-selected input'
-                        );
-
-
-                    if (!selectedMethod) {
-                        return;
-                    }
-
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Demo Payment Flow
-                    |--------------------------------------------------------------------------
-                    |
-                    | Replace this section later with the real
-                    | payment gateway integration.
-                    |
-                    */
-
-                    const confirmed =
-                        window.confirm(
-                            'Proceed with payment of $2,450.00?'
-                        );
-
-
-                    if (!confirmed) {
-                        return;
-                    }
-
-
-                    payButton.disabled = true;
-
-
-                    payButton.innerHTML = `
-                <i class="ri-loader-4-line"></i>
-                <span>Processing Payment...</span>
-            `;
-
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Demo Redirect
-                    |--------------------------------------------------------------------------
-                    |
-                    | For now this redirects to the payment success
-                    | page. Later replace this with the gateway callback.
-                    |
-                    */
-
-                    setTimeout(function () {
-
-                        window.location.href =
-                            "{{ route('smart-buy-payment-success', $smartBuy) }}";
-
-                    }, 1200);
-
-                }
-            );
-
-        });
-    </script>
-
-@endpush

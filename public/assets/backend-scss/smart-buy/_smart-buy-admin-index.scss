@@ -1,1158 +1,1232 @@
 @use "../common" as *;
 
-
-/*==================================================
-| Smart Buy Page
-==================================================*/
-
-.smart-buy-page {
-    width: 100%;
+.smart-buy-admin-page {
+    padding: 20px;
 }
 
+/*
+|--------------------------------------------------------------------------
+| Header
+|--------------------------------------------------------------------------
+*/
 
-/*==================================================
-| Page Header
-==================================================*/
-
-.smart-buy-page__header {
-    margin-bottom: 18px;
-
+.smart-buy-admin-header {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: space-between;
+    gap: 24px;
 
-    gap: 20px;
-}
+    padding: 24px 28px;
 
+    margin-bottom: 24px;
 
-.smart-buy-page__eyebrow {
-    display: block;
+    background: #ffffff;
 
-    margin-bottom: 3px;
+    border: 1px solid rgba($dark, 0.08);
 
-    color: $theme-color;
+    border-radius: 18px;
 
-    font-size: 14px;
-    font-weight: 700;
+    box-shadow: 0 8px 30px rgba($dark, 0.04);
 
-    line-height: 1.3;
-
-    letter-spacing: .05em;
-    text-transform: uppercase;
-}
-
-
-.smart-buy-page__header h1 {
-    margin: 0 0 4px;
-
-    color: $heading-color;
-
-    font-family: $header-fonts;
-    font-size: 24px;
-    font-weight: $head-fw;
-
-    line-height: 1.3;
-}
-
-
-.smart-buy-page__header p {
-    margin: 0;
-
-    color: $body-color;
-
-    font-size: 14px;
-    line-height: 1.45;
-}
-
-
-.smart-buy-page__header-actions {
-    display: flex;
-    align-items: center;
-
-    gap: 8px;
-}
-
-
-/*==================================================
-| Outline Button
-==================================================*/
-
-.smart-buy-outline-btn {
-    min-height: 38px;
-
-    padding: 0 12px;
-
-    border: 1px solid argb($dark, .09);
-    border-radius: 7px;
-
-    background: #fff;
-    color: $body-color;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    gap: 6px;
-
-    font-size: 14px;
-    font-weight: 600;
-
-    text-decoration: none;
-
-    white-space: nowrap;
-
-    transition:
-        color .2s ease,
-        border-color .2s ease,
-        background-color .2s ease;
-
-
-    i {
-        font-size: 14px;
+    &__content {
+        display: flex;
+        align-items: center;
+        gap: 18px;
     }
 
+    &__icon {
+        width: 56px;
+        height: 56px;
 
-    &:hover {
-        border-color: argb($theme-color, .20);
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-        background: argb($theme-color, .04);
+        flex-shrink: 0;
+
+        border-radius: 16px;
+
+        background: rgba($theme-color, 0.1);
 
         color: $theme-color;
+
+        font-size: 22px;
+    }
+
+    h1 {
+        margin: 0;
+
+        font-size: 26px;
+
+        font-weight: 700;
+
+        color: $heading-color;
+
+        line-height: 1.3;
+    }
+
+    p {
+        margin: 5px 0 0;
+
+        font-size: 14px;
+
+        color: $body-color;
+    }
+
+    &__actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    &__button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+
+        min-height: 46px;
+
+        padding: 0 18px;
+
+        border-radius: 10px;
+
+        font-size: 14px;
+
+        font-weight: 600;
+
+        text-decoration: none;
+
+        @include transition(.2s);
+
+        &--outline {
+            color: $theme-color;
+
+            border: 1px solid rgba($theme-color, 0.25);
+
+            background: rgba($theme-color, 0.04);
+
+            &:hover {
+                background: rgba($theme-color, 0.1);
+
+                color: $theme-color;
+            }
+        }
+    }
+
+    @include mq('xs') {
+        flex-direction: column;
+        align-items: flex-start;
+
+        padding: 20px;
+
+        &__actions {
+            width: 100%;
+        }
+
+        &__button {
+            width: 100%;
+        }
     }
 }
 
 
-/*==================================================
+/*
+|--------------------------------------------------------------------------
 | Statistics
-==================================================*/
+|--------------------------------------------------------------------------
+*/
 
-.smart-buy-stats {
-    margin-bottom: 15px;
-
+.smart-buy-admin-stats {
     display: grid;
 
     grid-template-columns: repeat(4, minmax(0, 1fr));
 
-    gap: 12px;
+    gap: 16px;
+
+    margin-bottom: 24px;
+
+    @include mq('lg') {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @include mq('md') {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @include mq('xs') {
+        grid-template-columns: 1fr;
+    }
 }
 
-
-.smart-buy-stat-card {
-    min-width: 0;
-
-    padding: 13px;
-
-    border: 1px solid argb($dark, .07);
-    border-radius: 9px;
-
-    background: #fff;
-
+.smart-buy-admin-stat-card {
     display: flex;
     align-items: center;
 
-    gap: 10px;
+    gap: 16px;
 
-    box-shadow: 0 3px 14px argb($dark, .025);
-}
+    min-height: 100px;
 
+    padding: 20px;
 
-.smart-buy-stat-card__icon {
-    width: 38px;
-    height: 38px;
+    background: #ffffff;
 
-    flex: 0 0 38px;
+    border: 1px solid rgba($dark, 0.08);
 
-    border-radius: 8px;
+    border-radius: 16px;
 
-    background: argb($theme-color, .08);
-    color: $theme-color;
+    box-shadow: 0 6px 24px rgba($dark, 0.035);
 
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    &__icon {
+        width: 52px;
+        height: 52px;
 
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-    i {
-        font-size: 17px;
+        flex-shrink: 0;
+
+        border-radius: 14px;
+
+        font-size: 19px;
+
+        &--blue {
+            color: #0ea5e9;
+            background: rgba(#0ea5e9, 0.1);
+        }
+
+        &--warning {
+            color: #d97706;
+            background: rgba(#f59e0b, 0.1);
+        }
+
+        &--purple {
+            color: #7c3aed;
+            background: rgba(#8b5cf6, 0.1);
+        }
+
+        &--green {
+            color: $theme-color;
+            background: rgba($theme-color, 0.1);
+        }
+    }
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+
+        gap: 4px;
+
+        span {
+            font-size: 13px;
+
+            color: $body-color;
+        }
+
+        strong {
+            font-size: 24px;
+
+            font-weight: 700;
+
+            color: $heading-color;
+        }
     }
 }
 
 
-.smart-buy-stat-card__icon--orange {
-    background: #fff4dc;
-    color: #ad7711;
+/*
+|--------------------------------------------------------------------------
+| Main List Card
+|--------------------------------------------------------------------------
+*/
+
+.smart-buy-admin-list-card {
+    padding: 20px;
+
+    background: #ffffff;
+
+    border: 1px solid rgba($dark, 0.08);
+
+    border-radius: 18px;
+
+    box-shadow: 0 8px 30px rgba($dark, 0.04);
+
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 20px;
+
+        padding-bottom: 20px;
+
+        margin-bottom: 20px;
+
+        border-bottom: 1px solid rgba($dark, 0.08);
+
+        h2 {
+            margin: 0;
+
+            font-size: 20px;
+
+            font-weight: 700;
+
+            color: $heading-color;
+        }
+
+        p {
+            margin: 5px 0 0;
+
+            font-size: 13px;
+
+            color: $body-color;
+        }
+    }
+
+    &__count {
+        width: 68px;
+        min-height: 60px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 14px;
+
+        background: rgba($theme-color, 0.07);
+
+        strong {
+            font-size: 18px;
+
+            font-weight: 700;
+
+            color: $theme-color;
+        }
+
+        span {
+            margin-top: 2px;
+
+            font-size: 10px;
+
+            color: $body-color;
+        }
+    }
+
+    @include mq('xs') {
+        padding: 15px;
+
+        &__header {
+            align-items: flex-start;
+        }
+    }
 }
 
 
-.smart-buy-stat-card__icon--blue {
-    background: #edf3ff;
-    color: #4a70ad;
+/*
+|--------------------------------------------------------------------------
+| Filters
+|--------------------------------------------------------------------------
+*/
+
+.smart-buy-admin-filters {
+    display: grid;
+
+    grid-template-columns:
+        minmax(240px, 1.4fr)
+        repeat(3, minmax(150px, 1fr))
+        auto
+        auto;
+
+    gap: 12px;
+
+    margin-bottom: 20px;
+
+    @include mq('xl') {
+        grid-template-columns:
+            minmax(220px, 1.3fr)
+            repeat(3, minmax(140px, 1fr))
+            auto;
+    }
+
+    @include mq('lg') {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @include mq('md') {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @include mq('xs') {
+        grid-template-columns: 1fr;
+    }
 }
 
-
-.smart-buy-stat-card__icon--purple {
-    background: #f1edff;
-    color: #7255b7;
-}
-
-
-.smart-buy-stat-card__content {
-    min-width: 0;
-
-    display: flex;
-    flex-direction: column;
-
-    gap: 2px;
-}
-
-
-.smart-buy-stat-card__content span {
-    overflow: hidden;
-
-    color: argb($body-color, 0.8);
-
-    font-size: 14px;
-
-    line-height: 1.3;
-
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-
-.smart-buy-stat-card__content strong {
-    color: $heading-color;
-
-    font-size: 20px;
-    font-weight: 700;
-
-    line-height: 1.2;
-}
-
-
-.smart-buy-stat-card__content small {
-    overflow: hidden;
-
-    color: argb($body-color, 0.2);
-
-    font-size: 14px;
-
-    line-height: 1.3;
-
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-
-/*==================================================
-| Main Card
-==================================================*/
-
-.smart-buy-card {
-    overflow: hidden;
-
-    border: 1px solid argb($dark, .07);
-    border-radius: 10px;
-
-    background: #fff;
-
-    box-shadow: 0 3px 14px argb($dark, .035);
-}
-
-
-/*==================================================
-| Card Header
-==================================================*/
-
-.smart-buy-card__header {
-    min-height: 62px;
-
-    padding: 12px 16px;
-
-    border-bottom: 1px solid argb($dark, .065);
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    gap: 15px;
-}
-
-
-.smart-buy-card__header h2 {
-    margin: 0 0 3px;
-
-    color: $heading-color;
-
-    font-family: $header-fonts;
-    font-size: 18px;
-    font-weight: 600;
-
-    line-height: 1.3;
-}
-
-
-.smart-buy-card__header p {
-    margin: 0;
-
-    color: argb($body-color, 0.8);
-
-    font-size: 14px;
-    line-height: 1.4;
-}
-
-
-.smart-buy-card__header-actions {
-    display: flex;
-    align-items: center;
-
-    gap: 7px;
-}
-
-
-/*==================================================
-| Search
-==================================================*/
-
-.smart-buy-search {
+.smart-buy-admin-filter-search {
     position: relative;
 
-    width: 220px;
+    display: flex;
+    align-items: center;
+
+    height: 46px;
+
+    border: 1px solid rgba($dark, 0.12);
+
+    border-radius: 10px;
+
+    background: #ffffff;
+
+    overflow: hidden;
+
+    @include transition(.2s);
+
+    &:focus-within {
+        border-color: rgba($theme-color, 0.5);
+
+        box-shadow: 0 0 0 3px rgba($theme-color, 0.08);
+    }
+
+    i {
+        position: absolute;
+
+        left: 16px;
+
+        color: rgba($body-color, 0.7);
+
+        font-size: 14px;
+    }
+
+    input {
+        width: 100%;
+        height: 100%;
+
+        padding: 0 15px 0 42px;
+
+        border: 0;
+
+        outline: none;
+
+        background: transparent;
+
+        color: $heading-color;
+
+        font-size: 13px;
+
+        @include placeholder {
+            color: rgba($body-color, 0.65);
+        }
+    }
 }
 
+.smart-buy-admin-filter-select {
+    position: relative;
 
-.smart-buy-search > i {
-    position: absolute;
+    select {
+        width: 100%;
+        height: 46px;
 
-    top: 50%;
-    left: 11px;
+        padding: 0 36px 0 14px;
 
-    color: argb($body-color, 0.2);
+        appearance: none;
 
-    font-size: 14px;
+        border: 1px solid rgba($dark, 0.12);
 
-    transform: translateY(-50%);
+        border-radius: 10px;
 
-    pointer-events: none;
+        background:
+            linear-gradient(45deg, transparent 50%, rgba($body-color, 0.7) 50%),
+            linear-gradient(135deg, rgba($body-color, 0.7) 50%, transparent 50%);
+
+        background-position:
+            calc(100% - 18px) 19px,
+            calc(100% - 13px) 19px;
+
+        background-size:
+            5px 5px,
+            5px 5px;
+
+        background-repeat: no-repeat;
+
+        outline: none;
+
+        color: $heading-color;
+
+        font-size: 13px;
+
+        cursor: pointer;
+
+        @include transition(.2s);
+
+        &:focus {
+            border-color: rgba($theme-color, 0.5);
+
+            box-shadow: 0 0 0 3px rgba($theme-color, 0.08);
+        }
+    }
 }
 
-
-.smart-buy-search input {
-    width: 100%;
-    height: 37px;
-
-    padding: 0 10px 0 32px;
-
-    border: 1px solid argb($dark, .09);
-    border-radius: 7px;
-
-    outline: none;
-
-    background: #fff;
-    color: $heading-color;
-
-    font-family: $body-fonts;
-    font-size: 14px;
-
-    transition:
-        border-color .2s ease,
-        box-shadow .2s ease;
-}
-
-
-.smart-buy-search input::placeholder {
-    color: argb($body-color, 0.2);
-}
-
-
-.smart-buy-search input:focus {
-    border-color: argb($theme-color, .30);
-
-    box-shadow: 0 0 0 3px argb($theme-color, .06);
-}
-
-
-/*==================================================
-| Filter Button
-==================================================*/
-
-.smart-buy-filter-btn {
-    min-height: 37px;
-
-    padding: 0 10px;
-
-    border: 1px solid argb($dark, .09);
-    border-radius: 7px;
-
-    background: #fff;
-    color: $body-color;
+.smart-buy-admin-filter-button {
+    height: 46px;
 
     display: inline-flex;
     align-items: center;
     justify-content: center;
 
-    gap: 5px;
+    gap: 8px;
 
-    font-family: $body-fonts;
-    font-size: 14px;
+    padding: 0 20px;
+
+    border: 0;
+
+    border-radius: 10px;
+
+    background: $theme-color;
+
+    color: #ffffff;
+
+    font-size: 13px;
+
     font-weight: 600;
 
     cursor: pointer;
 
-    transition:
-        color .2s ease,
-        border-color .2s ease,
-        background-color .2s ease;
-
-
-    i {
-        font-size: 14px;
-    }
-
+    @include transition(.2s);
 
     &:hover {
-        border-color: argb($theme-color, .18);
+        background: rgba($theme-color, 0.9);
+    }
+}
 
-        background: argb($theme-color, .04);
+.smart-buy-admin-reset-button {
+    width: 46px;
+    height: 46px;
 
-        color: $theme-color;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba($dark, 0.12);
+
+    border-radius: 10px;
+
+    color: $body-color;
+
+    background: #ffffff;
+
+    text-decoration: none;
+
+    @include transition(.2s);
+
+    &:hover {
+        color: $danger;
+
+        background: rgba($danger, 0.05);
+
+        border-color: rgba($danger, 0.2);
     }
 }
 
 
-/*==================================================
-| Filters
-==================================================*/
+/*
+|--------------------------------------------------------------------------
+| Request Card
+|--------------------------------------------------------------------------
+*/
 
-.smart-buy-filters {
-    padding: 12px 16px;
-
-    border-bottom: 1px solid argb($dark, .055);
-
-    background: #fafbfc;
-
+.smart-buy-admin-requests {
     display: flex;
-    align-items: flex-end;
+    flex-direction: column;
 
-    gap: 9px;
+    gap: 14px;
+}
+
+.smart-buy-admin-request {
+    overflow: hidden;
+
+    border: 1px solid rgba($dark, 0.1);
+
+    border-radius: 15px;
+
+    background: #ffffff;
+
+    @include transition(.2s);
+
+    &:hover {
+        border-color: rgba($theme-color, 0.22);
+
+        box-shadow: 0 8px 24px rgba($dark, 0.04);
+    }
+
+    &__top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 20px;
+
+        padding: 16px 20px;
+
+        border-bottom: 1px solid rgba($dark, 0.07);
+    }
+
+    &__info {
+        min-width: 0;
+    }
+
+    &__eyebrow {
+        display: block;
+
+        margin-bottom: 5px;
+
+        color: rgba($body-color, 0.75);
+
+        font-size: 10px;
+
+        font-weight: 600;
+
+        letter-spacing: 0.08em;
+    }
+
+    &__meta {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+
+        gap: 8px 16px;
+
+        strong {
+            color: $heading-color;
+
+            font-size: 17px;
+
+            font-weight: 700;
+        }
+
+        span {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 6px;
+
+            color: $body-color;
+
+            font-size: 12px;
+
+            i {
+                color: $theme-color;
+
+                font-size: 11px;
+            }
+        }
+    }
+
+    &__product {
+        display: grid;
+
+        grid-template-columns:
+            82px
+            minmax(0, 1fr)
+            minmax(180px, 0.5fr);
+
+        align-items: center;
+
+        gap: 16px;
+
+        padding: 20px;
+    }
+
+    &__actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+
+        gap: 12px;
+
+        padding: 14px 20px;
+
+        border-top: 1px solid rgba($dark, 0.07);
+
+        background: rgba($light, 0.35);
+    }
+
+    @include mq('md') {
+        &__product {
+            grid-template-columns: 82px 1fr;
+        }
+
+        .smart-buy-admin-customer {
+            grid-column: 2 / -1;
+        }
+    }
+
+    @include mq('xs') {
+        &__top {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        &__product {
+            grid-template-columns: 70px minmax(0, 1fr);
+
+            padding: 16px;
+        }
+
+        &__actions {
+            align-items: stretch;
+            flex-direction: column;
+
+            padding: 14px;
+        }
+    }
 }
 
 
-.smart-buy-filter-field {
-    min-width: 145px;
+/*
+|--------------------------------------------------------------------------
+| Status
+|--------------------------------------------------------------------------
+*/
 
+.smart-buy-admin-status {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 7px;
+
+    flex-shrink: 0;
+
+    padding: 9px 14px;
+
+    border-radius: 30px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    &--warning {
+        color: #a16207;
+
+        background: rgba(#f59e0b, 0.12);
+    }
+
+    &--info {
+        color: #0369a1;
+
+        background: rgba(#0ea5e9, 0.1);
+    }
+
+    &--purple {
+        color: #6d28d9;
+
+        background: rgba(#8b5cf6, 0.1);
+    }
+
+    &--success {
+        color: $theme-color;
+
+        background: rgba($theme-color, 0.1);
+    }
+
+    &--blue {
+        color: #2563eb;
+
+        background: rgba(#3b82f6, 0.1);
+    }
+
+    &--primary {
+        color: #075985;
+
+        background: rgba(#0ea5e9, 0.1);
+    }
+
+    &--danger {
+        color: $danger;
+
+        background: rgba($danger, 0.1);
+    }
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Product
+|--------------------------------------------------------------------------
+*/
+
+.smart-buy-admin-product-image {
+    width: 82px;
+    height: 82px;
+
+    overflow: hidden;
+
+    border-radius: 12px;
+
+    background: rgba($dark, 0.04);
+
+    img {
+        width: 100%;
+        height: 100%;
+
+        display: block;
+
+        object-fit: cover;
+    }
+
+    @include mq('xs') {
+        width: 70px;
+        height: 70px;
+    }
+}
+
+.smart-buy-admin-product-placeholder {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: rgba($body-color, 0.5);
+
+    background: rgba($dark, 0.04);
+}
+
+.smart-buy-admin-product-details {
+    min-width: 0;
+
+    > span {
+        display: block;
+
+        margin-bottom: 6px;
+
+        color: $theme-color;
+
+        font-size: 10px;
+
+        font-weight: 600;
+
+        letter-spacing: 0.08em;
+    }
+
+    h3 {
+        margin: 0 0 8px;
+
+        color: $heading-color;
+
+        font-size: 16px;
+
+        font-weight: 700;
+    }
+
+    &__meta {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+
+        gap: 6px 15px;
+
+        span {
+            color: $body-color;
+
+            font-size: 12px;
+        }
+
+        strong {
+            color: $heading-color;
+
+            font-weight: 600;
+        }
+    }
+}
+
+.smart-buy-admin-more-items {
+    display: inline-flex;
+
+    margin-top: 10px;
+
+    padding: 5px 10px;
+
+    border-radius: 6px;
+
+    color: $theme-color;
+
+    background: rgba($theme-color, 0.08);
+
+    font-size: 11px;
+
+    font-weight: 600;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Customer
+|--------------------------------------------------------------------------
+*/
+
+.smart-buy-admin-customer {
     display: flex;
     flex-direction: column;
 
     gap: 4px;
-}
 
+    padding-left: 20px;
 
-.smart-buy-filter-field label {
-    color: argb($body-color, 0.8);
+    border-left: 1px solid rgba($dark, 0.08);
 
-    font-size: 14px;
-    font-weight: 600;
+    span {
+        color: rgba($body-color, 0.7);
 
-    line-height: 1.3;
-}
+        font-size: 10px;
 
+        font-weight: 600;
 
-.smart-buy-filter-field select {
-    width: 100%;
-    height: 36px;
+        letter-spacing: 0.08em;
+    }
 
-    padding: 0 9px;
+    strong {
+        color: $heading-color;
 
-    border: 1px solid argb($dark, .09);
-    border-radius: 6px;
+        font-size: 13px;
 
-    outline: none;
+        font-weight: 600;
+    }
 
-    background: #fff;
-    color: $heading-color;
+    small {
+        overflow: hidden;
 
-    font-family: $body-fonts;
-    font-size: 14px;
+        color: $body-color;
 
-    cursor: pointer;
+        font-size: 11px;
 
-    transition:
-        border-color .2s ease,
-        box-shadow .2s ease;
-}
+        text-overflow: ellipsis;
+    }
 
+    @include mq('md') {
+        padding-left: 0;
 
-.smart-buy-filter-field select:focus {
-    border-color: argb($theme-color, .30);
+        padding-top: 12px;
 
-    box-shadow: 0 0 0 3px argb($theme-color, .06);
-}
+        border-left: 0;
 
+        border-top: 1px solid rgba($dark, 0.08);
+    }
 
-.smart-buy-clear-filter {
-    height: 36px;
+    @include mq('xs') {
+        grid-column: 1 / -1;
 
-    margin-left: auto;
+        padding-left: 0;
 
-    padding: 0 10px;
+        padding-top: 12px;
 
-    border: 0;
+        border-left: 0;
 
-    background: transparent;
-    color: $theme-color;
-
-    font-family: $body-fonts;
-    font-size: 14px;
-    font-weight: 600;
-
-    cursor: pointer;
-
-    white-space: nowrap;
-
-
-    &:hover {
-        color: argb($theme-color, 0.8);
+        border-top: 1px solid rgba($dark, 0.08);
     }
 }
 
 
-/*==================================================
-| Table Wrapper
-==================================================*/
+/*
+|--------------------------------------------------------------------------
+| Progress
+|--------------------------------------------------------------------------
+*/
 
-.smart-buy-table-wrapper {
-    width: 100%;
+.smart-buy-admin-progress {
+    padding: 0 20px 18px;
 
-    overflow-x: auto;
-}
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
 
+        margin-bottom: 9px;
 
-/*==================================================
-| Table
-==================================================*/
+        span {
+            color: $body-color;
 
-.smart-buy-table {
-    width: 100%;
+            font-size: 12px;
+        }
 
-    min-width: 1050px;
+        strong {
+            color: $theme-color;
 
-    border-collapse: collapse;
-}
+            font-size: 12px;
 
-
-.smart-buy-table th {
-    height: 42px;
-
-    padding: 0 13px;
-
-    border-bottom: 1px solid argb($dark, .06);
-
-    background: #fafbfc;
-    color: argb($body-color, 0.2);
-
-    font-size: 14px;
-    font-weight: 600;
-
-    text-align: left;
-
-    white-space: nowrap;
-}
-
-
-.smart-buy-table td {
-    height: 66px;
-
-    padding: 8px 13px;
-
-    border-bottom: 1px solid argb($dark, .055);
-
-    vertical-align: middle;
-}
-
-
-.smart-buy-table tbody tr {
-    transition: background-color .2s ease;
-}
-
-
-.smart-buy-table tbody tr:hover {
-    background: #fcfdfd;
-}
-
-
-.smart-buy-table tbody tr:last-child td {
-    border-bottom: 0;
-}
-
-
-/*==================================================
-| Request Number
-==================================================*/
-
-.smart-buy-request-number {
-    color: $theme-color;
-
-    font-size: 14px;
-    font-weight: 600;
-
-    text-decoration: none;
-
-    white-space: nowrap;
-
-
-    &:hover {
-        text-decoration: underline;
-    }
-}
-
-
-/*==================================================
-| Customer
-==================================================*/
-
-.smart-buy-customer {
-    min-width: 150px;
-
-    display: flex;
-    align-items: center;
-
-    gap: 8px;
-}
-
-
-.smart-buy-customer__avatar {
-    width: 31px;
-    height: 31px;
-
-    flex: 0 0 31px;
-
-    border-radius: 50%;
-
-    background: argb($theme-color, .08);
-    color: $theme-color;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 14px;
-    font-weight: 700;
-}
-
-
-.smart-buy-customer > div:last-child {
-    min-width: 0;
-
-    display: flex;
-    flex-direction: column;
-
-    gap: 2px;
-}
-
-
-.smart-buy-customer strong {
-    overflow: hidden;
-
-    color: $heading-color;
-
-    font-size: 14px;
-    font-weight: 600;
-
-    line-height: 1.3;
-
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-
-.smart-buy-customer span {
-    overflow: hidden;
-
-    color: argb($body-color, 0.2);
-
-    font-size: 14px;
-
-    line-height: 1.3;
-
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-
-/*==================================================
-| Product
-==================================================*/
-
-.smart-buy-product {
-    min-width: 150px;
-
-    display: flex;
-    flex-direction: column;
-
-    gap: 2px;
-}
-
-
-.smart-buy-product strong {
-    color: $heading-color;
-
-    font-size: 14px;
-    font-weight: 600;
-
-    line-height: 1.3;
-}
-
-
-.smart-buy-product span {
-    color: argb($body-color, 0.2);
-
-    font-size: 14px;
-
-    line-height: 1.3;
-}
-
-
-/*==================================================
-| Location
-==================================================*/
-
-.smart-buy-location {
-    display: flex;
-    align-items: center;
-
-    gap: 5px;
-
-    color: $body-color;
-
-    font-size: 14px;
-
-    white-space: nowrap;
-
-
-    i {
-        color: argb($body-color, 0.8);
-
-        font-size: 14px;
-    }
-}
-
-
-/*==================================================
-| Amount
-==================================================*/
-
-.smart-buy-amount {
-    color: $heading-color;
-
-    font-size: 14px;
-    font-weight: 700;
-
-    white-space: nowrap;
-}
-
-
-/*==================================================
-| Status
-==================================================*/
-
-.smart-buy-status {
-    display: inline-flex;
-    align-items: center;
-
-    gap: 5px;
-
-    min-height: 24px;
-
-    padding: 3px 8px;
-
-    border-radius: 20px;
-
-    font-size: 14px;
-    font-weight: 600;
-
-    line-height: 1.2;
-
-    white-space: nowrap;
-}
-
-
-.smart-buy-status > i {
-    width: 6px;
-    height: 6px;
-
-    border-radius: 50%;
-
-    background: currentColor;
-}
-
-
-.smart-buy-status--pending {
-    background: #fff4dc;
-    color: #ad7711;
-}
-
-
-.smart-buy-status--quote {
-    background: #edf3ff;
-    color: #4a70ad;
-}
-
-
-.smart-buy-status--payment {
-    background: #f1edff;
-    color: #7255b7;
-}
-
-
-.smart-buy-status--purchased {
-    background: #e8f7ef;
-    color: #26834b;
-}
-
-
-.smart-buy-status--transit {
-    background: #e8f4f7;
-    color: #327c8c;
-}
-
-
-/*==================================================
-| Date
-==================================================*/
-
-.smart-buy-date {
-    color: $body-color;
-
-    font-size: 14px;
-
-    white-space: nowrap;
-}
-
-
-/*==================================================
-| Actions
-==================================================*/
-
-.smart-buy-actions {
-    display: flex;
-    align-items: center;
-
-    gap: 5px;
-}
-
-
-.smart-buy-action-btn {
-    width: 30px;
-    height: 30px;
-
-    border: 1px solid argb($dark, .08);
-    border-radius: 6px;
-
-    background: #fff;
-    color: $body-color;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    text-decoration: none;
-
-    transition:
-        color .2s ease,
-        border-color .2s ease,
-        background-color .2s ease;
-
-
-    i {
-        font-size: 14px;
+            font-weight: 700;
+        }
     }
 
+    &__bar {
+        width: 100%;
+        height: 6px;
 
-    &:hover {
-        border-color: argb($theme-color, .20);
+        overflow: hidden;
 
-        background: argb($theme-color, .05);
+        border-radius: 20px;
 
-        color: $theme-color;
-    }
-}
-
-
-/*==================================================
-| Pagination
-==================================================*/
-
-.smart-buy-pagination {
-    min-height: 56px;
-
-    padding: 9px 13px;
-
-    border-top: 1px solid argb($dark, .055);
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    gap: 15px;
-}
-
-
-.smart-buy-pagination__info {
-    color: argb($body-color, 0.8);
-
-    font-size: 14px;
-}
-
-
-.smart-buy-pagination__info strong {
-    color: $heading-color;
-
-    font-weight: 600;
-}
-
-
-.smart-buy-pagination__links {
-    display: flex;
-    align-items: center;
-
-    gap: 3px;
-}
-
-
-.smart-buy-pagination__btn {
-    min-width: 31px;
-    height: 31px;
-
-    padding: 0 8px;
-
-    border: 1px solid argb($dark, .08);
-    border-radius: 6px;
-
-    background: #fff;
-    color: $body-color;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    font-family: $body-fonts;
-    font-size: 14px;
-    font-weight: 600;
-
-    cursor: pointer;
-
-    transition:
-        color .2s ease,
-        border-color .2s ease,
-        background-color .2s ease;
-
-
-    i {
-        font-size: 14px;
+        background: rgba($dark, 0.08);
     }
 
+    &__fill {
+        height: 100%;
 
-    &:hover {
-        border-color: argb($theme-color, .20);
-
-        background: argb($theme-color, .04);
-
-        color: $theme-color;
-    }
-}
-
-
-.smart-buy-pagination__btn--active {
-    border-color: $theme-color;
-
-    background: $theme-color;
-    color: #fff;
-
-
-    &:hover {
-        border-color: $theme-color;
+        border-radius: inherit;
 
         background: $theme-color;
 
-        color: #fff;
+        @include transition(.3s);
+    }
+
+    &__steps {
+        display: grid;
+
+        grid-template-columns: repeat(6, 1fr);
+
+        margin-top: 9px;
+
+        span {
+            color: rgba($body-color, 0.65);
+
+            font-size: 10px;
+
+            text-align: center;
+
+            &:first-child {
+                text-align: left;
+            }
+
+            &:last-child {
+                text-align: right;
+            }
+
+            &.is-active {
+                color: $theme-color;
+
+                font-weight: 600;
+            }
+        }
+    }
+
+    @include mq('xs') {
+        padding: 0 16px 16px;
+
+        &__steps {
+            grid-template-columns: repeat(3, 1fr);
+
+            gap: 8px;
+
+            span {
+                text-align: center !important;
+            }
+        }
     }
 }
 
 
-.smart-buy-pagination__btn--disabled {
-    opacity: .45;
+/*
+|--------------------------------------------------------------------------
+| Actions
+|--------------------------------------------------------------------------
+*/
 
-    cursor: not-allowed;
+.smart-buy-admin-action-info {
+    display: inline-flex;
+    align-items: center;
 
+    gap: 7px;
+
+    margin-right: auto;
+
+    color: #a16207;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    i {
+        color: inherit;
+    }
+
+    &--info {
+        color: #0369a1;
+    }
+
+    &--purple {
+        color: #6d28d9;
+    }
+
+    &--success {
+        color: $theme-color;
+    }
+
+    &--blue {
+        color: #2563eb;
+    }
+
+    &--primary {
+        color: #075985;
+    }
+
+    @include mq('xs') {
+        margin-right: 0;
+    }
+}
+
+.smart-buy-admin-view-button {
+    min-height: 42px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 0 16px;
+
+    border: 1px solid rgba($heading-color, 0.16);
+
+    border-radius: 10px;
+
+    color: $heading-color;
+
+    background: #ffffff;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    text-decoration: none;
+
+    @include transition(.2s);
 
     &:hover {
-        border-color: argb($dark, .08);
+        color: #ffffff;
 
-        background: #fff;
+        background: $theme-color;
+
+        border-color: $theme-color;
+    }
+
+    @include mq('xs') {
+        width: 100%;
+    }
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Empty State
+|--------------------------------------------------------------------------
+*/
+
+.smart-buy-admin-empty {
+    padding: 70px 20px;
+
+    text-align: center;
+
+    &__icon {
+        width: 70px;
+        height: 70px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        margin: 0 auto 18px;
+
+        border-radius: 20px;
+
+        color: $theme-color;
+
+        background: rgba($theme-color, 0.1);
+
+        font-size: 26px;
+    }
+
+    h3 {
+        margin: 0 0 8px;
+
+        color: $heading-color;
+
+        font-size: 18px;
+    }
+
+    p {
+        max-width: 420px;
+
+        margin: 0 auto;
 
         color: $body-color;
+
+        font-size: 13px;
+
+        line-height: 1.7;
+    }
+
+    &__button {
+        display: inline-flex;
+
+        margin-top: 20px;
+
+        padding: 11px 18px;
+
+        border-radius: 9px;
+
+        color: #ffffff;
+
+        background: $theme-color;
+
+        font-size: 13px;
+
+        font-weight: 600;
+
+        text-decoration: none;
     }
 }
 
 
-.smart-buy-pagination__dots {
-    padding: 0 3px;
+/*
+|--------------------------------------------------------------------------
+| Pagination
+|--------------------------------------------------------------------------
+*/
 
-    color: argb($body-color, 0.2);
+.smart-buy-admin-pagination {
+    display: flex;
+    justify-content: center;
 
-    font-size: 14px;
+    padding-top: 24px;
+
+    margin-top: 24px;
+
+    border-top: 1px solid rgba($dark, 0.08);
 }
 
 
-/*==================================================
-| Responsive - LG
-==================================================*/
+/*
+|--------------------------------------------------------------------------
+| Responsive
+|--------------------------------------------------------------------------
+*/
 
-@include mq(lg) {
+@include mq('xs') {
 
-    .smart-buy-stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+    .smart-buy-admin-page {
+        padding: 14px;
     }
 
-}
-
-
-/*==================================================
-| Responsive - MD
-==================================================*/
-
-@include mq(md) {
-
-    .smart-buy-page__header {
-        align-items: flex-start;
-
-        flex-direction: column;
+    .smart-buy-admin-stat-card {
+        min-height: 90px;
     }
 
-
-    .smart-buy-card__header {
-        align-items: flex-start;
-
-        flex-direction: column;
+    .smart-buy-admin-request__meta {
+        gap: 7px 12px;
     }
 
-
-    .smart-buy-card__header-actions {
-        width: 100%;
-    }
-
-
-    .smart-buy-search {
-        flex: 1;
-
-        width: auto;
-    }
-
-
-    .smart-buy-filters {
-        flex-wrap: wrap;
-    }
-
-
-    .smart-buy-filter-field {
-        flex: 1;
-
-        min-width: 140px;
-    }
-
-
-    .smart-buy-clear-filter {
-        margin-left: 0;
-    }
-
-}
-
-
-/*==================================================
-| Responsive - XS
-==================================================*/
-
-@include mq(xs) {
-
-    .smart-buy-page__header h1 {
-        font-size: 20px;
-    }
-
-
-    .smart-buy-page__header-actions {
-        width: 100%;
-    }
-
-
-    .smart-buy-outline-btn {
-        width: 100%;
-    }
-
-
-    .smart-buy-stats {
-        grid-template-columns: 1fr;
-
-        gap: 8px;
-    }
-
-
-    .smart-buy-card__header {
-        padding: 12px 13px;
-    }
-
-
-    .smart-buy-card__header-actions {
-        align-items: stretch;
-
-        flex-direction: column;
-    }
-
-
-    .smart-buy-search {
-        width: 100%;
-    }
-
-
-    .smart-buy-filter-btn {
-        width: 100%;
-    }
-
-
-    .smart-buy-filters {
-        align-items: stretch;
-
-        flex-direction: column;
-
-        padding: 11px 13px;
-    }
-
-
-    .smart-buy-filter-field {
-        width: 100%;
-    }
-
-
-    .smart-buy-clear-filter {
-        width: 100%;
-
-        margin: 0;
-
-        text-align: left;
-    }
-
-
-    .smart-buy-pagination {
-        align-items: flex-start;
-
-        flex-direction: column;
-    }
-
-
-    .smart-buy-pagination__links {
-        width: 100%;
-
-        justify-content: flex-end;
+    .smart-buy-admin-product-details h3 {
+        font-size: 14px;
     }
 
 }

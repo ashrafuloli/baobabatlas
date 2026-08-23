@@ -1,11 +1,11 @@
 <div class="dashboard-sidebar">
 
-    {{--==================================================
-        Sidebar Logo
-    ==================================================--}}
+    {{-- ================================================
+        SIDEBAR LOGO
+    ================================================= --}}
     <div class="sidebar-logo">
 
-        <a href="{{ route('dashboard') }}">
+        <a href="{{ auth()->user()->roles()->where('slug', 'admin')->exists() ? route('admin-dashboard') : route('dashboard') }}">
 
             <img
                 src="{{ asset('logo.png') }}"
@@ -15,30 +15,27 @@
         </a>
 
         <div class="close-menu d-xl-none d-inline-flex">
-
             <i class="ri-close-line"></i>
-
         </div>
 
     </div>
 
 
-    {{--==================================================
-        Sidebar Menu
-    ==================================================--}}
+    {{-- ================================================
+        SIDEBAR MENU
+    ================================================= --}}
     <div class="sidebar-menu">
 
 
-        {{--================================================
+        {{-- ============================================
             MAIN
-        =================================================--}}
+        ============================================= --}}
         <p class="menu-title">
             Main
         </p>
 
         <ul>
 
-            {{-- Dashboard --}}
             @if(auth()->user()->hasPermission('view-dashboard'))
 
                 <li class="{{ request()->routeIs(
@@ -46,7 +43,7 @@
                     'admin-dashboard'
                 ) ? 'active' : '' }}">
 
-                    <a href="{{ route('dashboard') }}">
+                    <a href="{{ auth()->user()->roles()->where('slug', 'admin')->exists() ? route('admin-dashboard') : route('dashboard') }}">
 
                         <i class="ri-dashboard-line"></i>
 
@@ -63,15 +60,16 @@
         </ul>
 
 
-
-        {{--================================================
+        {{-- ============================================
             CUSTOMER ECOMMERCE
-        =================================================--}}
+        ============================================= --}}
         @if(
-            !auth()->user()->isAdmin() &&
+            !auth()->user()->roles()->where('slug', 'admin')->exists() &&
             (
                 auth()->user()->hasPermission('view-products') ||
-                auth()->user()->hasPermission('view-orders')
+                auth()->user()->hasPermission('view-orders') ||
+                auth()->user()->hasPermission('view-cart') ||
+                auth()->user()->hasPermission('create-order')
             )
         )
 
@@ -82,10 +80,12 @@
             <ul>
 
 
-                {{--================================================
-                    Shop
-                =================================================--}}
-                @if(auth()->user()->hasPermission('view-products'))
+                {{-- SHOP --}}
+                @if(
+                    auth()->user()->hasPermission('view-products') ||
+                    auth()->user()->hasPermission('view-cart') ||
+                    auth()->user()->hasPermission('create-order')
+                )
 
                     <li class="has-submenu {{ request()->routeIs(
                         'customer-shop',
@@ -109,28 +109,31 @@
 
                         </a>
 
-
                         <ul class="submenu">
 
 
-                            {{-- Shop --}}
-                            <li class="{{ request()->routeIs(
-                                'customer-shop',
-                                'customer-product-details'
-                            ) ? 'active' : '' }}">
+                            {{-- SHOP --}}
+                            @if(auth()->user()->hasPermission('view-products'))
 
-                                <a href="{{ route('customer-shop') }}">
+                                <li class="{{ request()->routeIs(
+                                    'customer-shop',
+                                    'customer-product-details'
+                                ) ? 'active' : '' }}">
 
-                                    <span>
-                                        Shop
-                                    </span>
+                                    <a href="{{ route('customer-shop') }}">
 
-                                </a>
+                                        <span>
+                                            Shop
+                                        </span>
 
-                            </li>
+                                    </a>
+
+                                </li>
+
+                            @endif
 
 
-                            {{-- Cart --}}
+                            {{-- CART --}}
                             @if(auth()->user()->hasPermission('view-cart'))
 
                                 <li class="{{ request()->routeIs(
@@ -150,7 +153,7 @@
                             @endif
 
 
-                            {{-- Checkout --}}
+                            {{-- CHECKOUT --}}
                             @if(auth()->user()->hasPermission('create-order'))
 
                                 <li class="{{ request()->routeIs(
@@ -180,10 +183,7 @@
                 @endif
 
 
-
-                {{--================================================
-                    My Orders
-                =================================================--}}
+                {{-- MY ORDERS --}}
                 @if(auth()->user()->hasPermission('view-orders'))
 
                     <li class="{{ request()->routeIs(
@@ -213,13 +213,11 @@
         @endif
 
 
-
-        {{--================================================
-            SMART BUY
-            Customer Only
-        =================================================--}}
+        {{-- ============================================
+            SMART BUY - CUSTOMER
+        ============================================= --}}
         @if(
-            !auth()->user()->isAdmin() &&
+            !auth()->user()->roles()->where('slug', 'admin')->exists() &&
             (
                 auth()->user()->hasPermission('view-smart-buy') ||
                 auth()->user()->hasPermission('create-smart-buy')
@@ -233,17 +231,18 @@
             <ul>
 
 
-                {{--================================================
-                    My Smart Buy Requests
-                =================================================--}}
+                {{-- MY REQUESTS --}}
                 @if(auth()->user()->hasPermission('view-smart-buy'))
 
                     <li class="{{ request()->routeIs(
                         'my-smart-buy',
                         'my-smart-buy-details',
                         'smart-buy-confirmation',
-                        'smart-buy-quote',
+                        'my-smart-buy-quote',
+                        'my-smart-buy-quote-accept',
+                        'my-smart-buy-quote-reject',
                         'smart-buy-payment',
+                        'smart-buy-payment-store',
                         'smart-buy-payment-success',
                         'smart-buy-payment-failed',
                         'smart-buy-tracking'
@@ -264,10 +263,7 @@
                 @endif
 
 
-
-                {{--================================================
-                    Start Smart Buy
-                =================================================--}}
+                {{-- START SMART BUY --}}
                 @if(auth()->user()->hasPermission('create-smart-buy'))
 
                     <li class="{{ request()->routeIs(
@@ -294,19 +290,15 @@
         @endif
 
 
-
-        {{--================================================
-            ACCOUNT
-            Admin + Customer
-        =================================================--}}
+        {{-- ============================================
+            ACCOUNT - CUSTOMER
+        ============================================= --}}
         @if(
-            auth()->user()->hasPermission('view-profile') ||
+            !auth()->user()->roles()->where('slug', 'admin')->exists() &&
             (
-                !auth()->user()->isAdmin() &&
-                (
-                    auth()->user()->hasPermission('view-payments') ||
-                    auth()->user()->hasPermission('view-notifications')
-                )
+                auth()->user()->hasPermission('view-profile') ||
+                auth()->user()->hasPermission('view-payments') ||
+                auth()->user()->hasPermission('view-notifications')
             )
         )
 
@@ -317,14 +309,12 @@
             <ul>
 
 
-                {{--================================================
-                    Profile
-                    Admin + Customer
-                =================================================--}}
+                {{-- PROFILE --}}
                 @if(auth()->user()->hasPermission('view-profile'))
 
                     <li class="{{ request()->routeIs(
-                        'profile'
+                        'profile',
+                        'profile.update'
                     ) ? 'active' : '' }}">
 
                         <a href="{{ route('profile') }}">
@@ -342,14 +332,8 @@
                 @endif
 
 
-
-                {{--================================================
-                    Customer Payments
-                =================================================--}}
-                @if(
-                    !auth()->user()->isAdmin() &&
-                    auth()->user()->hasPermission('view-payments')
-                )
+                {{-- PAYMENTS --}}
+                @if(auth()->user()->hasPermission('view-payments'))
 
                     <li class="{{ request()->routeIs(
                         'account-payments'
@@ -370,14 +354,8 @@
                 @endif
 
 
-
-                {{--================================================
-                    Customer Notifications
-                =================================================--}}
-                @if(
-                    !auth()->user()->isAdmin() &&
-                    auth()->user()->hasPermission('view-notifications')
-                )
+                {{-- NOTIFICATIONS --}}
+                @if(auth()->user()->hasPermission('view-notifications'))
 
                     <li class="{{ request()->routeIs(
                         'notifications'
@@ -403,11 +381,10 @@
         @endif
 
 
-
-        {{--================================================
+        {{-- ============================================
             ADMINISTRATION
-        =================================================--}}
-        @if(auth()->user()->isAdmin())
+        ============================================= --}}
+        @if(auth()->user()->roles()->where('slug', 'admin')->exists())
 
             <p class="menu-title">
                 Administration
@@ -416,29 +393,35 @@
             <ul>
 
 
-                {{--================================================
-                    Ecommerce Management
-                =================================================--}}
+                {{-- ========================================
+                    ECOMMERCE MANAGEMENT
+                ========================================= --}}
                 @if(
                     auth()->user()->hasPermission('view-products') ||
                     auth()->user()->hasPermission('view-categories') ||
-                    auth()->user()->hasPermission('view-orders') ||
                     auth()->user()->hasPermission('view-inventory') ||
+                    auth()->user()->hasPermission('view-orders') ||
                     auth()->user()->hasPermission('view-ecommerce-shipments')
                 )
 
                     <li class="has-submenu {{ request()->routeIs(
                         'admin-products',
-                        'admin-product-*',
+                        'admin-product-create',
+                        'admin-product-details',
+                        'admin-product-edit',
                         'admin-categories',
-                        'admin-category-*',
+                        'admin-category-create',
+                        'admin-category-details',
+                        'admin-category-edit',
                         'admin-inventory',
                         'admin-inventory-low-stock',
                         'admin-inventory-out-of-stock',
                         'admin-orders',
                         'admin-order-details',
+                        'admin-ecommerce-payments',
                         'ecommerce-shipments',
-                        'ecommerce-shipment-*'
+                        'ecommerce-shipment-create',
+                        'ecommerce-shipment-details'
                     ) ? 'active open' : '' }}">
 
                         <a href="javascript:void(0);">
@@ -453,16 +436,17 @@
 
                         </a>
 
-
                         <ul class="submenu">
 
 
-                            {{-- Products --}}
+                            {{-- PRODUCTS --}}
                             @if(auth()->user()->hasPermission('view-products'))
 
                                 <li class="{{ request()->routeIs(
                                     'admin-products',
-                                    'admin-product-*'
+                                    'admin-product-create',
+                                    'admin-product-details',
+                                    'admin-product-edit'
                                 ) ? 'active' : '' }}">
 
                                     <a href="{{ route('admin-products') }}">
@@ -478,13 +462,14 @@
                             @endif
 
 
-
-                            {{-- Categories --}}
+                            {{-- CATEGORIES --}}
                             @if(auth()->user()->hasPermission('view-categories'))
 
                                 <li class="{{ request()->routeIs(
                                     'admin-categories',
-                                    'admin-category-*'
+                                    'admin-category-create',
+                                    'admin-category-details',
+                                    'admin-category-edit'
                                 ) ? 'active' : '' }}">
 
                                     <a href="{{ route('admin-categories') }}">
@@ -500,8 +485,7 @@
                             @endif
 
 
-
-                            {{-- Inventory --}}
+                            {{-- INVENTORY --}}
                             @if(auth()->user()->hasPermission('view-inventory'))
 
                                 <li class="{{ request()->routeIs(
@@ -523,8 +507,7 @@
                             @endif
 
 
-
-                            {{-- Orders --}}
+                            {{-- ORDERS --}}
                             @if(auth()->user()->hasPermission('view-orders'))
 
                                 <li class="{{ request()->routeIs(
@@ -545,15 +528,33 @@
                             @endif
 
 
+                            {{-- ECOMMERCE PAYMENTS --}}
+                            @if(auth()->user()->hasPermission('view-ecommerce-payments'))
 
-                            {{-- Shipments --}}
-                            @if(auth()->user()->hasPermission(
-                                'view-ecommerce-shipments'
-                            ))
+                                <li class="{{ request()->routeIs(
+                                    'admin-ecommerce-payments'
+                                ) ? 'active' : '' }}">
+
+                                    <a href="{{ route('admin-ecommerce-payments') }}">
+
+                                        <span>
+                                            Payments
+                                        </span>
+
+                                    </a>
+
+                                </li>
+
+                            @endif
+
+
+                            {{-- SHIPMENTS --}}
+                            @if(auth()->user()->hasPermission('view-ecommerce-shipments'))
 
                                 <li class="{{ request()->routeIs(
                                     'ecommerce-shipments',
-                                    'ecommerce-shipment-*'
+                                    'ecommerce-shipment-create',
+                                    'ecommerce-shipment-details'
                                 ) ? 'active' : '' }}">
 
                                     <a href="{{ route('ecommerce-shipments') }}">
@@ -576,24 +577,31 @@
                 @endif
 
 
-
-                {{--================================================
-                    Smart Buy Management
-                =================================================--}}
+                {{-- ========================================
+                    SMART BUY MANAGEMENT
+                ========================================= --}}
                 @if(
-                    auth()->user()->hasPermission('view-smart-buy') ||
-                    auth()->user()->hasPermission('edit-smart-buy') ||
-                    auth()->user()->hasPermission('manage-smart-buy-quote')
+                    auth()->user()->hasPermission('view-smart-buy-admin') ||
+                    auth()->user()->hasPermission('view-smart-buy-admin-details') ||
+                    auth()->user()->hasPermission('create-smart-buy-quote') ||
+                    auth()->user()->hasPermission('manage-smart-buy') ||
+                    auth()->user()->hasPermission('manage-smart-buy-payment') ||
+                    auth()->user()->hasPermission('manage-smart-buy-shipment')
                 )
 
                     <li class="has-submenu {{ request()->routeIs(
                         'smart-buy',
-                        'smart-buy-details',
-                        'smart-buy-edit',
-                        'smart-buy-admin-quote',
+                        'smart-buy.details',
+                        'smart-buy.quote.show',
                         'smart-buy-purchase',
                         'smart-buy-shipment',
-                        'smart-buy-admin-payments'
+                        'smart-buy.quote.store',
+                        'smart-buy.quote.update',
+                        'smart-buy.payment.store',
+                        'smart-buy.payment.update',
+                        'smart-buy.shipment.store',
+                        'smart-buy.shipment.update',
+                        'smart-buy.status.update'
                     ) ? 'active open' : '' }}">
 
                         <a href="javascript:void(0);">
@@ -608,18 +616,16 @@
 
                         </a>
 
-
                         <ul class="submenu">
 
 
-                            {{-- Requests --}}
-                            @if(auth()->user()->hasPermission('view-smart-buy'))
+                            {{-- ALL REQUESTS --}}
+                            @if(auth()->user()->hasPermission('view-smart-buy-admin'))
 
                                 <li class="{{ request()->routeIs(
                                     'smart-buy',
-                                    'smart-buy-details',
-                                    'smart-buy-edit',
-                                    'smart-buy-admin-quote',
+                                    'smart-buy.details',
+                                    'smart-buy.quote.show',
                                     'smart-buy-purchase',
                                     'smart-buy-shipment'
                                 ) ? 'active' : '' }}">
@@ -637,29 +643,6 @@
                             @endif
 
 
-
-                            {{-- Payments --}}
-                            @if(auth()->user()->hasPermission(
-                                'view-smart-buy-payment'
-                            ))
-
-                                <li class="{{ request()->routeIs(
-                                    'smart-buy-admin-payments'
-                                ) ? 'active' : '' }}">
-
-                                    <a href="{{ route('smart-buy-admin-payments') }}">
-
-                                        <span>
-                                            Payments
-                                        </span>
-
-                                    </a>
-
-                                </li>
-
-                            @endif
-
-
                         </ul>
 
                     </li>
@@ -667,10 +650,9 @@
                 @endif
 
 
-
-                {{--================================================
-                    User Management
-                =================================================--}}
+                {{-- ========================================
+                    USER MANAGEMENT
+                ========================================= --}}
                 @if(
                     auth()->user()->hasPermission('view-users') ||
                     auth()->user()->hasPermission('view-roles') ||
@@ -678,12 +660,29 @@
                 )
 
                     <li class="has-submenu {{ request()->routeIs(
-                        'users*',
-                        'user-*',
-                        'roles*',
-                        'role-*',
-                        'permissions*',
-                        'permission-*'
+                        'users',
+                        'user-create',
+                        'user-store',
+                        'user-details',
+                        'user-edit',
+                        'user-update',
+                        'user-destroy',
+                        'roles',
+                        'role-create',
+                        'role-store',
+                        'role-details',
+                        'role-edit',
+                        'role-update',
+                        'role-destroy',
+                        'role-permissions',
+                        'role-permissions.update',
+                        'permissions',
+                        'permission-create',
+                        'permission-store',
+                        'permission-details',
+                        'permission-edit',
+                        'permission-update',
+                        'permission-destroy'
                     ) ? 'active open' : '' }}">
 
                         <a href="javascript:void(0);">
@@ -698,16 +697,20 @@
 
                         </a>
 
-
                         <ul class="submenu">
 
 
-                            {{-- Users --}}
+                            {{-- USERS --}}
                             @if(auth()->user()->hasPermission('view-users'))
 
                                 <li class="{{ request()->routeIs(
-                                    'users*',
-                                    'user-*'
+                                    'users',
+                                    'user-create',
+                                    'user-store',
+                                    'user-details',
+                                    'user-edit',
+                                    'user-update',
+                                    'user-destroy'
                                 ) ? 'active' : '' }}">
 
                                     <a href="{{ route('users') }}">
@@ -723,13 +726,19 @@
                             @endif
 
 
-
-                            {{-- Roles --}}
+                            {{-- ROLES --}}
                             @if(auth()->user()->hasPermission('view-roles'))
 
                                 <li class="{{ request()->routeIs(
-                                    'roles*',
-                                    'role-*'
+                                    'roles',
+                                    'role-create',
+                                    'role-store',
+                                    'role-details',
+                                    'role-edit',
+                                    'role-update',
+                                    'role-destroy',
+                                    'role-permissions',
+                                    'role-permissions.update'
                                 ) ? 'active' : '' }}">
 
                                     <a href="{{ route('roles') }}">
@@ -745,13 +754,17 @@
                             @endif
 
 
-
-                            {{-- Permissions --}}
+                            {{-- PERMISSIONS --}}
                             @if(auth()->user()->hasPermission('view-permissions'))
 
                                 <li class="{{ request()->routeIs(
-                                    'permissions*',
-                                    'permission-*'
+                                    'permissions',
+                                    'permission-create',
+                                    'permission-store',
+                                    'permission-details',
+                                    'permission-edit',
+                                    'permission-update',
+                                    'permission-destroy'
                                 ) ? 'active' : '' }}">
 
                                     <a href="{{ route('permissions') }}">
@@ -774,10 +787,9 @@
                 @endif
 
 
-
-                {{--================================================
-                    Central Payments
-                =================================================--}}
+                {{-- ========================================
+                    PAYMENTS
+                ========================================= --}}
                 @if(
                     auth()->user()->hasPermission('view-payments') ||
                     auth()->user()->hasPermission('view-ecommerce-payments') ||
@@ -805,11 +817,10 @@
 
                         </a>
 
-
                         <ul class="submenu">
 
 
-                            {{-- All Payments --}}
+                            {{-- ALL PAYMENTS --}}
                             @if(auth()->user()->hasPermission('view-payments'))
 
                                 <li class="{{ request()->routeIs(
@@ -830,11 +841,8 @@
                             @endif
 
 
-
-                            {{-- Ecommerce Payments --}}
-                            @if(auth()->user()->hasPermission(
-                                'view-ecommerce-payments'
-                            ))
+                            {{-- ECOMMERCE --}}
+                            @if(auth()->user()->hasPermission('view-ecommerce-payments'))
 
                                 <li class="{{ request()->routeIs(
                                     'payments-ecommerce'
@@ -853,11 +861,8 @@
                             @endif
 
 
-
-                            {{-- Smart Buy Payments --}}
-                            @if(auth()->user()->hasPermission(
-                                'view-smart-buy-payments'
-                            ))
+                            {{-- SMART BUY --}}
+                            @if(auth()->user()->hasPermission('view-smart-buy-payments'))
 
                                 <li class="{{ request()->routeIs(
                                     'payments-smart-buy'
@@ -876,11 +881,8 @@
                             @endif
 
 
-
-                            {{-- Failed Payments --}}
-                            @if(auth()->user()->hasPermission(
-                                'view-failed-payments'
-                            ))
+                            {{-- FAILED --}}
+                            @if(auth()->user()->hasPermission('view-failed-payments'))
 
                                 <li class="{{ request()->routeIs(
                                     'payments-failed'
@@ -906,10 +908,9 @@
                 @endif
 
 
-
-                {{--================================================
-                    Reports
-                =================================================--}}
+                {{-- ========================================
+                    REPORTS
+                ========================================= --}}
                 @if(
                     auth()->user()->hasPermission('view-reports') ||
                     auth()->user()->hasPermission('view-ecommerce-reports') ||
@@ -934,16 +935,13 @@
 
                         </a>
 
-
                         <ul class="submenu">
 
 
-                            {{-- Overview --}}
+                            {{-- OVERVIEW --}}
                             @if(auth()->user()->hasPermission('view-reports'))
 
-                                <li class="{{ request()->routeIs(
-                                    'reports'
-                                ) ? 'active' : '' }}">
+                                <li class="{{ request()->routeIs('reports') ? 'active' : '' }}">
 
                                     <a href="{{ route('reports') }}">
 
@@ -958,15 +956,10 @@
                             @endif
 
 
+                            {{-- ECOMMERCE --}}
+                            @if(auth()->user()->hasPermission('view-ecommerce-reports'))
 
-                            {{-- Ecommerce --}}
-                            @if(auth()->user()->hasPermission(
-                                'view-ecommerce-reports'
-                            ))
-
-                                <li class="{{ request()->routeIs(
-                                    'reports-ecommerce'
-                                ) ? 'active' : '' }}">
+                                <li class="{{ request()->routeIs('reports-ecommerce') ? 'active' : '' }}">
 
                                     <a href="{{ route('reports-ecommerce') }}">
 
@@ -981,15 +974,10 @@
                             @endif
 
 
+                            {{-- SMART BUY --}}
+                            @if(auth()->user()->hasPermission('view-smart-buy-reports'))
 
-                            {{-- Smart Buy --}}
-                            @if(auth()->user()->hasPermission(
-                                'view-smart-buy-reports'
-                            ))
-
-                                <li class="{{ request()->routeIs(
-                                    'reports-smart-buy'
-                                ) ? 'active' : '' }}">
+                                <li class="{{ request()->routeIs('reports-smart-buy') ? 'active' : '' }}">
 
                                     <a href="{{ route('reports-smart-buy') }}">
 
@@ -1011,18 +999,19 @@
                 @endif
 
 
-
-                {{--================================================
-                    Settings
-                =================================================--}}
+                {{-- ========================================
+                    SETTINGS
+                ========================================= --}}
                 @if(
                     auth()->user()->hasPermission('view-settings') ||
+                    auth()->user()->hasPermission('view-ecommerce-settings') ||
                     auth()->user()->hasPermission('view-smart-buy-settings') ||
                     auth()->user()->hasPermission('view-audit-logs')
                 )
 
                     <li class="has-submenu {{ request()->routeIs(
                         'settings',
+                        'settings-ecommerce',
                         'settings-smart-buy',
                         'settings-audit-logs',
                         'settings-audit-log-details'
@@ -1040,16 +1029,13 @@
 
                         </a>
 
-
                         <ul class="submenu">
 
 
-                            {{-- General Settings --}}
+                            {{-- GENERAL --}}
                             @if(auth()->user()->hasPermission('view-settings'))
 
-                                <li class="{{ request()->routeIs(
-                                    'settings'
-                                ) ? 'active' : '' }}">
+                                <li class="{{ request()->routeIs('settings') ? 'active' : '' }}">
 
                                     <a href="{{ route('settings') }}">
 
@@ -1064,15 +1050,28 @@
                             @endif
 
 
+                            {{-- ECOMMERCE --}}
+                            @if(auth()->user()->hasPermission('view-ecommerce-settings'))
 
-                            {{-- Smart Buy Settings --}}
-                            @if(auth()->user()->hasPermission(
-                                'view-smart-buy-settings'
-                            ))
+                                <li class="{{ request()->routeIs('settings-ecommerce') ? 'active' : '' }}">
 
-                                <li class="{{ request()->routeIs(
-                                    'settings-smart-buy'
-                                ) ? 'active' : '' }}">
+                                    <a href="{{ route('settings-ecommerce') }}">
+
+                                        <span>
+                                            Ecommerce
+                                        </span>
+
+                                    </a>
+
+                                </li>
+
+                            @endif
+
+
+                            {{-- SMART BUY --}}
+                            @if(auth()->user()->hasPermission('view-smart-buy-settings'))
+
+                                <li class="{{ request()->routeIs('settings-smart-buy') ? 'active' : '' }}">
 
                                     <a href="{{ route('settings-smart-buy') }}">
 
@@ -1087,20 +1086,15 @@
                             @endif
 
 
-
-                            {{-- Audit Logs --}}
-                            @if(auth()->user()->hasPermission(
-                                'view-audit-logs'
-                            ))
+                            {{-- AUDIT LOGS --}}
+                            @if(auth()->user()->hasPermission('view-audit-logs'))
 
                                 <li class="{{ request()->routeIs(
                                     'settings-audit-logs',
                                     'settings-audit-log-details'
                                 ) ? 'active' : '' }}">
 
-                                    <a href="{{ route(
-                                        'settings-audit-logs'
-                                    ) }}">
+                                    <a href="{{ route('settings-audit-logs') }}">
 
                                         <span>
                                             Audit Logs
@@ -1120,6 +1114,31 @@
                 @endif
 
 
+                {{-- ========================================
+                    ADMIN PROFILE
+                ========================================= --}}
+                @if(auth()->user()->hasPermission('view-profile'))
+
+                    <li class="{{ request()->routeIs(
+                        'profile',
+                        'profile.update'
+                    ) ? 'active' : '' }}">
+
+                        <a href="{{ route('profile') }}">
+
+                            <i class="ri-user-settings-line"></i>
+
+                            <span>
+                                Profile
+                            </span>
+
+                        </a>
+
+                    </li>
+
+                @endif
+
+
             </ul>
 
         @endif
@@ -1127,9 +1146,9 @@
     </div>
 
 
-    {{--==================================================
-        Logout
-    ==================================================--}}
+    {{-- ================================================
+        LOGOUT
+    ================================================= --}}
     <div class="logout">
 
         <form

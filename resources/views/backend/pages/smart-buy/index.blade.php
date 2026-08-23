@@ -1,47 +1,40 @@
 @extends('backend.layouts.backend')
 
-@section('title', 'Smart Buy')
+@section('title', 'Smart Buy Management')
 
 @section('content')
 
-    <div class="smart-buy-page">
+    <div class="smart-buy-admin-page">
 
-        {{-- ==========================================================
-        | Page Header
-        =========================================================== --}}
+        {{-- =========================================================
+            PAGE HEADER
+        ========================================================= --}}
+        <div class="smart-buy-admin-header">
 
-        <div class="smart-buy-page__header">
+            <div class="smart-buy-admin-header__content">
 
-            <div>
+                <div class="smart-buy-admin-header__icon">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                </div>
 
-            <span class="smart-buy-page__eyebrow">
-                Smart Buy Management
-            </span>
+                <div>
+                    <h1>Smart Buy Management</h1>
 
-                <h1>
-                    Smart Buy
-                </h1>
-
-                <p>
-                    Review customer requests, prepare quotes, manage purchases and shipments.
-                </p>
+                    <p>
+                        Review customer requests, manage quotes, payments, purchases and shipments.
+                    </p>
+                </div>
 
             </div>
 
-
-            <div class="smart-buy-page__header-actions">
+            <div class="smart-buy-admin-header__actions">
 
                 <a
-                    href="{{ route('smart-buy-admin-payments') }}"
-                    class="smart-buy-outline-btn"
+                    href="{{ route('payments-smart-buy') }}"
+                    class="smart-buy-admin-header__button smart-buy-admin-header__button--outline"
                 >
-
-                    <i class="ri-bank-card-line"></i>
-
-                    <span>
-                    Payments
-                </span>
-
+                    <i class="fa-solid fa-credit-card"></i>
+                    <span>Payments</span>
                 </a>
 
             </div>
@@ -49,66 +42,45 @@
         </div>
 
 
-
-        {{-- ==========================================================
-        | Statistics
-        =========================================================== --}}
-
-        <div class="smart-buy-stats">
-
+        {{-- =========================================================
+            STATISTICS
+        ========================================================= --}}
+        <div class="smart-buy-admin-stats">
 
             {{-- Total Requests --}}
+            <div class="smart-buy-admin-stat-card">
 
-            <div class="smart-buy-stat-card">
-
-                <div class="smart-buy-stat-card__icon">
-
-                    <i class="ri-file-list-3-line"></i>
-
+                <div class="smart-buy-admin-stat-card__icon smart-buy-admin-stat-card__icon--blue">
+                    <i class="fa-solid fa-layer-group"></i>
                 </div>
 
-                <div class="smart-buy-stat-card__content">
+                <div class="smart-buy-admin-stat-card__content">
 
-                <span>
-                    Total Requests
-                </span>
+                    <span>Total Requests</span>
 
                     <strong>
-                        128
+                        {{ $totalRequests ?? 0 }}
                     </strong>
-
-                    <small>
-                        All Smart Buy requests
-                    </small>
 
                 </div>
 
             </div>
 
 
-            {{-- Pending Review --}}
+            {{-- Pending --}}
+            <div class="smart-buy-admin-stat-card">
 
-            <div class="smart-buy-stat-card">
-
-                <div class="smart-buy-stat-card__icon smart-buy-stat-card__icon--orange">
-
-                    <i class="ri-time-line"></i>
-
+                <div class="smart-buy-admin-stat-card__icon smart-buy-admin-stat-card__icon--warning">
+                    <i class="fa-solid fa-clock"></i>
                 </div>
 
-                <div class="smart-buy-stat-card__content">
+                <div class="smart-buy-admin-stat-card__content">
 
-                <span>
-                    Pending Review
-                </span>
+                    <span>Pending Review</span>
 
                     <strong>
-                        18
+                        {{ $pendingRequests ?? 0 }}
                     </strong>
-
-                    <small>
-                        Waiting for admin review
-                    </small>
 
                 </div>
 
@@ -116,28 +88,19 @@
 
 
             {{-- Awaiting Payment --}}
+            <div class="smart-buy-admin-stat-card">
 
-            <div class="smart-buy-stat-card">
-
-                <div class="smart-buy-stat-card__icon smart-buy-stat-card__icon--blue">
-
-                    <i class="ri-bank-card-line"></i>
-
+                <div class="smart-buy-admin-stat-card__icon smart-buy-admin-stat-card__icon--purple">
+                    <i class="fa-solid fa-credit-card"></i>
                 </div>
 
-                <div class="smart-buy-stat-card__content">
+                <div class="smart-buy-admin-stat-card__content">
 
-                <span>
-                    Awaiting Payment
-                </span>
+                    <span>Awaiting Payment</span>
 
                     <strong>
-                        12
+                        {{ $awaitingPayment ?? 0 }}
                     </strong>
-
-                    <small>
-                        Quotes accepted
-                    </small>
 
                 </div>
 
@@ -145,171 +108,154 @@
 
 
             {{-- In Progress --}}
+            <div class="smart-buy-admin-stat-card">
 
-            <div class="smart-buy-stat-card">
-
-                <div class="smart-buy-stat-card__icon smart-buy-stat-card__icon--purple">
-
-                    <i class="ri-shopping-bag-3-line"></i>
-
+                <div class="smart-buy-admin-stat-card__icon smart-buy-admin-stat-card__icon--green">
+                    <i class="fa-solid fa-truck"></i>
                 </div>
 
-                <div class="smart-buy-stat-card__content">
+                <div class="smart-buy-admin-stat-card__content">
 
-                <span>
-                    In Progress
-                </span>
+                    <span>In Progress</span>
 
                     <strong>
-                        24
+                        {{ $inProgress ?? 0 }}
                     </strong>
-
-                    <small>
-                        Purchase or shipment
-                    </small>
 
                 </div>
 
             </div>
 
-
         </div>
 
 
-
-        {{-- ==========================================================
-        | Main Card
-        =========================================================== --}}
-
-        <section class="smart-buy-card">
+        {{-- =========================================================
+            REQUEST LIST
+        ========================================================= --}}
+        <div class="smart-buy-admin-list-card">
 
 
-            {{-- ======================================================
-            | Card Header
-            ======================================================= --}}
-
-            <div class="smart-buy-card__header">
+            {{-- List Header --}}
+            <div class="smart-buy-admin-list-card__header">
 
                 <div>
 
-                    <h2>
-                        Smart Buy Requests
-                    </h2>
+                    <h2>Smart Buy Requests</h2>
 
                     <p>
-                        Manage customer product purchasing requests.
+                        Manage and track all customer Smart Buy requests.
                     </p>
 
                 </div>
 
 
-                <div class="smart-buy-card__header-actions">
+                <div class="smart-buy-admin-list-card__count">
 
-                    <div class="smart-buy-search">
+                    <strong>
+                        {{ $smartBuys->total() }}
+                    </strong>
 
-                        <i class="ri-search-line"></i>
-
-                        <input
-                            type="text"
-                            placeholder="Search request..."
-                            autocomplete="off"
-                        >
-
-                    </div>
-
-
-                    <button
-                        type="button"
-                        class="smart-buy-filter-btn"
-                    >
-
-                        <i class="ri-filter-3-line"></i>
-
-                        <span>
-                        Filter
-                    </span>
-
-                    </button>
+                    <span>Requests</span>
 
                 </div>
 
             </div>
 
 
+            {{-- =====================================================
+                FILTER FORM
+            ===================================================== --}}
+            <form
+                action="{{ route('smart-buy') }}"
+                method="GET"
+                class="smart-buy-admin-filters"
+            >
 
-            {{-- ======================================================
-            | Filters
-            ======================================================= --}}
+                {{-- Search --}}
+                <div class="smart-buy-admin-filter-search">
 
-            <div class="smart-buy-filters">
+                    <i class="fa-solid fa-magnifying-glass"></i>
 
-                <div class="smart-buy-filter-field">
+                    <input
+                        type="text"
+                        name="search"
+                        value="{{ request('search') }}"
+                        placeholder="Search by request or customer"
+                    >
 
-                    <label for="smart-buy-status">
-                        Status
-                    </label>
+                </div>
 
-                    <select id="smart-buy-status">
 
-                        <option value="">
-                            All Statuses
+                {{-- Status --}}
+                <div class="smart-buy-admin-filter-select">
+
+                    <select name="status">
+
+                        <option value="all">
+                            All Status
                         </option>
 
-                        <option value="pending">
-                            Pending Review
+                        <option
+                            value="pending"
+                            @selected(request('status') === 'pending')
+                        >
+                            Pending
                         </option>
 
-                        <option value="quote">
-                            Quote Prepared
+                        <option
+                            value="quote_sent"
+                            @selected(request('status') === 'quote_sent')
+                        >
+                            Quote Sent
                         </option>
 
-                        <option value="awaiting-payment">
-                            Awaiting Payment
+                        <option
+                            value="quote_accepted"
+                            @selected(request('status') === 'quote_accepted')
+                        >
+                            Quote Accepted
                         </option>
 
-                        <option value="paid">
-                            Paid
+                        <option
+                            value="quote_rejected"
+                            @selected(request('status') === 'quote_rejected')
+                        >
+                            Quote Rejected
                         </option>
 
-                        <option value="purchased">
-                            Purchased
+                        <option
+                            value="payment_completed"
+                            @selected(request('status') === 'payment_completed')
+                        >
+                            Payment Completed
                         </option>
 
-                        <option value="shipment">
-                            In Shipment
+                        <option
+                            value="product_purchased"
+                            @selected(request('status') === 'product_purchased')
+                        >
+                            Product Purchased
                         </option>
 
-                        <option value="completed">
+                        <option
+                            value="in_transit"
+                            @selected(request('status') === 'in_transit')
+                        >
+                            In Transit
+                        </option>
+
+                        <option
+                            value="completed"
+                            @selected(request('status') === 'completed')
+                        >
                             Completed
                         </option>
 
-                    </select>
-
-                </div>
-
-
-                <div class="smart-buy-filter-field">
-
-                    <label for="smart-buy-service">
-                        Service
-                    </label>
-
-                    <select id="smart-buy-service">
-
-                        <option value="">
-                            All Services
-                        </option>
-
-                        <option value="freight">
-                            Freight Forwarding
-                        </option>
-
-                        <option value="customs">
-                            Customs Clearance
-                        </option>
-
-                        <option value="warehousing">
-                            Warehousing
+                        <option
+                            value="cancelled"
+                            @selected(request('status') === 'cancelled')
+                        >
+                            Cancelled
                         </option>
 
                     </select>
@@ -317,27 +263,58 @@
                 </div>
 
 
-                <div class="smart-buy-filter-field">
+                {{-- Country --}}
+                <div class="smart-buy-admin-filter-select">
 
-                    <label for="smart-buy-date">
-                        Date
-                    </label>
+                    <select name="country">
 
-                    <select id="smart-buy-date">
-
-                        <option value="">
-                            All Dates
+                        <option value="all">
+                            All Countries
                         </option>
 
-                        <option value="today">
+                        @foreach($countries as $country)
+
+                            <option
+                                value="{{ $country }}"
+                                @selected(request('country') === $country)
+                            >
+                                {{ config('countries.' . $country, $country) }}
+                            </option>
+
+                        @endforeach
+
+                    </select>
+
+                </div>
+
+
+                {{-- Date --}}
+                <div class="smart-buy-admin-filter-select">
+
+                    <select name="date">
+
+                        <option value="all">
+                            All Time
+                        </option>
+
+                        <option
+                            value="today"
+                            @selected(request('date') === 'today')
+                        >
                             Today
                         </option>
 
-                        <option value="week">
+                        <option
+                            value="week"
+                            @selected(request('date') === 'week')
+                        >
                             This Week
                         </option>
 
-                        <option value="month">
+                        <option
+                            value="month"
+                            @selected(request('date') === 'month')
+                        >
                             This Month
                         </option>
 
@@ -346,869 +323,670 @@
                 </div>
 
 
+                {{-- Filter --}}
                 <button
-                    type="button"
-                    class="smart-buy-clear-filter"
+                    type="submit"
+                    class="smart-buy-admin-filter-button"
                 >
 
-                    Clear Filters
+                    <i class="fa-solid fa-filter"></i>
+
+                    Filter
 
                 </button>
 
-            </div>
+
+                {{-- Reset --}}
+                @if(
+                    request()->filled('search')
+                    || request('status') !== null
+                    || request('country') !== null
+                    || request('date') !== null
+                )
+
+                    <a
+                        href="{{ route('smart-buy') }}"
+                        class="smart-buy-admin-reset-button"
+                    >
+                        <i class="fa-solid fa-rotate-left"></i>
+                    </a>
+
+                @endif
+
+            </form>
 
 
+            {{-- =====================================================
+                REQUESTS
+            ===================================================== --}}
+            <div class="smart-buy-admin-requests">
 
-            {{-- ======================================================
-            | Table
-            ======================================================= --}}
+                @forelse($smartBuys as $smartBuy)
 
-            <div class="smart-buy-table-wrapper">
+                    @php
 
-                <table class="smart-buy-table">
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Main Product
+                        |--------------------------------------------------------------------------
+                        */
 
-                    <thead>
-
-                    <tr>
-
-                        <th>
-                            Request
-                        </th>
-
-                        <th>
-                            Customer
-                        </th>
-
-                        <th>
-                            Product
-                        </th>
-
-                        <th>
-                            Destination
-                        </th>
-
-                        <th>
-                            Amount
-                        </th>
-
-                        <th>
-                            Status
-                        </th>
-
-                        <th>
-                            Created
-                        </th>
-
-                        <th>
-                            Action
-                        </th>
-
-                    </tr>
-
-                    </thead>
+                        $firstItem = $smartBuy->items->first();
 
 
-                    <tbody>
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Total Items
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $totalItems = $smartBuy->items->count();
 
 
-                    {{-- ==================================================
-                    | Request 1
-                    =================================================== --}}
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Current Status
+                        |--------------------------------------------------------------------------
+                        */
 
-                    <tr>
-
-                        <td>
-
-                            <a
-                                href="{{ route('smart-buy-details', 1) }}"
-                                class="smart-buy-request-number"
-                            >
-                                SB-2026-00128
-                            </a>
-
-                        </td>
+                        $status = $smartBuy->status;
 
 
-                        <td>
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Progress
+                        |--------------------------------------------------------------------------
+                        */
 
-                            <div class="smart-buy-customer">
+                        $progress = match ($status) {
 
-                                <div class="smart-buy-customer__avatar">
-                                    JD
-                                </div>
+                            'pending' => 10,
 
-                                <div>
+                            'quote_sent' => 25,
+
+                            'quote_accepted' => 35,
+
+                            'payment_completed' => 50,
+
+                            'product_purchased' => 70,
+
+                            'in_transit' => 85,
+
+                            'completed' => 100,
+
+                            'quote_rejected',
+                            'cancelled' => 0,
+
+                            default => 10,
+
+                        };
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Status Label
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $statusLabel = match ($status) {
+
+                            'pending' =>
+                                'Pending Review',
+
+                            'quote_sent' =>
+                                'Quote Sent',
+
+                            'quote_accepted' =>
+                                'Awaiting Payment',
+
+                            'payment_completed' =>
+                                'Payment Completed',
+
+                            'product_purchased' =>
+                                'Product Purchased',
+
+                            'in_transit' =>
+                                'In Transit',
+
+                            'completed' =>
+                                'Completed',
+
+                            'quote_rejected' =>
+                                'Quote Rejected',
+
+                            'cancelled' =>
+                                'Cancelled',
+
+                            default =>
+                                ucfirst(str_replace('_', ' ', $status)),
+
+                        };
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Status Class
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $statusClass = match ($status) {
+
+                            'pending' =>
+                                'warning',
+
+                            'quote_sent' =>
+                                'info',
+
+                            'quote_accepted' =>
+                                'purple',
+
+                            'payment_completed' =>
+                                'success',
+
+                            'product_purchased' =>
+                                'blue',
+
+                            'in_transit' =>
+                                'primary',
+
+                            'completed' =>
+                                'success',
+
+                            'quote_rejected',
+                            'cancelled' =>
+                                'danger',
+
+                            default =>
+                                'default',
+
+                        };
+
+                    @endphp
+
+
+                    <div class="smart-buy-admin-request">
+
+
+                        {{-- =================================================
+                            REQUEST TOP
+                        ================================================= --}}
+                        <div class="smart-buy-admin-request__top">
+
+
+                            <div class="smart-buy-admin-request__info">
+
+                            <span class="smart-buy-admin-request__eyebrow">
+                                REQUEST
+                            </span>
+
+
+                                <div class="smart-buy-admin-request__meta">
 
                                     <strong>
-                                        John Doe
+                                        #{{ $smartBuy->request_number }}
                                     </strong>
 
+
                                     <span>
-                                        john@example.com
-                                    </span>
+                                    <i class="fa-regular fa-calendar"></i>
+
+                                    {{ $smartBuy->created_at->format('d M Y') }}
+                                </span>
+
+
+                                    <span>
+                                    <i class="fa-solid fa-box"></i>
+
+                                    {{ $totalItems }}
+                                        {{ Str::plural('Item', $totalItems) }}
+                                </span>
+
+
+                                    <span>
+                                    <i class="fa-regular fa-user"></i>
+
+                                    {{ $smartBuy->first_name }}
+                                        {{ $smartBuy->last_name }}
+                                </span>
 
                                 </div>
 
                             </div>
 
-                        </td>
 
-
-                        <td>
-
-                            <div class="smart-buy-product">
-
-                                <strong>
-                                    MacBook Pro 14"
-                                </strong>
-
-                                <span>
-                                    Apple · 1 unit
-                                </span>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="smart-buy-location">
-
-                                <i class="ri-map-pin-line"></i>
-
-                                <span>
-                                    Paris, France
-                                </span>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <strong class="smart-buy-amount">
-                                $2,450.00
-                            </strong>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="smart-buy-status smart-buy-status--pending">
-
-                                <i></i>
-
-                                Pending Review
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="smart-buy-date">
-                                Aug 16, 2026
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="smart-buy-actions">
-
-                                <a
-                                    href="{{ route('smart-buy-details', 1) }}"
-                                    class="smart-buy-action-btn"
-                                    title="View Details"
-                                >
-
-                                    <i class="ri-eye-line"></i>
-
-                                </a>
-
-
-                                <a
-                                    href="{{ route('smart-buy-admin-quote', 1) }}"
-                                    class="smart-buy-action-btn"
-                                    title="Prepare Quote"
-                                >
-
-                                    <i class="ri-file-edit-line"></i>
-
-                                </a>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-
-
-                    {{-- ==================================================
-                    | Request 2
-                    =================================================== --}}
-
-                    <tr>
-
-                        <td>
-
-                            <a
-                                href="{{ route('smart-buy-details', 2) }}"
-                                class="smart-buy-request-number"
+                            <div
+                                class="smart-buy-admin-status smart-buy-admin-status--{{ $statusClass }}"
                             >
-                                SB-2026-00127
-                            </a>
 
-                        </td>
+                                @if($status === 'pending')
+
+                                    <i class="fa-solid fa-clock"></i>
+
+                                @elseif($status === 'quote_sent')
+
+                                    <i class="fa-solid fa-file-invoice"></i>
+
+                                @elseif($status === 'quote_accepted')
+
+                                    <i class="fa-solid fa-credit-card"></i>
+
+                                @elseif($status === 'payment_completed')
+
+                                    <i class="fa-solid fa-circle-check"></i>
+
+                                @elseif($status === 'product_purchased')
+
+                                    <i class="fa-solid fa-bag-shopping"></i>
+
+                                @elseif($status === 'in_transit')
+
+                                    <i class="fa-solid fa-truck"></i>
+
+                                @elseif($status === 'completed')
+
+                                    <i class="fa-solid fa-circle-check"></i>
+
+                                @else
+
+                                    <i class="fa-solid fa-circle-info"></i>
+
+                                @endif
+
+                                {{ $statusLabel }}
+
+                            </div>
+
+                        </div>
 
 
-                        <td>
+                        {{-- =================================================
+                            PRODUCT
+                        ================================================= --}}
+                        <div class="smart-buy-admin-request__product">
 
-                            <div class="smart-buy-customer">
 
-                                <div class="smart-buy-customer__avatar">
-                                    AM
-                                </div>
+                            {{-- Product Image --}}
+                            <div class="smart-buy-admin-product-image">
 
-                                <div>
+                                @if(
+                                    $firstItem
+                                    && $firstItem->product_image
+                                )
 
-                                    <strong>
-                                        Amadou Mohamed
-                                    </strong>
+                                    <img
+                                        src="{{ asset($firstItem->product_image) }}"
+                                        alt="{{ $firstItem->product_name }}"
+                                    >
+
+                                @else
+
+                                    <div class="smart-buy-admin-product-placeholder">
+
+                                        <i class="fa-solid fa-image"></i>
+
+                                    </div>
+
+                                @endif
+
+                            </div>
+
+
+                            {{-- Product Details --}}
+                            <div class="smart-buy-admin-product-details">
+
+                            <span>
+                                REQUESTED PRODUCT
+                            </span>
+
+
+                                <h3>
+                                    {{ $firstItem?->product_name ?? 'Product Request' }}
+                                </h3>
+
+
+                                @if($firstItem)
+
+                                    <div class="smart-buy-admin-product-details__meta">
 
                                     <span>
-                                        amadou@example.com
+                                        Qty:
+                                        <strong>
+                                            {{ $firstItem->quantity }}
+                                        </strong>
                                     </span>
 
-                                </div>
+
+                                        @if($firstItem->size)
+
+                                            <span>
+                                            Size:
+                                            <strong>
+                                                {{ $firstItem->size }}
+                                            </strong>
+                                        </span>
+
+                                        @endif
+
+
+                                        @if($firstItem->color)
+
+                                            <span>
+                                            Color:
+                                            <strong>
+                                                {{ $firstItem->color }}
+                                            </strong>
+                                        </span>
+
+                                        @endif
+
+                                    </div>
+
+                                @endif
+
+
+                                @if($totalItems > 1)
+
+                                    <div class="smart-buy-admin-more-items">
+
+                                        + {{ $totalItems - 1 }}
+                                        more
+                                        {{ Str::plural('item', $totalItems - 1) }}
+
+                                    </div>
+
+                                @endif
 
                             </div>
 
-                        </td>
 
+                            {{-- Customer --}}
+                            <div class="smart-buy-admin-customer">
 
-                        <td>
-
-                            <div class="smart-buy-product">
+                                <span>CUSTOMER</span>
 
                                 <strong>
-                                    Industrial Equipment
+                                    {{ $smartBuy->first_name }}
+                                    {{ $smartBuy->last_name }}
                                 </strong>
 
-                                <span>
-                                    Equipment · 3 units
-                                </span>
+                                <small>
+                                    {{ $smartBuy->email }}
+                                </small>
 
                             </div>
 
-                        </td>
+                        </div>
 
 
-                        <td>
+                        {{-- =================================================
+                            PROGRESS
+                        ================================================= --}}
+                        <div class="smart-buy-admin-progress">
 
-                            <div class="smart-buy-location">
+                            <div class="smart-buy-admin-progress__header">
 
-                                <i class="ri-map-pin-line"></i>
-
-                                <span>
-                                    Conakry, Guinea
-                                </span>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <strong class="smart-buy-amount">
-                                $8,750.00
-                            </strong>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="smart-buy-status smart-buy-status--quote">
-
-                                <i></i>
-
-                                Quote Prepared
-
+                            <span>
+                                Request Progress
                             </span>
 
-                        </td>
-
-
-                        <td>
-
-                            <span class="smart-buy-date">
-                                Aug 15, 2026
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="smart-buy-actions">
-
-                                <a
-                                    href="{{ route('smart-buy-details', 2) }}"
-                                    class="smart-buy-action-btn"
-                                    title="View Details"
-                                >
-
-                                    <i class="ri-eye-line"></i>
-
-                                </a>
-
-
-                                <a
-                                    href="{{ route('smart-buy-admin-quote', 2) }}"
-                                    class="smart-buy-action-btn"
-                                    title="Edit Quote"
-                                >
-
-                                    <i class="ri-edit-line"></i>
-
-                                </a>
+                                <strong>
+                                    {{ $progress }}%
+                                </strong>
 
                             </div>
 
-                        </td>
 
-                    </tr>
+                            <div class="smart-buy-admin-progress__bar">
+
+                                <div
+                                    class="smart-buy-admin-progress__fill"
+                                    style="width: {{ $progress }}%;"
+                                ></div>
+
+                            </div>
 
 
+                            <div class="smart-buy-admin-progress__steps">
 
-                    {{-- ==================================================
-                    | Request 3
-                    =================================================== --}}
-
-                    <tr>
-
-                        <td>
-
-                            <a
-                                href="{{ route('smart-buy-details', 3) }}"
-                                class="smart-buy-request-number"
+                            <span
+                                class="{{ $progress >= 10 ? 'is-active' : '' }}"
                             >
-                                SB-2026-00126
-                            </a>
+                                Request
+                            </span>
 
-                        </td>
+                                <span
+                                    class="{{ $progress >= 25 ? 'is-active' : '' }}"
+                                >
+                                Quote
+                            </span>
 
+                                <span
+                                    class="{{ $progress >= 50 ? 'is-active' : '' }}"
+                                >
+                                Payment
+                            </span>
 
-                        <td>
+                                <span
+                                    class="{{ $progress >= 70 ? 'is-active' : '' }}"
+                                >
+                                Purchase
+                            </span>
 
-                            <div class="smart-buy-customer">
+                                <span
+                                    class="{{ $progress >= 85 ? 'is-active' : '' }}"
+                                >
+                                Shipping
+                            </span>
 
-                                <div class="smart-buy-customer__avatar">
-                                    MK
-                                </div>
-
-                                <div>
-
-                                    <strong>
-                                        Mariama Kante
-                                    </strong>
-
-                                    <span>
-                                        mariama@example.com
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="smart-buy-product">
-
-                                <strong>
-                                    Samsung Galaxy S26
-                                </strong>
-
-                                <span>
-                                    Electronics · 2 units
-                                </span>
+                                <span
+                                    class="{{ $progress >= 100 ? 'is-active' : '' }}"
+                                >
+                                Completed
+                            </span>
 
                             </div>
 
-                        </td>
+                        </div>
 
 
-                        <td>
-
-                            <div class="smart-buy-location">
-
-                                <i class="ri-map-pin-line"></i>
-
-                                <span>
-                                    Kankan, Guinea
-                                </span>
-
-                            </div>
-
-                        </td>
+                        {{-- =================================================
+                            ACTIONS
+                        ================================================= --}}
+                        <div class="smart-buy-admin-request__actions">
 
 
-                        <td>
+                            {{-- Quote Status --}}
+                            @if(
+                                $status === 'pending'
+                            )
 
-                            <strong class="smart-buy-amount">
-                                $1,980.00
-                            </strong>
+                                <span class="smart-buy-admin-action-info">
 
-                        </td>
+                                <i class="fa-solid fa-file-invoice"></i>
 
+                                Quote Required
 
-                        <td>
+                            </span>
 
-                            <span class="smart-buy-status smart-buy-status--payment">
+                            @elseif(
+                                $status === 'quote_sent'
+                            )
 
-                                <i></i>
+                                <span class="smart-buy-admin-action-info smart-buy-admin-action-info--info">
+
+                                <i class="fa-solid fa-clock"></i>
+
+                                Waiting for Customer
+
+                            </span>
+
+                            @elseif(
+                                $status === 'quote_accepted'
+                            )
+
+                                <span class="smart-buy-admin-action-info smart-buy-admin-action-info--purple">
+
+                                <i class="fa-solid fa-credit-card"></i>
 
                                 Awaiting Payment
 
                             </span>
 
-                        </td>
+                            @elseif(
+                                $status === 'payment_completed'
+                            )
 
+                                <span class="smart-buy-admin-action-info smart-buy-admin-action-info--success">
 
-                        <td>
+                                <i class="fa-solid fa-circle-check"></i>
 
-                            <span class="smart-buy-date">
-                                Aug 14, 2026
+                                Ready to Purchase
+
                             </span>
 
-                        </td>
+                            @elseif(
+                                $status === 'product_purchased'
+                            )
+
+                                <span class="smart-buy-admin-action-info smart-buy-admin-action-info--blue">
+
+                                <i class="fa-solid fa-truck"></i>
+
+                                Shipment Required
+
+                            </span>
+
+                            @elseif(
+                                $status === 'in_transit'
+                            )
+
+                                <span class="smart-buy-admin-action-info smart-buy-admin-action-info--primary">
+
+                                <i class="fa-solid fa-truck-fast"></i>
+
+                                Shipment Active
+
+                            </span>
+
+                            @endif
 
 
-                        <td>
-
-                            <div class="smart-buy-actions">
-
-                                <a
-                                    href="{{ route('smart-buy-details', 3) }}"
-                                    class="smart-buy-action-btn"
-                                    title="View Details"
-                                >
-
-                                    <i class="ri-eye-line"></i>
-
-                                </a>
-
-
-                                <a
-                                    href="{{ route('smart-buy-admin-payments') }}"
-                                    class="smart-buy-action-btn"
-                                    title="View Payment"
-                                >
-
-                                    <i class="ri-bank-card-line"></i>
-
-                                </a>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-
-
-                    {{-- ==================================================
-                    | Request 4
-                    =================================================== --}}
-
-                    <tr>
-
-                        <td>
-
+                            {{-- Manage Button --}}
                             <a
-                                href="{{ route('smart-buy-details', 4) }}"
-                                class="smart-buy-request-number"
+                                href="{{ route('smart-buy.details', $smartBuy) }}"
+                                class="smart-buy-admin-view-button"
                             >
-                                SB-2026-00125
+
+                                <i class="fa-regular fa-eye"></i>
+
+                                Manage Request
+
                             </a>
 
-                        </td>
+                        </div>
 
 
-                        <td>
+                    </div>
 
-                            <div class="smart-buy-customer">
-
-                                <div class="smart-buy-customer__avatar">
-                                    AS
-                                </div>
-
-                                <div>
-
-                                    <strong>
-                                        Alpha Services
-                                    </strong>
-
-                                    <span>
-                                        alpha@example.com
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
+                @empty
 
 
-                        <td>
+                    {{-- =================================================
+                        EMPTY STATE
+                    ================================================= --}}
+                    <div class="smart-buy-admin-empty">
 
-                            <div class="smart-buy-product">
+                        <div class="smart-buy-admin-empty__icon">
 
-                                <strong>
-                                    Office Furniture
-                                </strong>
+                            <i class="fa-solid fa-bag-shopping"></i>
 
-                                <span>
-                                    Furniture · 12 units
-                                </span>
+                        </div>
 
-                            </div>
+                        <h3>
+                            No Smart Buy Requests Found
+                        </h3>
 
-                        </td>
-
-
-                        <td>
-
-                            <div class="smart-buy-location">
-
-                                <i class="ri-map-pin-line"></i>
-
-                                <span>
-                                    Labé, Guinea
-                                </span>
-
-                            </div>
-
-                        </td>
+                        <p>
+                            There are currently no Smart Buy requests matching your filters.
+                        </p>
 
 
-                        <td>
-
-                            <strong class="smart-buy-amount">
-                                $4,620.00
-                            </strong>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="smart-buy-status smart-buy-status--purchased">
-
-                                <i></i>
-
-                                Purchased
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="smart-buy-date">
-                                Aug 13, 2026
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="smart-buy-actions">
-
-                                <a
-                                    href="{{ route('smart-buy-details', 4) }}"
-                                    class="smart-buy-action-btn"
-                                    title="View Details"
-                                >
-
-                                    <i class="ri-eye-line"></i>
-
-                                </a>
-
-
-                                <a
-                                    href="{{ route('smart-buy-shipment', 4) }}"
-                                    class="smart-buy-action-btn"
-                                    title="Manage Shipment"
-                                >
-
-                                    <i class="ri-truck-line"></i>
-
-                                </a>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-
-
-                    {{-- ==================================================
-                    | Request 5
-                    =================================================== --}}
-
-                    <tr>
-
-                        <td>
+                        @if(
+                            request()->hasAny([
+                                'search',
+                                'status',
+                                'country',
+                                'date'
+                            ])
+                        )
 
                             <a
-                                href="{{ route('smart-buy-details', 5) }}"
-                                class="smart-buy-request-number"
+                                href="{{ route('smart-buy') }}"
+                                class="smart-buy-admin-empty__button"
                             >
-                                SB-2026-00124
+                                Reset Filters
                             </a>
 
-                        </td>
+                        @endif
+
+                    </div>
 
 
-                        <td>
-
-                            <div class="smart-buy-customer">
-
-                                <div class="smart-buy-customer__avatar">
-                                    FB
-                                </div>
-
-                                <div>
-
-                                    <strong>
-                                        Fatou Bah
-                                    </strong>
-
-                                    <span>
-                                        fatou@example.com
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="smart-buy-product">
-
-                                <strong>
-                                    Medical Supplies
-                                </strong>
-
-                                <span>
-                                    Supplies · 8 boxes
-                                </span>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="smart-buy-location">
-
-                                <i class="ri-map-pin-line"></i>
-
-                                <span>
-                                    Nzérékoré, Guinea
-                                </span>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <strong class="smart-buy-amount">
-                                $3,240.00
-                            </strong>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="smart-buy-status smart-buy-status--transit">
-
-                                <i></i>
-
-                                In Shipment
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="smart-buy-date">
-                                Aug 12, 2026
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="smart-buy-actions">
-
-                                <a
-                                    href="{{ route('smart-buy-details', 5) }}"
-                                    class="smart-buy-action-btn"
-                                    title="View Details"
-                                >
-
-                                    <i class="ri-eye-line"></i>
-
-                                </a>
-
-
-                                <a
-                                    href="{{ route('smart-buy-shipment', 5) }}"
-                                    class="smart-buy-action-btn"
-                                    title="View Shipment"
-                                >
-
-                                    <i class="ri-truck-line"></i>
-
-                                </a>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-
-                    </tbody>
-
-                </table>
+                @endforelse
 
             </div>
 
 
+            {{-- =====================================================
+                PAGINATION
+            ===================================================== --}}
+            @if($smartBuys->hasPages())
 
-            {{-- ======================================================
-            | Pagination
-            ======================================================= --}}
+                <div class="smart-buy-admin-pagination">
 
-            <div class="smart-buy-pagination">
-
-                <div class="smart-buy-pagination__info">
-
-                    Showing
-
-                    <strong>
-                        1
-                    </strong>
-
-                    to
-
-                    <strong>
-                        5
-                    </strong>
-
-                    of
-
-                    <strong>
-                        128
-                    </strong>
-
-                    requests
+                    {{ $smartBuys->links() }}
 
                 </div>
 
-
-                <div class="smart-buy-pagination__links">
-
-                    <button
-                        type="button"
-                        class="smart-buy-pagination__btn smart-buy-pagination__btn--disabled"
-                        disabled
-                    >
-
-                        <i class="ri-arrow-left-s-line"></i>
-
-                    </button>
+            @endif
 
 
-                    <button
-                        type="button"
-                        class="smart-buy-pagination__btn smart-buy-pagination__btn--active"
-                    >
-                        1
-                    </button>
-
-
-                    <button
-                        type="button"
-                        class="smart-buy-pagination__btn"
-                    >
-                        2
-                    </button>
-
-
-                    <button
-                        type="button"
-                        class="smart-buy-pagination__btn"
-                    >
-                        3
-                    </button>
-
-
-                    <span class="smart-buy-pagination__dots">
-                    ...
-                </span>
-
-
-                    <button
-                        type="button"
-                        class="smart-buy-pagination__btn"
-                    >
-                        26
-                    </button>
-
-
-                    <button
-                        type="button"
-                        class="smart-buy-pagination__btn"
-                    >
-
-                        <i class="ri-arrow-right-s-line"></i>
-
-                    </button>
-
-                </div>
-
-            </div>
-
-        </section>
+        </div>
 
     </div>
 
 @endsection
+
+
+@push('scripts')
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const selects = document.querySelectorAll(
+                '.smart-buy-admin-filter-select select'
+            );
+
+            selects.forEach(function (select) {
+
+                select.addEventListener('change', function () {
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Optional:
+                    | Automatically submit filter form
+                    |--------------------------------------------------------------------------
+                    */
+
+                    // this.form.submit();
+
+                });
+
+            });
+
+        });
+
+    </script>
+
+@endpush
