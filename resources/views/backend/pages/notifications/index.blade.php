@@ -354,7 +354,7 @@
 
 
                             <a
-                                href="{{ route('account-payments') }}"
+                                href="{{ route('account.payments') }}"
                                 class="notification-action"
                             >
                                 View Payments
@@ -545,7 +545,7 @@
 
 
                             <a
-                                href="{{ route('account-payments') }}"
+                                href="{{ route('account.payments') }}"
                                 class="notification-action"
                             >
                                 View Payment

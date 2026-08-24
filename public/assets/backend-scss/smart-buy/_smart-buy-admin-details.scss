@@ -1212,4 +1212,361 @@
             }
         }
     }
+
+    /* =========================================================
+       SMART BUY - SHIPPING & TRACKING
+    ========================================================= */
+
+    .smart-buy-card {
+
+        .shipping-section {
+            padding: 32px 20px 8px;
+
+            &:first-of-type {
+                padding-top: 28px;
+            }
+
+            + .shipping-section {
+                margin-top: 8px;
+            }
+        }
+
+
+        /* =====================================================
+           SECTION HEADING
+        ===================================================== */
+
+        .shipping-section-header {
+            margin-bottom: 22px;
+
+            h3 {
+                margin: 0;
+                font-size: 22px;
+                line-height: 1.3;
+                font-weight: 700;
+                color: #2f415c;
+            }
+        }
+
+
+        /* =====================================================
+           SHIPPING INFORMATION GRID
+        ===================================================== */
+
+        .shipping-section {
+
+            .info-grid {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                border-top: 1px solid #e7eaee;
+                border-left: 1px solid #e7eaee;
+                border-radius: 10px;
+                overflow: hidden;
+                gap: 0;
+            }
+
+
+            .info-item {
+                position: relative;
+                min-height: 105px;
+                padding: 24px 28px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                gap: 8px;
+                background: #fff;
+                border-right: 1px solid #e7eaee;
+                border-bottom: 1px solid #e7eaee;
+
+
+                span {
+                    font-size: 14px;
+                    line-height: 1.4;
+                    font-weight: 500;
+                    color: #7a8596;
+                }
+
+
+                strong {
+                    font-size: 15px;
+                    line-height: 1.5;
+                    font-weight: 700;
+                    color: #435168;
+                    word-break: break-word;
+                }
+
+
+                a.view-product {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 7px;
+                    width: fit-content;
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: #356d61;
+                    text-decoration: none;
+                    transition: all 0.2s ease;
+
+
+                    i {
+                        font-size: 16px;
+                    }
+
+
+                    &:hover {
+                        color: #1f5549;
+                        transform: translateX(2px);
+                    }
+                }
+            }
+        }
+
+
+        /* =====================================================
+           SHIPPING TIMELINE
+        ===================================================== */
+
+        .shipping-section:nth-of-type(2) {
+
+            .info-item {
+                min-height: 95px;
+            }
+        }
+
+
+        /* =====================================================
+           DELIVERY ADDRESS
+        ===================================================== */
+
+        .shipping-address-box {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 22px 24px;
+            border: 1px solid #e7eaee;
+            border-radius: 10px;
+            background: #fafcfc;
+        }
+
+
+        .shipping-address-icon {
+            width: 42px;
+            height: 42px;
+            flex: 0 0 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: #edf4f1;
+            color: #356d61;
+
+
+            i {
+                font-size: 20px;
+            }
+        }
+
+
+        .shipping-address-content {
+            padding-top: 2px;
+
+            p {
+                margin: 0 0 7px;
+                font-size: 15px;
+                line-height: 1.6;
+                color: #566378;
+
+                &:last-of-type {
+                    margin-bottom: 5px;
+                }
+            }
+
+
+            strong {
+                display: block;
+                font-size: 14px;
+                font-weight: 700;
+                color: #36445a;
+            }
+        }
+
+
+        /* =====================================================
+           SHIPMENT NOTES
+        ===================================================== */
+
+        .quote-notes {
+            margin: 26px 20px 0;
+            padding: 18px 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            border-left: 3px solid #356d61;
+            border-radius: 8px;
+            background: #f3f7f6;
+        }
+
+
+        .quote-notes-icon {
+            width: 32px;
+            height: 32px;
+            flex: 0 0 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: #e7f0ed;
+            color: #356d61;
+
+
+            i {
+                font-size: 17px;
+            }
+        }
+
+
+        .quote-notes {
+
+            strong {
+                display: block;
+                margin-bottom: 4px;
+                font-size: 14px;
+                font-weight: 700;
+                color: #435168;
+            }
+
+
+            p {
+                margin: 0;
+                font-size: 14px;
+                line-height: 1.6;
+                color: #667085;
+            }
+        }
+
+
+        /* =====================================================
+           SHIPPING ACTIONS
+        ===================================================== */
+
+        .quote-action-bottom {
+            margin-top: 26px;
+            padding: 20px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 12px;
+            border-top: 1px solid #edf0f2;
+            background: #fafbfb;
+
+
+            .btn {
+                min-height: 42px;
+                padding: 0 18px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: 600;
+                text-decoration: none;
+                transition: all 0.2s ease;
+
+
+                i {
+                    font-size: 17px;
+                }
+            }
+
+
+            .btn-secondary {
+                background: #fff;
+                border: 1px solid #cfd9d6;
+                color: #356d61;
+
+
+                &:hover {
+                    background: #f2f7f5;
+                    border-color: #356d61;
+                }
+            }
+
+
+            .btn-primary {
+                background: #356d61;
+                border: 1px solid #356d61;
+                color: #fff;
+
+
+                &:hover {
+                    background: #29594e;
+                    border-color: #29594e;
+                    transform: translateY(-1px);
+                }
+            }
+        }
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+
+    @media (max-width: 767px) {
+
+        .smart-buy-card {
+
+            .shipping-section {
+                padding: 24px 16px 4px;
+            }
+
+
+            .shipping-section-header {
+                margin-bottom: 16px;
+
+                h3 {
+                    font-size: 19px;
+                }
+            }
+
+
+            .shipping-section {
+
+                .info-grid {
+                    grid-template-columns: 1fr;
+                }
+
+
+                .info-item {
+                    min-height: auto;
+                    padding: 18px 18px;
+                }
+            }
+
+
+            .shipping-address-box {
+                padding: 18px;
+            }
+
+
+            .quote-notes {
+                margin: 22px 16px 0;
+                padding: 16px;
+            }
+
+
+            .quote-action-bottom {
+                padding: 16px;
+                flex-direction: column;
+
+
+                .btn {
+                    width: 100%;
+                }
+            }
+        }
+    }
 }
+
+

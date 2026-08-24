@@ -8,12 +8,25 @@
 
         $statusConfig = [
 
+            /*
+            |--------------------------------------------------------------------------
+            | Request Submitted
+            |--------------------------------------------------------------------------
+            */
+
             'pending' => [
                 'label' => 'Pending Review',
                 'class' => 'status-pending',
                 'icon' => 'fa-solid fa-clock',
                 'progress' => 10,
             ],
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Quote Sent
+            |--------------------------------------------------------------------------
+            */
 
             'quote_sent' => [
                 'label' => 'Quote Available',
@@ -22,6 +35,13 @@
                 'progress' => 25,
             ],
 
+
+            /*
+            |--------------------------------------------------------------------------
+            | Quote Accepted
+            |--------------------------------------------------------------------------
+            */
+
             'quote_accepted' => [
                 'label' => 'Awaiting Payment',
                 'class' => 'status-quote-accepted',
@@ -29,12 +49,40 @@
                 'progress' => 40,
             ],
 
-            'quote_rejected' => [
-                'label' => 'Quote Rejected',
-                'class' => 'status-rejected',
-                'icon' => 'fa-solid fa-circle-xmark',
-                'progress' => 25,
+
+            /*
+            |--------------------------------------------------------------------------
+            | Payment Pending
+            |--------------------------------------------------------------------------
+            */
+
+            'payment_pending' => [
+                'label' => 'Payment Pending',
+                'class' => 'status-payment-pending',
+                'icon' => 'fa-solid fa-clock',
+                'progress' => 45,
             ],
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Payment Processing
+            |--------------------------------------------------------------------------
+            */
+
+            'payment_processing' => [
+                'label' => 'Payment Processing',
+                'class' => 'status-payment-processing',
+                'icon' => 'fa-solid fa-spinner',
+                'progress' => 50,
+            ],
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Payment Completed
+            |--------------------------------------------------------------------------
+            */
 
             'payment_completed' => [
                 'label' => 'Payment Completed',
@@ -43,12 +91,68 @@
                 'progress' => 55,
             ],
 
+
+            /*
+            |--------------------------------------------------------------------------
+            | Payment Failed
+            |--------------------------------------------------------------------------
+            */
+
+            'payment_failed' => [
+                'label' => 'Payment Failed',
+                'class' => 'status-payment-failed',
+                'icon' => 'fa-solid fa-circle-xmark',
+                'progress' => 40,
+            ],
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Payment Cancelled
+            |--------------------------------------------------------------------------
+            */
+
+            'payment_cancelled' => [
+                'label' => 'Payment Cancelled',
+                'class' => 'status-payment-cancelled',
+                'icon' => 'fa-solid fa-ban',
+                'progress' => 40,
+            ],
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Quote Rejected
+            |--------------------------------------------------------------------------
+            */
+
+            'quote_rejected' => [
+                'label' => 'Quote Rejected',
+                'class' => 'status-rejected',
+                'icon' => 'fa-solid fa-circle-xmark',
+                'progress' => 25,
+            ],
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Products Purchased
+            |--------------------------------------------------------------------------
+            */
+
             'product_purchased' => [
                 'label' => 'Products Purchased',
                 'class' => 'status-purchased',
                 'icon' => 'fa-solid fa-bag-shopping',
                 'progress' => 70,
             ],
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | In Transit
+            |--------------------------------------------------------------------------
+            */
 
             'in_transit' => [
                 'label' => 'In Transit',
@@ -57,12 +161,26 @@
                 'progress' => 85,
             ],
 
+
+            /*
+            |--------------------------------------------------------------------------
+            | Completed
+            |--------------------------------------------------------------------------
+            */
+
             'completed' => [
                 'label' => 'Completed',
                 'class' => 'status-completed',
                 'icon' => 'fa-solid fa-circle-check',
                 'progress' => 100,
             ],
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Cancelled
+            |--------------------------------------------------------------------------
+            */
 
             'cancelled' => [
                 'label' => 'Cancelled',
@@ -107,7 +225,7 @@
 
 
                 <a
-                    href="{{ route('my-smart-buy-create') }}"
+                    href="{{ route('my-smart-buy.create') }}"
                     class="smart-buy-create-btn"
                 >
                     <i class="fa-solid fa-plus"></i>
@@ -118,7 +236,6 @@
             </div>
 
         </div>
-
 
 
         {{-- ============================================================
@@ -221,7 +338,6 @@
         </div>
 
 
-
         {{-- ============================================================
             REQUEST LIST
         ============================================================ --}}
@@ -259,7 +375,6 @@
             </div>
 
 
-
             {{-- ========================================================
                 FILTER FORM
             ======================================================== --}}
@@ -287,7 +402,6 @@
                     >
 
                 </div>
-
 
 
                 {{-- Status Filter --}}
@@ -322,7 +436,6 @@
                 </div>
 
 
-
                 {{-- Country Filter --}}
 
                 <div class="smart-buy-filter-select">
@@ -352,7 +465,6 @@
                     <i class="fa-solid fa-chevron-down"></i>
 
                 </div>
-
 
 
                 {{-- Date Filter --}}
@@ -396,7 +508,6 @@
                 </div>
 
 
-
                 {{-- Filter Button --}}
 
                 <button
@@ -411,7 +522,6 @@
                 </span>
 
                 </button>
-
 
 
                 {{-- Reset --}}
@@ -442,13 +552,11 @@
             </form>
 
 
-
             {{-- ========================================================
                 REQUESTS
             ======================================================== --}}
 
             @if($smartBuys->count())
-
 
                 <div class="smart-buy-request-list">
 
@@ -530,7 +638,6 @@
                                 </div>
 
 
-
                                 {{-- STATUS --}}
 
                                 <div
@@ -549,7 +656,6 @@
                             </div>
 
 
-
                             {{-- ====================================================
                                 PRODUCT PREVIEW
                             ==================================================== --}}
@@ -565,7 +671,7 @@
                                     )
 
                                         <img
-                                            src="{{ asset('storage/' . $firstItem->product_image) }}"
+                                            src="{{ asset($firstItem->product_image) }}"
                                             alt="{{ $firstItem->product_name }}"
                                         >
 
@@ -580,7 +686,6 @@
                                     @endif
 
                                 </div>
-
 
 
                                 <div class="request-product-content">
@@ -669,81 +774,159 @@
                             </div>
 
 
-
                             {{-- ====================================================
                                 PROGRESS
                             ==================================================== --}}
 
+                            @php
+
+                                /*
+                                |--------------------------------------------------------------------------
+                                | Progress Stage
+                                |--------------------------------------------------------------------------
+                                |
+                                | 1 = Request
+                                | 2 = Quote
+                                | 3 = Payment
+                                | 4 = Shipping
+                                | 5 = Completed
+                                |
+                                */
+
+                                $currentStage = match($statusKey) {
+
+                                    'pending' => 1,
+
+                                    'quote_sent',
+                                    'quote_rejected',
+                                    'quote_accepted',
+                                    'extension_requested' => 2,
+
+                                    'payment_pending',
+                                    'payment_processing',
+                                    'payment_failed',
+                                    'payment_cancelled',
+                                    'payment_completed',
+                                    'product_purchased' => 3,
+
+                                    'in_transit' => 4,
+
+                                    'completed' => 5,
+
+                                    'cancelled' => 0,
+
+                                    default => 1,
+
+                                };
+
+
+                                /*
+                                |--------------------------------------------------------------------------
+                                | Progress Percentage
+                                |--------------------------------------------------------------------------
+                                */
+
+                                $progressMap = [
+
+                                    0 => 0,
+
+                                    1 => 10,
+
+                                    2 => 25,
+
+                                    3 => 55,
+
+                                    4 => 85,
+
+                                    5 => 100,
+
+                                ];
+
+
+                                $progressPercentage =
+                                    $progressMap[$currentStage] ?? 10;
+
+                            @endphp
+
+
+
                             <div class="request-progress-section">
 
 
+                                {{-- ==================================================
+                                    PROGRESS HEADER
+                                ================================================== --}}
+
                                 <div class="progress-header">
 
-                                <span>
-                                    Request Progress
-                                </span>
+                                    <span>
+                                        Request Progress
+                                    </span>
 
 
                                     <strong>
-                                        {{ $status['progress'] }}%
+
+                                        {{ $progressPercentage }}%
+
                                     </strong>
 
                                 </div>
 
 
+
+                                {{-- ==================================================
+                                    PROGRESS BAR
+                                ================================================== --}}
+
                                 <div class="request-progress-bar">
 
                                     <div
                                         class="request-progress-fill"
-                                        style="width: {{ $status['progress'] }}%"
-                                    ></div>
+                                        style="width: {{ $progressPercentage }}%"
+                                    >
+                                    </div>
 
                                 </div>
 
+
+
+                                {{-- ==================================================
+                                    PROGRESS STEPS
+                                ================================================== --}}
 
                                 <div class="request-progress-steps">
 
 
-                                <span
-                                    class="{{ $status['progress'] >= 10 ? 'active' : '' }}"
-                                >
-                                    Request
-                                </span>
+                                    {{-- Request --}}
+
+                                    <span class="{{ $currentStage >= 1 ? 'active' : '' }}">Request</span>
 
 
-                                    <span
-                                        class="{{ $status['progress'] >= 25 ? 'active' : '' }}"
-                                    >
-                                    Quote
-                                </span>
+
+                                    {{-- Quote --}}
+
+                                    <span class="{{ $currentStage >= 2 ? 'active' : '' }}">Quote</span>
 
 
-                                    <span
-                                        class="{{ $status['progress'] >= 55 ? 'active' : '' }}"
-                                    >
-                                    Payment
-                                </span>
+
+                                    {{-- Payment --}}
+
+                                    <span class="{{ $currentStage >= 3 ? 'active' : '' }}">Payment</span>
 
 
-                                    <span
-                                        class="{{ $status['progress'] >= 85 ? 'active' : '' }}"
-                                    >
-                                    Shipping
-                                </span>
+
+                                    {{-- Shipping --}}
+
+                                    <span class="{{ $currentStage >= 4 ? 'active' : '' }}">Shipping</span>
 
 
-                                    <span
-                                        class="{{ $status['progress'] >= 100 ? 'active' : '' }}"
-                                    >
-                                    Completed
-                                </span>
 
+                                    {{-- Completed --}}
+
+                                    <span class="{{ $currentStage >= 5 ? 'active' : '' }}">Completed</span>
 
                                 </div>
-
-
                             </div>
-
 
 
                             {{-- ====================================================
@@ -753,8 +936,9 @@
                             <div class="request-card-footer">
 
 
-                                {{-- LEFT STATUS INFO --}}
-
+                                {{-- ==========================================================
+                                | LEFT STATUS INFO
+                                =========================================================== --}}
                                 <div class="request-extra-info">
 
 
@@ -768,9 +952,9 @@
 
                                             <div>
 
-                                            <span>
-                                                Quote
-                                            </span>
+                                                <span>
+                                                    Quote
+                                                </span>
 
                                                 <strong>
 
@@ -802,9 +986,9 @@
 
                                             <div>
 
-                                            <span>
-                                                Payment
-                                            </span>
+                                                <span>
+                                                    Payment
+                                                </span>
 
                                                 <strong>
 
@@ -836,9 +1020,9 @@
 
                                             <div>
 
-                                            <span>
-                                                Shipment
-                                            </span>
+                                                <span>
+                                                    Shipment
+                                                </span>
 
                                                 <strong>
 
@@ -862,56 +1046,64 @@
                                 </div>
 
 
-
-                                {{-- ACTIONS --}}
-
+                                {{-- ==========================================================
+                                | ACTIONS
+                                =========================================================== --}}
                                 <div class="request-actions">
 
 
                                     {{-- VIEW DETAILS --}}
 
                                     <a
-                                        href="{{ route('my-smart-buy-details', $smartBuy->id) }}"
+                                        href="{{ route('my-smart-buy.details', $smartBuy->id) }}"
                                         class="request-action-btn request-view-btn"
                                     >
 
                                         <i class="fa-regular fa-eye"></i>
 
                                         <span>
-                                        View Details
-                                    </span>
+                                            View Details
+                                        </span>
 
                                     </a>
 
 
-
-                                    {{-- VIEW QUOTE --}}
+                                    {{-- ======================================================
+                                    | VIEW QUOTE
+                                    ======================================================= --}}
 
                                     @if(
+                                        $quote
+                                        &&
                                         in_array(
                                             $statusKey,
                                             [
                                                 'quote_sent',
                                                 'quote_accepted',
+                                                'extension_requested',
+                                                'payment_pending',
+                                                'payment_processing',
                                                 'payment_completed',
+                                                'payment_failed',
+                                                'payment_cancelled',
                                                 'product_purchased',
                                                 'in_transit',
-                                                'completed'
-                                            ]
+                                                'completed',
+                                            ],
+                                            true
                                         )
-                                        && $quote
                                     )
 
                                         <a
-                                            href="{{ route('my-smart-buy-quote', $smartBuy) }}"
+                                            href="{{ route('my-smart-buy.quote', $smartBuy) }}"
                                             class="request-action-btn request-quote-btn"
                                         >
 
                                             <i class="fa-solid fa-file-invoice-dollar"></i>
 
                                             <span>
-                                            View Quote
-                                        </span>
+                                                View Quote
+                                            </span>
 
                                         </a>
 
@@ -919,20 +1111,33 @@
 
 
 
-                                    {{-- PAYMENT --}}
+                                    {{-- ======================================================
+                                    | MAKE PAYMENT
+                                    ======================================================= --}}
 
-                                    @if($statusKey === 'quote_accepted')
+                                    @if(
+                                        in_array(
+                                            $statusKey,
+                                            [
+                                                'quote_accepted',
+                                                'payment_pending',
+                                                'payment_failed',
+                                                'payment_cancelled',
+                                            ],
+                                            true
+                                        )
+                                    )
 
                                         <a
-                                            href="{{ route('smart-buy-payment', $smartBuy) }}"
+                                            href="{{ route('my-smart-buy.payment', $smartBuy) }}"
                                             class="request-action-btn request-payment-btn"
                                         >
 
                                             <i class="fa-solid fa-credit-card"></i>
 
                                             <span>
-                                            Make Payment
-                                        </span>
+                                                Make Payment
+                                            </span>
 
                                         </a>
 
@@ -940,20 +1145,47 @@
 
 
 
-                                    {{-- TRACK SHIPMENT --}}
+                                    {{-- ======================================================
+                                    | PAYMENT PROCESSING
+                                    ======================================================= --}}
+
+                                    @if($statusKey === 'payment_processing')
+
+                                        <span
+                                            class="request-action-btn request-processing-btn"
+                                        >
+
+                                            <i class="fa-solid fa-spinner fa-spin"></i>
+
+                                            <span>
+                                                Processing Payment
+                                            </span>
+
+                                        </span>
+
+                                    @endif
+
+
+
+                                    {{-- ======================================================
+                                    | TRACK SHIPMENT
+                                    ======================================================= --}}
 
                                     @if(
+                                        $shipment
+                                        &&
                                         in_array(
                                             $statusKey,
                                             [
                                                 'in_transit',
-                                                'completed'
-                                            ]
+                                                'completed',
+                                            ],
+                                            true
                                         )
                                     )
 
                                         <a
-                                            href="{{ route('smart-buy-tracking', $smartBuy) }}"
+                                            href="{{ route('my-smart-buy.tracking', $smartBuy) }}"
                                             class="request-action-btn request-track-btn"
                                         >
 
@@ -997,9 +1229,7 @@
 
                 @endif
 
-
             @else
-
 
                 {{-- ====================================================
                     EMPTY STATE
@@ -1030,7 +1260,7 @@
 
 
                     <a
-                        href="{{ route('my-smart-buy-create') }}"
+                        href="{{ route('my-smart-buy.create') }}"
                         class="smart-buy-create-btn"
                     >
 
@@ -1044,7 +1274,6 @@
 
 
                 </div>
-
 
             @endif
 
@@ -1114,7 +1343,6 @@
             });
 
 
-
             /*
             |--------------------------------------------------------------------------
             | Search On Enter
@@ -1139,7 +1367,6 @@
                 );
 
             }
-
 
 
             /*
@@ -1167,7 +1394,6 @@
                 }, 100);
 
             });
-
 
 
             /*

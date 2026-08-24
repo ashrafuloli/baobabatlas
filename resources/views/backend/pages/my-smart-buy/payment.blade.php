@@ -40,7 +40,7 @@
 
 
             <a
-                href="{{ route('my-smart-buy-quote', $smartBuy->id) }}"
+                href="{{ route('my-smart-buy.quote', $smartBuy->id) }}"
                 class="smart-buy-payment-page__back-btn"
             >
                 <i class="ri-arrow-left-line"></i>
@@ -496,12 +496,18 @@
 
                     {{-- Payment Form --}}
                     <form
-                        action="{{ route('smart-buy.payment.store', $smartBuy->id) }}"
+                        action="{{ route('my-smart-buy.payment.store', $smartBuy->id) }}"
                         method="POST"
                         class="smart-buy-payment-page__payment-form"
                     >
 
                         @csrf
+
+                        <input
+                            type="hidden"
+                            name="payment_method"
+                            value="card"
+                        >
 
 
                         <button
@@ -521,7 +527,7 @@
 
 
                     <a
-                        href="{{ route('my-smart-buy-quote', $smartBuy->id) }}"
+                        href="{{ route('my-smart-buy.quote', $smartBuy->id) }}"
                         class="smart-buy-payment-page__quote-link"
                     >
 

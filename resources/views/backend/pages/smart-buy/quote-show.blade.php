@@ -116,6 +116,7 @@
                             $quote->status,
                             [
                                 'pending',
+                                'rejected',
                                 'sent'
                             ]
                         )
@@ -374,9 +375,7 @@
                                     );
 
                                 $productImage =
-                                    $requestItem->image
-                                    ?? $requestItem->image_url
-                                    ?? $requestItem->product_image
+                                    $requestItem->product_image
                                     ?? null;
 
                                 $color =

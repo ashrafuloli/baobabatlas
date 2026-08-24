@@ -262,10 +262,8 @@
                                         ?? 'Requested Product';
 
                                     $productImage =
-                                    $item->image
-                                    ?? $item->product_image
-                                    ?? $item->image_url
-                                    ?? null;
+                                        $item->product_image
+                                        ?? null;
 
                                     $oldUnitPrice = old(
                                         'items.' . $index . '.unit_price'

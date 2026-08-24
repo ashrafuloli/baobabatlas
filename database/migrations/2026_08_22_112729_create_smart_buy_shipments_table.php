@@ -11,125 +11,186 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('smart_buy_shipments', function (Blueprint $table) {
+        Schema::create(
+            'smart_buy_shipments',
+            function (Blueprint $table) {
 
-            $table->id();
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Smart Buy Request
-            |--------------------------------------------------------------------------
-            */
-
-            $table->foreignId('smart_buy_request_id')
-                ->unique()
-                ->constrained('smart_buy_requests')
-                ->cascadeOnDelete();
+                $table->id();
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | Shipment Information
-            |--------------------------------------------------------------------------
-            */
+                /*
+                |--------------------------------------------------------------------------
+                | Smart Buy Request
+                |--------------------------------------------------------------------------
+                */
 
-            $table->string('tracking_number')
-                ->nullable()
-                ->index();
-
-            $table->string('carrier')
-                ->nullable();
-
-            $table->string('tracking_url')
-                ->nullable();
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Shipping Status
-            |--------------------------------------------------------------------------
-            |
-            | pending
-            | preparing
-            | shipped
-            | in_transit
-            | delivered
-            | cancelled
-            |
-            */
-
-            $table->string('status')
-                ->default('pending')
-                ->index();
+                $table->foreignId(
+                    'smart_buy_request_id'
+                )
+                    ->unique()
+                    ->constrained(
+                        'smart_buy_requests'
+                    )
+                    ->cascadeOnDelete();
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | Shipping Dates
-            |--------------------------------------------------------------------------
-            */
+                /*
+                |--------------------------------------------------------------------------
+                | Shipment Number
+                |--------------------------------------------------------------------------
+                */
 
-            $table->timestamp('shipped_at')
-                ->nullable();
-
-            $table->timestamp('estimated_delivery_at')
-                ->nullable();
-
-            $table->timestamp('delivered_at')
-                ->nullable();
+                $table->string(
+                    'shipment_number'
+                )
+                    ->unique();
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | Delivery Information
-            |--------------------------------------------------------------------------
-            */
+                /*
+                |--------------------------------------------------------------------------
+                | Shipment Information
+                |--------------------------------------------------------------------------
+                */
 
-            $table->string('country')
-                ->nullable();
-
-            $table->string('city')
-                ->nullable();
-
-            $table->string('zip_code')
-                ->nullable();
-
-            $table->text('delivery_address')
-                ->nullable();
+                $table->string(
+                    'tracking_number'
+                )
+                    ->nullable()
+                    ->index();
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | Additional Notes
-            |--------------------------------------------------------------------------
-            */
-
-            $table->text('notes')
-                ->nullable();
+                $table->string(
+                    'carrier'
+                )
+                    ->nullable();
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | Created By
-            |--------------------------------------------------------------------------
-            */
-
-            $table->foreignId('created_by')
-                ->nullable()
-                ->constrained('users')
-                ->nullOnDelete();
+                $table->string(
+                    'shipping_method'
+                )
+                    ->nullable();
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | Timestamps
-            |--------------------------------------------------------------------------
-            */
+                $table->string(
+                    'tracking_url'
+                )
+                    ->nullable();
 
-            $table->timestamps();
 
-        });
+                /*
+                |--------------------------------------------------------------------------
+                | Shipping Status
+                |--------------------------------------------------------------------------
+                |
+                | pending
+                | preparing
+                | shipped
+                | in_transit
+                | out_for_delivery
+                | delivered
+                | cancelled
+                |
+                */
+
+                $table->string(
+                    'status'
+                )
+                    ->default('pending')
+                    ->index();
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Shipping Dates
+                |--------------------------------------------------------------------------
+                */
+
+                $table->timestamp(
+                    'shipped_at'
+                )
+                    ->nullable();
+
+
+                $table->timestamp(
+                    'estimated_delivery_at'
+                )
+                    ->nullable();
+
+
+                $table->timestamp(
+                    'delivered_at'
+                )
+                    ->nullable();
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Delivery Information
+                |--------------------------------------------------------------------------
+                */
+
+                $table->string(
+                    'country'
+                )
+                    ->nullable();
+
+
+                $table->string(
+                    'city'
+                )
+                    ->nullable();
+
+
+                $table->string(
+                    'zip_code'
+                )
+                    ->nullable();
+
+
+                $table->text(
+                    'delivery_address'
+                )
+                    ->nullable();
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Additional Notes
+                |--------------------------------------------------------------------------
+                */
+
+                $table->text(
+                    'notes'
+                )
+                    ->nullable();
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Created By
+                |--------------------------------------------------------------------------
+                */
+
+                $table->foreignId(
+                    'created_by'
+                )
+                    ->nullable()
+                    ->constrained(
+                        'users'
+                    )
+                    ->nullOnDelete();
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Timestamps
+                |--------------------------------------------------------------------------
+                */
+
+                $table->timestamps();
+
+            }
+        );
     }
 
 
@@ -138,6 +199,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('smart_buy_shipments');
+        Schema::dropIfExists(
+            'smart_buy_shipments'
+        );
     }
 };

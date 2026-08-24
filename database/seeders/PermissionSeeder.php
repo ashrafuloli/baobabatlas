@@ -36,7 +36,7 @@ class PermissionSeeder extends Seeder
             [
                 'name' => 'View Profile',
                 'slug' => 'view-profile',
-                'description' => 'Allow users to view their profile.',
+                'description' => 'Allow users to view and update their profile.',
             ],
 
 
@@ -120,10 +120,6 @@ class PermissionSeeder extends Seeder
             |--------------------------------------------------------------------------
             | General Payments
             |--------------------------------------------------------------------------
-            |
-            | Used for customer payment access and central
-            | admin payment management.
-            |
             */
 
             [
@@ -135,33 +131,7 @@ class PermissionSeeder extends Seeder
 
             /*
             |--------------------------------------------------------------------------
-            | ECOMMERCE - CUSTOMER
-            |--------------------------------------------------------------------------
-            |
-            | Customer Ecommerce workflow:
-            |
-            | Shop
-            |   ↓
-            | Product Details
-            |   ↓
-            | Cart
-            |   ↓
-            | Checkout
-            |   ↓
-            | Payment
-            |   ↓
-            | Orders
-            |   ↓
-            | Shipment
-            |   ↓
-            | Tracking
-            |
-            */
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Products
+            | ECOMMERCE - PRODUCTS
             |--------------------------------------------------------------------------
             */
 
@@ -192,7 +162,7 @@ class PermissionSeeder extends Seeder
 
             /*
             |--------------------------------------------------------------------------
-            | Categories
+            | ECOMMERCE - CATEGORIES
             |--------------------------------------------------------------------------
             */
 
@@ -223,7 +193,7 @@ class PermissionSeeder extends Seeder
 
             /*
             |--------------------------------------------------------------------------
-            | Cart
+            | ECOMMERCE - CART
             |--------------------------------------------------------------------------
             */
 
@@ -236,13 +206,13 @@ class PermissionSeeder extends Seeder
             [
                 'name' => 'Manage Cart',
                 'slug' => 'manage-cart',
-                'description' => 'Allow users to add, update and remove cart items.',
+                'description' => 'Allow users to manage cart items.',
             ],
 
 
             /*
             |--------------------------------------------------------------------------
-            | Orders
+            | ECOMMERCE - ORDERS
             |--------------------------------------------------------------------------
             */
 
@@ -261,7 +231,7 @@ class PermissionSeeder extends Seeder
             [
                 'name' => 'View Order Details',
                 'slug' => 'view-order-details',
-                'description' => 'Allow users to view ecommerce order details.',
+                'description' => 'Allow viewing ecommerce order details.',
             ],
 
             [
@@ -279,7 +249,7 @@ class PermissionSeeder extends Seeder
 
             /*
             |--------------------------------------------------------------------------
-            | Ecommerce Payments
+            | ECOMMERCE - PAYMENTS
             |--------------------------------------------------------------------------
             */
 
@@ -292,13 +262,13 @@ class PermissionSeeder extends Seeder
             [
                 'name' => 'Manage Ecommerce Payments',
                 'slug' => 'manage-ecommerce-payments',
-                'description' => 'Allow managing ecommerce payments and payment status.',
+                'description' => 'Allow managing ecommerce payments.',
             ],
 
 
             /*
             |--------------------------------------------------------------------------
-            | Ecommerce Shipments
+            | ECOMMERCE - SHIPMENTS
             |--------------------------------------------------------------------------
             */
 
@@ -323,26 +293,26 @@ class PermissionSeeder extends Seeder
             [
                 'name' => 'Manage Ecommerce Shipments',
                 'slug' => 'manage-ecommerce-shipments',
-                'description' => 'Allow managing ecommerce shipment information and status.',
+                'description' => 'Allow managing ecommerce shipments.',
             ],
 
 
             /*
             |--------------------------------------------------------------------------
-            | Ecommerce Tracking
+            | ECOMMERCE - TRACKING
             |--------------------------------------------------------------------------
             */
 
             [
                 'name' => 'View Ecommerce Tracking',
                 'slug' => 'view-ecommerce-tracking',
-                'description' => 'Allow users to view ecommerce shipment tracking.',
+                'description' => 'Allow viewing ecommerce shipment tracking.',
             ],
 
 
             /*
             |--------------------------------------------------------------------------
-            | Ecommerce Inventory
+            | ECOMMERCE - INVENTORY
             |--------------------------------------------------------------------------
             */
 
@@ -355,38 +325,38 @@ class PermissionSeeder extends Seeder
             [
                 'name' => 'Manage Inventory',
                 'slug' => 'manage-inventory',
-                'description' => 'Allow updating ecommerce inventory and stock quantities.',
+                'description' => 'Allow managing ecommerce inventory.',
             ],
 
             [
                 'name' => 'View Low Stock',
                 'slug' => 'view-low-stock',
-                'description' => 'Allow viewing low-stock products.',
+                'description' => 'Allow viewing low stock products.',
             ],
 
             [
                 'name' => 'View Out Of Stock',
                 'slug' => 'view-out-of-stock',
-                'description' => 'Allow viewing out-of-stock products.',
+                'description' => 'Allow viewing out of stock products.',
             ],
 
 
             /*
             |--------------------------------------------------------------------------
-            | Ecommerce Reports
+            | ECOMMERCE - REPORTS
             |--------------------------------------------------------------------------
             */
 
             [
                 'name' => 'View Ecommerce Reports',
                 'slug' => 'view-ecommerce-reports',
-                'description' => 'Allow viewing ecommerce reports and analytics.',
+                'description' => 'Allow viewing ecommerce reports.',
             ],
 
 
             /*
             |--------------------------------------------------------------------------
-            | Ecommerce Settings
+            | ECOMMERCE - SETTINGS
             |--------------------------------------------------------------------------
             */
 
@@ -405,194 +375,128 @@ class PermissionSeeder extends Seeder
 
             /*
             |--------------------------------------------------------------------------
-            | SMART BUY
+            | SMART BUY - CUSTOMER
             |--------------------------------------------------------------------------
             |
-            | Customer:
+            | These slugs exactly match web.php:
             |
-            |   View Smart Buy
-            |   Create Smart Buy
-            |   View Details
-            |   View Quote
-            |   Accept Quote
-            |   View Payment
-            |   View Tracking
-            |
-            | Admin:
-            |
-            |   View
-            |   Edit
-            |   Delete
-            |   Manage Quote
-            |   Manage Payment
-            |   Manage Purchase
-            |   Manage Shipment
-            |   Update Status
+            | my-smart-buy
+            | my-smart-buy-details
+            | my-smart-buy-create
+            | my-smart-buy-confirmation
+            | my-smart-buy-quote
+            | my-smart-buy-payment
+            | my-smart-buy-tracking
             |
             */
+
+            [
+                'name' => 'View My Smart Buy',
+                'slug' => 'my-smart-buy',
+                'description' => 'Allow customers to view their Smart Buy requests.',
+            ],
+
+            [
+                'name' => 'View My Smart Buy Details',
+                'slug' => 'my-smart-buy-details',
+                'description' => 'Allow customers to view Smart Buy request details.',
+            ],
+
+            [
+                'name' => 'Create My Smart Buy',
+                'slug' => 'my-smart-buy-create',
+                'description' => 'Allow customers to create Smart Buy requests.',
+            ],
+
+            [
+                'name' => 'View My Smart Buy Confirmation',
+                'slug' => 'my-smart-buy-confirmation',
+                'description' => 'Allow customers to view Smart Buy confirmation pages.',
+            ],
+
+            [
+                'name' => 'Manage My Smart Buy Quote',
+                'slug' => 'my-smart-buy-quote',
+                'description' => 'Allow customers to view, accept or reject Smart Buy quotes.',
+            ],
+
+            [
+                'name' => 'Manage My Smart Buy Payment',
+                'slug' => 'my-smart-buy-payment',
+                'description' => 'Allow customers to view and manage Smart Buy payments.',
+            ],
+
+            [
+                'name' => 'View My Smart Buy Tracking',
+                'slug' => 'my-smart-buy-tracking',
+                'description' => 'Allow customers to view Smart Buy tracking.',
+            ],
 
 
             /*
             |--------------------------------------------------------------------------
-            | Smart Buy - Customer
+            | SMART BUY - ADMIN
             |--------------------------------------------------------------------------
+            |
+            | These slugs exactly match web.php:
+            |
+            | smart-buy
+            | smart-buy-details
+            | smart-buy-status
+            | smart-buy-quote
+            | smart-buy-quote-edit
+            | smart-buy-payment
+            | smart-buy-shipment
+            |
             */
 
             [
                 'name' => 'View Smart Buy',
-                'slug' => 'view-smart-buy',
-                'description' => 'Allow viewing Smart Buy requests.',
-            ],
-
-            [
-                'name' => 'Create Smart Buy',
-                'slug' => 'create-smart-buy',
-                'description' => 'Allow creating new Smart Buy requests.',
+                'slug' => 'smart-buy',
+                'description' => 'Allow administrators to view Smart Buy requests.',
             ],
 
             [
                 'name' => 'View Smart Buy Details',
-                'slug' => 'view-smart-buy-details',
-                'description' => 'Allow viewing Smart Buy request details.',
-            ],
-
-            [
-                'name' => 'View Smart Buy Quote',
-                'slug' => 'view-smart-buy-quote',
-                'description' => 'Allow customers to view Smart Buy quotes.',
-            ],
-
-            [
-                'name' => 'Accept Smart Buy Quote',
-                'slug' => 'accept-smart-buy-quote',
-                'description' => 'Allow customers to accept Smart Buy quotes.',
-            ],
-
-            [
-                'name' => 'View Smart Buy Payment',
-                'slug' => 'view-smart-buy-payment',
-                'description' => 'Allow viewing Smart Buy payment pages and payment information.',
-            ],
-
-            [
-                'name' => 'View Smart Buy Tracking',
-                'slug' => 'view-smart-buy-tracking',
-                'description' => 'Allow viewing Smart Buy shipment tracking.',
-            ],
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Smart Buy - Admin
-            |--------------------------------------------------------------------------
-            */
-
-            [
-                'name' => 'Edit Smart Buy',
-                'slug' => 'edit-smart-buy',
-                'description' => 'Allow editing Smart Buy requests.',
-            ],
-
-            [
-                'name' => 'Delete Smart Buy',
-                'slug' => 'delete-smart-buy',
-                'description' => 'Allow deleting Smart Buy requests.',
-            ],
-
-            [
-                'name' => 'Manage Smart Buy Quote',
-                'slug' => 'manage-smart-buy-quote',
-                'description' => 'Allow administrators to create, update and send Smart Buy quotes.',
-            ],
-
-            [
-                'name' => 'Create Smart Buy Quote',
-                'slug' => 'create-smart-buy-quote',
-                'description' => 'Allow administrators to prepare Smart Buy quotes.',
-            ],
-
-            [
-                'name' => 'Manage Smart Buy Payment',
-                'slug' => 'manage-smart-buy-payment',
-                'description' => 'Allow managing Smart Buy payments and payment status.',
-            ],
-
-            [
-                'name' => 'Manage Smart Buy Purchase',
-                'slug' => 'manage-smart-buy-purchase',
-                'description' => 'Allow managing Smart Buy product purchasing and purchase status.',
-            ],
-
-            [
-                'name' => 'Purchase Smart Buy',
-                'slug' => 'purchase-smart-buy',
-                'description' => 'Allow administrators to purchase products for Smart Buy requests.',
-            ],
-
-            [
-                'name' => 'Manage Smart Buy Shipment',
-                'slug' => 'manage-smart-buy-shipment',
-                'description' => 'Allow managing shipment information for Smart Buy orders.',
-            ],
-
-            [
-                'name' => 'Create Smart Buy Shipment',
-                'slug' => 'create-smart-buy-shipment',
-                'description' => 'Allow administrators to create Smart Buy shipments.',
+                'slug' => 'smart-buy-details',
+                'description' => 'Allow administrators to view Smart Buy request details.',
             ],
 
             [
                 'name' => 'Update Smart Buy Status',
-                'slug' => 'update-smart-buy-status',
-                'description' => 'Allow updating Smart Buy request and order statuses.',
+                'slug' => 'smart-buy-status',
+                'description' => 'Allow administrators to update Smart Buy statuses.',
+            ],
+
+            [
+                'name' => 'Manage Smart Buy Quote',
+                'slug' => 'smart-buy-quote',
+                'description' => 'Allow administrators to create and manage Smart Buy quotes.',
+            ],
+
+            [
+                'name' => 'Edit Smart Buy Quote',
+                'slug' => 'smart-buy-quote-edit',
+                'description' => 'Allow administrators to edit Smart Buy quotes.',
+            ],
+
+            [
+                'name' => 'Manage Smart Buy Payment',
+                'slug' => 'smart-buy-payment',
+                'description' => 'Allow administrators to manage Smart Buy payments.',
+            ],
+
+            [
+                'name' => 'Manage Smart Buy Shipment',
+                'slug' => 'smart-buy-shipment',
+                'description' => 'Allow administrators to manage Smart Buy shipments.',
             ],
 
 
             /*
             |--------------------------------------------------------------------------
-            | Smart Buy Reports
+            | CENTRAL PAYMENTS
             |--------------------------------------------------------------------------
-            */
-
-            [
-                'name' => 'View Smart Buy Reports',
-                'slug' => 'view-smart-buy-reports',
-                'description' => 'Allow viewing Smart Buy reports and analytics.',
-            ],
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Smart Buy Settings
-            |--------------------------------------------------------------------------
-            */
-
-            [
-                'name' => 'View Smart Buy Settings',
-                'slug' => 'view-smart-buy-settings',
-                'description' => 'Allow viewing Smart Buy settings.',
-            ],
-
-            [
-                'name' => 'Edit Smart Buy Settings',
-                'slug' => 'edit-smart-buy-settings',
-                'description' => 'Allow editing Smart Buy settings.',
-            ],
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Central Payments
-            |--------------------------------------------------------------------------
-            |
-            | Admin payment management:
-            |
-            |   All Payments
-            |   Ecommerce Payments
-            |   Smart Buy Payments
-            |   Failed Payments
-            |   Payment Details
-            |
             */
 
             [
@@ -610,74 +514,63 @@ class PermissionSeeder extends Seeder
             [
                 'name' => 'View Smart Buy Payments',
                 'slug' => 'view-smart-buy-payments',
-                'description' => 'Allow viewing Smart Buy payments from the central payment management area.',
+                'description' => 'Allow viewing Smart Buy payments.',
             ],
 
 
             /*
             |--------------------------------------------------------------------------
-            | Reports
+            | REPORTS
             |--------------------------------------------------------------------------
-            |
-            | Central reports:
-            |
-            |   Overview
-            |   Ecommerce
-            |   Smart Buy
-            |
             */
 
             [
                 'name' => 'View Reports',
                 'slug' => 'view-reports',
-                'description' => 'Allow viewing the central reports overview.',
+                'description' => 'Allow viewing central reports.',
             ],
 
             [
                 'name' => 'View Smart Buy Reports',
                 'slug' => 'view-smart-buy-reports',
-                'description' => 'Allow viewing Smart Buy reports and analytics.',
+                'description' => 'Allow viewing Smart Buy reports.',
             ],
 
 
             /*
             |--------------------------------------------------------------------------
-            | Users
+            | USERS
             |--------------------------------------------------------------------------
-            |
-            | Currently protected by role:admin.
-            | Permissions are prepared for future permission-based access.
-            |
             */
 
             [
                 'name' => 'View Users',
                 'slug' => 'view-users',
-                'description' => 'Allow viewing registered users and their account information.',
+                'description' => 'Allow viewing users.',
             ],
 
             [
                 'name' => 'Create Users',
                 'slug' => 'create-users',
-                'description' => 'Allow creating new user accounts.',
+                'description' => 'Allow creating users.',
             ],
 
             [
                 'name' => 'Edit Users',
                 'slug' => 'edit-users',
-                'description' => 'Allow editing user accounts.',
+                'description' => 'Allow editing users.',
             ],
 
             [
                 'name' => 'Delete Users',
                 'slug' => 'delete-users',
-                'description' => 'Allow deleting user accounts.',
+                'description' => 'Allow deleting users.',
             ],
 
 
             /*
             |--------------------------------------------------------------------------
-            | Roles
+            | ROLES
             |--------------------------------------------------------------------------
             */
 
@@ -690,7 +583,7 @@ class PermissionSeeder extends Seeder
             [
                 'name' => 'Create Roles',
                 'slug' => 'create-roles',
-                'description' => 'Allow creating new roles.',
+                'description' => 'Allow creating roles.',
             ],
 
             [
@@ -705,13 +598,6 @@ class PermissionSeeder extends Seeder
                 'description' => 'Allow deleting roles.',
             ],
 
-
-            /*
-            |--------------------------------------------------------------------------
-            | Role Permissions
-            |--------------------------------------------------------------------------
-            */
-
             [
                 'name' => 'Manage Role Permissions',
                 'slug' => 'manage-role-permissions',
@@ -721,7 +607,7 @@ class PermissionSeeder extends Seeder
 
             /*
             |--------------------------------------------------------------------------
-            | Permissions
+            | PERMISSIONS
             |--------------------------------------------------------------------------
             */
 
@@ -734,7 +620,7 @@ class PermissionSeeder extends Seeder
             [
                 'name' => 'Create Permissions',
                 'slug' => 'create-permissions',
-                'description' => 'Allow creating new permissions.',
+                'description' => 'Allow creating permissions.',
             ],
 
             [
@@ -752,7 +638,7 @@ class PermissionSeeder extends Seeder
 
             /*
             |--------------------------------------------------------------------------
-            | Services
+            | SERVICES
             |--------------------------------------------------------------------------
             */
 
@@ -765,7 +651,7 @@ class PermissionSeeder extends Seeder
             [
                 'name' => 'Create Services',
                 'slug' => 'create-services',
-                'description' => 'Allow creating new services.',
+                'description' => 'Allow creating services.',
             ],
 
             [
@@ -789,20 +675,20 @@ class PermissionSeeder extends Seeder
 
             /*
             |--------------------------------------------------------------------------
-            | Clients
+            | CLIENTS
             |--------------------------------------------------------------------------
             */
 
             [
                 'name' => 'View Clients',
                 'slug' => 'view-clients',
-                'description' => 'Allow viewing service clients.',
+                'description' => 'Allow viewing clients.',
             ],
 
             [
                 'name' => 'Create Clients',
                 'slug' => 'create-clients',
-                'description' => 'Allow creating new clients.',
+                'description' => 'Allow creating clients.',
             ],
 
             [
@@ -826,7 +712,7 @@ class PermissionSeeder extends Seeder
 
             /*
             |--------------------------------------------------------------------------
-            | Notifications
+            | NOTIFICATIONS
             |--------------------------------------------------------------------------
             */
 
@@ -839,22 +725,7 @@ class PermissionSeeder extends Seeder
 
             /*
             |--------------------------------------------------------------------------
-            | Settings
-            |--------------------------------------------------------------------------
-            |
-            | Settings:
-            |
-            |   General
-            |   Ecommerce
-            |   Smart Buy
-            |   Audit Logs
-            |
-            */
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | General Settings
+            | SETTINGS
             |--------------------------------------------------------------------------
             */
 
@@ -867,15 +738,8 @@ class PermissionSeeder extends Seeder
             [
                 'name' => 'Edit Settings',
                 'slug' => 'edit-settings',
-                'description' => 'Allow editing general system settings.',
+                'description' => 'Allow editing general settings.',
             ],
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Company Profile
-            |--------------------------------------------------------------------------
-            */
 
             [
                 'name' => 'View Company Profile',
@@ -889,13 +753,6 @@ class PermissionSeeder extends Seeder
                 'description' => 'Allow editing company profile settings.',
             ],
 
-
-            /*
-            |--------------------------------------------------------------------------
-            | Security Settings
-            |--------------------------------------------------------------------------
-            */
-
             [
                 'name' => 'View Security Settings',
                 'slug' => 'view-security-settings',
@@ -907,13 +764,6 @@ class PermissionSeeder extends Seeder
                 'slug' => 'edit-security-settings',
                 'description' => 'Allow editing security settings.',
             ],
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Audit Logs
-            |--------------------------------------------------------------------------
-            */
 
             [
                 'name' => 'View Audit Logs',

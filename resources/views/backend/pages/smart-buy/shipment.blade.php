@@ -68,7 +68,7 @@
             id="smartBuyShipmentForm"
             class="smart-buy-shipment-form"
             method="POST"
-            action="{{ route('smart-buy-shipment', 1) }}"
+            action="{{ route('smart-buy.shipment', 1) }}"
         >
 
             @csrf

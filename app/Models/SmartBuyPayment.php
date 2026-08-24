@@ -7,9 +7,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SmartBuyPayment extends Model
 {
-    /**
-     * Payment Statuses
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | Payment Statuses
+    |--------------------------------------------------------------------------
+    */
+
     public const STATUS_PENDING = 'pending';
 
     public const STATUS_PROCESSING = 'processing';
@@ -23,9 +26,12 @@ class SmartBuyPayment extends Model
     public const STATUS_REFUNDED = 'refunded';
 
 
-    /**
-     * All Available Statuses
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | All Available Statuses
+    |--------------------------------------------------------------------------
+    */
+
     public const STATUSES = [
 
         self::STATUS_PENDING,
@@ -43,9 +49,12 @@ class SmartBuyPayment extends Model
     ];
 
 
-    /**
-     * Mass Assignable Fields
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | Mass Assignable Fields
+    |--------------------------------------------------------------------------
+    */
+
     protected $fillable = [
 
         'smart_buy_request_id',
@@ -60,6 +69,8 @@ class SmartBuyPayment extends Model
 
         'payment_method',
 
+        'payment_gateway',
+
         'transaction_id',
 
         'status',
@@ -71,9 +82,12 @@ class SmartBuyPayment extends Model
     ];
 
 
-    /**
-     * Attribute Casting
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | Attribute Casting
+    |--------------------------------------------------------------------------
+    */
+
     protected $casts = [
 
         'amount' => 'decimal:2',
@@ -83,9 +97,12 @@ class SmartBuyPayment extends Model
     ];
 
 
-    /**
-     * Smart Buy Request
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | Smart Buy Request
+    |--------------------------------------------------------------------------
+    */
+
     public function smartBuyRequest(): BelongsTo
     {
         return $this->belongsTo(
@@ -95,9 +112,12 @@ class SmartBuyPayment extends Model
     }
 
 
-    /**
-     * Smart Buy Quote
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | Smart Buy Quote
+    |--------------------------------------------------------------------------
+    */
+
     public function quote(): BelongsTo
     {
         return $this->belongsTo(
@@ -107,48 +127,201 @@ class SmartBuyPayment extends Model
     }
 
 
-    /**
-     * Check If Payment Is Completed
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | Check If Payment Is Completed
+    |--------------------------------------------------------------------------
+    */
+
     public function isCompleted(): bool
     {
-        return $this->status === self::STATUS_COMPLETED;
+        return
+            $this->status ===
+            self::STATUS_COMPLETED;
     }
 
 
-    /**
-     * Check If Payment Failed
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | Check If Payment Is Pending
+    |--------------------------------------------------------------------------
+    */
+
+    public function isPending(): bool
+    {
+        return
+            $this->status ===
+            self::STATUS_PENDING;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Check If Payment Is Processing
+    |--------------------------------------------------------------------------
+    */
+
+    public function isProcessing(): bool
+    {
+        return
+            $this->status ===
+            self::STATUS_PROCESSING;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Check If Payment Failed
+    |--------------------------------------------------------------------------
+    */
+
     public function isFailed(): bool
     {
-        return $this->status === self::STATUS_FAILED;
+        return
+            $this->status ===
+            self::STATUS_FAILED;
     }
 
 
-    /**
-     * Update Payment Status
-     */
-    public function updateStatus(string $status): bool
+    /*
+    |--------------------------------------------------------------------------
+    | Check If Payment Is Cancelled
+    |--------------------------------------------------------------------------
+    */
+
+    public function isCancelled(): bool
     {
-        if (!in_array($status, self::STATUSES, true)) {
+        return
+            $this->status ===
+            self::STATUS_CANCELLED;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Check If Payment Is Refunded
+    |--------------------------------------------------------------------------
+    */
+
+    public function isRefunded(): bool
+    {
+        return
+            $this->status ===
+            self::STATUS_REFUNDED;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Check If Payment Was Successful
+    |--------------------------------------------------------------------------
+    */
+
+    public function isSuccessful(): bool
+    {
+        return
+            $this->status ===
+            self::STATUS_COMPLETED;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Check If Payment Is In Final State
+    |--------------------------------------------------------------------------
+    */
+
+    public function isTerminal(): bool
+    {
+        return in_array(
+            $this->status,
+            [
+
+                self::STATUS_COMPLETED,
+
+                self::STATUS_FAILED,
+
+                self::STATUS_CANCELLED,
+
+                self::STATUS_REFUNDED,
+
+            ],
+            true
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Update Payment Status
+    |--------------------------------------------------------------------------
+    */
+
+    public function updateStatus(
+        string $status
+    ): bool
+    {
+        if (
+            !in_array(
+                $status,
+                self::STATUSES,
+                true
+            )
+        ) {
+
             throw new \InvalidArgumentException(
                 "Invalid payment status: {$status}"
             );
+
         }
 
+
         $data = [
+
             'status' => $status,
+
         ];
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | Mark Payment As Completed
+        |--------------------------------------------------------------------------
+        */
+
         if (
-            $status === self::STATUS_COMPLETED
-            && !$this->paid_at
+            $status ===
+            self::STATUS_COMPLETED
         ) {
-            $data['paid_at'] = now();
+
+            if (
+                !$this->paid_at
+            ) {
+
+                $data['paid_at'] =
+                    now();
+
+            }
+
         }
 
 
-        return $this->update($data);
+        /*
+        |--------------------------------------------------------------------------
+        | Clear Paid Date If Payment Is Not Completed
+        |--------------------------------------------------------------------------
+        */
+
+        else {
+
+            $data['paid_at'] =
+                null;
+
+        }
+
+
+        return $this->update(
+            $data
+        );
     }
 }

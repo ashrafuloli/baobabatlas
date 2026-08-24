@@ -72,7 +72,7 @@
         =======================================================--}}
         <form
             class="smart-buy-form"
-            action="{{ route('my-smart-buy-store') }}"
+            action="{{ route('my-smart-buy.store') }}"
             method="POST"
             enctype="multipart/form-data"
         >

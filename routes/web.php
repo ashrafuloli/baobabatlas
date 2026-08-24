@@ -9,11 +9,13 @@ use App\Http\Controllers\Backend\SmartBuyController;
 use App\Http\Controllers\Backend\SmartBuyPaymentController;
 use App\Http\Controllers\Backend\SmartBuyQuoteController;
 use App\Http\Controllers\Backend\SmartBuyShipmentController;
+use App\Http\Controllers\Backend\TrackingController;
 use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\Customer\MySmartBuyController;
 use App\Http\Controllers\Customer\MySmartBuyPaymentController;
 use App\Http\Controllers\Customer\MySmartBuyQuoteController;
 use App\Http\Controllers\Customer\MySmartBuyTrackingController;
+use App\Http\Controllers\Frontend\FrontendTrackingController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -99,11 +101,15 @@ Route::view(
 |--------------------------------------------------------------------------
 */
 
-Route::view(
+Route::get(
     '/tracking',
-    'frontend.pages.tracking.index'
+    [FrontendTrackingController::class, 'index']
 )->name('tracking');
 
+Route::post(
+    '/tracking',
+    [FrontendTrackingController::class, 'search']
+)->name('tracking.search');
 
 /*
 |--------------------------------------------------------------------------
@@ -292,6 +298,26 @@ Route::middleware('auth')
 
         /*
         |--------------------------------------------------------------------------
+        | Tracking
+        |--------------------------------------------------------------------------
+        */
+
+        // Show tracking page
+        Route::get(
+            '/tracking',
+            [TrackingController::class, 'index']
+        )->name('global-tracking');
+
+
+        // Search tracking
+        Route::post(
+            '/tracking/search',
+            [TrackingController::class, 'search']
+        )->name('global-tracking.search');
+
+
+        /*
+        |--------------------------------------------------------------------------
         | Profile
         |--------------------------------------------------------------------------
         */
@@ -448,7 +474,7 @@ Route::middleware('auth')
                     '/',
                     [MySmartBuyController::class, 'index']
                 )
-                    ->middleware('permission:view-smart-buy')
+                    ->middleware('permission:my-smart-buy')
                     ->name('my-smart-buy');
 
 
@@ -456,88 +482,87 @@ Route::middleware('auth')
                     '/create',
                     [MySmartBuyController::class, 'create']
                 )
-                    ->middleware('permission:create-smart-buy')
-                    ->name('my-smart-buy-create');
+                    ->middleware('permission:my-smart-buy-create')
+                    ->name('my-smart-buy.create');
 
 
                 Route::post(
-                    '/create',
+                    '/store',
                     [MySmartBuyController::class, 'store']
                 )
-                    ->middleware('permission:create-smart-buy')
-                    ->name('my-smart-buy-store');
-
-
-                Route::get(
-                    '/confirmation/{smartBuy}',
-                    [MySmartBuyController::class, 'confirmation']
-                )
-                    ->middleware('permission:view-smart-buy-details')
-                    ->name('smart-buy-confirmation');
+                    ->middleware('permission:my-smart-buy-create')
+                    ->name('my-smart-buy.store');
 
 
                 Route::get(
                     '/{smartBuy}/quote',
                     [MySmartBuyQuoteController::class, 'show']
                 )
-                    ->middleware('permission:view-smart-buy-quote')
-                    ->name('my-smart-buy-quote');
+                    ->middleware('permission:my-smart-buy-quote')
+                    ->name('my-smart-buy.quote');
 
 
                 Route::post(
                     '/{smartBuy}/quote/accept',
                     [MySmartBuyQuoteController::class, 'accept']
                 )
-                    ->middleware('permission:accept-smart-buy-quote')
-                    ->name('my-smart-buy-quote-accept');
+                    ->middleware('permission:my-smart-buy-quote')
+                    ->name('my-smart-buy.quote.accept');
 
 
                 Route::post(
                     '/{smartBuy}/quote/reject',
                     [MySmartBuyQuoteController::class, 'reject']
                 )
-                    ->middleware('permission:accept-smart-buy-quote')
-                    ->name('my-smart-buy-quote-reject');
+                    ->middleware('permission:my-smart-buy-quote')
+                    ->name('my-smart-buy.quote.reject');
+
+                Route::post(
+                    '/{smartBuy}/quote/request-extension',
+                    [MySmartBuyQuoteController::class, 'requestExtension']
+                )
+                    ->middleware('permission:my-smart-buy-quote')
+                    ->name('my-smart-buy.quote.request-extension');
 
 
                 Route::get(
                     '/{smartBuy}/payment',
                     [MySmartBuyPaymentController::class, 'show']
                 )
-                    ->middleware('permission:view-smart-buy-payment')
-                    ->name('smart-buy-payment');
+                    ->middleware('permission:my-smart-buy-payment')
+                    ->name('my-smart-buy.payment');
 
 
                 Route::post(
                     '/{smartBuy}/payment',
                     [MySmartBuyPaymentController::class, 'store']
                 )
-                    ->middleware('permission:make-smart-buy-payment')
-                    ->name('smart-buy-payment-store');
+                    ->middleware('permission:my-smart-buy-payment')
+                    ->name('my-smart-buy.payment.store');
 
 
                 Route::get(
                     '/{smartBuy}/payment/success',
                     [MySmartBuyPaymentController::class, 'success']
                 )
-                    ->middleware('permission:view-smart-buy-payment')
-                    ->name('smart-buy-payment-success');
+                    ->middleware('permission:my-smart-buy-payment')
+                    ->name('my-smart-buy.payment.success');
 
 
                 Route::get(
-                    '/{smartBuy}/payment/failed',
-                    [MySmartBuyPaymentController::class, 'failed']
+                    '/{smartBuy}/payment/cancel',
+                    [MySmartBuyPaymentController::class, 'cancel']
                 )
-                    ->middleware('permission:view-smart-buy-payment')
-                    ->name('smart-buy-payment-failed');
+                    ->middleware('permission:my-smart-buy-payment')
+                    ->name('my-smart-buy.payment.cancel');
 
 
                 Route::get(
                     '/{smartBuy}/tracking',
                     [MySmartBuyTrackingController::class, 'show']
                 )
-                    ->middleware('permission:view-smart-buy-tracking')
-                    ->name('smart-buy-tracking');
+                    ->middleware('permission:my-smart-buy-tracking')
+                    ->name('my-smart-buy.tracking');
 
 
                 // Dynamic route MUST be last
@@ -545,8 +570,8 @@ Route::middleware('auth')
                     '/{id}',
                     [MySmartBuyController::class, 'details']
                 )
-                    ->middleware('permission:view-smart-buy-details')
-                    ->name('my-smart-buy-details');
+                    ->middleware('permission:my-smart-buy-details')
+                    ->name('my-smart-buy.details');
 
             });
 
@@ -570,7 +595,7 @@ Route::middleware('auth')
                     '/',
                     [SmartBuyController::class, 'index']
                 )
-                    ->middleware('permission:view-smart-buy-admin')
+                    ->middleware('permission:smart-buy')
                     ->name('smart-buy');
 
                 /*
@@ -583,7 +608,7 @@ Route::middleware('auth')
                     '/{smartBuy}',
                     [SmartBuyController::class, 'show']
                 )
-                    ->middleware('permission:view-smart-buy-admin-details')
+                    ->middleware('permission:smart-buy-details')
                     ->name('smart-buy.details');
 
                 /*
@@ -596,7 +621,7 @@ Route::middleware('auth')
                     '/{smartBuy}/status',
                     [SmartBuyController::class, 'updateStatus']
                 )
-                    ->middleware('permission:manage-smart-buy')
+                    ->middleware('permission:smart-buy-status')
                     ->name('smart-buy.status.update');
 
 
@@ -610,7 +635,7 @@ Route::middleware('auth')
                     '/{smartBuy}/quote/create',
                     [SmartBuyQuoteController::class, 'create']
                 )
-                    ->middleware('permission:create-smart-buy-quote')
+                    ->middleware('permission:smart-buy-quote')
                     ->name('smart-buy.quote.create');
 
 
@@ -618,21 +643,21 @@ Route::middleware('auth')
                     '/{smartBuy}/quote',
                     [SmartBuyQuoteController::class, 'store']
                 )
-                    ->middleware('permission:create-smart-buy-quote')
+                    ->middleware('permission:smart-buy-quote')
                     ->name('smart-buy.quote.store');
 
                 Route::get(
                     '/quote/{quote}',
                     [SmartBuyQuoteController::class, 'show']
                 )
-                    ->middleware('permission:view-smart-buy-quote')
+                    ->middleware('permission:smart-buy-quote')
                     ->name('smart-buy.quote.show');
 
                 Route::get(
                     '/quote/{quote}/edit',
                     [SmartBuyQuoteController::class, 'edit']
                 )
-                    ->middleware('permission:edit-smart-buy-quote')
+                    ->middleware('permission:smart-buy-quote-edit')
                     ->name('smart-buy.quote.edit');
 
 
@@ -640,7 +665,7 @@ Route::middleware('auth')
                     '/quote/{quote}',
                     [SmartBuyQuoteController::class, 'update']
                 )
-                    ->middleware('permission:edit-smart-buy-quote')
+                    ->middleware('permission:smart-buy-quote-edit')
                     ->name('smart-buy.quote.update');
 
 
@@ -654,7 +679,7 @@ Route::middleware('auth')
                     '/{smartBuy}/payment',
                     [SmartBuyPaymentController::class, 'store']
                 )
-                    ->middleware('permission:manage-smart-buy-payment')
+                    ->middleware('permission:smart-buy-payment')
                     ->name('smart-buy.payment.store');
 
 
@@ -662,7 +687,7 @@ Route::middleware('auth')
                     '/payment/{payment}',
                     [SmartBuyPaymentController::class, 'update']
                 )
-                    ->middleware('permission:manage-smart-buy-payment')
+                    ->middleware('permission:smart-buy-payment')
                     ->name('smart-buy.payment.update');
 
 
@@ -672,14 +697,20 @@ Route::middleware('auth')
                 |--------------------------------------------------------------------------
                 */
 
+                /**
+                 * Create Shipment Form
+                 */
                 Route::get(
-                    '/{smartBuy}/shipment',
-                    [SmartBuyShipmentController::class, 'show']
+                    '/{smartBuy}/shipment/create',
+                    [SmartBuyShipmentController::class, 'create']
                 )
                     ->middleware('permission:manage-smart-buy-shipment')
-                    ->name('smart-buy-shipment');
+                    ->name('smart-buy.shipment.create');
 
 
+                /**
+                 * Store Shipment
+                 */
                 Route::post(
                     '/{smartBuy}/shipment',
                     [SmartBuyShipmentController::class, 'store']
@@ -688,6 +719,31 @@ Route::middleware('auth')
                     ->name('smart-buy.shipment.store');
 
 
+                /**
+                 * View Shipment
+                 */
+                Route::get(
+                    '/shipment/{shipment}',
+                    [SmartBuyShipmentController::class, 'show']
+                )
+                    ->middleware('permission:manage-smart-buy-shipment')
+                    ->name('smart-buy.shipment.show');
+
+
+                /**
+                 * Edit Shipment
+                 */
+                Route::get(
+                    '/shipment/{shipment}/edit',
+                    [SmartBuyShipmentController::class, 'edit']
+                )
+                    ->middleware('permission:manage-smart-buy-shipment')
+                    ->name('smart-buy.shipment.edit');
+
+
+                /**
+                 * Update Shipment
+                 */
                 Route::put(
                     '/shipment/{shipment}',
                     [SmartBuyShipmentController::class, 'update']
@@ -709,7 +765,7 @@ Route::middleware('auth')
             'backend.pages.account.payments'
         )
             ->middleware('permission:view-payments')
-            ->name('account-payments');
+            ->name('account.payments');
 
 
         /*

@@ -26,7 +26,6 @@ class UserSeeder extends Seeder
             'admin'
         )->firstOrFail();
 
-
         $clientRole = Role::where(
             'slug',
             'client'
@@ -37,9 +36,6 @@ class UserSeeder extends Seeder
         |--------------------------------------------------------------------------
         | Admin User
         |--------------------------------------------------------------------------
-        |
-        | Admin automatically receives ALL permissions.
-        |
         */
 
         $admin = User::updateOrCreate(
@@ -71,16 +67,12 @@ class UserSeeder extends Seeder
 
         /*
         |--------------------------------------------------------------------------
-        | Admin Gets ALL Permissions
+        | Admin Gets All Permissions
         |--------------------------------------------------------------------------
-        |
-        | RoleSeeder is not changed.
-        |
-        | Admin role permissions are handled here.
-        |
         */
 
-        $allPermissionIds = Permission::pluck('id')->toArray();
+        $allPermissionIds = Permission::pluck('id')
+            ->toArray();
 
         $adminRole->permissions()->sync(
             $allPermissionIds
@@ -126,8 +118,7 @@ class UserSeeder extends Seeder
         |--------------------------------------------------------------------------
         |
         | Only customer-facing permissions are assigned.
-        |
-        | Admin-only permissions are NOT assigned to Client.
+        | Admin-only permissions are excluded.
         |
         */
 
@@ -174,9 +165,6 @@ class UserSeeder extends Seeder
             |--------------------------------------------------------------------------
             | Service Requests
             |--------------------------------------------------------------------------
-            |
-            | Customer can create and view their own requests.
-            |
             */
 
             'view-requests',
@@ -186,22 +174,11 @@ class UserSeeder extends Seeder
 
             /*
             |--------------------------------------------------------------------------
-            | Ecommerce - Products
+            | Ecommerce - Products & Categories
             |--------------------------------------------------------------------------
             */
 
             'view-products',
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Ecommerce - Categories
-            |--------------------------------------------------------------------------
-            |
-            | Customer can browse categories.
-            |
-            */
-
             'view-categories',
 
 
@@ -230,9 +207,6 @@ class UserSeeder extends Seeder
             |--------------------------------------------------------------------------
             | Ecommerce - Payments
             |--------------------------------------------------------------------------
-            |
-            | Customer payment access.
-            |
             */
 
             'view-payments',
@@ -292,37 +266,62 @@ class UserSeeder extends Seeder
             | Smart Buy - Customer
             |--------------------------------------------------------------------------
             |
-            | Customer workflow:
-            |
-            | My Smart Buy
-            |      ↓
-            | Create Request
-            |      ↓
-            | Request Details
-            |      ↓
-            | Quote
-            |      ↓
-            | Accept Quote
-            |      ↓
-            | Payment
-            |      ↓
-            | Tracking
+            | These permissions exactly match PermissionSeeder
+            | and web.php middleware.
             |
             */
 
-            'view-smart-buy',
+            /*
+            | My Smart Buy List
+            */
 
-            'create-smart-buy',
+            'my-smart-buy',
 
-            'view-smart-buy-details',
 
-            'view-smart-buy-quote',
+            /*
+            | Smart Buy Details
+            */
 
-            'accept-smart-buy-quote',
+            'my-smart-buy-details',
 
-            'view-smart-buy-payment',
 
-            'view-smart-buy-tracking',
+            /*
+            | Create Smart Buy
+            */
+
+            'my-smart-buy-create',
+
+
+            /*
+            | Smart Buy Confirmation
+            */
+
+            'my-smart-buy-confirmation',
+
+
+            /*
+            | Smart Buy Quote
+            |
+            | Allows viewing, accepting and rejecting quotes.
+            */
+
+            'my-smart-buy-quote',
+
+
+            /*
+            | Smart Buy Payment
+            |
+            | Allows viewing and submitting Smart Buy payments.
+            */
+
+            'my-smart-buy-payment',
+
+
+            /*
+            | Smart Buy Tracking
+            */
+
+            'my-smart-buy-tracking',
 
         ];
 
@@ -344,10 +343,6 @@ class UserSeeder extends Seeder
         |--------------------------------------------------------------------------
         | Get Client Permission IDs
         |--------------------------------------------------------------------------
-        |
-        | Only permissions that already exist in the database
-        | will be assigned.
-        |
         */
 
         $clientPermissionIds = Permission::whereIn(

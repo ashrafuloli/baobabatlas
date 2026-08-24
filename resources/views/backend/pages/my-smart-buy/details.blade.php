@@ -15,57 +15,143 @@
         $statusConfig = [
 
             'pending' => [
-                'label' => 'Pending Review',
+
+                'label' => 'Pending',
+
                 'class' => 'pending',
+
                 'progress' => 10,
+
             ],
 
             'quote_sent' => [
-                'label' => 'Quote Available',
-                'class' => 'quote',
-                'progress' => 30,
+
+                'label' => 'Quote Sent',
+
+                'class' => 'quote-sent',
+
+                'progress' => 40,
+
             ],
 
-            'quote_accepted' => [
-                'label' => 'Awaiting Payment',
-                'class' => 'payment',
-                'progress' => 50,
-            ],
+            'quote_extension_requested' => [
 
-            'payment_completed' => [
-                'label' => 'Payment Completed',
-                'class' => 'payment-completed',
-                'progress' => 65,
-            ],
+                'label' => 'Quote Extension Requested',
 
-            'product_purchased' => [
-                'label' => 'Product Purchased',
-                'class' => 'purchased',
-                'progress' => 75,
-            ],
+                'class' => 'extension-requested',
 
-            'in_transit' => [
-                'label' => 'In Transit',
-                'class' => 'shipping',
-                'progress' => 90,
-            ],
+                'progress' => 40,
 
-            'completed' => [
-                'label' => 'Completed',
-                'class' => 'completed',
-                'progress' => 100,
-            ],
-
-            'cancelled' => [
-                'label' => 'Cancelled',
-                'class' => 'cancelled',
-                'progress' => 0,
             ],
 
             'quote_rejected' => [
+
                 'label' => 'Quote Rejected',
+
+                'class' => 'quote-rejected',
+
+                'progress' => 40,
+
+            ],
+
+            'quote_accepted' => [
+
+                'label' => 'Quote Accepted',
+
+                'class' => 'quote-accepted',
+
+                'progress' => 50,
+
+            ],
+
+            'payment_pending' => [
+
+                'label' => 'Payment Pending',
+
+                'class' => 'payment-pending',
+
+                'progress' => 60,
+
+            ],
+
+            'payment_processing' => [
+
+                'label' => 'Payment Processing',
+
+                'class' => 'payment-processing',
+
+                'progress' => 60,
+
+            ],
+
+            'payment_failed' => [
+
+                'label' => 'Payment Failed',
+
+                'class' => 'payment-failed',
+
+                'progress' => 60,
+
+            ],
+
+            'payment_cancelled' => [
+
+                'label' => 'Payment Cancelled',
+
+                'class' => 'payment-cancelled',
+
+                'progress' => 60,
+
+            ],
+
+            'payment_completed' => [
+
+                'label' => 'Payment Completed',
+
+                'class' => 'payment-completed',
+
+                'progress' => 70,
+
+            ],
+
+            'product_purchased' => [
+
+                'label' => 'Product Purchased',
+
+                'class' => 'product-purchased',
+
+                'progress' => 80,
+
+            ],
+
+            'in_transit' => [
+
+                'label' => 'In Transit',
+
+                'class' => 'in-transit',
+
+                'progress' => 90,
+
+            ],
+
+            'completed' => [
+
+                'label' => 'Completed',
+
+                'class' => 'completed',
+
+                'progress' => 100,
+
+            ],
+
+            'cancelled' => [
+
+                'label' => 'Cancelled',
+
                 'class' => 'cancelled',
+
                 'progress' => 0,
+
             ],
 
         ];
@@ -107,7 +193,7 @@
     @endphp
 
 
-    <div class="smart-buy-details">
+    <div class="my-smart-buy-details">
 
         {{-- ============================================================
             Page Header
@@ -168,170 +254,551 @@
 
         </div>
 
+        {{-- ============================================================
+            SMART BUY REQUEST PROGRESS
+        ============================================================ --}}
+
+        @php
+
+            /*
+            |--------------------------------------------------------------------------
+            | Progress Steps
+            |--------------------------------------------------------------------------
+            */
+
+            $progressSteps = [
+
+                [
+                    'key' => 'request',
+                    'label' => 'Request',
+                    'icon' => 'fa-solid fa-file-lines',
+                    'statuses' => [
+
+                        'pending',
+
+                        'quote_sent',
+                        'quote_rejected',
+                        'quote_accepted',
+                        'quote_extension_requested',
+
+                        'payment_pending',
+                        'payment_processing',
+                        'payment_failed',
+                        'payment_cancelled',
+                        'payment_completed',
+
+                        'product_purchased',
+
+                        'in_transit',
+
+                        'completed',
+
+                    ],
+                ],
+
+                [
+                    'key' => 'quote',
+                    'label' => 'Quote',
+                    'icon' => 'fa-solid fa-file-invoice-dollar',
+                    'statuses' => [
+
+                        'quote_sent',
+
+                        'quote_rejected',
+
+                        'quote_extension_requested',
+
+                        'quote_accepted',
+
+                        'payment_pending',
+                        'payment_processing',
+                        'payment_failed',
+                        'payment_cancelled',
+                        'payment_completed',
+
+                        'product_purchased',
+
+                        'in_transit',
+
+                        'completed',
+
+                    ],
+                ],
+
+                [
+                    'key' => 'payment',
+                    'label' => 'Payment',
+                    'icon' => 'fa-solid fa-credit-card',
+                    'statuses' => [
+
+                        'quote_accepted',
+
+                        'payment_pending',
+
+                        'payment_processing',
+
+                        'payment_failed',
+
+                        'payment_cancelled',
+
+                        'payment_completed',
+
+                        'product_purchased',
+
+                        'in_transit',
+
+                        'completed',
+
+                    ],
+                ],
+
+                [
+                    'key' => 'shipping',
+                    'label' => 'Shipping',
+                    'icon' => 'fa-solid fa-truck',
+                    'statuses' => [
+
+                        'product_purchased',
+
+                        'in_transit',
+
+                        'completed',
+
+                    ],
+                ],
+
+                [
+                    'key' => 'completed',
+                    'label' => 'Completed',
+                    'icon' => 'fa-solid fa-circle-check',
+                    'statuses' => [
+
+                        'completed',
+
+                    ],
+                ],
+
+            ];
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Current Status
+            |--------------------------------------------------------------------------
+            */
+
+            $currentStatus = $statusConfig[
+                $smartBuy->status
+            ] ?? [
+
+                'label' => 'Unknown',
+                'class' => 'unknown',
+                'progress' => 0,
+
+            ];
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Terminal Statuses
+            |--------------------------------------------------------------------------
+            */
+
+            $isTerminalStatus = in_array(
+                $smartBuy->status,
+                [
+
+                    'cancelled',
+
+                ],
+                true
+            );
+
+        @endphp
 
 
         {{-- ============================================================
-            Request Progress
+            REQUEST PROGRESS
         ============================================================ --}}
 
         <div class="smart-buy-progress-card">
 
+
+            {{-- ========================================================
+                HEADER
+            ========================================================= --}}
+
             <div class="smart-buy-progress-card__header">
 
-                <div>
+                <div class="smart-buy-progress-card__heading">
 
-                    <h3>
-                        Request Progress
-                    </h3>
+                    <div
+                        class="
+                    smart-buy-progress-card__status-icon
+                    smart-buy-progress-card__status-icon--{{ $currentStatus['class'] }}
+                "
+                    >
 
-                    <p>
-                        Track the current progress of your Smart Buy request.
-                    </p>
+                        @if($isTerminalStatus)
+
+                            <i class="fa-solid fa-circle-xmark"></i>
+
+                        @else
+
+                            <i class="fa-solid fa-chart-line"></i>
+
+                        @endif
+
+                    </div>
+
+
+                    <div>
+
+                        <h3>
+                            Request Progress
+                        </h3>
+
+                        <p>
+
+                            {{
+                                $isTerminalStatus
+                                    ? $currentStatus['label']
+                                    : 'Track the current progress of your Smart Buy request.'
+                            }}
+
+                        </p>
+
+                    </div>
 
                 </div>
 
 
-                <strong>
-                    {{ $currentStatus['progress'] }}%
-                </strong>
+                <div
+                    class="
+                smart-buy-progress-card__percentage
+                {{
+                    $isTerminalStatus
+                        ? 'smart-buy-progress-card__percentage--terminal'
+                        : ''
+                }}
+            "
+                >
+
+            <span>
+                Progress
+            </span>
+
+                    <strong>
+                        {{ $currentStatus['progress'] }}%
+                    </strong>
+
+                </div>
 
             </div>
 
 
+            {{-- ========================================================
+                PROGRESS CONTENT
+            ========================================================= --}}
+
             <div class="smart-buy-progress">
+
+
+                {{-- ====================================================
+                    PROGRESS LINE
+                ===================================================== --}}
 
                 <div class="smart-buy-progress__line">
 
                     <div
-                        class="smart-buy-progress__active"
-                        style="width: {{ $currentStatus['progress'] }}%"
+                        class="
+                    smart-buy-progress__active
+                    {{
+                        $isTerminalStatus
+                            ? 'smart-buy-progress__active--terminal'
+                            : ''
+                    }}
+                "
+                        style="
+                    width: {{ $currentStatus['progress'] }}%;
+                "
                     ></div>
 
                 </div>
 
 
+                {{-- ====================================================
+                    PROGRESS STEPS
+                ===================================================== --}}
+
                 <div class="smart-buy-progress__steps">
 
-                    <div
-                        class="smart-buy-progress__step
-                    {{ in_array($smartBuy->status, [
-                        'pending',
-                        'quote_sent',
-                        'quote_accepted',
-                        'payment_completed',
-                        'product_purchased',
-                        'in_transit',
-                        'completed'
-                    ]) ? 'is-active' : '' }}"
-                    >
+                    @foreach($progressSteps as $step)
 
-                    <span class="smart-buy-progress__circle">
+                        @php
 
-                        <i class="fa-solid fa-file-lines"></i>
+                            /*
+                            |--------------------------------------------------------------------------
+                            | Check Active Step
+                            |--------------------------------------------------------------------------
+                            */
+
+                            $isActive = in_array(
+                                $smartBuy->status,
+                                $step['statuses'],
+                                true
+                            );
+
+
+                            /*
+                            |--------------------------------------------------------------------------
+                            | Current Step
+                            |--------------------------------------------------------------------------
+                            */
+
+                            $isCurrent = match($step['key']) {
+
+                                /*
+                                |--------------------------------------------------------------------------
+                                | Request
+                                |--------------------------------------------------------------------------
+                                */
+
+                                'request' =>
+
+                                    $smartBuy->status === 'pending',
+
+
+                                /*
+                                |--------------------------------------------------------------------------
+                                | Quote
+                                |--------------------------------------------------------------------------
+                                */
+
+                                'quote' =>
+
+                                    in_array(
+                                        $smartBuy->status,
+                                        [
+
+                                            'quote_sent',
+
+                                            'quote_rejected',
+
+                                            'quote_extension_requested',
+
+                                        ],
+                                        true
+                                    ),
+
+
+                                /*
+                                |--------------------------------------------------------------------------
+                                | Payment
+                                |--------------------------------------------------------------------------
+                                */
+
+                                'payment' =>
+
+                                    in_array(
+                                        $smartBuy->status,
+                                        [
+
+                                            'quote_accepted',
+
+                                            'payment_pending',
+
+                                            'payment_processing',
+
+                                            'payment_failed',
+
+                                            'payment_cancelled',
+
+                                            'payment_completed',
+
+                                        ],
+                                        true
+                                    ),
+
+
+                                /*
+                                |--------------------------------------------------------------------------
+                                | Shipping
+                                |--------------------------------------------------------------------------
+                                */
+
+                                'shipping' =>
+
+                                    in_array(
+                                        $smartBuy->status,
+                                        [
+
+                                            'product_purchased',
+
+                                            'in_transit',
+
+                                        ],
+                                        true
+                                    ),
+
+
+                                /*
+                                |--------------------------------------------------------------------------
+                                | Completed
+                                |--------------------------------------------------------------------------
+                                */
+
+                                'completed' =>
+
+                                    $smartBuy->status === 'completed',
+
+
+                                default => false,
+
+                            };
+
+
+                            /*
+                            |--------------------------------------------------------------------------
+                            | Step Class
+                            |--------------------------------------------------------------------------
+                            */
+
+                            $stepClass = '';
+
+
+                            if ($isTerminalStatus) {
+
+                                $stepClass = 'is-terminal';
+
+                            } elseif ($isCurrent) {
+
+                                $stepClass = 'is-current';
+
+                            } elseif ($isActive) {
+
+                                $stepClass = 'is-active';
+
+                            }
+
+                        @endphp
+
+
+                        <div
+                            class="
+                        smart-buy-progress__step
+                        {{ $stepClass }}
+                    "
+                        >
+
+
+                            {{-- STEP CIRCLE --}}
+
+                            <span class="smart-buy-progress__circle">
+
+                        <i
+                            class="{{ $step['icon'] }}"
+                        ></i>
 
                     </span>
 
-                        <span>
-                        Request
-                    </span>
 
-                    </div>
+                            {{-- STEP LABEL --}}
 
+                            <span class="smart-buy-progress__label">
 
-                    <div
-                        class="smart-buy-progress__step
-                    {{ in_array($smartBuy->status, [
-                        'quote_sent',
-                        'quote_accepted',
-                        'payment_completed',
-                        'product_purchased',
-                        'in_transit',
-                        'completed'
-                    ]) ? 'is-active' : '' }}"
-                    >
-
-                    <span class="smart-buy-progress__circle">
-
-                        <i class="fa-solid fa-file-invoice-dollar"></i>
+                        {{ $step['label'] }}
 
                     </span>
 
-                        <span>
-                        Quote
-                    </span>
 
-                    </div>
+                            {{-- CURRENT INDICATOR --}}
 
+                            @if(
+                                $isCurrent
+                                &&
+                                !$isTerminalStatus
+                            )
 
-                    <div
-                        class="smart-buy-progress__step
-                    {{ in_array($smartBuy->status, [
-                        'quote_accepted',
-                        'payment_completed',
-                        'product_purchased',
-                        'in_transit',
-                        'completed'
-                    ]) ? 'is-active' : '' }}"
-                    >
+                                <span class="smart-buy-progress__current">
 
-                    <span class="smart-buy-progress__circle">
+                            Current
 
-                        <i class="fa-solid fa-credit-card"></i>
+                        </span>
 
-                    </span>
-
-                        <span>
-                        Payment
-                    </span>
-
-                    </div>
+                            @endif
 
 
-                    <div
-                        class="smart-buy-progress__step
-                    {{ in_array($smartBuy->status, [
-                        'product_purchased',
-                        'in_transit',
-                        'completed'
-                    ]) ? 'is-active' : '' }}"
-                    >
+                        </div>
 
-                    <span class="smart-buy-progress__circle">
-
-                        <i class="fa-solid fa-truck"></i>
-
-                    </span>
-
-                        <span>
-                        Shipping
-                    </span>
-
-                    </div>
-
-
-                    <div
-                        class="smart-buy-progress__step
-                    {{ $smartBuy->status === 'completed' ? 'is-active' : '' }}"
-                    >
-
-                    <span class="smart-buy-progress__circle">
-
-                        <i class="fa-solid fa-circle-check"></i>
-
-                    </span>
-
-                        <span>
-                        Completed
-                    </span>
-
-                    </div>
+                    @endforeach
 
                 </div>
+
+
+                {{-- ====================================================
+                    CURRENT STATUS
+                ===================================================== --}}
+
+                @if(!$isTerminalStatus)
+
+                    <div class="smart-buy-progress__status">
+
+                        <div class="smart-buy-progress__status-info">
+
+                    <span
+                        class="smart-buy-progress__status-dot"
+                    ></span>
+
+                            <span>
+                        Current Status
+                    </span>
+
+                        </div>
+
+
+                        <strong>
+
+                            {{ $currentStatus['label'] }}
+
+                        </strong>
+
+                    </div>
+
+                @else
+
+                    <div
+                        class="
+                    smart-buy-progress__status
+                    smart-buy-progress__status--terminal
+                "
+                    >
+
+                        <div class="smart-buy-progress__status-info">
+
+                            <i class="fa-solid fa-circle-exclamation"></i>
+
+                            <span>
+                        Request Status
+                    </span>
+
+                        </div>
+
+
+                        <strong>
+
+                            {{ $currentStatus['label'] }}
+
+                        </strong>
+
+                    </div>
+
+                @endif
+
 
             </div>
 
         </div>
-
 
 
         {{-- ============================================================
@@ -441,7 +908,6 @@
                 </div>
 
 
-
                 {{-- ====================================================
                     Requested Products
                 ==================================================== --}}
@@ -493,7 +959,7 @@
                                     @if($item->product_image)
 
                                         <img
-                                            src="{{ asset('storage/' . $item->product_image) }}"
+                                            src="{{ asset($item->product_image) }}"
                                             alt="{{ $item->product_name }}"
                                         >
 
@@ -508,7 +974,6 @@
                                     @endif
 
                                 </div>
-
 
 
                                 {{-- Product Content --}}
@@ -623,7 +1088,6 @@
                     </div>
 
                 </div>
-
 
 
                 {{-- ====================================================
@@ -766,7 +1230,7 @@
                         @if(
                             in_array(
                                 $smartBuy->status,
-                                ['quote_sent']
+                                ['quote_sent','quote_extension_requested']
                             )
                         )
 
@@ -774,7 +1238,7 @@
 
                                 <a
                                     href="{{ route(
-                                    'my-smart-buy-quote',
+                                    'my-smart-buy.quote',
                                     $smartBuy
                                 ) }}"
                                     class="smart-buy-btn smart-buy-btn--primary"
@@ -803,7 +1267,6 @@
                 @if($smartBuy->payment)
 
                     <div class="smart-buy-details-card">
-
                         <div class="smart-buy-details-card__header">
 
                             <div>
@@ -831,7 +1294,6 @@
                         </span>
 
                         </div>
-
 
                         <div class="smart-buy-payment-info">
 
@@ -906,10 +1368,9 @@
                             </div>
 
                         </div>
-
                     </div>
 
-                @elseif($smartBuy->status === 'quote_accepted')
+                @elseif($smartBuy->status === 'quote_accepted' || $smartBuy->status === 'payment_pending')
 
                     <div class="smart-buy-payment-required">
 
@@ -927,7 +1388,8 @@
                             </h3>
 
                             <p>
-                                Your quote has been accepted. Please proceed with payment to continue your Smart Buy request.
+                                Your quote has been accepted. Please proceed with payment to continue your Smart Buy
+                                request.
                             </p>
 
                         </div>
@@ -935,7 +1397,7 @@
 
                         <a
                             href="{{ route(
-                            'smart-buy-payment',
+                            'my-smart-buy.payment',
                             $smartBuy
                         ) }}"
                             class="smart-buy-btn smart-buy-btn--primary"
@@ -957,17 +1419,33 @@
 
                 @if($smartBuy->shipment)
 
-                    <div class="smart-buy-details-card">
+                    @php
+
+                        $shipment = $smartBuy->shipment;
+
+                        $shipmentStatus = ucfirst(
+                            str_replace(
+                                '_',
+                                ' ',
+                                $shipment->status
+                            )
+                        );
+
+                    @endphp
+
+
+                    <div class="smart-buy-details-card smart-buy-shipment-card">
+
+
+                        {{-- Header --}}
 
                         <div class="smart-buy-details-card__header">
 
                             <div>
 
-                            <span class="smart-buy-details-card__eyebrow">
-
-                                Delivery
-
-                            </span>
+                                <span class="smart-buy-details-card__eyebrow">
+                                    Delivery
+                                </span>
 
                                 <h3>
                                     Shipment Tracking
@@ -976,130 +1454,299 @@
                             </div>
 
 
-                            <span
-                                class="smart-buy-shipment-status
-                            smart-buy-shipment-status--{{ $smartBuy->shipment->status }}"
-                            >
+                            <span class="
+                                    smart-buy-shipment-status
+                                    smart-buy-shipment-status--{{ $shipment->status }}
+                            ">
+                                {{ $shipmentStatus }}
 
-                            {{
-                                ucfirst(
-                                    str_replace(
-                                        '_',
-                                        ' ',
-                                        $smartBuy->shipment->status
-                                    )
-                                )
-                            }}
-
-                        </span>
+                            </span>
 
                         </div>
 
 
-                        <div class="smart-buy-shipment-info">
+                        {{-- Shipment Information --}}
 
-                            <div class="smart-buy-shipment-info__item">
+                        <div class="smart-buy-shipment-section">
 
-                            <span>
-                                Carrier
-                            </span>
-
-                                <strong>
-
-                                    {{
-                                        $smartBuy->shipment->carrier
-                                        ?? '—'
-                                    }}
-
-                                </strong>
-
-                            </div>
+                            <h4 class="smart-buy-shipment-section__title">
+                                Shipment Information
+                            </h4>
 
 
-                            <div class="smart-buy-shipment-info__item">
-
-                            <span>
-                                Tracking Number
-                            </span>
-
-                                <strong>
-
-                                    {{
-                                        $smartBuy->shipment->tracking_number
-                                        ?? 'Not available yet'
-                                    }}
-
-                                </strong>
-
-                            </div>
+                            <div class="smart-buy-shipment-info">
 
 
-                            <div class="smart-buy-shipment-info__item">
+                                {{-- Shipment Number --}}
 
-                            <span>
-                                Estimated Delivery
-                            </span>
+                                <div class="smart-buy-shipment-info__item">
 
-                                <strong>
+                                    <span>
+                                        Shipment Number
+                                    </span>
 
-                                    {{
-                                        $smartBuy->shipment
-                                            ->estimated_delivery_at
-                                            ? $smartBuy->shipment
-                                                ->estimated_delivery_at
-                                                ->format('d M Y')
-                                            : '—'
-                                    }}
+                                    <strong>
+                                        {{ $shipment->shipment_number ?? '—' }}
+                                    </strong>
 
-                                </strong>
+                                </div>
+
+
+                                {{-- Shipment Status --}}
+
+                                <div class="smart-buy-shipment-info__item">
+
+                                    <span>
+                                        Shipment Status
+                                    </span>
+
+                                    <strong>
+                                        {{ $shipmentStatus }}
+                                    </strong>
+
+                                </div>
+
+
+                                {{-- Carrier --}}
+
+                                <div class="smart-buy-shipment-info__item">
+
+                                    <span>
+                                        Carrier
+                                    </span>
+
+                                    <strong>
+                                        {{ $shipment->carrier ?? '—' }}
+                                    </strong>
+
+                                </div>
+
+
+                                {{-- Shipping Method --}}
+
+                                <div class="smart-buy-shipment-info__item">
+
+                                    <span>
+                                        Shipping Method
+                                    </span>
+
+                                    <strong>
+                                        {{ $shipment->shipping_method ?? '—' }}
+                                    </strong>
+
+                                </div>
 
                             </div>
 
                         </div>
 
 
-                        <div class="smart-buy-details-card__actions">
+                        {{-- Shipping Timeline --}}
 
-                            <a
-                                href="{{ route(
-                                'smart-buy-tracking',
-                                $smartBuy
-                            ) }}"
-                                class="smart-buy-btn smart-buy-btn--outline"
-                            >
+                        <div class="smart-buy-shipment-section">
 
-                                <i class="fa-solid fa-location-dot"></i>
-
-                                Track Shipment
-
-                            </a>
+                            <h4 class="smart-buy-shipment-section__title">
+                                Shipping Timeline
+                            </h4>
 
 
-                            @if($smartBuy->shipment->tracking_url)
+                            <div class="smart-buy-shipment-info">
+
+
+                                {{-- Shipped Date --}}
+
+                                <div class="smart-buy-shipment-info__item">
+
+                                    <span>
+                                        Shipped Date
+                                    </span>
+
+                                    <strong>
+
+                                        {{
+                                            $shipment->shipped_at
+                                                ? $shipment->shipped_at->format('d M Y')
+                                                : '—'
+                                        }}
+
+                                    </strong>
+
+                                </div>
+
+
+                                {{-- Estimated Delivery --}}
+
+                                <div class="smart-buy-shipment-info__item">
+
+                                    <span>
+                                        Estimated Delivery
+                                    </span>
+
+                                    <strong>
+
+                                        {{
+                                            $shipment->estimated_delivery_at
+                                                ? $shipment->estimated_delivery_at->format('d M Y')
+                                                : '—'
+                                        }}
+
+                                    </strong>
+
+                                </div>
+
+
+                                {{-- Delivered Date --}}
+
+                                <div class="smart-buy-shipment-info__item">
+
+                                    <span>
+                                        Delivered Date
+                                    </span>
+
+                                    <strong>
+
+                                        {{
+                                            $shipment->delivered_at
+                                                ? $shipment->delivered_at->format('d M Y')
+                                                : '—'
+                                        }}
+
+                                    </strong>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        {{-- Delivery Address --}}
+
+                        <div class="smart-buy-shipment-section">
+
+                            <h4 class="smart-buy-shipment-section__title">
+                                Delivery Address
+                            </h4>
+
+
+                            <div class="smart-buy-delivery-address">
+
+                                <div class="smart-buy-delivery-address__icon">
+
+                                    <i class="fa-solid fa-location-dot"></i>
+
+                                </div>
+
+
+                                <div class="smart-buy-delivery-address__content">
+
+                                    <strong>
+
+                                        {{ $smartBuy->first_name }}
+                                        {{ $smartBuy->last_name }}
+
+                                    </strong>
+
+
+                                    <p>
+                                        {{ $smartBuy->delivery_address }}
+                                    </p>
+
+
+                                    <p>
+
+                                        {{ $smartBuy->city }}
+
+                                        @if($smartBuy->zip_code)
+
+                                            , {{ $smartBuy->zip_code }}
+
+                                        @endif
+
+                                    </p>
+
+
+                                    <p>
+                                        {{ $countryName }}
+                                    </p>
+
+
+                                    @if($smartBuy->phone)
+
+                                        <p class="smart-buy-delivery-address__phone">
+
+                                            <i class="fa-solid fa-phone"></i>
+
+                                            {{ $smartBuy->phone }}
+
+                                        </p>
+
+                                    @endif
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        {{-- Shipment Notes --}}
+
+                        @if($shipment->notes)
+
+                            <div class="smart-buy-shipment-notes">
+
+                                <div class="smart-buy-shipment-notes__icon">
+
+                                    <i class="fa-solid fa-note-sticky"></i>
+
+                                </div>
+
+
+                                <div>
+
+                                    <strong>
+                                        Shipment Notes
+                                    </strong>
+
+                                    <p>
+                                        {{ $shipment->notes }}
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        @endif
+
+
+
+                        {{-- Actions --}}
+
+                        @if(
+                            $shipment->tracking_url
+                            || $shipment->tracking_number
+                        )
+
+                            <div class="smart-buy-details-card__actions">
 
                                 <a
-                                    href="{{ $smartBuy->shipment->tracking_url }}"
-                                    target="_blank"
-                                    rel="noopener"
-                                    class="smart-buy-btn smart-buy-btn--primary"
-                                >
+                                    href="{{ route('my-smart-buy.tracking', $smartBuy) }}"
+                                    class="smart-buy-btn smart-buy-btn--primary">
 
-                                    Track with Carrier
+                                    <i class="fa-solid fa-location-dot"></i>
 
-                                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
-
+                                    Track Shipment
                                 </a>
+                            </div>
 
-                            @endif
+                        @endif
 
-                        </div>
 
                     </div>
 
                 @endif
 
             </div>
-
 
 
             {{-- ========================================================
@@ -1203,7 +1850,6 @@
                     </div>
 
                 </div>
-
 
 
                 {{-- ====================================================

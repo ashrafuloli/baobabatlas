@@ -1,1172 +1,1547 @@
 @use "../common" as *;
 
-.smart-buy-details {
+.my-smart-buy-details {
     width: 100%;
+    padding: 12px;
+    font-family: $body-fonts;
 
-    &__header {
+    * {
+        box-sizing: border-box;
+    }
+
+    // ============================================================
+    // Base Card Styles
+    // ============================================================
+
+    .smart-buy-details-card,
+    .smart-buy-sidebar-card,
+    .smart-buy-progress-card,
+    .smart-buy-payment-required,
+    .smart-buy-cancelled-notice {
+        background: $white;
+        border: 1px solid rgba($heading-color, 0.08);
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba($heading-color, 0.04);
+    }
+
+    // ============================================================
+    // Page Header
+    // ============================================================
+
+    .smart-buy-details__header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 30px;
-        padding: 25px 30px;
-        margin-bottom: 24px;
-        background: #ffffff;
-        border: 1px solid rgba($dark, 0.08);
-        border-radius: 16px;
-
-        @include mq('xs') {
-            flex-direction: column;
-            align-items: flex-start;
-            padding: 20px;
-        }
+        gap: 24px;
+        padding: 18px 20px;
+        margin-bottom: 12px;
+        background: $white;
+        border: 1px solid rgba($heading-color, 0.08);
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba($heading-color, 0.04);
     }
 
-    &__header-left {
-        display: flex;
-        flex-direction: column;
-        gap: 18px;
+    .smart-buy-details__header-left {
+        min-width: 0;
     }
 
-    &__back {
+    .smart-buy-details__back {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
-        width: fit-content;
-        color: $body-color;
-        font-size: 13px;
+        gap: 7px;
+        margin-bottom: 12px;
+        color: rgba($body-color, 0.75);
+        font-size: 14px;
+        font-weight: 500;
         text-decoration: none;
 
-        @include transition(0.2s);
+        @include transition(0.3s);
+
+        i {
+            font-size: 14px;
+        }
 
         &:hover {
             color: $theme-color;
-        }
 
-        i {
-            font-size: 13px;
+            i {
+                @include transform(translateX(-2px));
+            }
         }
     }
 
-    &__title-wrap {
+    .smart-buy-details__title-wrap {
         display: flex;
         align-items: center;
-        gap: 15px;
+        gap: 12px;
+
+        .smart-buy-details__icon {
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+            color: $theme-color;
+            background: rgba($theme-color, 0.1);
+            border-radius: 10px;
+
+            i {
+                font-size: 16px;
+            }
+        }
 
         h2 {
-            margin: 0;
+            margin: 0 0 2px;
             color: $heading-color;
-            font-size: 24px;
-            font-weight: 700;
+            font-family: $header-fonts;
+            font-size: 18px;
+            font-weight: 600;
             line-height: 1.3;
         }
 
         p {
-            margin: 3px 0 0;
-            color: rgba($body-color, 0.8);
+            margin: 0;
+            color: rgba($body-color, 0.65);
             font-size: 14px;
             font-weight: 500;
         }
     }
 
-    &__icon {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 52px;
-        height: 52px;
-        border-radius: 14px;
-        background: rgba($theme-color, 0.1);
-        color: $theme-color;
-        font-size: 20px;
-    }
+    // ============================================================
+    // Smart Buy Status
+    // ============================================================
 
-    &__status {
-        flex-shrink: 0;
-    }
-
-    &__grid {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) 320px;
-        gap: 24px;
-
-        @include mq('lg') {
-            grid-template-columns: minmax(0, 1fr) 280px;
-        }
-
-        @include mq('md') {
-            grid-template-columns: 1fr;
-        }
-
-        @include mq('xs') {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    &__main {
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
-    }
-
-    &__sidebar {
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
-    }
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Status
-|--------------------------------------------------------------------------
-*/
-
-.smart-buy-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
-    border-radius: 50px;
-    font-size: 13px;
-    font-weight: 600;
-
-    &__dot {
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-    }
-
-    &--pending {
-        background: rgba($warning, 0.12);
-        color: rgba($warning, 0.95);
-
-        .smart-buy-status__dot {
-            background: $warning;
-        }
-    }
-
-    &--quote {
-        background: rgba($info, 0.1);
-        color: rgba($info, 0.9);
-
-        .smart-buy-status__dot {
-            background: $info;
-        }
-    }
-
-    &--payment {
-        background: rgba(#7c3aed, 0.1);
-        color: #7c3aed;
-
-        .smart-buy-status__dot {
-            background: #7c3aed;
-        }
-    }
-
-    &--payment-completed {
-        background: rgba($success, 0.1);
-        color: $success;
-
-        .smart-buy-status__dot {
-            background: $success;
-        }
-    }
-
-    &--purchased {
-        background: rgba($theme-color-2, 0.14);
-        color: rgba(#8c6d08, 1);
-
-        .smart-buy-status__dot {
-            background: $theme-color-2;
-        }
-    }
-
-    &--shipping {
-        background: rgba($info, 0.1);
-        color: rgba($info, 0.9);
-
-        .smart-buy-status__dot {
-            background: $info;
-        }
-    }
-
-    &--completed {
-        background: rgba($success, 0.1);
-        color: $success;
-
-        .smart-buy-status__dot {
-            background: $success;
-        }
-    }
-
-    &--cancelled {
-        background: rgba($danger, 0.1);
-        color: $danger;
-
-        .smart-buy-status__dot {
-            background: $danger;
-        }
-    }
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Progress Card
-|--------------------------------------------------------------------------
-*/
-
-.smart-buy-progress-card {
-    padding: 28px 30px;
-    margin-bottom: 24px;
-    background: #ffffff;
-    border: 1px solid rgba($dark, 0.08);
-    border-radius: 16px;
-
-    @include mq('xs') {
-        padding: 20px;
-    }
-
-    &__header {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 20px;
-        margin-bottom: 30px;
-
-        h3 {
-            margin: 0 0 5px;
-            color: $heading-color;
-            font-size: 18px;
-            font-weight: 700;
-        }
-
-        p {
-            margin: 0;
-            color: rgba($body-color, 0.8);
-            font-size: 13px;
-        }
-
-        strong {
-            color: $theme-color;
-            font-size: 18px;
-            font-weight: 700;
-        }
-    }
-}
-
-
-.smart-buy-progress {
-    position: relative;
-
-    &__line {
-        position: relative;
-        width: 100%;
-        height: 6px;
-        margin-bottom: 20px;
-        overflow: hidden;
-        background: rgba($dark, 0.08);
-        border-radius: 50px;
-    }
-
-    &__active {
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 100%;
-        background: $theme-color;
-        border-radius: 50px;
-        @include transition(0.3s);
-    }
-
-    &__steps {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 10px;
-    }
-
-    &__step {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 8px;
-        flex: 1;
-        min-width: 0;
-        color: rgba($body-color, 0.6);
-        font-size: 11px;
-        text-align: center;
-
-        &.is-active {
-            color: $theme-color;
-            font-weight: 600;
-
-            .smart-buy-progress__circle {
-                background: rgba($theme-color, 0.12);
-                border-color: $theme-color;
-                color: $theme-color;
-            }
-        }
-
-        @include mq('xs') {
-            font-size: 9px;
-        }
-    }
-
-    &__circle {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 36px;
-        height: 36px;
-        border: 1px solid rgba($dark, 0.1);
-        border-radius: 50%;
-        background: #ffffff;
-        color: rgba($body-color, 0.55);
-        font-size: 13px;
-
-        @include mq('xs') {
-            width: 30px;
-            height: 30px;
-            font-size: 11px;
-        }
-    }
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Main Details Card
-|--------------------------------------------------------------------------
-*/
-
-.smart-buy-details-card {
-    overflow: hidden;
-    background: #ffffff;
-    border: 1px solid rgba($dark, 0.08);
-    border-radius: 16px;
-
-    &__header {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 20px;
-        padding: 24px 26px;
-        border-bottom: 1px solid rgba($dark, 0.07);
-
-        @include mq('xs') {
-            padding: 20px;
-        }
-
-        h3 {
-            margin: 4px 0 0;
-            color: $heading-color;
-            font-size: 19px;
-            font-weight: 700;
-        }
-    }
-
-    &__eyebrow {
-        display: block;
-        color: $theme-color;
-        font-size: 10px;
-        font-weight: 700;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-    }
-
-    &__date {
+    .smart-buy-status {
         display: inline-flex;
         align-items: center;
         gap: 7px;
-        color: rgba($body-color, 0.75);
-        font-size: 12px;
-
-        i {
-            color: $theme-color;
-        }
-    }
-
-    &__count {
-        display: inline-flex;
-        align-items: center;
-        padding: 7px 12px;
-        background: rgba($theme-color, 0.08);
-        border-radius: 8px;
-        color: $theme-color;
-        font-size: 12px;
+        min-height: 30px;
+        padding: 6px 11px;
+        border-radius: 999px;
+        font-size: 14px;
         font-weight: 600;
-    }
+        line-height: 1;
 
-    &__actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 12px;
-        padding: 20px 26px;
-        border-top: 1px solid rgba($dark, 0.07);
-
-        @include mq('xs') {
-            flex-direction: column;
-            padding: 18px 20px;
-        }
-    }
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Request Information
-|--------------------------------------------------------------------------
-*/
-
-.smart-buy-request-info {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0;
-
-    @include mq('xs') {
-        grid-template-columns: 1fr;
-    }
-
-    &__item {
-        padding: 20px 26px;
-        border-right: 1px solid rgba($dark, 0.07);
-        border-bottom: 1px solid rgba($dark, 0.07);
-
-        &:nth-child(2n) {
-            border-right: 0;
+        &__dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
         }
 
-        &:nth-last-child(-n + 2) {
-            border-bottom: 0;
+        &--pending,
+        &--quote-sent,
+        &--extension-requested,
+        &--payment-pending,
+        &--payment-processing {
+            color: $warning;
+            background: rgba($warning, 0.1);
         }
 
-        @include mq('xs') {
-            border-right: 0;
-
-            &:nth-last-child(-n + 2) {
-                border-bottom: 1px solid rgba($dark, 0.07);
-            }
-
-            &:last-child {
-                border-bottom: 0;
-            }
+        &--quote-rejected,
+        &--payment-failed,
+        &--payment-cancelled,
+        &--cancelled {
+            color: $danger;
+            background: rgba($danger, 0.1);
         }
 
-        span {
-            display: block;
-            margin-bottom: 6px;
-            color: rgba($body-color, 0.7);
-            font-size: 12px;
+        &--quote-accepted,
+        &--payment-completed,
+        &--product-purchased,
+        &--in-transit {
+            color: $info;
+            background: rgba($info, 0.1);
         }
 
-        strong {
-            display: block;
-            color: $heading-color;
-            font-size: 14px;
-            font-weight: 600;
+        &--completed {
+            color: $success;
+            background: rgba($success, 0.1);
         }
     }
-}
 
+    // ============================================================
+    // Request Progress Card
+    // ============================================================
 
-/*
-|--------------------------------------------------------------------------
-| Products
-|--------------------------------------------------------------------------
-*/
-
-.smart-buy-product-list {
-    display: flex;
-    flex-direction: column;
-}
-
-
-.smart-buy-product {
-    display: flex;
-    gap: 20px;
-    padding: 24px 26px;
-    border-bottom: 1px solid rgba($dark, 0.07);
-
-    &:last-child {
-        border-bottom: 0;
-    }
-
-    @include mq('xs') {
-        padding: 20px;
-        gap: 15px;
-        flex-direction: column;
-    }
-
-    &__image {
-        flex: 0 0 100px;
-        width: 100px;
-        height: 100px;
+    .smart-buy-progress-card {
+        margin-bottom: 12px;
         overflow: hidden;
-        border-radius: 12px;
-        background: rgba($dark, 0.04);
 
-        @include mq('xs') {
-            width: 100%;
-            height: 180px;
+        &__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 16px 18px;
+            border-bottom: 1px solid rgba($heading-color, 0.07);
         }
 
-        img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-    }
+        &__heading {
+            display: flex;
+            align-items: center;
+            gap: 10px;
 
-    &__placeholder {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 100%;
-        color: rgba($body-color, 0.35);
-        font-size: 28px;
-    }
+            h3 {
+                margin: 0 0 2px;
+                color: $heading-color;
+                font-family: $header-fonts;
+                font-size: 16px;
+                font-weight: 600;
+            }
 
-    &__content {
-        flex: 1;
-        min-width: 0;
-    }
-
-    &__label {
-        display: block;
-        margin-bottom: 5px;
-        color: $theme-color;
-        font-size: 10px;
-        font-weight: 700;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-    }
-
-    h4 {
-        margin: 0 0 10px;
-        color: $heading-color;
-        font-size: 16px;
-        font-weight: 600;
-    }
-
-    &__meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px 18px;
-
-        span {
-            color: rgba($body-color, 0.75);
-            font-size: 12px;
-        }
-
-        strong {
-            color: $heading-color;
-            font-weight: 600;
-        }
-    }
-
-    &__notes {
-        padding: 10px 12px;
-        margin-top: 14px;
-        background: rgba($dark, 0.035);
-        border-radius: 8px;
-        color: rgba($body-color, 0.85);
-        font-size: 12px;
-        line-height: 1.6;
-    }
-
-    &__link {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        margin-top: 14px;
-        color: $theme-color;
-        font-size: 12px;
-        font-weight: 600;
-        text-decoration: none;
-
-        @include transition(0.2s);
-
-        &:hover {
-            opacity: 0.75;
-        }
-    }
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Quote
-|--------------------------------------------------------------------------
-*/
-
-.smart-buy-quote-number {
-    padding: 7px 11px;
-    border-radius: 7px;
-    background: rgba($theme-color, 0.08);
-    color: $theme-color;
-    font-size: 11px;
-    font-weight: 700;
-}
-
-
-.smart-buy-quote-summary {
-    padding: 12px 26px;
-    margin: 20px 26px;
-
-    &__row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 20px;
-        padding: 13px 0;
-        border-bottom: 1px solid rgba($dark, 0.06);
-        color: rgba($body-color, 0.8);
-        font-size: 13px;
-
-        strong {
-            color: $heading-color;
-            font-weight: 600;
-        }
-
-        &.is-discount {
-            strong {
-                color: $success;
+            p {
+                margin: 0;
+                color: rgba($body-color, 0.65);
+                font-size: 14px;
+                line-height: 1.5;
             }
         }
 
-        &.is-total {
-            padding: 18px 0 10px;
-            border-bottom: 0;
-            color: $heading-color;
-            font-size: 15px;
-            font-weight: 600;
-
-            strong {
-                color: $theme-color;
-                font-size: 20px;
-                font-weight: 700;
-            }
-        }
-    }
-
-    @include mq('xs') {
-        padding: 12px 20px;
-    }
-}
-
-
-.smart-buy-quote-note {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 14px;
-    margin: 0 26px 20px;
-    background: rgba($info, 0.06);
-    border: 1px solid rgba($info, 0.12);
-    border-radius: 10px;
-
-    i {
-        margin-top: 2px;
-        color: $info;
-    }
-
-    p {
-        margin: 0;
-        color: rgba($body-color, 0.9);
-        font-size: 12px;
-        line-height: 1.6;
-    }
-
-    @include mq('xs') {
-        margin: 0 20px 18px;
-    }
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Payment
-|--------------------------------------------------------------------------
-*/
-
-.smart-buy-payment-info {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-
-    @include mq('xs') {
-        grid-template-columns: 1fr;
-    }
-
-    > div {
-        padding: 20px 26px;
-        border-right: 1px solid rgba($dark, 0.07);
-        border-bottom: 1px solid rgba($dark, 0.07);
-
-        &:nth-child(2n) {
-            border-right: 0;
-        }
-
-        &:nth-last-child(-n + 2) {
-            border-bottom: 0;
-        }
-
-        @include mq('xs') {
-            border-right: 0;
-
-            &:nth-last-child(-n + 2) {
-                border-bottom: 1px solid rgba($dark, 0.07);
-            }
-
-            &:last-child {
-                border-bottom: 0;
-            }
-        }
-
-        span {
-            display: block;
-            margin-bottom: 7px;
-            color: rgba($body-color, 0.7);
-            font-size: 12px;
-        }
-
-        strong {
-            color: $heading-color;
-            font-size: 14px;
-            font-weight: 600;
-        }
-    }
-}
-
-
-.smart-buy-payment-status {
-    padding: 7px 12px;
-    border-radius: 50px;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: capitalize;
-
-    &--paid {
-        background: rgba($success, 0.1);
-        color: $success;
-    }
-
-    &--pending {
-        background: rgba($warning, 0.12);
-        color: rgba($warning, 0.95);
-    }
-
-    &--failed {
-        background: rgba($danger, 0.1);
-        color: $danger;
-    }
-
-    &--refunded {
-        background: rgba($info, 0.1);
-        color: $info;
-    }
-}
-
-
-.smart-buy-payment-required {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    padding: 24px;
-    background: #ffffff;
-    border: 1px solid rgba(#7c3aed, 0.15);
-    border-radius: 16px;
-
-    @include mq('xs') {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    &__icon {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex: 0 0 50px;
-        width: 50px;
-        height: 50px;
-        border-radius: 12px;
-        background: rgba(#7c3aed, 0.1);
-        color: #7c3aed;
-        font-size: 19px;
-    }
-
-    &__content {
-        flex: 1;
-
-        h3 {
-            margin: 0 0 5px;
-            color: $heading-color;
-            font-size: 16px;
-            font-weight: 700;
-        }
-
-        p {
-            margin: 0;
-            color: rgba($body-color, 0.8);
-            font-size: 12px;
-            line-height: 1.6;
-        }
-    }
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Shipment
-|--------------------------------------------------------------------------
-*/
-
-.smart-buy-shipment-info {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-
-    @include mq('md') {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    @include mq('xs') {
-        grid-template-columns: 1fr;
-    }
-
-    &__item {
-        padding: 20px 26px;
-        border-right: 1px solid rgba($dark, 0.07);
-
-        &:last-child {
-            border-right: 0;
-        }
-
-        @include mq('md') {
-            &:nth-child(2) {
-                border-right: 0;
-            }
-
-            &:last-child {
-                border-top: 1px solid rgba($dark, 0.07);
-            }
-        }
-
-        @include mq('xs') {
-            border-right: 0;
-            border-bottom: 1px solid rgba($dark, 0.07);
-
-            &:last-child {
-                border-bottom: 0;
-                border-top: 0;
-            }
-        }
-
-        span {
-            display: block;
-            margin-bottom: 7px;
-            color: rgba($body-color, 0.7);
-            font-size: 12px;
-        }
-
-        strong {
-            color: $heading-color;
-            font-size: 13px;
-            font-weight: 600;
-            word-break: break-word;
-        }
-    }
-}
-
-
-.smart-buy-shipment-status {
-    padding: 7px 12px;
-    border-radius: 50px;
-    font-size: 11px;
-    font-weight: 700;
-
-    &--pending {
-        background: rgba($warning, 0.12);
-        color: rgba($warning, 0.95);
-    }
-
-    &--processing {
-        background: rgba($theme-color-2, 0.12);
-        color: rgba(#8c6d08, 1);
-    }
-
-    &--shipped,
-    &--in_transit {
-        background: rgba($info, 0.1);
-        color: $info;
-    }
-
-    &--delivered {
-        background: rgba($success, 0.1);
-        color: $success;
-    }
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Sidebar
-|--------------------------------------------------------------------------
-*/
-
-.smart-buy-sidebar-card {
-    padding: 22px;
-    background: #ffffff;
-    border: 1px solid rgba($dark, 0.08);
-    border-radius: 16px;
-
-    &__header {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding-bottom: 16px;
-        margin-bottom: 18px;
-        border-bottom: 1px solid rgba($dark, 0.07);
-
-        > i {
+        &__status-icon {
+            width: 32px;
+            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 34px;
-            height: 34px;
-            border-radius: 9px;
-            background: rgba($theme-color, 0.1);
+            flex: 0 0 auto;
             color: $theme-color;
-            font-size: 13px;
+            background: rgba($theme-color, 0.1);
+            border-radius: 8px;
+
+            i {
+                font-size: 14px;
+            }
+
+            &--terminal {
+                color: $danger;
+                background: rgba($danger, 0.1);
+            }
+
+            &--completed {
+                color: $success;
+                background: rgba($success, 0.1);
+            }
+        }
+
+        &__percentage {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+
+            span {
+                color: rgba($body-color, 0.65);
+                font-size: 14px;
+                font-weight: 500;
+            }
+
+            strong {
+                color: $success;
+                font-size: 14px;
+                font-weight: 700;
+            }
+
+            &--terminal {
+                strong {
+                    color: $danger;
+                }
+            }
+        }
+    }
+
+    .smart-buy-progress {
+        padding: 18px;
+
+        &__line {
+            position: relative;
+            width: calc(100% - 16%);
+            height: 2px;
+            margin: 0 auto;
+            background: rgba($heading-color, 0.12);
+            overflow: hidden;
+        }
+
+        &__active {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: $theme-color;
+            border-radius: 999px;
+
+            @include transition(0.4s);
+
+            &--terminal {
+                background: $danger;
+            }
+        }
+
+        &__steps {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            margin-top: -10px;
+        }
+
+        &__step {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            min-width: 0;
+
+            &.is-active,
+            &.is-current {
+                .smart-buy-progress__circle {
+                    color: $white;
+                    background: $theme-color;
+                    border-color: $theme-color;
+                    box-shadow: 0 0 0 4px rgba($theme-color, 0.08);
+                }
+
+                .smart-buy-progress__label {
+                    color: $theme-color;
+                    font-weight: 600;
+                }
+            }
+
+            &.is-current {
+                .smart-buy-progress__circle {
+                    box-shadow: 0 0 0 5px rgba($theme-color, 0.12);
+                }
+            }
+
+            &.is-terminal {
+                .smart-buy-progress__circle {
+                    color: $danger;
+                    background: rgba($danger, 0.08);
+                    border-color: $danger;
+                }
+
+                .smart-buy-progress__label {
+                    color: $danger;
+                }
+            }
+        }
+
+        &__circle {
+            position: relative;
+            z-index: 1;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba($body-color, 0.55);
+            background: $white;
+            border: 2px solid rgba($heading-color, 0.15);
+            border-radius: 50%;
+
+            @include transition(0.3s);
+
+            i {
+                font-size: 14px;
+                line-height: 1;
+            }
+        }
+
+        &__label {
+            margin-top: 8px;
+            color: rgba($body-color, 0.65);
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.3;
+        }
+
+        &__current {
+            margin-top: 3px;
+            color: $theme-color;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        &__status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding-top: 16px;
+            margin-top: 16px;
+            border-top: 1px solid rgba($heading-color, 0.07);
+
+            &-info {
+                display: flex;
+                align-items: center;
+                gap: 7px;
+                color: rgba($body-color, 0.7);
+                font-size: 14px;
+                font-weight: 500;
+
+                i {
+                    color: $danger;
+                    font-size: 14px;
+                }
+            }
+
+            strong {
+                color: $heading-color;
+                font-size: 14px;
+                font-weight: 600;
+            }
+
+            &--terminal {
+                strong {
+                    color: $danger;
+                }
+            }
+        }
+
+        &__status-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: $success;
+        }
+    }
+
+    // ============================================================
+    // Main Layout
+    // ============================================================
+
+    .smart-buy-details__grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 320px;
+        align-items: start;
+        gap: 12px;
+    }
+
+    .smart-buy-details__main {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .smart-buy-details__sidebar {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        position: sticky;
+        top: 16px;
+    }
+
+    // ============================================================
+    // Main Details Card
+    // ============================================================
+
+    .smart-buy-details-card {
+        overflow: hidden;
+
+        &__header {
+            min-height: 62px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 14px 18px;
+            border-bottom: 1px solid rgba($heading-color, 0.07);
+        }
+
+        &__eyebrow {
+            display: block;
+            margin-bottom: 3px;
+            color: $theme-color;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
         }
 
         h3 {
             margin: 0;
             color: $heading-color;
-            font-size: 15px;
-            font-weight: 700;
+            font-family: $header-fonts;
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        &__date {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: rgba($body-color, 0.65);
+            font-size: 14px;
+            font-weight: 500;
+
+            i {
+                color: $theme-color;
+                font-size: 14px;
+            }
+        }
+
+        &__count,
+        &__actions {
+            display: flex;
+            align-items: center;
+        }
+
+        &__count,
+        .smart-buy-quote-number {
+            padding: 6px 10px;
+            color: $success;
+            background: rgba($success, 0.08);
+            border-radius: 7px;
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        &__actions {
+            justify-content: flex-end;
+            padding: 14px 18px;
+            border-top: 1px solid rgba($heading-color, 0.07);
         }
     }
-}
 
+    // ============================================================
+    // Request Information
+    // ============================================================
 
-.smart-buy-customer-info {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
+    .smart-buy-request-info {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
 
-    > div {
+        &__item {
+            min-height: 68px;
+            padding: 14px 18px;
+            border-right: 1px solid rgba($heading-color, 0.07);
+            border-bottom: 1px solid rgba($heading-color, 0.07);
+
+            &:nth-child(2n) {
+                border-right: 0;
+            }
+
+            &:nth-last-child(-n + 2) {
+                border-bottom: 0;
+            }
+
+            span {
+                display: block;
+                margin-bottom: 5px;
+                color: rgba($body-color, 0.6);
+                font-size: 14px;
+                font-weight: 500;
+            }
+
+            strong {
+                display: block;
+                color: $heading-color;
+                font-size: 14px;
+                font-weight: 600;
+                word-break: break-word;
+            }
+        }
+    }
+
+    // ============================================================
+    // Product List
+    // ============================================================
+
+    .smart-buy-product-list {
+        .smart-buy-product {
+            &:not(:last-child) {
+                border-bottom: 1px solid rgba($heading-color, 0.07);
+            }
+        }
+    }
+
+    .smart-buy-product {
+        display: flex;
+        gap: 14px;
+        padding: 14px 18px;
+
+        &__image {
+            width: 56px;
+            height: 56px;
+            flex: 0 0 56px;
+            overflow: hidden;
+            background: $light;
+            border: 1px solid rgba($heading-color, 0.07);
+            border-radius: 9px;
+
+            img {
+                width: 100%;
+                height: 100%;
+                display: block;
+                object-fit: cover;
+            }
+        }
+
+        &__placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba($body-color, 0.45);
+
+            i {
+                font-size: 16px;
+            }
+        }
+
+        &__content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        &__label {
+            display: block;
+            margin-bottom: 3px;
+            color: $theme-color;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+
+        h4 {
+            margin: 0 0 7px;
+            color: $heading-color;
+            font-family: $header-fonts;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        &__meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 10px;
+            margin-bottom: 8px;
+
+            span {
+                color: rgba($body-color, 0.68);
+                font-size: 14px;
+                font-weight: 500;
+            }
+
+            strong {
+                color: $heading-color;
+                font-size: 14px;
+                font-weight: 600;
+            }
+        }
+
+        &__notes {
+            margin-bottom: 8px;
+            padding: 7px 9px;
+            color: rgba($body-color, 0.75);
+            background: $light;
+            border-radius: 6px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        &__link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: $theme-color;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+
+            @include transition(0.3s);
+
+            i {
+                font-size: 14px;
+            }
+
+            &:hover {
+                color: $heading-color;
+            }
+        }
+    }
+
+    .smart-buy-empty {
+        min-height: 150px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 20px;
+        text-align: center;
+        color: rgba($body-color, 0.6);
+
+        i {
+            color: rgba($theme-color, 0.6);
+            font-size: 24px;
+        }
+
+        p {
+            margin: 0;
+            font-size: 14px;
+        }
+    }
+
+    // ============================================================
+    // Quote
+    // ============================================================
+
+    .smart-buy-quote-summary {
+        &__row {
+            min-height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 9px 18px;
+            border-bottom: 1px solid rgba($heading-color, 0.07);
+
+            span {
+                color: rgba($body-color, 0.7);
+                font-size: 14px;
+                font-weight: 500;
+            }
+
+            strong {
+                color: $heading-color;
+                font-size: 14px;
+                font-weight: 600;
+                text-align: right;
+            }
+
+            &.is-discount {
+                strong {
+                    color: $success;
+                }
+            }
+
+            &.is-total {
+                min-height: 52px;
+                background: rgba($theme-color, 0.035);
+                border-bottom: 0;
+
+                span {
+                    color: $heading-color;
+                    font-weight: 600;
+                }
+
+                strong {
+                    color: $success;
+                    font-size: 16px;
+                    font-weight: 700;
+                }
+            }
+        }
+    }
+
+    .smart-buy-quote-note {
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
+        margin: 14px 18px 0;
+        padding: 10px 12px;
+        color: $info;
+        background: rgba($info, 0.07);
+        border-radius: 8px;
+
+        i {
+            flex: 0 0 auto;
+            margin-top: 2px;
+            font-size: 14px;
+        }
+
+        p {
+            margin: 0;
+            color: rgba($body-color, 0.8);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+    }
+
+    // ============================================================
+    // Buttons
+    // ============================================================
+
+    .smart-buy-btn {
+        min-height: 38px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 8px 14px;
+        border: 0;
+        border-radius: 7px;
+        font-family: $body-fonts;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+
+        @include transition(0.3s);
+
+        i {
+            font-size: 14px;
+        }
+
+        &--primary {
+            color: $white;
+            background: $theme-color;
+
+            &:hover {
+                color: $white;
+                background: $heading-color;
+
+                @include transform(translateY(-1px));
+            }
+        }
+    }
+
+    // ============================================================
+    // Payment
+    // ============================================================
+
+    .smart-buy-payment-status {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 10px;
+        border-radius: 7px;
+        font-size: 14px;
+        font-weight: 600;
+
+        &--completed,
+        &--paid,
+        &--success {
+            color: $success;
+            background: rgba($success, 0.08);
+        }
+
+        &--pending,
+        &--processing {
+            color: $warning;
+            background: rgba($warning, 0.1);
+        }
+
+        &--failed,
+        &--cancelled {
+            color: $danger;
+            background: rgba($danger, 0.1);
+        }
+    }
+
+    .smart-buy-payment-info {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+
+        > div {
+            min-height: 68px;
+            padding: 14px 18px;
+            border-right: 1px solid rgba($heading-color, 0.07);
+            border-bottom: 1px solid rgba($heading-color, 0.07);
+
+            &:nth-child(2n) {
+                border-right: 0;
+            }
+
+            &:nth-last-child(-n + 2) {
+                border-bottom: 0;
+            }
+        }
+
         span {
             display: block;
             margin-bottom: 5px;
-            color: rgba($body-color, 0.65);
-            font-size: 11px;
+            color: rgba($body-color, 0.6);
+            font-size: 14px;
+            font-weight: 500;
         }
 
         strong {
             display: block;
             color: $heading-color;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 600;
-            line-height: 1.7;
             word-break: break-word;
         }
     }
-}
 
-
-/*
-|--------------------------------------------------------------------------
-| Timeline
-|--------------------------------------------------------------------------
-*/
-
-.smart-buy-timeline {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 22px;
-
-    &__item {
-        position: relative;
+    .smart-buy-payment-required {
         display: flex;
-        gap: 13px;
-        min-height: 40px;
+        align-items: center;
+        gap: 14px;
+        padding: 18px;
 
-        &:not(:last-child) {
+        &__icon {
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+            color: $warning;
+            background: rgba($warning, 0.1);
+            border-radius: 10px;
 
-            &::after {
-                position: absolute;
-                top: 32px;
-                left: 14px;
-                width: 1px;
-                height: calc(100% + 4px);
-                background: rgba($dark, 0.1);
-                content: "";
+            i {
+                font-size: 16px;
             }
         }
 
-        &.is-active {
+        &__content {
+            flex: 1;
 
-            .smart-buy-timeline__marker {
-                background: $theme-color;
-                border-color: $theme-color;
-                color: #ffffff;
+            h3 {
+                margin: 0 0 4px;
+                color: $heading-color;
+                font-family: $header-fonts;
+                font-size: 16px;
+                font-weight: 600;
+            }
+
+            p {
+                margin: 0;
+                color: rgba($body-color, 0.7);
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        }
+    }
+
+    // ============================================================
+    // Shipment
+    // ============================================================
+
+    .smart-buy-shipment-card {
+        .smart-buy-details-card__header {
+            border-bottom: 1px solid rgba($heading-color, 0.07);
+        }
+    }
+
+    .smart-buy-shipment-status {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 10px;
+        border-radius: 7px;
+        font-size: 14px;
+        font-weight: 600;
+
+        &--pending {
+            color: $warning;
+            background: rgba($warning, 0.1);
+        }
+
+        &--shipped,
+        &--in_transit {
+            color: $info;
+            background: rgba($info, 0.1);
+        }
+
+        &--delivered {
+            color: $success;
+            background: rgba($success, 0.08);
+        }
+
+        &--cancelled,
+        &--failed {
+            color: $danger;
+            background: rgba($danger, 0.1);
+        }
+    }
+
+    .smart-buy-shipment-section {
+        padding: 14px 18px;
+
+        &:not(:last-of-type) {
+            border-bottom: 1px solid rgba($heading-color, 0.07);
+        }
+
+        &__title {
+            margin: 0 0 10px;
+            color: $heading-color;
+            font-family: $header-fonts;
+            font-size: 14px;
+            font-weight: 600;
+        }
+    }
+
+    .smart-buy-shipment-info {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        border: 1px solid rgba($heading-color, 0.07);
+        border-radius: 8px;
+        overflow: hidden;
+
+        &__item {
+            min-height: 64px;
+            padding: 11px;
+            border-right: 1px solid rgba($heading-color, 0.07);
+
+            &:last-child {
+                border-right: 0;
+            }
+
+            span {
+                display: block;
+                margin-bottom: 5px;
+                color: rgba($body-color, 0.58);
+                font-size: 14px;
+                font-weight: 500;
+            }
+
+            strong {
+                display: block;
+                color: $heading-color;
+                font-size: 14px;
+                font-weight: 600;
+                word-break: break-word;
+            }
+        }
+    }
+
+    .smart-buy-delivery-address {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 14px;
+        background: $light;
+        border: 1px solid rgba($heading-color, 0.06);
+        border-radius: 9px;
+
+        &__icon {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+            color: $theme-color;
+            background: rgba($theme-color, 0.1);
+            border-radius: 7px;
+
+            i {
+                font-size: 14px;
             }
         }
 
-        > div:last-child {
-            padding-top: 1px;
+        &__content {
+            min-width: 0;
+
+            strong {
+                display: block;
+                margin-bottom: 6px;
+                color: $heading-color;
+                font-size: 14px;
+                font-weight: 600;
+            }
+
+            p {
+                margin: 2px 0;
+                color: rgba($body-color, 0.72);
+                font-size: 14px;
+                line-height: 1.5;
+            }
+        }
+
+        &__phone {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 7px !important;
+            color: $theme-color !important;
+            font-weight: 600;
+
+            i {
+                font-size: 14px;
+            }
+        }
+    }
+
+    .smart-buy-shipment-notes {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin: 0 18px 14px;
+        padding: 12px;
+        border-left: 2px solid $theme-color;
+        background: rgba($theme-color, 0.04);
+
+        &__icon {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+            color: $theme-color;
+            background: rgba($theme-color, 0.1);
+            border-radius: 7px;
+
+            i {
+                font-size: 14px;
+            }
         }
 
         strong {
             display: block;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
             color: $heading-color;
-            font-size: 12px;
+            font-size: 14px;
             font-weight: 600;
+        }
+
+        p {
+            margin: 0;
+            color: rgba($body-color, 0.72);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+    }
+
+    // ============================================================
+    // Sidebar
+    // ============================================================
+
+    .smart-buy-sidebar-card {
+        overflow: hidden;
+
+        &__header {
+            min-height: 54px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 13px 15px;
+            border-bottom: 1px solid rgba($heading-color, 0.07);
+
+            > i {
+                width: 26px;
+                height: 26px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: $theme-color;
+                background: rgba($theme-color, 0.1);
+                border-radius: 7px;
+                font-size: 14px;
+            }
+
+            h3 {
+                margin: 0;
+                color: $heading-color;
+                font-family: $header-fonts;
+                font-size: 14px;
+                font-weight: 600;
+            }
+        }
+    }
+
+    .smart-buy-customer-info {
+        padding: 14px 15px;
+
+        > div {
+            &:not(:last-child) {
+                margin-bottom: 12px;
+            }
         }
 
         span {
             display: block;
-            color: rgba($body-color, 0.65);
-            font-size: 10px;
+            margin-bottom: 4px;
+            color: rgba($body-color, 0.58);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        strong {
+            display: block;
+            color: $heading-color;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.6;
+            word-break: break-word;
         }
     }
 
-    &__marker {
-        position: relative;
-        z-index: 2;
+    // ============================================================
+    // Timeline
+    // ============================================================
+
+    .smart-buy-timeline {
+        padding: 14px 15px;
+
+        &__item {
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+            padding-bottom: 16px;
+
+            &:last-child {
+                padding-bottom: 0;
+
+                &::after {
+                    display: none;
+                }
+            }
+
+            &::after {
+                content: "";
+                position: absolute;
+                top: 21px;
+                left: 8px;
+                width: 1px;
+                height: calc(100% - 12px);
+                background: rgba($heading-color, 0.12);
+            }
+
+            > div:last-child {
+                min-width: 0;
+            }
+
+            strong {
+                display: block;
+                margin-bottom: 3px;
+                color: $heading-color;
+                font-size: 14px;
+                font-weight: 600;
+                line-height: 1.4;
+            }
+
+            span {
+                display: block;
+                color: rgba($body-color, 0.6);
+                font-size: 14px;
+                line-height: 1.4;
+            }
+
+            &.is-active {
+                .smart-buy-timeline__marker {
+                    color: $white;
+                    background: $success;
+                    border-color: $success;
+                }
+            }
+        }
+
+        &__marker {
+            position: relative;
+            z-index: 1;
+            width: 17px;
+            height: 17px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+            color: rgba($body-color, 0.5);
+            background: $white;
+            border: 1px solid rgba($heading-color, 0.14);
+            border-radius: 50%;
+
+            i {
+                font-size: 14px;
+                line-height: 1;
+            }
+        }
+    }
+
+    // ============================================================
+    // Cancelled Notice
+    // ============================================================
+
+    .smart-buy-cancelled-notice {
         display: flex;
-        align-items: center;
-        justify-content: center;
-        flex: 0 0 29px;
-        width: 29px;
-        height: 29px;
-        border: 1px solid rgba($dark, 0.1);
-        border-radius: 50%;
-        background: #ffffff;
-        color: rgba($body-color, 0.5);
-        font-size: 10px;
-    }
-}
+        align-items: flex-start;
+        gap: 10px;
+        padding: 14px;
+        color: $danger;
+        background: rgba($danger, 0.04);
+        border-color: rgba($danger, 0.15);
 
+        > i {
+            flex: 0 0 auto;
+            margin-top: 2px;
+            font-size: 16px;
+        }
 
-/*
-|--------------------------------------------------------------------------
-| Buttons
-|--------------------------------------------------------------------------
-*/
+        strong {
+            display: block;
+            margin-bottom: 3px;
+            color: $danger;
+            font-size: 14px;
+            font-weight: 600;
+        }
 
-.smart-buy-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    min-height: 42px;
-    padding: 0 18px;
-    border: 1px solid transparent;
-    border-radius: 9px;
-    font-size: 12px;
-    font-weight: 600;
-    text-decoration: none;
-    cursor: pointer;
-
-    @include transition(0.2s);
-
-    &--primary {
-        background: $theme-color;
-        border-color: $theme-color;
-        color: #ffffff;
-
-        &:hover {
-            background: rgba($theme-color, 0.9);
-            border-color: rgba($theme-color, 0.9);
-            color: #ffffff;
+        p {
+            margin: 0;
+            color: rgba($body-color, 0.72);
+            font-size: 14px;
+            line-height: 1.5;
         }
     }
 
-    &--outline {
-        background: #ffffff;
-        border-color: rgba($dark, 0.12);
-        color: $heading-color;
+    // ============================================================
+    // Responsive - Large
+    // ============================================================
 
-        &:hover {
-            background: rgba($theme-color, 0.05);
-            border-color: rgba($theme-color, 0.3);
-            color: $theme-color;
+    @include mq('lg') {
+        .smart-buy-details__grid {
+            grid-template-columns: minmax(0, 1fr) 280px;
+        }
+
+        .smart-buy-details__sidebar {
+            position: static;
+        }
+
+        .smart-buy-shipment-info {
+            grid-template-columns: repeat(2, 1fr);
+
+            &__item {
+                border-bottom: 1px solid rgba($heading-color, 0.07);
+
+                &:nth-child(2n) {
+                    border-right: 0;
+                }
+
+                &:nth-last-child(-n + 2) {
+                    border-bottom: 0;
+                }
+            }
         }
     }
+
+    // ============================================================
+    // Responsive - Medium
+    // ============================================================
+
+    @include mq('md') {
+        padding: 8px;
+
+        .smart-buy-details__grid {
+            grid-template-columns: 1fr;
+        }
+
+        .smart-buy-details__sidebar {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            align-items: start;
+        }
+
+        .smart-buy-cancelled-notice {
+            grid-column: 1 / -1;
+        }
+    }
+
+    // ============================================================
+    // Responsive - Small
+    // ============================================================
+
+    @include mq('sm') {
+        .smart-buy-details__header {
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 16px;
+        }
+
+        .smart-buy-details__status {
+            width: 100%;
+        }
+
+        .smart-buy-status {
+            justify-content: center;
+        }
+
+        .smart-buy-progress-card__header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .smart-buy-progress-card__percentage {
+            align-self: flex-start;
+        }
+
+        .smart-buy-details__sidebar {
+            grid-template-columns: 1fr;
+        }
+
+        .smart-buy-cancelled-notice {
+            grid-column: auto;
+        }
+
+        .smart-buy-payment-required {
+            align-items: flex-start;
+            flex-wrap: wrap;
+
+            .smart-buy-btn {
+                width: 100%;
+            }
+        }
+    }
+
+    // ============================================================
+    // Responsive - Mobile
+    // ============================================================
 
     @include mq('xs') {
-        width: 100%;
-    }
-}
+        padding: 0;
 
+        .smart-buy-details__header {
+            gap: 14px;
+            padding: 14px;
+            border-radius: 10px;
+        }
 
-/*
-|--------------------------------------------------------------------------
-| Empty State
-|--------------------------------------------------------------------------
-*/
+        .smart-buy-details__title-wrap {
+            align-items: flex-start;
 
-.smart-buy-empty {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 200px;
-    padding: 30px;
-    text-align: center;
+            h2 {
+                font-size: 16px;
+            }
+        }
 
-    i {
-        margin-bottom: 12px;
-        color: rgba($body-color, 0.25);
-        font-size: 32px;
-    }
+        .smart-buy-progress-card {
+            border-radius: 10px;
 
-    p {
-        margin: 0;
-        color: rgba($body-color, 0.65);
-        font-size: 13px;
-    }
-}
+            &__header {
+                padding: 14px;
+            }
 
+            &__heading {
+                align-items: flex-start;
+            }
+        }
 
-/*
-|--------------------------------------------------------------------------
-| Cancelled Notice
-|--------------------------------------------------------------------------
-*/
+        .smart-buy-progress {
+            padding: 16px 10px;
 
-.smart-buy-cancelled-notice {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 18px;
-    background: rgba($danger, 0.06);
-    border: 1px solid rgba($danger, 0.12);
-    border-radius: 14px;
+            &__line {
+                width: calc(100% - 10%);
+            }
 
-    > i {
-        margin-top: 2px;
-        color: $danger;
-        font-size: 18px;
-    }
+            &__steps {
+                margin-top: -10px;
+            }
 
-    strong {
-        display: block;
-        margin-bottom: 4px;
-        color: $danger;
-        font-size: 13px;
-        font-weight: 700;
-    }
+            &__circle {
+                width: 20px;
+                height: 20px;
 
-    p {
-        margin: 0;
-        color: rgba($body-color, 0.8);
-        font-size: 11px;
-        line-height: 1.6;
+                i {
+                    font-size: 14px;
+                }
+            }
+
+            &__label {
+                margin-top: 7px;
+                font-size: 14px;
+                word-break: break-word;
+            }
+
+            &__current {
+                display: none;
+            }
+
+            &__status {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 6px;
+                margin-top: 14px;
+                padding-top: 14px;
+            }
+        }
+
+        .smart-buy-details-card {
+            border-radius: 10px;
+
+            &__header {
+                min-height: auto;
+                align-items: flex-start;
+                padding: 13px 14px;
+            }
+
+            &__actions {
+                padding: 12px 14px;
+
+                .smart-buy-btn {
+                    width: 100%;
+                }
+            }
+        }
+
+        .smart-buy-request-info,
+        .smart-buy-payment-info {
+            grid-template-columns: 1fr;
+
+            &__item,
+            > div {
+                min-height: auto;
+                padding: 12px 14px;
+                border-right: 0 !important;
+                border-bottom: 1px solid rgba($heading-color, 0.07) !important;
+
+                &:last-child {
+                    border-bottom: 0 !important;
+                }
+            }
+        }
+
+        .smart-buy-product {
+            gap: 10px;
+            padding: 13px 14px;
+
+            &__image {
+                width: 50px;
+                height: 50px;
+                flex-basis: 50px;
+            }
+        }
+
+        .smart-buy-quote-summary__row {
+            padding: 10px 14px;
+        }
+
+        .smart-buy-quote-note {
+            margin: 12px 14px 0;
+        }
+
+        .smart-buy-payment-required {
+            padding: 14px;
+        }
+
+        .smart-buy-shipment-section {
+            padding: 13px 14px;
+        }
+
+        .smart-buy-shipment-info {
+            grid-template-columns: 1fr;
+
+            &__item {
+                min-height: auto;
+                padding: 11px;
+                border-right: 0 !important;
+                border-bottom: 1px solid rgba($heading-color, 0.07) !important;
+
+                &:last-child {
+                    border-bottom: 0 !important;
+                }
+            }
+        }
+
+        .smart-buy-delivery-address {
+            padding: 12px;
+        }
+
+        .smart-buy-shipment-notes {
+            margin: 0 14px 12px;
+        }
+
+        .smart-buy-sidebar-card {
+            border-radius: 10px;
+        }
     }
 }

@@ -281,3 +281,73 @@ ECOMMERCE
 12. Tracking
     ↓
 13. Reports
+
+
+Test Payment
+--------------
+Card number:
+Successful
+4242 4242 4242 4242
+
+3D Secure success
+4000 0025 0000 3155
+
+Declined
+4000 0000 0000 9995
+
+
+Expiry date:
+12/34
+
+CVC:
+123
+
+Cardholder name:
+Test User
+
+
+
+Standard Ground Example
+
+Carrier: FedEx
+
+Shipping Method: FedEx Ground
+
+Tracking Number: 9611020987654321098765
+
+Tracking URL: https://www.fedex.com/fedextrack/?trknbr=9611020987654321098765
+https://www.fedex.com/fedextrack/?trknbr=9611020987654321098765
+
+
+Express / Air Example
+
+Carrier: UPS
+
+Shipping Method: UPS Next Day Air
+
+Tracking Number: 1Z9999999999999999
+
+Tracking URL: https://www.ups.com/track?tracknum=1Z9999999999999999
+https://www.ups.com/track?tracknum=1Z9999999999999999
+
+Postal Service Example
+
+Carrier: USPS
+
+Shipping Method: Priority Mail Express
+
+Tracking Number: 9400100000000000000000
+
+Tracking URL: https://tools.usps.com/go/TrackConfirmAction?tLabels=9400100000000000000000
+https://tools.usps.com/go/TrackConfirmAction?tLabels=9400100000000000000000
+
+International Courier Example
+
+Carrier: DHL Express
+
+Shipping Method: DHL Express Worldwide
+
+Tracking Number: 1234567890
+
+Tracking URL: https://www.dhl.com/en/express/tracking.html?AWB=1234567890
+https://www.dhl.com/en/express/tracking.html?AWB=1234567890

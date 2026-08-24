@@ -119,16 +119,21 @@
                     </a>
 
 
-                    <a
-                        href="{{ route('smart-buy.quote.edit' , $quote->id ) }}"
-                        class="btn btn-primary"
-                    >
-                        <i class="ri-edit-line"></i>
+                    @if(
+                        $smartBuy->status !== 'quote_accepted'
+                        &&
+                        !$quote->isAccepted()
+                    )
+                        <a
+                            href="{{ route('smart-buy.quote.edit', $quote->id) }}"
+                            class="btn btn-primary"
+                        >
+                            <i class="ri-edit-line"></i>
 
-                        <span>
                             Edit Quote
-                        </span>
-                    </a>
+                        </a>
+
+                    @endif
 
                 @endif
 
@@ -211,9 +216,7 @@
                             @php
 
                                 $image =
-                                    $item->image
-                                    ?? $item->product_image
-                                    ?? $item->image_url
+                                    $item->product_image
                                     ?? null;
 
                             @endphp
@@ -741,14 +744,21 @@
                             </a>
 
 
-                            <a
-                                href="{{ route('smart-buy.quote.edit' , $quote->id ) }}"
-                                class="btn btn-primary"
-                            >
-                                <i class="ri-edit-line"></i>
+                            @if(
+                                $smartBuy->status !== 'quote_accepted'
+                                &&
+                                !$quote->isAccepted()
+                            )
+                                <a
+                                    href="{{ route('smart-buy.quote.edit', $quote->id) }}"
+                                    class="btn btn-primary"
+                                >
+                                    <i class="ri-edit-line"></i>
 
-                                Edit Quote
-                            </a>
+                                    Edit Quote
+                                </a>
+
+                            @endif
 
                         </div>
 
@@ -887,7 +897,7 @@
 
 
                 {{-- ====================================================
-                    SHIPPING
+                    SHIPPING & TRACKING
                 ==================================================== --}}
 
                 <div class="smart-buy-card">
@@ -914,57 +924,566 @@
 
                         </div>
 
+
+                        @if($smartBuy->shipment)
+
+                            @php
+
+                                $shipmentStatusLabels = [
+
+                                    'pending' => 'Pending',
+
+                                    'preparing' => 'Preparing',
+
+                                    'shipped' => 'Shipped',
+
+                                    'in_transit' => 'In Transit',
+
+                                    'out_for_delivery' => 'Out for Delivery',
+
+                                    'delivered' => 'Delivered',
+
+                                    'cancelled' => 'Cancelled',
+
+                                ];
+
+                                $shipmentStatusClasses = [
+
+                                    'pending' => 'status-pending',
+
+                                    'preparing' => 'status-warning',
+
+                                    'shipped' => 'status-info',
+
+                                    'in_transit' => 'status-info',
+
+                                    'out_for_delivery' => 'status-warning',
+
+                                    'delivered' => 'status-success',
+
+                                    'cancelled' => 'status-danger',
+
+                                ];
+
+                            @endphp
+
+
+                            <span
+                                class="status-badge {{ $shipmentStatusClasses[$smartBuy->shipment->status] ?? 'status-pending' }}"
+                            >
+
+                {{
+                    $shipmentStatusLabels[$smartBuy->shipment->status]
+                    ?? ucwords(
+                        str_replace(
+                            '_',
+                            ' ',
+                            $smartBuy->shipment->status
+                        )
+                    )
+                }}
+
+            </span>
+
+                        @endif
+
                     </div>
 
 
                     @if($smartBuy->shipment)
 
-                        <div class="info-grid">
+                        @php
 
-                            <div class="info-item">
+                            $shipment = $smartBuy->shipment;
 
-                                <span>
-                                    Carrier
-                                </span>
+                        @endphp
 
-                                <strong>
-                                    {{ $smartBuy->shipment->carrier ?? '—' }}
-                                </strong>
+
+                        {{-- ====================================================
+                            SHIPMENT BASIC INFORMATION
+                        ==================================================== --}}
+
+                        <div class="shipping-section">
+
+                            <div class="shipping-section-header">
+
+                                <h3>
+                                    Shipment Information
+                                </h3>
 
                             </div>
 
 
-                            <div class="info-item">
+                            <div class="info-grid">
 
-                                <span>
-                                    Tracking Number
-                                </span>
+                                {{-- Shipment Number --}}
 
-                                <strong>
-                                    {{ $smartBuy->shipment->tracking_number ?? '—' }}
-                                </strong>
+                                <div class="info-item">
+
+                    <span>
+                        Shipment Number
+                    </span>
+
+                                    <strong>
+
+                                        {{ $shipment->shipment_number ?? '—' }}
+
+                                    </strong>
+
+                                </div>
+
+
+                                {{-- Status --}}
+
+                                <div class="info-item">
+
+                    <span>
+                        Shipment Status
+                    </span>
+
+                                    <strong>
+
+                                        {{
+                                            $shipmentStatusLabels[$shipment->status]
+                                            ?? ucwords(
+                                                str_replace(
+                                                    '_',
+                                                    ' ',
+                                                    $shipment->status ?? 'pending'
+                                                )
+                                            )
+                                        }}
+
+                                    </strong>
+
+                                </div>
+
+
+                                {{-- Carrier --}}
+
+                                <div class="info-item">
+
+                    <span>
+                        Carrier
+                    </span>
+
+                                    <strong>
+
+                                        {{ $shipment->carrier ?? '—' }}
+
+                                    </strong>
+
+                                </div>
+
+
+                                {{-- Shipping Method --}}
+
+                                <div class="info-item">
+
+                    <span>
+                        Shipping Method
+                    </span>
+
+                                    <strong>
+
+                                        {{ $shipment->shipping_method ?? '—' }}
+
+                                    </strong>
+
+                                </div>
+
+
+                                {{-- Tracking Number --}}
+
+                                <div class="info-item">
+
+                    <span>
+                        Tracking Number
+                    </span>
+
+                                    <strong>
+
+                                        {{ $shipment->tracking_number ?? '—' }}
+
+                                    </strong>
+
+                                </div>
+
+
+                                {{-- Tracking Link --}}
+
+                                <div class="info-item">
+
+                    <span>
+                        Tracking Link
+                    </span>
+
+                                    @if($shipment->tracking_url)
+
+                                        <a
+                                            href="{{ $shipment->tracking_url }}"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="view-product"
+                                        >
+
+                                            <i class="ri-external-link-line"></i>
+
+                                            Track Shipment
+
+                                        </a>
+
+                                    @else
+
+                                        <strong>
+                                            —
+                                        </strong>
+
+                                    @endif
+
+                                </div>
 
                             </div>
 
                         </div>
 
+
+
+                        {{-- ====================================================
+                            SHIPPING TIMELINE
+                        ==================================================== --}}
+
+                        <div class="shipping-section">
+
+                            <div class="shipping-section-header">
+
+                                <h3>
+                                    Shipping Timeline
+                                </h3>
+
+                            </div>
+
+
+                            <div class="info-grid">
+
+                                {{-- Shipped Date --}}
+
+                                <div class="info-item">
+
+                    <span>
+                        Shipped At
+                    </span>
+
+                                    <strong>
+
+                                        {{
+                                            optional(
+                                                $shipment->shipped_at
+                                            )->format('M d, Y')
+                                            ?? 'Not shipped yet'
+                                        }}
+
+                                    </strong>
+
+                                </div>
+
+
+                                {{-- Estimated Delivery --}}
+
+                                <div class="info-item">
+
+                    <span>
+                        Estimated Delivery
+                    </span>
+
+                                    <strong>
+
+                                        {{
+                                            optional(
+                                                $shipment->estimated_delivery_at
+                                            )->format('M d, Y')
+                                            ?? 'Not available'
+                                        }}
+
+                                    </strong>
+
+                                </div>
+
+
+                                {{-- Delivered Date --}}
+
+                                <div class="info-item">
+
+                    <span>
+                        Delivered At
+                    </span>
+
+                                    <strong>
+
+                                        {{
+                                            optional(
+                                                $shipment->delivered_at
+                                            )->format('M d, Y')
+                                            ?? 'Not delivered yet'
+                                        }}
+
+                                    </strong>
+
+                                </div>
+
+
+                                {{-- Created Date --}}
+
+                                <div class="info-item">
+
+                    <span>
+                        Shipment Created
+                    </span>
+
+                                    <strong>
+
+                                        {{
+                                            optional(
+                                                $shipment->created_at
+                                            )->format('M d, Y')
+                                            ?? '—'
+                                        }}
+
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+
+                        {{-- ====================================================
+                            DELIVERY ADDRESS
+                        ==================================================== --}}
+
+                        <div class="shipping-section">
+
+                            <div class="shipping-section-header">
+
+                                <h3>
+                                    Delivery Address
+                                </h3>
+
+                            </div>
+
+
+                            <div class="shipping-address-box">
+
+                                <div class="shipping-address-icon">
+
+                                    <i class="ri-map-pin-line"></i>
+
+                                </div>
+
+
+                                <div class="shipping-address-content">
+
+                                    <p>
+
+                                        {{
+                                            $shipment->delivery_address
+                                            ?? $smartBuy->delivery_address
+                                            ?? '—'
+                                        }}
+
+                                    </p>
+
+
+                                    <p>
+
+                                        {{ $shipment->city ?? $smartBuy->city ?? '' }}
+
+                                        @if(
+                                            $shipment->zip_code
+                                            ?? $smartBuy->zip_code
+                                        )
+
+                                            ,
+                                            {{
+                                                $shipment->zip_code
+                                                ?? $smartBuy->zip_code
+                                            }}
+
+                                        @endif
+
+                                    </p>
+
+
+                                    <strong>
+
+                                        {{
+                                            $shipment->country
+                                            ?? $smartBuy->country
+                                            ?? '—'
+                                        }}
+
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+
+                        {{-- ====================================================
+                            SHIPMENT NOTES
+                        ==================================================== --}}
+
+                        @if(!empty($shipment->notes))
+
+                            <div class="quote-notes">
+
+                                <div class="quote-notes-icon">
+
+                                    <i class="ri-sticky-note-line"></i>
+
+                                </div>
+
+
+                                <div>
+
+                                    <strong>
+                                        Shipment Notes
+                                    </strong>
+
+                                    <p>
+
+                                        {{ $shipment->notes }}
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        @endif
+
+
+
+                        {{-- ====================================================
+                            SHIPPING ACTIONS
+                        ==================================================== --}}
+
+                        <div class="quote-action-bottom">
+
+                            @if($shipment->tracking_url)
+
+                                <a
+                                    href="{{ $shipment->tracking_url }}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="btn btn-secondary"
+                                >
+
+                                    <i class="ri-map-pin-line"></i>
+
+                                    Track Shipment
+
+                                </a>
+
+                            @endif
+
+
+                            <a
+                                href="{{ route('smart-buy.shipment.edit', $shipment->id) }}"
+                                class="btn btn-primary"
+                            >
+
+                                <i class="ri-edit-line"></i>
+
+                                Edit Shipping
+
+                            </a>
+
+                        </div>
+
+
                     @else
+
+
+                        {{-- ====================================================
+                            EMPTY STATE
+                        ==================================================== --}}
 
                         <div class="empty-state">
 
                             <div class="empty-icon">
+
                                 <i class="ri-truck-line"></i>
+
                             </div>
+
 
                             <h3>
                                 No shipment information
                             </h3>
 
+
                             <p>
-                                Shipment and tracking information will appear here.
+
+                                @if(
+                                    in_array(
+                                        $smartBuy->status,
+                                        [
+                                            'product_purchased',
+                                            'in_transit',
+                                            'payment_completed'
+                                        ]
+                                    )
+                                )
+
+                                    The products have been purchased. You can now create shipment and tracking information.
+
+                                @else
+
+                                    Shipment and tracking information will appear here once the products are ready to ship.
+
+                                @endif
+
                             </p>
 
                         </div>
+
+
+
+                        {{-- Create Shipping Action --}}
+
+                        @if(
+                            in_array(
+                                $smartBuy->status,
+                                [
+                                    'product_purchased',
+                                    'in_transit',
+                                    'payment_completed'
+                                ]
+                            )
+                        )
+
+                            <div class="quote-action-bottom">
+
+                                <a
+                                    href="{{ route('smart-buy.shipment.create', $smartBuy->id) }}"
+                                    class="btn btn-primary"
+                                >
+
+                                    <i class="ri-add-circle-line"></i>
+
+                                    Create Shipment
+
+                                </a>
+
+                            </div>
+
+                        @endif
 
                     @endif
 
@@ -1254,7 +1773,7 @@
 
                         @csrf
 
-                        @method('PATCH')
+                        @method('PUT')
 
 
                         <select name="status">

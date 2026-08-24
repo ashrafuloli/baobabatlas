@@ -29,6 +29,8 @@ class SmartBuyQuote extends Model
 
     public const STATUS_EXPIRED = 'expired';
 
+    public const STATUS_EXTENSION_REQUESTED = 'extension_requested';
+
 
     /*
     |--------------------------------------------------------------------------
@@ -47,6 +49,8 @@ class SmartBuyQuote extends Model
         self::STATUS_REJECTED,
 
         self::STATUS_EXPIRED,
+
+        self::STATUS_EXTENSION_REQUESTED,
 
     ];
 
@@ -216,29 +220,35 @@ class SmartBuyQuote extends Model
 
         $data = [
 
-            'status' =>
-                $status,
+            'status' => $status,
 
         ];
 
 
         /*
         |--------------------------------------------------------------------------
-        | Status Timestamps
+        | Sent Timestamp
         |--------------------------------------------------------------------------
+        |
+        | Every time a quote is sent or resent,
+        | update the sent timestamp.
+        |
         */
 
         if (
             $status === self::STATUS_SENT
-            &&
-            !$this->sent_at
         ) {
 
-            $data['sent_at'] =
-                now();
+            $data['sent_at'] = now();
 
         }
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | Accepted Timestamp
+        |--------------------------------------------------------------------------
+        */
 
         if (
             $status === self::STATUS_ACCEPTED
@@ -246,11 +256,16 @@ class SmartBuyQuote extends Model
             !$this->accepted_at
         ) {
 
-            $data['accepted_at'] =
-                now();
+            $data['accepted_at'] = now();
 
         }
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | Rejected Timestamp
+        |--------------------------------------------------------------------------
+        */
 
         if (
             $status === self::STATUS_REJECTED
@@ -258,8 +273,7 @@ class SmartBuyQuote extends Model
             !$this->rejected_at
         ) {
 
-            $data['rejected_at'] =
-                now();
+            $data['rejected_at'] = now();
 
         }
 
@@ -454,6 +468,9 @@ class SmartBuyQuote extends Model
     |--------------------------------------------------------------------------
     | Check If Quote Can Be Edited
     |--------------------------------------------------------------------------
+    |
+    | Rejected quotes can be edited and resent.
+    |
     */
 
     public function canBeEdited(): bool
@@ -462,11 +479,15 @@ class SmartBuyQuote extends Model
             $this->status,
             [
 
-                self::STATUS_ACCEPTED,
+                self::STATUS_DRAFT,
+
+                self::STATUS_SENT,
 
                 self::STATUS_REJECTED,
 
                 self::STATUS_EXPIRED,
+
+                self::STATUS_EXTENSION_REQUESTED,
 
             ],
             true
@@ -518,6 +539,10 @@ class SmartBuyQuote extends Model
     |--------------------------------------------------------------------------
     | Mark Quote As Sent
     |--------------------------------------------------------------------------
+    |
+    | This also works when a rejected quote
+    | is updated and sent again.
+    |
     */
 
     public function markAsSent(): bool
@@ -571,5 +596,19 @@ class SmartBuyQuote extends Model
                 now(),
 
         ]);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Check If Quote Extension Is Requested
+    |--------------------------------------------------------------------------
+    */
+
+    public function isExtensionRequested(): bool
+    {
+        return
+            $this->status
+            ===
+            self::STATUS_EXTENSION_REQUESTED;
     }
 }

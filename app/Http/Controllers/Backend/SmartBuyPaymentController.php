@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\DB;
 class SmartBuyPaymentController extends Controller
 {
     /**
-     * Store or update payment.
+     * Store a manual payment
+     * or update an existing payment.
      */
     public function store(
         Request $request,
@@ -31,6 +32,12 @@ class SmartBuyPaymentController extends Controller
                 'max:255',
             ],
 
+            'payment_gateway' => [
+                'nullable',
+                'string',
+                'max:255',
+            ],
+
             'transaction_id' => [
                 'nullable',
                 'string',
@@ -39,7 +46,7 @@ class SmartBuyPaymentController extends Controller
 
             'status' => [
                 'required',
-                'in:pending,paid,failed,refunded',
+                'in:pending,processing,completed,failed,cancelled,refunded',
             ],
 
             'paid_at' => [
@@ -51,6 +58,23 @@ class SmartBuyPaymentController extends Controller
                 'nullable',
                 'string',
             ],
+
+        ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Load Quote
+        |--------------------------------------------------------------------------
+        */
+
+        $smartBuy->load([
+
+            'latestQuote',
+
+            'quote',
+
+            'payment',
 
         ]);
 
@@ -77,113 +101,113 @@ class SmartBuyPaymentController extends Controller
                 $validated
             ) {
 
-                $payment =
-                    $smartBuy
-                        ->payment()
-                        ->first();
+                /*
+                |--------------------------------------------------------------------------
+                | Find Existing Payment
+                |--------------------------------------------------------------------------
+                */
 
+                $payment =
+                    $smartBuy->payment;
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Payment Data
+                |--------------------------------------------------------------------------
+                */
+
+                $paymentData = [
+
+                    'smart_buy_quote_id' =>
+                        $quote->id,
+
+                    'amount' =>
+                        $validated['amount'],
+
+                    'currency' =>
+                        $quote->currency,
+
+                    'payment_method' =>
+                        $validated['payment_method'],
+
+                    'payment_gateway' =>
+                        $validated[
+                        'payment_gateway'
+                        ] ?? null,
+
+                    'transaction_id' =>
+                        $validated[
+                        'transaction_id'
+                        ] ?? null,
+
+                    'status' =>
+                        $validated['status'],
+
+                    'paid_at' =>
+                        $this->resolvePaidAt(
+                            $validated
+                        ),
+
+                    'notes' =>
+                        $validated[
+                        'notes'
+                        ] ?? null,
+
+                ];
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Update Existing Payment
+                |--------------------------------------------------------------------------
+                */
 
                 if ($payment) {
 
-                    $payment->update([
-
-                        'smart_buy_quote_id' =>
-                            $quote->id,
-
-                        'amount' =>
-                            $validated['amount'],
-
-                        'currency' =>
-                            $quote->currency,
-
-                        'payment_method' =>
-                            $validated['payment_method'],
-
-                        'transaction_id' =>
-                            $validated[
-                            'transaction_id'
-                            ] ?? null,
-
-                        'status' =>
-                            $validated['status'],
-
-                        'paid_at' =>
-                            $validated[
-                            'paid_at'
-                            ] ?? null,
-
-                        'notes' =>
-                            $validated[
-                            'notes'
-                            ] ?? null,
-
-                    ]);
-
-                } else {
-
-                    $payment =
-                        $smartBuy
-                            ->payment()
-                            ->create([
-
-                                'smart_buy_quote_id' =>
-                                    $quote->id,
-
-                                'payment_number' =>
-                                    $this->generatePaymentNumber(),
-
-                                'amount' =>
-                                    $validated['amount'],
-
-                                'currency' =>
-                                    $quote->currency,
-
-                                'payment_method' =>
-                                    $validated[
-                                    'payment_method'
-                                    ],
-
-                                'transaction_id' =>
-                                    $validated[
-                                    'transaction_id'
-                                    ] ?? null,
-
-                                'status' =>
-                                    $validated['status'],
-
-                                'paid_at' =>
-                                    $validated[
-                                    'paid_at'
-                                    ] ?? null,
-
-                                'notes' =>
-                                    $validated[
-                                    'notes'
-                                    ] ?? null,
-
-                            ]);
+                    $payment->update(
+                        $paymentData
+                    );
 
                 }
 
 
                 /*
                 |--------------------------------------------------------------------------
-                | Update Request Status
+                | Create New Payment
                 |--------------------------------------------------------------------------
                 */
 
-                if (
-                    $payment->status === 'paid'
-                ) {
+                else {
 
-                    $smartBuy->update([
+                    $payment =
+                        $smartBuy
+                            ->payment()
+                            ->create(
+                                array_merge(
+                                    $paymentData,
+                                    [
 
-                        'status' =>
-                            'payment_completed',
+                                        'payment_number' =>
+                                            $this->generatePaymentNumber(),
 
-                    ]);
+                                    ]
+                                )
+                            );
 
                 }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Update Smart Buy Status
+                |--------------------------------------------------------------------------
+                */
+
+                $this->syncSmartBuyStatus(
+                    $smartBuy,
+                    $payment
+                );
 
             }
         );
@@ -197,7 +221,7 @@ class SmartBuyPaymentController extends Controller
 
 
     /**
-     * Update payment.
+     * Update existing payment.
      */
     public function update(
         Request $request,
@@ -217,6 +241,12 @@ class SmartBuyPaymentController extends Controller
                 'max:255',
             ],
 
+            'payment_gateway' => [
+                'nullable',
+                'string',
+                'max:255',
+            ],
+
             'transaction_id' => [
                 'nullable',
                 'string',
@@ -225,7 +255,7 @@ class SmartBuyPaymentController extends Controller
 
             'status' => [
                 'required',
-                'in:pending,paid,failed,refunded',
+                'in:pending,processing,completed,failed,cancelled,refunded',
             ],
 
             'paid_at' => [
@@ -247,26 +277,70 @@ class SmartBuyPaymentController extends Controller
                 $validated
             ) {
 
-                $payment->update(
-                    $validated
-                );
+                /*
+                |--------------------------------------------------------------------------
+                | Update Payment
+                |--------------------------------------------------------------------------
+                */
 
+                $payment->update([
+
+                    'amount' =>
+                        $validated['amount'],
+
+                    'payment_method' =>
+                        $validated['payment_method'],
+
+                    'payment_gateway' =>
+                        $validated[
+                        'payment_gateway'
+                        ] ?? null,
+
+                    'transaction_id' =>
+                        $validated[
+                        'transaction_id'
+                        ] ?? null,
+
+                    'status' =>
+                        $validated['status'],
+
+                    'paid_at' =>
+                        $this->resolvePaidAt(
+                            $validated,
+                            $payment
+                        ),
+
+                    'notes' =>
+                        $validated[
+                        'notes'
+                        ] ?? null,
+
+                ]);
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Load Smart Buy Request
+                |--------------------------------------------------------------------------
+                */
 
                 $smartBuy =
                     $payment
                         ->smartBuyRequest;
 
 
-                if (
-                    $payment->status === 'paid'
-                ) {
+                /*
+                |--------------------------------------------------------------------------
+                | Sync Smart Buy Status
+                |--------------------------------------------------------------------------
+                */
 
-                    $smartBuy->update([
+                if ($smartBuy) {
 
-                        'status' =>
-                            'payment_completed',
-
-                    ]);
+                    $this->syncSmartBuyStatus(
+                        $smartBuy,
+                        $payment
+                    );
 
                 }
 
@@ -282,15 +356,218 @@ class SmartBuyPaymentController extends Controller
 
 
     /**
-     * Generate payment number.
+     * Resolve Paid At Date
+     */
+    private function resolvePaidAt(
+        array $validated,
+        ?SmartBuyPayment $payment = null
+    ) {
+        /*
+        |--------------------------------------------------------------------------
+        | Completed Payment
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $validated['status']
+            === SmartBuyPayment::STATUS_COMPLETED
+        ) {
+
+            if (
+                !empty(
+                $validated['paid_at']
+                )
+            ) {
+
+                return
+                    $validated['paid_at'];
+
+            }
+
+
+            if (
+                $payment
+                &&
+                $payment->paid_at
+            ) {
+
+                return
+                    $payment->paid_at;
+
+            }
+
+
+            return now();
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Other Payment Status
+        |--------------------------------------------------------------------------
+        */
+
+        return
+            $validated['paid_at']
+            ?? null;
+    }
+
+
+    /**
+     * Sync Smart Buy Request Status
+     */
+    private function syncSmartBuyStatus(
+        SmartBuyRequest $smartBuy,
+        SmartBuyPayment $payment
+    ): void {
+
+        /*
+        |--------------------------------------------------------------------------
+        | Payment Completed
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $payment->status
+            === SmartBuyPayment::STATUS_COMPLETED
+        ) {
+
+            $smartBuy->update([
+
+                'status' =>
+                    'payment_completed',
+
+            ]);
+
+            return;
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Payment Processing
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $payment->status
+            === SmartBuyPayment::STATUS_PROCESSING
+        ) {
+
+            $smartBuy->update([
+
+                'status' =>
+                    'payment_processing',
+
+            ]);
+
+            return;
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Payment Pending
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $payment->status
+            === SmartBuyPayment::STATUS_PENDING
+        ) {
+
+            $smartBuy->update([
+
+                'status' =>
+                    'payment_pending',
+
+            ]);
+
+            return;
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Payment Failed
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $payment->status
+            === SmartBuyPayment::STATUS_FAILED
+        ) {
+
+            $smartBuy->update([
+
+                'status' =>
+                    'payment_failed',
+
+            ]);
+
+            return;
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Payment Cancelled
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $payment->status
+            === SmartBuyPayment::STATUS_CANCELLED
+        ) {
+
+            $smartBuy->update([
+
+                'status' =>
+                    'payment_pending',
+
+            ]);
+
+            return;
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Payment Refunded
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $payment->status
+            === SmartBuyPayment::STATUS_REFUNDED
+        ) {
+
+            $smartBuy->update([
+
+                'status' =>
+                    'payment_refunded',
+
+            ]);
+
+        }
+    }
+
+
+    /**
+     * Generate Unique Payment Number.
      */
     private function generatePaymentNumber(): string
     {
         $lastPayment =
-            SmartBuyPayment::latest(
-                'id'
-            )
+            SmartBuyPayment::query()
                 ->lockForUpdate()
+                ->latest('id')
                 ->first();
 
 
@@ -300,7 +577,8 @@ class SmartBuyPaymentController extends Controller
                 : 1;
 
 
-        return 'SBP-' . str_pad(
+        return 'SBP-' .
+            str_pad(
                 $nextId,
                 6,
                 '0',

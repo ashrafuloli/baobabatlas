@@ -520,7 +520,7 @@ class SmartBuyQuoteController extends Controller
         if (!$smartBuy) {
 
             return redirect()
-                ->route('smart-buy')
+                ->route('smart-buy.index')
                 ->with(
                     'error',
                     'Smart Buy request not found.'
@@ -531,18 +531,16 @@ class SmartBuyQuoteController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Prevent Editing Accepted / Rejected Quote
+        | Prevent Editing Accepted Quote
         |--------------------------------------------------------------------------
+        |
+        | Rejected quotes can be edited and sent again.
+        |
         */
 
         if (
-            in_array(
-                $quote->status,
-                [
-                    SmartBuyQuote::STATUS_ACCEPTED,
-                    SmartBuyQuote::STATUS_REJECTED,
-                ]
-            )
+            $quote->status ===
+            SmartBuyQuote::STATUS_ACCEPTED
         ) {
 
             return redirect()
@@ -552,7 +550,7 @@ class SmartBuyQuoteController extends Controller
                 )
                 ->with(
                     'error',
-                    'This quote can no longer be edited.'
+                    'An accepted quote can no longer be edited.'
                 );
 
         }
@@ -565,7 +563,8 @@ class SmartBuyQuoteController extends Controller
         */
 
         $quoteItems =
-            $quote->quoteItems
+            $quote
+                ->quoteItems
                 ->keyBy(
                     'smart_buy_item_id'
                 );
@@ -616,24 +615,22 @@ class SmartBuyQuoteController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Prevent Editing Accepted / Rejected Quote
+        | Prevent Editing Accepted Quote
         |--------------------------------------------------------------------------
+        |
+        | Rejected and expired quotes can be updated.
+        |
         */
 
         if (
-            in_array(
-                $quote->status,
-                [
-                    SmartBuyQuote::STATUS_ACCEPTED,
-                    SmartBuyQuote::STATUS_REJECTED,
-                ]
-            )
+            $quote->status ===
+            SmartBuyQuote::STATUS_ACCEPTED
         ) {
 
             return back()
                 ->with(
                     'error',
-                    'This quote can no longer be edited.'
+                    'An accepted quote can no longer be edited.'
                 );
 
         }
@@ -781,7 +778,8 @@ class SmartBuyQuoteController extends Controller
         DB::transaction(
             function () use (
                 $validated,
-                $quote
+                $quote,
+                $smartBuy
             ) {
 
                 /*
@@ -854,6 +852,10 @@ class SmartBuyQuoteController extends Controller
                 |--------------------------------------------------------------------------
                 | Update Quote
                 |--------------------------------------------------------------------------
+                |
+                | After admin updates the quote, it is sent
+                | again to the customer for review.
+                |
                 */
 
                 $quote->update([
@@ -882,6 +884,32 @@ class SmartBuyQuoteController extends Controller
                     'expires_at' =>
                         $validated['expires_at']
                         ?? null,
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Re-send Quote
+                    |--------------------------------------------------------------------------
+                    */
+
+                    'status' =>
+                        SmartBuyQuote::STATUS_SENT,
+
+                    'sent_at' =>
+                        now(),
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Reset Previous Decision
+                    |--------------------------------------------------------------------------
+                    */
+
+                    'accepted_at' =>
+                        null,
+
+                    'rejected_at' =>
+                        null,
 
                 ]);
 
@@ -948,7 +976,7 @@ class SmartBuyQuoteController extends Controller
 
                     /*
                     |--------------------------------------------------------------------------
-                    | Update Existing Item
+                    | Update Existing Quote Item
                     |--------------------------------------------------------------------------
                     */
 
@@ -1034,6 +1062,28 @@ class SmartBuyQuoteController extends Controller
                     )
                     ->delete();
 
+
+                /*
+                |--------------------------------------------------------------------------
+                | Update Smart Buy Request Status
+                |--------------------------------------------------------------------------
+                |
+                | This removes statuses such as:
+                |
+                | - quote_rejected
+                | - quote_extension_requested
+                |
+                | and makes the quote available to the customer again.
+                |
+                */
+
+                $smartBuy->update([
+
+                    'status' =>
+                        'quote_sent',
+
+                ]);
+
             }
         );
 
@@ -1045,7 +1095,7 @@ class SmartBuyQuoteController extends Controller
             )
             ->with(
                 'success',
-                'Smart Buy quote updated successfully.'
+                'Smart Buy quote updated and sent to the customer successfully.'
             );
     }
 }

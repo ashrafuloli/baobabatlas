@@ -1,104 +1,173 @@
 @extends('backend.layouts.backend')
 
-@section('title', 'Tracking')
+@section('title', 'Track Your Smart Buy')
 
 @section('content')
 
-    <div class="tracking-page">
+    <div class="global-tracking">
 
         {{-- ==========================================================
-        | Page Header
+        | Hero
         =========================================================== --}}
 
-        <div class="tracking-page__header">
+        <section class="tracking-hero">
 
-            <div>
+            <div class="container">
 
-            <span class="tracking-page__eyebrow">
-                Shipment Tracking
-            </span>
+                <div class="tracking-hero__content">
 
-                <h1>
-                    Tracking
-                </h1>
+                    <div class="tracking-icon">
 
-                <p>
-                    Search and track shipments using a tracking number.
-                </p>
+                        <i class="fa-solid fa-truck"></i>
+
+                    </div>
+
+                    <div class="tracking-hero__text">
+
+                        <span class="tracking-eyebrow">
+                            SMART BUY TRACKING
+                        </span>
+
+                        <h1>
+                            Track Your Smart Buy
+                        </h1>
+
+                        <p>
+                            Enter your Smart Buy number to check your current shipment status.
+                        </p>
+
+                    </div>
+
+                </div>
 
             </div>
 
-        </div>
+        </section>
 
 
         {{-- ==========================================================
-        | Tracking Search
+        | Search
         =========================================================== --}}
 
-        <section class="tracking-search-card">
+        <section class="tracking-search-section">
 
-            <div class="tracking-search-card__icon">
+            <div class="container">
 
-                <i class="ri-map-pin-time-line"></i>
+                <div class="tracking-search-card">
 
-            </div>
+                    <div class="tracking-search-header">
 
+                        <h2>
+                            Track Your Shipment
+                        </h2>
 
-            <div class="tracking-search-card__content">
-
-                <h2>
-                    Track Your Shipment
-                </h2>
-
-                <p>
-                    Enter your tracking number to view the latest shipment status and tracking information.
-                </p>
-
-
-                <form
-                    action="#"
-                    method="GET"
-                    class="tracking-search-form"
-                >
-
-                    <div class="tracking-search-input">
-
-                        <i class="ri-search-line"></i>
-
-                        <input
-                            type="text"
-                            name="tracking_number"
-                            value="{{ request('tracking_number') }}"
-                            placeholder="Enter tracking number, e.g. BAT-2026-000124"
-                            autocomplete="off"
-                        >
+                        <p>
+                            Enter your Smart Buy number, for example:
+                            <strong>SB-000001</strong>
+                        </p>
 
                     </div>
 
 
-                    <button
-                        type="submit"
-                        class="tracking-search-btn"
+                    {{-- Error Message --}}
+
+                    @if(session('error'))
+
+                        <div class="tracking-alert tracking-alert--error">
+
+                            <i class="fa-solid fa-circle-exclamation"></i>
+
+                            <span>
+                                {{ session('error') }}
+                            </span>
+
+                        </div>
+
+                    @endif
+
+
+                    {{-- Success Message --}}
+
+                    @if(session('success'))
+
+                        <div class="tracking-alert tracking-alert--success">
+
+                            <i class="fa-solid fa-circle-check"></i>
+
+                            <span>
+                                {{ session('success') }}
+                            </span>
+
+                        </div>
+
+                    @endif
+
+
+                    {{-- Search Form --}}
+
+                    <form
+                        action="{{ route('global-tracking.search') }}"
+                        method="POST"
+                        class="tracking-search-form-wrapper"
+                        id="trackingForm"
                     >
 
-                        <i class="ri-search-line"></i>
+                        @csrf
 
-                        <span>
-                        Track Shipment
-                    </span>
+                        <div class="tracking-search-form">
 
-                    </button>
+                            <div class="tracking-input-wrapper">
 
-                </form>
+                                <i class="fa-solid fa-magnifying-glass"></i>
+
+                                <input
+                                    type="text"
+                                    name="request_number"
+                                    id="requestNumber"
+                                    value="{{ old('request_number') }}"
+                                    placeholder="Enter Smart Buy Number (SB-000001)"
+                                    autocomplete="off"
+                                    maxlength="50"
+                                    required
+                                >
+
+                            </div>
 
 
-                <div class="tracking-search-help">
+                            <button
+                                type="submit"
+                                class="tracking-search-btn"
+                                id="trackingButton"
+                            >
 
-                    <i class="ri-information-line"></i>
+                                <span class="button-text">
+                                    Track Shipment
+                                </span>
 
-                    <span>
-                    You can find the tracking number in your shipment confirmation.
-                </span>
+                                <span class="button-loader"></span>
+
+                                <i class="fa-solid fa-arrow-right button-icon"></i>
+
+                            </button>
+
+                        </div>
+
+
+                        @error('request_number')
+
+                        <div class="tracking-validation-error">
+
+                            <i class="fa-solid fa-circle-exclamation"></i>
+
+                            <span>
+                                    {{ $message }}
+                                </span>
+
+                        </div>
+
+                        @enderror
+
+                    </form>
 
                 </div>
 
@@ -107,634 +176,675 @@
         </section>
 
 
-
         {{-- ==========================================================
-        | Tracking Overview
+        | Tracking Result
         =========================================================== --}}
 
-        <div class="tracking-stats">
+        @if(isset($smartBuy) && isset($shipment) && $smartBuy && $shipment)
 
-            {{-- Total Shipments --}}
+            @php
 
-            <div class="tracking-stat-card">
+                $shipmentSteps = [
 
-                <div class="tracking-stat-card__icon">
+                    [
+                        'status' =>
+                            \App\Models\SmartBuyShipment::STATUS_PENDING,
 
-                    <i class="ri-box-3-line"></i>
+                        'title' =>
+                            'Shipment Pending',
 
-                </div>
+                        'description' =>
+                            'Your shipment is being prepared.',
 
-                <div>
+                        'icon' =>
+                            'fa-clock',
+                    ],
 
-                <span>
-                    Total Shipments
-                </span>
+                    [
+                        'status' =>
+                            \App\Models\SmartBuyShipment::STATUS_PREPARING,
 
-                    <strong>
-                        248
-                    </strong>
+                        'title' =>
+                            'Preparing Shipment',
 
-                </div>
+                        'description' =>
+                            'Your order is being prepared for dispatch.',
 
-            </div>
+                        'icon' =>
+                            'fa-box',
+                    ],
 
+                    [
+                        'status' =>
+                            \App\Models\SmartBuyShipment::STATUS_SHIPPED,
 
-            {{-- Active Shipments --}}
+                        'title' =>
+                            'Shipped',
 
-            <div class="tracking-stat-card">
+                        'description' =>
+                            'Your shipment has been handed over to the carrier.',
 
-                <div class="tracking-stat-card__icon tracking-stat-card__icon--blue">
+                        'icon' =>
+                            'fa-truck',
+                    ],
 
-                    <i class="ri-truck-line"></i>
+                    [
+                        'status' =>
+                            \App\Models\SmartBuyShipment::STATUS_IN_TRANSIT,
 
-                </div>
+                        'title' =>
+                            'In Transit',
 
-                <div>
+                        'description' =>
+                            'Your shipment is currently on the way.',
 
-                <span>
-                    In Transit
-                </span>
+                        'icon' =>
+                            'fa-truck-fast',
+                    ],
 
-                    <strong>
-                        86
-                    </strong>
+                    [
+                        'status' =>
+                            \App\Models\SmartBuyShipment::STATUS_OUT_FOR_DELIVERY,
 
-                </div>
+                        'title' =>
+                            'Out for Delivery',
 
-            </div>
+                        'description' =>
+                            'Your shipment is out for delivery.',
 
+                        'icon' =>
+                            'fa-location-dot',
+                    ],
 
-            {{-- Delivered --}}
+                    [
+                        'status' =>
+                            \App\Models\SmartBuyShipment::STATUS_DELIVERED,
 
-            <div class="tracking-stat-card">
+                        'title' =>
+                            'Delivered',
 
-                <div class="tracking-stat-card__icon tracking-stat-card__icon--green">
+                        'description' =>
+                            'Your shipment has been successfully delivered.',
 
-                    <i class="ri-checkbox-circle-line"></i>
+                        'icon' =>
+                            'fa-circle-check',
+                    ],
 
-                </div>
+                ];
 
-                <div>
 
-                <span>
-                    Delivered
-                </span>
+                $currentStep = collect($shipmentSteps)
+                    ->search(
+                        fn ($step) =>
+                            $step['status'] === $shipment->status
+                    );
 
-                    <strong>
-                        142
-                    </strong>
 
-                </div>
+                $isCancelled =
+                    $shipment->status
+                    ===
+                    \App\Models\SmartBuyShipment::STATUS_CANCELLED;
 
-            </div>
 
+                if ($currentStep === false) {
 
-            {{-- Pending --}}
+                    $currentStep = 0;
 
-            <div class="tracking-stat-card">
+                }
 
-                <div class="tracking-stat-card__icon tracking-stat-card__icon--orange">
 
-                    <i class="ri-time-line"></i>
+                $progressPercentage =
+                    count($shipmentSteps) > 1
 
-                </div>
+                        ? (
+                            $currentStep
+                            /
+                            (
+                                count($shipmentSteps) - 1
+                            )
+                        ) * 100
 
-                <div>
+                        : 0;
 
-                <span>
-                    Pending
-                </span>
+            @endphp
 
-                    <strong>
-                        20
-                    </strong>
 
-                </div>
+            <section
+                class="tracking-result-section"
+                id="trackingResult"
+            >
 
-            </div>
+                <div class="container">
 
-        </div>
 
+                    {{-- ==================================================
+                    | Request Information
+                    ================================================== --}}
 
+                    <div class="tracking-request-card">
 
-        {{-- ==========================================================
-        | Recent Shipments
-        =========================================================== --}}
+                        <div class="tracking-request-info">
 
-        <section class="tracking-card">
+                            <span>
+                                Smart Buy Number
+                            </span>
 
-            <div class="tracking-card__header">
+                            <strong>
+                                {{ $smartBuy->request_number }}
+                            </strong>
 
-                <div>
+                        </div>
 
-                    <h2>
-                        Recent Shipments
-                    </h2>
 
-                    <p>
-                        Recently updated shipment tracking information.
-                    </p>
+                        <div
+                            class="
+                                tracking-current-status
+                                {{ $isCancelled ? 'is-cancelled' : '' }}
+                            "
+                        >
 
-                </div>
+                            <span class="status-label">
 
+                                @if($isCancelled)
 
-                <a
-                    href="{{ route('shipments') }}"
-                    class="tracking-card__action"
-                >
+                                    Shipment Status
 
-                <span>
-                    View All Shipments
-                </span>
+                                @else
 
-                    <i class="ri-arrow-right-line"></i>
+                                    Current Shipment Status
 
-                </a>
+                                @endif
 
-            </div>
+                            </span>
 
+                            <strong>
 
-            <div class="tracking-table-wrapper">
+                                @if($isCancelled)
 
-                <table class="tracking-table">
+                                    Cancelled
 
-                    <thead>
+                                @else
 
-                    <tr>
+                                    {{ $shipmentSteps[$currentStep]['title'] }}
 
-                        <th>
-                            Tracking Number
-                        </th>
+                                @endif
 
-                        <th>
-                            Shipment
-                        </th>
+                            </strong>
 
-                        <th>
-                            Destination
-                        </th>
+                        </div>
 
-                        <th>
-                            Current Status
-                        </th>
+                    </div>
 
-                        <th>
-                            Last Updated
-                        </th>
 
-                        <th>
-                            Action
-                        </th>
+                    {{-- ==================================================
+                    | Shipment Progress
+                    ================================================== --}}
 
-                    </tr>
+                    @if(!$isCancelled)
 
-                    </thead>
+                        <div class="tracking-progress-card">
 
-
-                    <tbody>
-
-
-                    {{-- Shipment 1 --}}
-
-                    <tr>
-
-                        <td>
-
-                            <a
-                                href="#"
-                                class="tracking-number"
-                            >
-                                BAT-2026-000124
-                            </a>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="tracking-shipment">
-
-                                <div class="tracking-shipment__icon">
-
-                                    <i class="ri-box-3-line"></i>
-
-                                </div>
+                            <div class="tracking-progress-header">
 
                                 <div>
 
-                                    <strong>
-                                        Freight Shipment
-                                    </strong>
+                                    <h2>
+                                        Shipment Progress
+                                    </h2>
+
+                                    <p>
+                                        Follow each stage of your delivery.
+                                    </p>
+
+                                </div>
+
+
+                                <div class="tracking-progress-percentage">
+
+                                    {{ round($progressPercentage) }}%
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="shipment-progress-wrapper">
+
+
+                                {{-- Progress Line --}}
+
+                                <div class="shipment-progress-line">
+
+                                    <div
+                                        class="shipment-progress-line__active"
+                                        style="width: {{ $progressPercentage }}%"
+                                    ></div>
+
+                                </div>
+
+
+                                {{-- Shipment Steps --}}
+
+                                <div class="shipment-steps">
+
+                                    @foreach(
+                                        $shipmentSteps
+                                        as $index => $step
+                                    )
+
+                                        @php
+
+                                            $isCompleted =
+                                                $index < $currentStep;
+
+                                            $isCurrent =
+                                                $index === $currentStep;
+
+                                        @endphp
+
+
+                                        <div
+                                            class="
+                                                shipment-step
+                                                {{ $isCompleted ? 'is-completed' : '' }}
+                                                {{ $isCurrent ? 'is-current' : '' }}
+                                            "
+                                        >
+
+                                            <div class="shipment-step__icon">
+
+                                                <i
+                                                    class="
+                                                        fa-solid
+                                                        {{ $step['icon'] }}
+                                                    "
+                                                ></i>
+
+                                            </div>
+
+
+                                            <h4>
+                                                {{ $step['title'] }}
+                                            </h4>
+
+
+                                            <p>
+                                                {{ $step['description'] }}
+                                            </p>
+
+                                        </div>
+
+                                    @endforeach
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    @else
+
+                        <div class="tracking-cancelled-message">
+
+                            <div class="tracking-cancelled-message__icon">
+
+                                <i class="fa-solid fa-circle-xmark"></i>
+
+                            </div>
+
+                            <div>
+
+                                <h3>
+                                    Shipment Cancelled
+                                </h3>
+
+                                <p>
+                                    This shipment has been cancelled. Please contact support if you need further assistance.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    @endif
+
+
+                    {{-- ==================================================
+                    | Shipment Details
+                    ================================================== --}}
+
+                    <div class="tracking-details-grid">
+
+
+                        {{-- Shipment Information --}}
+
+                        <div class="tracking-details-card">
+
+                            <h3>
+                                Shipment Information
+                            </h3>
+
+
+                            @if($shipment->shipment_number)
+
+                                <div class="tracking-detail-row">
 
                                     <span>
-                                        Freight Forwarding
+                                        Shipment Number
                                     </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="tracking-location">
-
-                                <i class="ri-map-pin-line"></i>
-
-                                <span>
-                                    Conakry, Guinea
-                                </span>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="tracking-status tracking-status--transit">
-
-                                <i></i>
-
-                                In Transit
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="tracking-date">
-                                Aug 13, 2026 · 10:42 AM
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <a
-                                href="#"
-                                class="tracking-view-btn"
-                                aria-label="View shipment"
-                            >
-
-                                <i class="ri-eye-line"></i>
-
-                            </a>
-
-                        </td>
-
-                    </tr>
-
-
-                    {{-- Shipment 2 --}}
-
-                    <tr>
-
-                        <td>
-
-                            <a
-                                href="#"
-                                class="tracking-number"
-                            >
-                                BAT-2026-000121
-                            </a>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="tracking-shipment">
-
-                                <div class="tracking-shipment__icon">
-
-                                    <i class="ri-box-3-line"></i>
-
-                                </div>
-
-                                <div>
 
                                     <strong>
-                                        Document Shipment
+                                        {{ $shipment->shipment_number }}
                                     </strong>
 
+                                </div>
+
+                            @endif
+
+
+                            @if($shipment->carrier)
+
+                                <div class="tracking-detail-row">
+
                                     <span>
-                                        Customs Clearance
+                                        Carrier
                                     </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="tracking-location">
-
-                                <i class="ri-map-pin-line"></i>
-
-                                <span>
-                                    Kankan, Guinea
-                                </span>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="tracking-status tracking-status--delivered">
-
-                                <i></i>
-
-                                Delivered
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="tracking-date">
-                                Aug 12, 2026 · 03:20 PM
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <a
-                                href="#"
-                                class="tracking-view-btn"
-                                aria-label="View shipment"
-                            >
-
-                                <i class="ri-eye-line"></i>
-
-                            </a>
-
-                        </td>
-
-                    </tr>
-
-
-                    {{-- Shipment 3 --}}
-
-                    <tr>
-
-                        <td>
-
-                            <a
-                                href="#"
-                                class="tracking-number"
-                            >
-                                BAT-2026-000118
-                            </a>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="tracking-shipment">
-
-                                <div class="tracking-shipment__icon">
-
-                                    <i class="ri-box-3-line"></i>
-
-                                </div>
-
-                                <div>
 
                                     <strong>
-                                        Commercial Package
+                                        {{ $shipment->carrier }}
                                     </strong>
 
+                                </div>
+
+                            @endif
+
+
+                            @if($shipment->shipping_method)
+
+                                <div class="tracking-detail-row">
+
                                     <span>
-                                        Warehousing
+                                        Shipping Method
                                     </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="tracking-location">
-
-                                <i class="ri-map-pin-line"></i>
-
-                                <span>
-                                    Nzérékoré, Guinea
-                                </span>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="tracking-status tracking-status--pending">
-
-                                <i></i>
-
-                                Pending
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="tracking-date">
-                                Aug 11, 2026 · 09:15 AM
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <a
-                                href="#"
-                                class="tracking-view-btn"
-                                aria-label="View shipment"
-                            >
-
-                                <i class="ri-eye-line"></i>
-
-                            </a>
-
-                        </td>
-
-                    </tr>
-
-
-                    {{-- Shipment 4 --}}
-
-                    <tr>
-
-                        <td>
-
-                            <a
-                                href="#"
-                                class="tracking-number"
-                            >
-                                BAT-2026-000115
-                            </a>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="tracking-shipment">
-
-                                <div class="tracking-shipment__icon">
-
-                                    <i class="ri-box-3-line"></i>
-
-                                </div>
-
-                                <div>
 
                                     <strong>
-                                        Export Package
+                                        {{ $shipment->shipping_method }}
                                     </strong>
-
-                                    <span>
-                                        Freight Forwarding
-                                    </span>
 
                                 </div>
 
-                            </div>
-
-                        </td>
+                            @endif
 
 
-                        <td>
+                            @if($shipment->shipped_at)
 
-                            <div class="tracking-location">
+                                <div class="tracking-detail-row">
 
-                                <i class="ri-map-pin-line"></i>
+                                    <span>
+                                        Shipped Date
+                                    </span>
+
+                                    <strong>
+                                        {{ \Carbon\Carbon::parse(
+                                            $shipment->shipped_at
+                                        )->format('d M Y') }}
+                                    </strong>
+
+                                </div>
+
+                            @endif
+
+
+                            @if($shipment->estimated_delivery_at)
+
+                                <div class="tracking-detail-row">
+
+                                    <span>
+                                        Estimated Delivery
+                                    </span>
+
+                                    <strong>
+                                        {{ \Carbon\Carbon::parse(
+                                            $shipment->estimated_delivery_at
+                                        )->format('d M Y') }}
+                                    </strong>
+
+                                </div>
+
+                            @endif
+
+
+                            @if($shipment->delivered_at)
+
+                                <div class="tracking-detail-row">
+
+                                    <span>
+                                        Delivered Date
+                                    </span>
+
+                                    <strong>
+                                        {{ \Carbon\Carbon::parse(
+                                            $shipment->delivered_at
+                                        )->format('d M Y') }}
+                                    </strong>
+
+                                </div>
+
+                            @endif
+
+                        </div>
+
+                    </div>
+
+
+                    {{-- ==================================================
+                    | Shipment Notes
+                    ================================================== --}}
+
+                    @if($shipment->notes)
+
+                        <div class="tracking-notes">
+
+                            <h3>
+
+                                <i class="fa-solid fa-circle-info"></i>
 
                                 <span>
-                                    Labé, Guinea
+                                    Shipment Notes
                                 </span>
 
-                            </div>
+                            </h3>
 
-                        </td>
+                            <p>
+                                {{ $shipment->notes }}
+                            </p>
 
+                        </div>
 
-                        <td>
-
-                            <span class="tracking-status tracking-status--transit">
-
-                                <i></i>
-
-                                In Transit
-
-                            </span>
-
-                        </td>
+                    @endif
 
 
-                        <td>
+                </div>
 
-                            <span class="tracking-date">
-                                Aug 10, 2026 · 04:55 PM
-                            </span>
+            </section>
 
-                        </td>
-
-
-                        <td>
-
-                            <a
-                                href="#"
-                                class="tracking-view-btn"
-                                aria-label="View shipment"
-                            >
-
-                                <i class="ri-eye-line"></i>
-
-                            </a>
-
-                        </td>
-
-                    </tr>
-
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-
-            {{-- Table Footer --}}
-
-            <div class="tracking-card__footer">
-
-            <span>
-                Showing recent shipment activity
-            </span>
-
-                <a href="{{ route('shipments') }}">
-
-                    View all shipments
-
-                    <i class="ri-arrow-right-line"></i>
-
-                </a>
-
-            </div>
-
-        </section>
-
-
-
-        {{-- ==========================================================
-        | Empty Search State
-        | Hidden by default. Can be shown when no tracking result.
-        =========================================================== --}}
-
-        <section class="tracking-empty-state">
-
-            <div class="tracking-empty-state__icon">
-
-                <i class="ri-search-line"></i>
-
-            </div>
-
-            <h2>
-                No Shipment Found
-            </h2>
-
-            <p>
-                We couldn't find a shipment with that tracking number.
-                Please check the number and try again.
-            </p>
-
-        </section>
+        @endif
 
     </div>
 
 @endsection
+
+
+@push('scripts')
+
+    <script>
+
+        document.addEventListener(
+            'DOMContentLoaded',
+            function () {
+
+                /*
+                |--------------------------------------------------------------------------
+                | Page Wrapper
+                |--------------------------------------------------------------------------
+                */
+
+                const trackingPage =
+                    document.querySelector(
+                        '.global-tracking'
+                    );
+
+
+                if (!trackingPage) {
+
+                    return;
+
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Elements
+                |--------------------------------------------------------------------------
+                */
+
+                const form =
+                    trackingPage.querySelector(
+                        '#trackingForm'
+                    );
+
+                const input =
+                    trackingPage.querySelector(
+                        '#requestNumber'
+                    );
+
+                const button =
+                    trackingPage.querySelector(
+                        '#trackingButton'
+                    );
+
+                const trackingResult =
+                    trackingPage.querySelector(
+                        '#trackingResult'
+                    );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Format Smart Buy Number
+                |--------------------------------------------------------------------------
+                */
+
+                input?.addEventListener(
+                    'input',
+                    function () {
+
+                        let value =
+                            this.value
+                                .toUpperCase()
+                                .replace(
+                                    /\s+/g,
+                                    ''
+                                );
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Keep SB Prefix
+                        |--------------------------------------------------------------------------
+                        */
+
+                        if (
+                            value.length > 0
+                            &&
+                            !value.startsWith('SB')
+                        ) {
+
+                            value =
+                                value.replace(
+                                    /[^A-Z0-9-]/g,
+                                    ''
+                                );
+
+                        }
+
+
+                        this.value = value;
+
+                    }
+                );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Submit Form
+                |--------------------------------------------------------------------------
+                */
+
+                form?.addEventListener(
+                    'submit',
+                    function (event) {
+
+                        const requestNumber =
+                            input?.value.trim();
+
+
+                        if (!requestNumber) {
+
+                            event.preventDefault();
+
+                            input?.focus();
+
+                            return;
+
+                        }
+
+
+                        button?.classList.add(
+                            'is-loading'
+                        );
+
+
+                        if (button) {
+
+                            button.disabled = true;
+
+                        }
+
+                    }
+                );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Scroll To Result
+                |--------------------------------------------------------------------------
+                */
+
+                if (trackingResult) {
+
+                    setTimeout(
+                        function () {
+
+                            trackingResult.scrollIntoView({
+
+                                behavior:
+                                    'smooth',
+
+                                block:
+                                    'start',
+
+                            });
+
+                        },
+                        200
+                    );
+
+                }
+
+            }
+        );
+
+    </script>
+
+@endpush

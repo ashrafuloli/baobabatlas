@@ -5,7 +5,9 @@
     ================================================= --}}
     <div class="sidebar-logo">
 
-        <a href="{{ auth()->user()->roles()->where('slug', 'admin')->exists() ? route('admin-dashboard') : route('dashboard') }}">
+        <a href="{{ auth()->user()->roles()->where('slug', 'admin')->exists()
+            ? route('admin-dashboard')
+            : route('dashboard') }}">
 
             <img
                 src="{{ asset('logo.png') }}"
@@ -43,7 +45,9 @@
                     'admin-dashboard'
                 ) ? 'active' : '' }}">
 
-                    <a href="{{ auth()->user()->roles()->where('slug', 'admin')->exists() ? route('admin-dashboard') : route('dashboard') }}">
+                    <a href="{{ auth()->user()->roles()->where('slug', 'admin')->exists()
+                        ? route('admin-dashboard')
+                        : route('dashboard') }}">
 
                         <i class="ri-dashboard-line"></i>
 
@@ -56,6 +60,13 @@
                 </li>
 
             @endif
+
+            <li class="{{ request()->routeIs('global-tracking') ? 'active' : '' }}">
+                <a href="{{ route('global-tracking') }}">
+                    <i class="ri-map-pin-2-line"></i>
+                    <span>Tracking</span>
+                </a>
+            </li>
 
         </ul>
 
@@ -136,9 +147,9 @@
                             {{-- CART --}}
                             @if(auth()->user()->hasPermission('view-cart'))
 
-                                <li class="{{ request()->routeIs(
-                                    'cart'
-                                ) ? 'active' : '' }}">
+                                <li class="{{ request()->routeIs('cart')
+                                    ? 'active'
+                                    : '' }}">
 
                                     <a href="{{ route('cart') }}">
 
@@ -175,7 +186,6 @@
 
                             @endif
 
-
                         </ul>
 
                     </li>
@@ -207,7 +217,6 @@
 
                 @endif
 
-
             </ul>
 
         @endif
@@ -219,8 +228,8 @@
         @if(
             !auth()->user()->roles()->where('slug', 'admin')->exists() &&
             (
-                auth()->user()->hasPermission('view-smart-buy') ||
-                auth()->user()->hasPermission('create-smart-buy')
+                auth()->user()->hasPermission('my-smart-buy') ||
+                auth()->user()->hasPermission('my-smart-buy-create')
             )
         )
 
@@ -232,20 +241,20 @@
 
 
                 {{-- MY REQUESTS --}}
-                @if(auth()->user()->hasPermission('view-smart-buy'))
+                @if(auth()->user()->hasPermission('my-smart-buy'))
 
                     <li class="{{ request()->routeIs(
                         'my-smart-buy',
-                        'my-smart-buy-details',
-                        'smart-buy-confirmation',
-                        'my-smart-buy-quote',
-                        'my-smart-buy-quote-accept',
-                        'my-smart-buy-quote-reject',
-                        'smart-buy-payment',
-                        'smart-buy-payment-store',
-                        'smart-buy-payment-success',
-                        'smart-buy-payment-failed',
-                        'smart-buy-tracking'
+                        'my-smart-buy.details',
+                        'my-smart-buy.confirmation',
+                        'my-smart-buy.quote',
+                        'my-smart-buy.quote.accept',
+                        'my-smart-buy.quote.reject',
+                        'my-smart-buy.payment',
+                        'my-smart-buy.payment.store',
+                        'my-smart-buy.payment.success',
+                        'my-smart-buy.payment.cancel',
+                        'my-smart-buy.tracking'
                     ) ? 'active' : '' }}">
 
                         <a href="{{ route('my-smart-buy') }}">
@@ -264,13 +273,13 @@
 
 
                 {{-- START SMART BUY --}}
-                @if(auth()->user()->hasPermission('create-smart-buy'))
+                @if(auth()->user()->hasPermission('my-smart-buy-create'))
 
                     <li class="{{ request()->routeIs(
-                        'my-smart-buy-create'
+                        'my-smart-buy.create'
                     ) ? 'active' : '' }}">
 
-                        <a href="{{ route('my-smart-buy-create') }}">
+                        <a href="{{ route('my-smart-buy.create') }}">
 
                             <i class="ri-add-circle-line"></i>
 
@@ -283,7 +292,6 @@
                     </li>
 
                 @endif
-
 
             </ul>
 
@@ -336,10 +344,10 @@
                 @if(auth()->user()->hasPermission('view-payments'))
 
                     <li class="{{ request()->routeIs(
-                        'account-payments'
+                        'account.payments'
                     ) ? 'active' : '' }}">
 
-                        <a href="{{ route('account-payments') }}">
+                        <a href="{{ route('account.payments') }}">
 
                             <i class="ri-bank-card-line"></i>
 
@@ -375,7 +383,6 @@
 
                 @endif
 
-
             </ul>
 
         @endif
@@ -401,6 +408,7 @@
                     auth()->user()->hasPermission('view-categories') ||
                     auth()->user()->hasPermission('view-inventory') ||
                     auth()->user()->hasPermission('view-orders') ||
+                    auth()->user()->hasPermission('view-ecommerce-payments') ||
                     auth()->user()->hasPermission('view-ecommerce-shipments')
                 )
 
@@ -528,7 +536,7 @@
                             @endif
 
 
-                            {{-- ECOMMERCE PAYMENTS --}}
+                            {{-- PAYMENTS --}}
                             @if(auth()->user()->hasPermission('view-ecommerce-payments'))
 
                                 <li class="{{ request()->routeIs(
@@ -569,7 +577,6 @@
 
                             @endif
 
-
                         </ul>
 
                     </li>
@@ -581,27 +588,29 @@
                     SMART BUY MANAGEMENT
                 ========================================= --}}
                 @if(
-                    auth()->user()->hasPermission('view-smart-buy-admin') ||
-                    auth()->user()->hasPermission('view-smart-buy-admin-details') ||
-                    auth()->user()->hasPermission('create-smart-buy-quote') ||
-                    auth()->user()->hasPermission('manage-smart-buy') ||
-                    auth()->user()->hasPermission('manage-smart-buy-payment') ||
-                    auth()->user()->hasPermission('manage-smart-buy-shipment')
+                    auth()->user()->hasPermission('smart-buy') ||
+                    auth()->user()->hasPermission('smart-buy-details') ||
+                    auth()->user()->hasPermission('smart-buy-status') ||
+                    auth()->user()->hasPermission('smart-buy-quote') ||
+                    auth()->user()->hasPermission('smart-buy-quote-edit') ||
+                    auth()->user()->hasPermission('smart-buy-payment') ||
+                    auth()->user()->hasPermission('smart-buy-shipment')
                 )
 
                     <li class="has-submenu {{ request()->routeIs(
                         'smart-buy',
                         'smart-buy.details',
-                        'smart-buy.quote.show',
-                        'smart-buy-purchase',
-                        'smart-buy-shipment',
+                        'smart-buy.status.update',
+                        'smart-buy.quote.create',
                         'smart-buy.quote.store',
+                        'smart-buy.quote.show',
+                        'smart-buy.quote.edit',
                         'smart-buy.quote.update',
                         'smart-buy.payment.store',
                         'smart-buy.payment.update',
+                        'smart-buy.shipment',
                         'smart-buy.shipment.store',
-                        'smart-buy.shipment.update',
-                        'smart-buy.status.update'
+                        'smart-buy.shipment.update'
                     ) ? 'active open' : '' }}">
 
                         <a href="javascript:void(0);">
@@ -620,14 +629,22 @@
 
 
                             {{-- ALL REQUESTS --}}
-                            @if(auth()->user()->hasPermission('view-smart-buy-admin'))
+                            @if(auth()->user()->hasPermission('smart-buy'))
 
                                 <li class="{{ request()->routeIs(
                                     'smart-buy',
                                     'smart-buy.details',
+                                    'smart-buy.status.update',
+                                    'smart-buy.quote.create',
+                                    'smart-buy.quote.store',
                                     'smart-buy.quote.show',
-                                    'smart-buy-purchase',
-                                    'smart-buy-shipment'
+                                    'smart-buy.quote.edit',
+                                    'smart-buy.quote.update',
+                                    'smart-buy.payment.store',
+                                    'smart-buy.payment.update',
+                                    'smart-buy.shipment',
+                                    'smart-buy.shipment.store',
+                                    'smart-buy.shipment.update'
                                 ) ? 'active' : '' }}">
 
                                     <a href="{{ route('smart-buy') }}">
@@ -641,7 +658,6 @@
                                 </li>
 
                             @endif
-
 
                         </ul>
 
@@ -779,7 +795,6 @@
 
                             @endif
 
-
                         </ul>
 
                     </li>
@@ -820,7 +835,6 @@
                         <ul class="submenu">
 
 
-                            {{-- ALL PAYMENTS --}}
                             @if(auth()->user()->hasPermission('view-payments'))
 
                                 <li class="{{ request()->routeIs(
@@ -841,7 +855,6 @@
                             @endif
 
 
-                            {{-- ECOMMERCE --}}
                             @if(auth()->user()->hasPermission('view-ecommerce-payments'))
 
                                 <li class="{{ request()->routeIs(
@@ -861,7 +874,6 @@
                             @endif
 
 
-                            {{-- SMART BUY --}}
                             @if(auth()->user()->hasPermission('view-smart-buy-payments'))
 
                                 <li class="{{ request()->routeIs(
@@ -881,7 +893,6 @@
                             @endif
 
 
-                            {{-- FAILED --}}
                             @if(auth()->user()->hasPermission('view-failed-payments'))
 
                                 <li class="{{ request()->routeIs(
@@ -899,7 +910,6 @@
                                 </li>
 
                             @endif
-
 
                         </ul>
 
@@ -938,10 +948,11 @@
                         <ul class="submenu">
 
 
-                            {{-- OVERVIEW --}}
                             @if(auth()->user()->hasPermission('view-reports'))
 
-                                <li class="{{ request()->routeIs('reports') ? 'active' : '' }}">
+                                <li class="{{ request()->routeIs('reports')
+                                    ? 'active'
+                                    : '' }}">
 
                                     <a href="{{ route('reports') }}">
 
@@ -956,10 +967,11 @@
                             @endif
 
 
-                            {{-- ECOMMERCE --}}
                             @if(auth()->user()->hasPermission('view-ecommerce-reports'))
 
-                                <li class="{{ request()->routeIs('reports-ecommerce') ? 'active' : '' }}">
+                                <li class="{{ request()->routeIs('reports-ecommerce')
+                                    ? 'active'
+                                    : '' }}">
 
                                     <a href="{{ route('reports-ecommerce') }}">
 
@@ -974,10 +986,11 @@
                             @endif
 
 
-                            {{-- SMART BUY --}}
                             @if(auth()->user()->hasPermission('view-smart-buy-reports'))
 
-                                <li class="{{ request()->routeIs('reports-smart-buy') ? 'active' : '' }}">
+                                <li class="{{ request()->routeIs('reports-smart-buy')
+                                    ? 'active'
+                                    : '' }}">
 
                                     <a href="{{ route('reports-smart-buy') }}">
 
@@ -990,7 +1003,6 @@
                                 </li>
 
                             @endif
-
 
                         </ul>
 
@@ -1005,14 +1017,12 @@
                 @if(
                     auth()->user()->hasPermission('view-settings') ||
                     auth()->user()->hasPermission('view-ecommerce-settings') ||
-                    auth()->user()->hasPermission('view-smart-buy-settings') ||
                     auth()->user()->hasPermission('view-audit-logs')
                 )
 
                     <li class="has-submenu {{ request()->routeIs(
                         'settings',
                         'settings-ecommerce',
-                        'settings-smart-buy',
                         'settings-audit-logs',
                         'settings-audit-log-details'
                     ) ? 'active open' : '' }}">
@@ -1035,7 +1045,9 @@
                             {{-- GENERAL --}}
                             @if(auth()->user()->hasPermission('view-settings'))
 
-                                <li class="{{ request()->routeIs('settings') ? 'active' : '' }}">
+                                <li class="{{ request()->routeIs('settings')
+                                    ? 'active'
+                                    : '' }}">
 
                                     <a href="{{ route('settings') }}">
 
@@ -1053,30 +1065,14 @@
                             {{-- ECOMMERCE --}}
                             @if(auth()->user()->hasPermission('view-ecommerce-settings'))
 
-                                <li class="{{ request()->routeIs('settings-ecommerce') ? 'active' : '' }}">
+                                <li class="{{ request()->routeIs('settings-ecommerce')
+                                    ? 'active'
+                                    : '' }}">
 
                                     <a href="{{ route('settings-ecommerce') }}">
 
                                         <span>
                                             Ecommerce
-                                        </span>
-
-                                    </a>
-
-                                </li>
-
-                            @endif
-
-
-                            {{-- SMART BUY --}}
-                            @if(auth()->user()->hasPermission('view-smart-buy-settings'))
-
-                                <li class="{{ request()->routeIs('settings-smart-buy') ? 'active' : '' }}">
-
-                                    <a href="{{ route('settings-smart-buy') }}">
-
-                                        <span>
-                                            Smart Buy
                                         </span>
 
                                     </a>
@@ -1105,7 +1101,6 @@
                                 </li>
 
                             @endif
-
 
                         </ul>
 
@@ -1137,7 +1132,6 @@
                     </li>
 
                 @endif
-
 
             </ul>
 

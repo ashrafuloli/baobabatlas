@@ -1,47 +1,253 @@
 @extends('backend.layouts.backend')
 
-@section('title', 'Smart Buy Tracking')
+@section('title', 'Track Smart Buy')
 
 @section('content')
 
+    @php
+
+        /*
+        |--------------------------------------------------------------------------
+        | Basic Data
+        |--------------------------------------------------------------------------
+        */
+
+        $shipmentStatus = $shipment?->status
+            ?? \App\Models\SmartBuyShipment::STATUS_PENDING;
+
+
+        $shipmentNumber = $shipment?->shipment_number
+            ?? (
+                $shipment
+                    ? 'SBS-' . str_pad(
+                        $shipment->id,
+                        6,
+                        '0',
+                        STR_PAD_LEFT
+                    )
+                    : 'Not available'
+            );
+
+
+        $requestNumber = $smartBuy->request_number
+            ?? (
+                'SB-' . str_pad(
+                    $smartBuy->id,
+                    6,
+                    '0',
+                    STR_PAD_LEFT
+                )
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Quote
+        |--------------------------------------------------------------------------
+        */
+
+        $quote = $smartBuy->latestQuote
+            ?? $smartBuy->quote
+            ?? null;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Quote Items
+        |--------------------------------------------------------------------------
+        */
+
+        $quoteItems = $quote?->quoteItems
+            ?? collect();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Smart Buy Items
+        |--------------------------------------------------------------------------
+        */
+
+        $smartBuyItems = $smartBuy->items
+            ?? collect();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Currency
+        |--------------------------------------------------------------------------
+        */
+
+        $currency = $quote?->currency
+            ?? $smartBuy->currency
+            ?? 'USD';
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Status Configuration
+        |--------------------------------------------------------------------------
+        */
+
+        $trackingSteps = [
+
+            [
+                'key' => 'pending',
+                'label' => 'Shipment Pending',
+                'description' => 'Your shipment is being prepared.',
+                'icon' => 'fa-clock',
+            ],
+
+            [
+                'key' => 'preparing',
+                'label' => 'Preparing Shipment',
+                'description' => 'Your order is being prepared for dispatch.',
+                'icon' => 'fa-box',
+            ],
+
+            [
+                'key' => 'shipped',
+                'label' => 'Shipped',
+                'description' => 'Your shipment has been handed over to the carrier.',
+                'icon' => 'fa-truck',
+            ],
+
+            [
+                'key' => 'in_transit',
+                'label' => 'In Transit',
+                'description' => 'Your shipment is currently on the way.',
+                'icon' => 'fa-truck-fast',
+            ],
+
+            [
+                'key' => 'out_for_delivery',
+                'label' => 'Out for Delivery',
+                'description' => 'Your shipment is out for delivery.',
+                'icon' => 'fa-location-dot',
+            ],
+
+            [
+                'key' => 'delivered',
+                'label' => 'Delivered',
+                'description' => 'Your shipment has been successfully delivered.',
+                'icon' => 'fa-circle-check',
+            ],
+
+        ];
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Current Status Index
+        |--------------------------------------------------------------------------
+        */
+
+        $currentStepIndex = 0;
+
+
+        foreach ($trackingSteps as $index => $step) {
+
+            if ($step['key'] === $shipmentStatus) {
+
+                $currentStepIndex = $index;
+
+                break;
+
+            }
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Dates
+        |--------------------------------------------------------------------------
+        */
+
+        $shippedAt = $shipment?->shipped_at
+            ? \Carbon\Carbon::parse($shipment->shipped_at)
+            : null;
+
+
+        $estimatedDeliveryAt = $shipment?->estimated_delivery_at
+            ? \Carbon\Carbon::parse($shipment->estimated_delivery_at)
+            : null;
+
+
+        $deliveredAt = $shipment?->delivered_at
+            ? \Carbon\Carbon::parse($shipment->delivered_at)
+            : null;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Product Count
+        |--------------------------------------------------------------------------
+        */
+
+        $productCount = $quoteItems->count() > 0
+            ? $quoteItems->count()
+            : $smartBuyItems->count();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Status Label
+        |--------------------------------------------------------------------------
+        */
+
+        $statusLabel = ucwords(
+            str_replace(
+                '_',
+                ' ',
+                $shipmentStatus
+            )
+        );
+
+    @endphp
+
+
     <div class="my-smart-buy-tracking-page">
 
-        {{-- ==========================================================
-        | Header
-        =========================================================== --}}
 
-        <div class="my-smart-buy-tracking-header">
+        {{-- ============================================================
+            PAGE HEADER
+        ============================================================ --}}
 
-            <div>
+        <div class="my-smart-buy-tracking-page__header">
+
+            <div class="my-smart-buy-tracking-page__header-left">
 
                 <a
-                    href="{{ route('my-smart-buy-details', $smartBuy) }}"
-                    class="my-smart-buy-tracking-back"
+                    href="{{ route('my-smart-buy.details', $smartBuy->id) }}"
+                    class="my-smart-buy-tracking-page__back"
                 >
-                    <i class="ri-arrow-left-line"></i>
-                    <span>Back to Request</span>
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    <span>
+                        Back to Smart Buy
+                    </span>
+
                 </a>
 
 
-                <div class="my-smart-buy-tracking-heading">
+                <div class="my-smart-buy-tracking-page__title">
 
-                    <div class="my-smart-buy-tracking-heading__icon">
+                    <div class="my-smart-buy-tracking-page__title-icon">
 
-                        <i class="ri-map-pin-time-line"></i>
+                        <i class="fa-solid fa-truck-fast"></i>
 
                     </div>
 
 
                     <div>
 
-                        <span>My Smart Buy</span>
-
                         <h1>
-                            Shipment Tracking
+                            Track Your Smart Buy
                         </h1>
 
                         <p>
-                            Track the current status and delivery progress of your shipment.
+                            Follow the current delivery status of your request.
                         </p>
 
                     </div>
@@ -51,735 +257,332 @@
             </div>
 
 
-            <span class="my-smart-buy-tracking-status">
+            <div class="my-smart-buy-tracking-page__request">
 
-            <i></i>
+                <span>
+                    Smart Buy Number
+                </span>
 
-            In Transit
+                <strong>
+                    {{ $requestNumber }}
+                </strong>
 
-        </span>
+            </div>
 
         </div>
 
 
 
-        {{-- ==========================================================
-        | Tracking Overview
-        =========================================================== --}}
+        {{-- ============================================================
+            SHIPMENT STATUS
+        ============================================================ --}}
 
-        <section class="my-smart-buy-tracking-overview">
+        <div class="my-smart-buy-tracking-page__status-card">
 
-            <div class="my-smart-buy-tracking-overview__main">
+            <div class="my-smart-buy-tracking-page__status-header">
 
-            <span>
-                Tracking Number
-            </span>
+                <div>
 
-                <div class="my-smart-buy-tracking-number">
+                    <span class="my-smart-buy-tracking-page__eyebrow">
+                        Current Shipment Status
+                    </span>
 
-                    <strong id="trackingNumber">
-                        DHL-7849236510
-                    </strong>
-
-                    <button
-                        type="button"
-                        id="copyTrackingNumber"
-                        class="my-smart-buy-tracking-copy"
-                    >
-
-                        <i class="ri-file-copy-line"></i>
-
-                        Copy
-
-                    </button>
+                    <h2>
+                        {{ $statusLabel }}
+                    </h2>
 
                 </div>
 
-                <p>
-                    DHL Express · Express Shipping
-                </p>
+
+                <div
+                    class="my-smart-buy-tracking-page__status-badge my-smart-buy-tracking-page__status-badge--{{ $shipmentStatus }}"
+                >
+
+                    <span></span>
+
+                    {{ $statusLabel }}
+
+                </div>
 
             </div>
 
 
-            <div class="my-smart-buy-tracking-overview__delivery">
+            <div class="my-smart-buy-tracking-page__shipment-reference">
 
-            <span>
-                Estimated Delivery
-            </span>
+                <div class="d-none">
 
-                <strong>
-                    Aug 26, 2026
-                </strong>
-
-                <small>
-                    9 days remaining
-                </small>
-
-            </div>
-
-        </section>
-
-
-
-        {{-- ==========================================================
-        | Layout
-        =========================================================== --}}
-
-        <div class="my-smart-buy-tracking-layout">
-
-
-            {{-- ======================================================
-            | Main Tracking
-            ======================================================= --}}
-
-            <div class="my-smart-buy-tracking-main">
-
-
-                {{-- ==================================================
-                | Current Status
-                =================================================== --}}
-
-                <section class="my-smart-buy-tracking-card">
-
-                    <div class="my-smart-buy-tracking-card__header">
-
-                        <div>
-
-                            <h2>
-                                Current Status
-                            </h2>
-
-                            <p>
-                                Latest shipment update.
-                            </p>
-
-                        </div>
-
-
-                        <span class="my-smart-buy-tracking-badge is-transit">
-
-                        <i class="ri-truck-line"></i>
-
-                        In Transit
-
+                    <span>
+                        Smart Buy Request
                     </span>
 
-                    </div>
+                    <strong>
+                        {{ $requestNumber }}
+                    </strong>
 
+                </div>
 
-                    <div class="my-smart-buy-tracking-current">
 
-                        <div class="my-smart-buy-tracking-current__icon">
+                <div class="d-none">
 
-                            <i class="ri-truck-line"></i>
+                    <span>
+                        Shipment Reference
+                    </span>
 
-                        </div>
+                    <strong>
+                        {{ $shipmentNumber }}
+                    </strong>
 
-
-                        <div>
-
-                            <strong>
-                                Shipment is on the way
-                            </strong>
-
-                            <span>
-                            Your shipment is currently in transit to the destination.
-                        </span>
-
-                            <small>
-                                Last updated: Aug 17, 2026 · 09:42 AM
-                            </small>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-
-
-                {{-- ==================================================
-                | Tracking Timeline
-                =================================================== --}}
-
-                <section class="my-smart-buy-tracking-card">
-
-                    <div class="my-smart-buy-tracking-card__header">
-
-                        <div>
-
-                            <h2>
-                                Tracking History
-                            </h2>
-
-                            <p>
-                                Complete shipment movement history.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="my-smart-buy-tracking-timeline">
-
-
-                        {{-- Delivered --}}
-
-                        <div class="my-smart-buy-tracking-event">
-
-                            <div class="my-smart-buy-tracking-event__marker">
-
-                                <i class="ri-checkbox-circle-line"></i>
-
-                            </div>
-
-
-                            <div class="my-smart-buy-tracking-event__content">
-
-                                <div>
-
-                                    <strong>
-                                        Delivered
-                                    </strong>
-
-                                    <span class="is-pending">
-                                    Pending
-                                </span>
-
-                                </div>
-
-                                <p>
-                                    Shipment will be marked delivered after reaching
-                                    the destination.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-
-                        {{-- In Transit --}}
-
-                        <div class="my-smart-buy-tracking-event is-current">
-
-                            <div class="my-smart-buy-tracking-event__marker">
-
-                                <i class="ri-truck-line"></i>
-
-                            </div>
-
-
-                            <div class="my-smart-buy-tracking-event__content">
-
-                                <div>
-
-                                    <strong>
-                                        In Transit
-                                    </strong>
-
-                                    <span>
-                                    Aug 17, 2026 · 09:42 AM
-                                </span>
-
-                                </div>
-
-                                <p>
-                                    Shipment has departed from the distribution facility
-                                    and is on its way to the destination.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-
-                        {{-- Shipment Picked Up --}}
-
-                        <div class="my-smart-buy-tracking-event is-completed">
-
-                            <div class="my-smart-buy-tracking-event__marker">
-
-                                <i class="ri-box-3-line"></i>
-
-                            </div>
-
-
-                            <div class="my-smart-buy-tracking-event__content">
-
-                                <div>
-
-                                    <strong>
-                                        Shipment Picked Up
-                                    </strong>
-
-                                    <span>
-                                    Aug 16, 2026 · 04:25 PM
-                                </span>
-
-                                </div>
-
-                                <p>
-                                    Package was collected by the shipping carrier.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-
-                        {{-- Shipment Created --}}
-
-                        <div class="my-smart-buy-tracking-event is-completed">
-
-                            <div class="my-smart-buy-tracking-event__marker">
-
-                                <i class="ri-file-add-line"></i>
-
-                            </div>
-
-
-                            <div class="my-smart-buy-tracking-event__content">
-
-                                <div>
-
-                                    <strong>
-                                        Shipment Created
-                                    </strong>
-
-                                    <span>
-                                    Aug 16, 2026 · 10:15 AM
-                                </span>
-
-                                </div>
-
-                                <p>
-                                    Shipment information was created and submitted
-                                    to the carrier.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-
-                        {{-- Product Purchased --}}
-
-                        <div class="my-smart-buy-tracking-event is-completed">
-
-                            <div class="my-smart-buy-tracking-event__marker">
-
-                                <i class="ri-shopping-cart-line"></i>
-
-                            </div>
-
-
-                            <div class="my-smart-buy-tracking-event__content">
-
-                                <div>
-
-                                    <strong>
-                                        Product Purchased
-                                    </strong>
-
-                                    <span>
-                                    Aug 16, 2026 · 08:40 AM
-                                </span>
-
-                                </div>
-
-                                <p>
-                                    Product was successfully purchased by our team.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-
-                        {{-- Payment Completed --}}
-
-                        <div class="my-smart-buy-tracking-event is-completed">
-
-                            <div class="my-smart-buy-tracking-event__marker">
-
-                                <i class="ri-bank-card-line"></i>
-
-                            </div>
-
-
-                            <div class="my-smart-buy-tracking-event__content">
-
-                                <div>
-
-                                    <strong>
-                                        Payment Completed
-                                    </strong>
-
-                                    <span>
-                                    Aug 15, 2026 · 06:18 PM
-                                </span>
-
-                                </div>
-
-                                <p>
-                                    Payment was successfully received and confirmed.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-
-
-                {{-- ==================================================
-                | Shipment Updates
-                =================================================== --}}
-
-                <section class="my-smart-buy-tracking-card">
-
-                    <div class="my-smart-buy-tracking-card__header">
-
-                        <div>
-
-                            <h2>
-                                Shipment Updates
-                            </h2>
-
-                            <p>
-                                Recent information about your shipment.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="my-smart-buy-tracking-updates">
-
-                        <div class="my-smart-buy-tracking-update">
-
-                            <div class="my-smart-buy-tracking-update__icon">
-
-                                <i class="ri-truck-line"></i>
-
-                            </div>
-
-
-                            <div>
-
-                                <strong>
-                                    Shipment departed facility
-                                </strong>
-
-                                <span>
-                                Aug 17, 2026 · 09:42 AM
-                            </span>
-
-                                <p>
-                                    Your package has left the distribution facility
-                                    and is currently in transit.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="my-smart-buy-tracking-update">
-
-                            <div class="my-smart-buy-tracking-update__icon">
-
-                                <i class="ri-map-pin-line"></i>
-
-                            </div>
-
-
-                            <div>
-
-                                <strong>
-                                    Shipment destination confirmed
-                                </strong>
-
-                                <span>
-                                Aug 16, 2026 · 05:10 PM
-                            </span>
-
-                                <p>
-                                    Destination address has been confirmed by the
-                                    shipping carrier.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </section>
+                </div>
 
             </div>
 
+        </div>
 
 
-            {{-- ======================================================
-            | Sidebar
-            ======================================================= --}}
 
-            <aside class="my-smart-buy-tracking-sidebar">
+        {{-- ============================================================
+            TRACKING PROGRESS
+        ============================================================ --}}
+
+        @if($shipmentStatus !== \App\Models\SmartBuyShipment::STATUS_CANCELLED)
+
+            <div class="my-smart-buy-tracking-page__progress-card">
+
+                <div class="my-smart-buy-tracking-page__card-heading">
+
+                    <div>
+
+                        <h2>
+                            Shipment Progress
+                        </h2>
+
+                        <p>
+                            Follow each stage of your delivery.
+                        </p>
+
+                    </div>
+
+                </div>
 
 
-                {{-- ==================================================
-                | Shipment Details
-                =================================================== --}}
+                <div class="my-smart-buy-tracking-page__timeline">
 
-                <section class="my-smart-buy-tracking-card">
+                    @foreach($trackingSteps as $index => $step)
 
-                    <div class="my-smart-buy-tracking-card__header">
+                        @php
 
-                        <div>
+                            $isCompleted = $index < $currentStepIndex;
 
-                            <h2>
-                                Shipment Details
-                            </h2>
+                            $isCurrent = $index === $currentStepIndex;
+
+                        @endphp
+
+
+                        <div
+                            class="my-smart-buy-tracking-page__timeline-item {{ $isCompleted ? 'is-completed' : '' }} {{ $isCurrent ? 'is-current' : '' }}"
+                        >
+
+                            <div class="my-smart-buy-tracking-page__timeline-marker">
+
+                                <i class="fa-solid {{ $step['icon'] }}"></i>
+
+                            </div>
+
+
+                            <div class="my-smart-buy-tracking-page__timeline-content">
+
+                                <h3>
+                                    {{ $step['label'] }}
+                                </h3>
+
+                                <p>
+                                    {{ $step['description'] }}
+                                </p>
+
+                            </div>
 
                         </div>
+
+                    @endforeach
+
+                </div>
+
+            </div>
+
+        @else
+
+            <div class="my-smart-buy-tracking-page__cancelled-card">
+
+                <div class="my-smart-buy-tracking-page__cancelled-icon">
+
+                    <i class="fa-solid fa-circle-xmark"></i>
+
+                </div>
+
+
+                <div>
+
+                    <h2>
+                        Shipment Cancelled
+                    </h2>
+
+                    <p>
+                        This shipment has been cancelled.
+                        Please contact support if you need assistance.
+                    </p>
+
+                </div>
+
+            </div>
+
+        @endif
+
+
+
+        {{-- ============================================================
+            MAIN GRID
+        ============================================================ --}}
+
+        <div class="my-smart-buy-tracking-page__grid">
+
+
+            {{-- Shipment Details --}}
+
+            <div class="my-smart-buy-tracking-page__details-card">
+
+                <div class="my-smart-buy-tracking-page__card-heading">
+
+                    <div>
+
+                        <h2>
+                            Shipment Details
+                        </h2>
+
+                        <p>
+                            Important information about your delivery.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="my-smart-buy-tracking-page__details-list">
+
+
+                    <div class="my-smart-buy-tracking-page__detail-item">
+
+                        <span>
+                            Smart Buy Number
+                        </span>
+
+                        <strong>
+                            {{ $requestNumber }}
+                        </strong>
 
                     </div>
 
 
-                    <div class="my-smart-buy-tracking-details">
-
-                        <div>
+                    <div class="my-smart-buy-tracking-page__detail-item">
 
                         <span>
                             Carrier
                         </span>
 
-                            <strong>
-                                DHL Express
-                            </strong>
+                        <strong>
+                            {{ $shipment?->carrier ?? 'Not specified' }}
+                        </strong>
 
-                        </div>
-
-
-                        <div>
-
-                        <span>
-                            Tracking Number
-                        </span>
-
-                            <strong>
-                                DHL-7849236510
-                            </strong>
-
-                        </div>
+                    </div>
 
 
-                        <div>
+                    <div class="my-smart-buy-tracking-page__detail-item">
 
                         <span>
                             Shipping Method
                         </span>
 
-                            <strong>
-                                Express
-                            </strong>
+                        <strong>
+                            {{ $shipment?->shipping_method ?? 'Not specified' }}
+                        </strong>
 
-                        </div>
-
-
-                        <div>
-
-                        <span>
-                            Origin
-                        </span>
-
-                            <strong>
-                                United States
-                            </strong>
-
-                        </div>
+                    </div>
 
 
-                        <div>
+                    <div class="my-smart-buy-tracking-page__detail-item">
 
                         <span>
-                            Destination
+                            Shipped Date
                         </span>
 
-                            <strong>
-                                Conakry, Guinea
-                            </strong>
+                        <strong>
+                            {{ $shippedAt ? $shippedAt->format('M d, Y h:i A') : 'Not shipped yet' }}
+                        </strong>
 
-                        </div>
-
-
-                        <div>
-
-                        <span>
-                            Shipped On
-                        </span>
-
-                            <strong>
-                                Aug 16, 2026
-                            </strong>
-
-                        </div>
+                    </div>
 
 
-                        <div>
+                    <div class="my-smart-buy-tracking-page__detail-item">
 
                         <span>
                             Estimated Delivery
                         </span>
 
-                            <strong>
-                                Aug 26, 2026
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-
-
-                {{-- ==================================================
-                | Delivery Address
-                =================================================== --}}
-
-                <section class="my-smart-buy-tracking-card">
-
-                    <div class="my-smart-buy-tracking-card__header">
-
-                        <div>
-
-                            <h2>
-                                Delivery Address
-                            </h2>
-
-                        </div>
+                        <strong>
+                            {{ $estimatedDeliveryAt ? $estimatedDeliveryAt->format('M d, Y h:i A') : 'Not available' }}
+                        </strong>
 
                     </div>
 
 
-                    <div class="my-smart-buy-tracking-address">
+                    @if($deliveredAt)
 
-                        <div class="my-smart-buy-tracking-address__icon">
-
-                            <i class="ri-map-pin-line"></i>
-
-                        </div>
-
-
-                        <div>
-
-                            <strong>
-                                John Doe
-                            </strong>
-
-                            <p>
-                                24 Rue de Paris<br>
-                                Conakry, Guinea<br>
-                                ZIP: 001
-                            </p>
+                        <div class="my-smart-buy-tracking-page__detail-item">
 
                             <span>
-                            +224 600 000 000
-                        </span>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-
-
-                {{-- ==================================================
-                | Request
-                =================================================== --}}
-
-                <section class="my-smart-buy-tracking-card">
-
-                    <div class="my-smart-buy-tracking-card__header">
-
-                        <div>
-
-                            <h2>
-                                Request
-                            </h2>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="my-smart-buy-tracking-request">
-
-                        <div>
-
-                        <span>
-                            Request ID
-                        </span>
+                                Delivered On
+                            </span>
 
                             <strong>
-                                SB-2026-00128
+                                {{ $deliveredAt->format('M d, Y h:i A') }}
                             </strong>
 
                         </div>
 
+                    @endif
 
-                        <div>
+                </div>
 
-                        <span>
-                            Status
-                        </span>
-
-                            <strong class="is-transit">
-                                In Transit
-                            </strong>
-
-                        </div>
+            </div>
 
 
-                        <a
-                            href="{{ route('my-smart-buy-details', $smartBuy) }}"
-                        >
 
-                            View Request
+            {{-- Delivery Address --}}
 
-                            <i class="ri-arrow-right-line"></i>
+            <div class="my-smart-buy-tracking-page__address-card">
 
-                        </a>
+                <div class="my-smart-buy-tracking-page__card-heading">
+
+                    <div>
+
+                        <h2>
+                            Delivery Address
+                        </h2>
+
+                        <p>
+                            Your shipment destination.
+                        </p>
 
                     </div>
 
-                </section>
+                </div>
 
 
+                <div class="my-smart-buy-tracking-page__address">
 
-                {{-- ==================================================
-                | Support
-                =================================================== --}}
+                    <div class="my-smart-buy-tracking-page__address-icon">
 
-                <div class="my-smart-buy-tracking-help">
-
-                    <div class="my-smart-buy-tracking-help__icon">
-
-                        <i class="ri-customer-service-2-line"></i>
+                        <i class="fa-solid fa-location-dot"></i>
 
                     </div>
 
@@ -787,135 +590,321 @@
                     <div>
 
                         <strong>
-                            Need Help?
+
+                            {{
+                                $shipment?->delivery_address
+                                ?? $smartBuy->delivery_address
+                                ?? 'Address not available'
+                            }}
+
                         </strong>
 
-                        <p>
-                            Contact our support team if you have questions
-                            about your shipment.
-                        </p>
 
-                        <a href="#">
-                            Contact Support
-                            <i class="ri-arrow-right-line"></i>
-                        </a>
+                        <span>
+
+                            {{
+                                collect([
+
+                                    $shipment?->city
+                                    ?? $smartBuy->city,
+
+                                    $shipment?->zip_code
+                                    ?? $smartBuy->zip_code,
+
+                                    $shipment?->country
+                                    ?? $smartBuy->country,
+
+                                ])
+                                ->filter()
+                                ->implode(', ')
+                            }}
+
+                        </span>
 
                     </div>
 
                 </div>
 
-            </aside>
+            </div>
+
+        </div>
+
+
+
+        {{-- ============================================================
+            PRODUCTS
+        ============================================================ --}}
+
+        <div class="my-smart-buy-tracking-page__products-card">
+
+            <div class="my-smart-buy-tracking-page__card-heading">
+
+                <div>
+
+                    <h2>
+                        Products in This Shipment
+                    </h2>
+
+                    <p>
+
+                        {{ $productCount }}
+
+                        Item{{ $productCount !== 1 ? 's' : '' }}
+
+                        included in this Smart Buy request.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="my-smart-buy-tracking-page__product-list">
+
+
+                {{-- Quote Products --}}
+
+                @forelse($quoteItems as $quoteItem)
+
+                    @php
+
+                        $product = $quoteItem->smartBuyItem;
+
+
+                        $productImage =
+                            $quoteItem->product_image
+                            ?? $product?->product_image;
+
+
+                        $productName = $quoteItem->product_name
+                            ?? $product?->product_name
+                            ?? $product?->name
+                            ?? 'Product';
+
+
+                        $quantity = (float) (
+                            $quoteItem->quantity
+                            ?? $product?->quantity
+                            ?? 1
+                        );
+
+
+                        $unitPrice = (float) (
+                            $quoteItem->unit_price
+                            ?? $quoteItem->price
+                            ?? 0
+                        );
+
+
+                        $totalPrice = $quoteItem->total_price
+                            ?? $quoteItem->total_amount
+                            ?? $quoteItem->total
+                            ?? ($unitPrice * $quantity);
+
+                    @endphp
+
+
+                    <div class="my-smart-buy-tracking-page__product">
+
+                        <div class="my-smart-buy-tracking-page__product-image">
+
+                            @if($productImage)
+
+                                <img
+                                    src="{{ asset($productImage) }}"
+                                    alt="{{ $productName }}"
+                                >
+
+                            @else
+
+                                <div class="my-smart-buy-tracking-page__product-placeholder">
+
+                                    <i class="fa-solid fa-image"></i>
+
+                                </div>
+
+                            @endif
+
+                        </div>
+
+
+                        <div class="my-smart-buy-tracking-page__product-content">
+
+                            <h3>
+                                {{ $productName }}
+                            </h3>
+
+
+                            <div class="my-smart-buy-tracking-page__product-meta">
+
+                                <span>
+                                    Quantity: {{ $quantity }}
+                                </span>
+
+
+                                <span>
+                                    Unit Price:
+                                    {{ $currency }}
+                                    {{ number_format($unitPrice, 2) }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="my-smart-buy-tracking-page__product-price">
+
+                            <span>
+                                Total
+                            </span>
+
+                            <strong>
+
+                                {{ $currency }}
+
+                                {{
+                                    number_format(
+                                        (float) $totalPrice,
+                                        2
+                                    )
+                                }}
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    {{-- Fallback Smart Buy Items --}}
+
+                @empty
+
+                    @forelse($smartBuyItems as $item)
+
+                        @php
+
+                            $productImage = $item->product_image
+                                ?? $item->image
+                                ?? $item->image_url;
+
+
+                            $productName = $item->product_name
+                                ?? $item->name
+                                ?? 'Product';
+
+
+                            $quantity = (float) (
+                                $item->quantity
+                                ?? 1
+                            );
+
+
+                            $unitPrice = (float) (
+                                $item->unit_price
+                                ?? $item->price
+                                ?? 0
+                            );
+
+
+                            $totalPrice = $unitPrice * $quantity;
+
+                        @endphp
+
+
+                        <div class="my-smart-buy-tracking-page__product">
+
+                            <div class="my-smart-buy-tracking-page__product-image">
+
+                                @if($productImage)
+
+                                    <img
+                                        src="{{ asset($productImage) }}"
+                                        alt="{{ $productName }}"
+                                    >
+
+                                @else
+
+                                    <div class="my-smart-buy-tracking-page__product-placeholder">
+
+                                        <i class="fa-solid fa-image"></i>
+
+                                    </div>
+
+                                @endif
+
+                            </div>
+
+
+                            <div class="my-smart-buy-tracking-page__product-content">
+
+                                <h3>
+                                    {{ $productName }}
+                                </h3>
+
+
+                                <div class="my-smart-buy-tracking-page__product-meta">
+
+                                    <span>
+                                        Quantity: {{ $quantity }}
+                                    </span>
+
+
+                                    <span>
+
+                                        Unit Price:
+
+                                        {{ $currency }}
+
+                                        {{ number_format($unitPrice, 2) }}
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="my-smart-buy-tracking-page__product-price">
+
+                                <span>
+                                    Total
+                                </span>
+
+                                <strong>
+
+                                    {{ $currency }}
+
+                                    {{ number_format($totalPrice, 2) }}
+
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    @empty
+
+                        <div class="my-smart-buy-tracking-page__empty">
+
+                            <i class="fa-solid fa-box-open"></i>
+
+                            <span>
+                                No products found.
+                            </span>
+
+                        </div>
+
+                    @endforelse
+
+                @endforelse
+
+            </div>
 
         </div>
 
     </div>
 
 @endsection
-
-
-@push('scripts')
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-
-            /*
-            |--------------------------------------------------------------------------
-            | Copy Tracking Number
-            |--------------------------------------------------------------------------
-            */
-
-            const copyButton =
-                document.getElementById(
-                    'copyTrackingNumber'
-                );
-
-            const trackingNumber =
-                document.getElementById(
-                    'trackingNumber'
-                );
-
-
-            copyButton?.addEventListener(
-                'click',
-                async function () {
-
-                    if (!trackingNumber) {
-                        return;
-                    }
-
-
-                    const value =
-                        trackingNumber.textContent.trim();
-
-
-                    try {
-
-                        if (
-                            navigator.clipboard &&
-                            window.isSecureContext
-                        ) {
-
-                            await navigator.clipboard.writeText(
-                                value
-                            );
-
-                        } else {
-
-                            const textarea =
-                                document.createElement(
-                                    'textarea'
-                                );
-
-                            textarea.value = value;
-
-                            textarea.style.position = 'fixed';
-                            textarea.style.opacity = '0';
-
-                            document.body.appendChild(
-                                textarea
-                            );
-
-                            textarea.focus();
-                            textarea.select();
-
-                            document.execCommand(
-                                'copy'
-                            );
-
-                            textarea.remove();
-
-                        }
-
-
-                        copyButton.innerHTML = `
-                    <i class="ri-check-line"></i>
-                    Copied
-                `;
-
-
-                    } catch (error) {
-
-                        console.error(
-                            'Unable to copy tracking number.',
-                            error
-                        );
-
-                    }
-
-
-                    setTimeout(function () {
-
-                        copyButton.innerHTML = `
-                    <i class="ri-file-copy-line"></i>
-                    Copy
-                `;
-
-                    }, 1800);
-
-                }
-            );
-
-        });
-    </script>
-
-@endpush

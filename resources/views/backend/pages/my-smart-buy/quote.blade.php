@@ -14,7 +14,7 @@
             <div class="page-header-left">
 
                 <a
-                    href="{{ route('my-smart-buy-details', $smartBuy->id) }}"
+                    href="{{ route('my-smart-buy.details', $smartBuy->id) }}"
                     class="back-btn"
                 >
                     <i class="ri-arrow-left-line"></i>
@@ -227,14 +227,10 @@
                                 {{-- Product Image --}}
                                 <div class="product-image">
 
-                                    @if (
-                                        $item
-                                        &&
-                                        !empty($item->product_image)
-                                    )
+                                    @if ( $item && !empty($item->product_image))
 
                                         <img
-                                            src="{{ asset('storage/' . $item->product_image) }}"
+                                            src="{{ asset($item->product_image) }}"
                                             alt="{{ $productName }}"
                                         >
 
@@ -632,48 +628,68 @@
 
                         <div class="quote-actions">
 
-
-                            {{-- Accept Quote --}}
-                            <form
-                                action="{{ route('my-smart-buy-quote-accept', $smartBuy->id) }}"
-                                method="POST"
-                                data-accept-form
-                            >
-
-                                @csrf
-
-
-                                <button
-                                    type="submit"
-                                    class="quote-btn quote-btn-success"
+                            @if(
+                                $quote->status !== 'expired'
+                            )
+                                {{-- Accept Quote --}}
+                                <form
+                                    action="{{ route('my-smart-buy.quote.accept', $smartBuy->id) }}"
+                                    method="POST"
+                                    data-accept-form
                                 >
 
-                                    <i class="ri-checkbox-circle-line"></i>
+                                    @csrf
 
-                                    <span>
+
+                                    <button
+                                        type="submit"
+                                        class="quote-btn quote-btn-success"
+                                    >
+
+                                        <i class="ri-checkbox-circle-line"></i>
+
+                                        <span>
                                         Accept Quote
                                     </span>
 
-                                </button>
+                                    </button>
 
-                            </form>
+                                </form>
 
+                                {{-- Reject Quote --}}
+                                <button
+                                    type="button"
+                                    class="quote-btn quote-btn-danger"
+                                    data-show-reject
+                                >
 
-                            {{-- Reject Quote --}}
-                            <button
-                                type="button"
-                                class="quote-btn quote-btn-danger"
-                                data-show-reject
-                            >
+                                    <i class="ri-close-circle-line"></i>
 
-                                <i class="ri-close-circle-line"></i>
-
-                                <span>
+                                    <span>
                                     Reject Quote
                                 </span>
 
-                            </button>
+                                </button>
 
+                            @else
+                                <form
+                                    action="{{ route( 'my-smart-buy.quote.request-extension', $smartBuy->id) }}"
+                                    method="POST"
+                                >
+                                    @csrf
+
+                                    <button type="submit" class="quote-btn quote-btn-primary">
+
+                                        <i class="ri-time-line"></i>
+
+                                        <span>
+                                            Request Quote Extension
+                                        </span>
+
+                                    </button>
+
+                                </form>
+                            @endif
 
                         </div>
 
@@ -690,7 +706,7 @@
                         >
 
                             <form
-                                action="{{ route('my-smart-buy-quote-reject', $smartBuy->id) }}"
+                                action="{{ route('my-smart-buy.quote.reject', $smartBuy->id) }}"
                                 method="POST"
                                 data-reject-form
                             >
@@ -718,7 +734,7 @@
                                         name="reason"
                                         rows="4"
                                         placeholder="Tell us why you are rejecting this quote..."
-                                    >{{ old('reason') }}</textarea>
+                                    >{{ old('reason', $quote->notes ?? '') }}</textarea>
 
 
                                     @error('reason')
@@ -774,7 +790,7 @@
 
                     </div>
 
-                @elseif ($smartBuy->status === 'quote_accepted')
+                @elseif ($smartBuy->status === 'quote_accepted' || $smartBuy->status === 'payment_pending')
 
                     <div class="quote-card quote-decision-card accepted">
 
@@ -808,7 +824,8 @@
                                     </h2>
 
                                     <p>
-                                        Your quote has been accepted. Please proceed with payment to continue your Smart Buy request.
+                                        Your quote has been accepted. Please proceed with payment to continue your Smart
+                                        Buy request.
                                     </p>
 
                                 </div>
@@ -817,7 +834,7 @@
                         </div>
 
                         <div class="quote-actions">
-                            <a href="{{ route('smart-buy-payment', $smartBuy->id) }}"
+                            <a href="{{ route('my-smart-buy.payment', $smartBuy->id) }}"
                                class="quote-btn quote-btn-success">
                                 <i class="fa-solid fa-credit-card"></i>
                                 <span>Make Payment</span>
@@ -845,6 +862,25 @@
 
                     </div>
 
+                @elseif ($smartBuy->status === 'quote_extension_requested')
+
+                    <div class="quote-card quote-decision-card rejected">
+
+                        <i class="ri-time-line"></i>
+
+                        <div>
+
+                            <h3>
+                                Quote Extension Requested
+                            </h3>
+
+                            <p>
+                                Your quote extension request is pending.
+                            </p>
+
+                        </div>
+
+                    </div>
                 @endif
 
 

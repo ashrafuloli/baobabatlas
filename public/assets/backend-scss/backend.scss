@@ -9,7 +9,6 @@
 @use "auth/verify-email";
 
 @use "tracking/tracking-all";
-@use "tracking/tracking-details";
 
 @use "users/user-all";
 @use "users/user-deatils";
@@ -60,6 +59,7 @@
 @use "smart-buy/smart-buy-admin-quote-edit";
 @use "smart-buy/smart-buy-admin-purchase";
 @use "smart-buy/smart-buy-admin-shipment";
+@use "smart-buy/smart-buy-admin-shipment-create";
 @use "smart-buy/smart-buy-admin-payments";
 
 @use "smart-buy/smart-buy-customer-create";

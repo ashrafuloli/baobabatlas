@@ -13,7 +13,7 @@
         <div class="my-smart-buy-payment-result-header">
 
             <a
-                href="{{ route('my-smart-buy-details', $smartBuy) }}"
+                href="{{ route('my-smart-buy.details', $smartBuy) }}"
                 class="my-smart-buy-payment-result-back"
             >
                 <i class="ri-arrow-left-line"></i>
@@ -188,7 +188,7 @@
             <div class="my-smart-buy-payment-result-actions">
 
                 <a
-                    href="{{ route('my-smart-buy-details', $smartBuy) }}"
+                    href="{{ route('my-smart-buy.details', $smartBuy) }}"
                     class="my-smart-buy-payment-result-primary"
                 >
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\SmartBuyRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class MySmartBuyController extends Controller
 {
@@ -24,7 +25,6 @@ class MySmartBuyController extends Controller
                 'shipment',
             ]);
 
-
         /*
         |--------------------------------------------------------------------------
         | Search
@@ -42,13 +42,11 @@ class MySmartBuyController extends Controller
                     'like',
                     "%{$search}%"
                 )
-
                     ->orWhere(
                         'first_name',
                         'like',
                         "%{$search}%"
                     )
-
                     ->orWhere(
                         'last_name',
                         'like',
@@ -58,7 +56,6 @@ class MySmartBuyController extends Controller
             });
 
         }
-
 
         /*
         |--------------------------------------------------------------------------
@@ -78,7 +75,6 @@ class MySmartBuyController extends Controller
 
         }
 
-
         /*
         |--------------------------------------------------------------------------
         | Requests
@@ -89,7 +85,6 @@ class MySmartBuyController extends Controller
             ->latest()
             ->paginate(10)
             ->withQueryString();
-
 
         /*
         |--------------------------------------------------------------------------
@@ -102,7 +97,6 @@ class MySmartBuyController extends Controller
             auth()->id()
         )->count();
 
-
         $pendingRequests = SmartBuyRequest::where(
             'user_id',
             auth()->id()
@@ -112,7 +106,6 @@ class MySmartBuyController extends Controller
                 'pending'
             )
             ->count();
-
 
         $activeRequests = SmartBuyRequest::where(
             'user_id',
@@ -130,7 +123,6 @@ class MySmartBuyController extends Controller
             )
             ->count();
 
-
         $completedRequests = SmartBuyRequest::where(
             'user_id',
             auth()->id()
@@ -140,7 +132,6 @@ class MySmartBuyController extends Controller
                 'completed'
             )
             ->count();
-
 
         return view(
             'backend.pages.my-smart-buy.my-requests',
@@ -154,7 +145,6 @@ class MySmartBuyController extends Controller
         );
     }
 
-
     /**
      * Show Smart Buy request form.
      */
@@ -164,7 +154,6 @@ class MySmartBuyController extends Controller
             'backend.pages.my-smart-buy.create'
         );
     }
-
 
     /**
      * Store new Smart Buy request.
@@ -203,7 +192,6 @@ class MySmartBuyController extends Controller
                 'max:255',
             ],
 
-
             /*
             |--------------------------------------------------------------------------
             | Delivery Information
@@ -232,7 +220,6 @@ class MySmartBuyController extends Controller
                 'required',
                 'string',
             ],
-
 
             /*
             |--------------------------------------------------------------------------
@@ -290,18 +277,24 @@ class MySmartBuyController extends Controller
 
         ]);
 
-
         $smartBuyRequest = DB::transaction(
             function () use ($validated) {
 
+                /*
+                |--------------------------------------------------------------------------
+                | Generate Request Number
+                |--------------------------------------------------------------------------
+                */
+
                 $lastRequest = SmartBuyRequest::latest(
                     'id'
-                )->lockForUpdate()->first();
+                )
+                    ->lockForUpdate()
+                    ->first();
 
                 $nextId = $lastRequest
                     ? $lastRequest->id + 1
                     : 1;
-
 
                 $requestNumber = 'SB-' . str_pad(
                         $nextId,
@@ -310,55 +303,52 @@ class MySmartBuyController extends Controller
                         STR_PAD_LEFT
                     );
 
-
                 /*
                 |--------------------------------------------------------------------------
-                | Create Request
+                | Create Smart Buy Request
                 |--------------------------------------------------------------------------
                 */
 
-                $smartBuyRequest =
-                    SmartBuyRequest::create([
+                $smartBuyRequest = SmartBuyRequest::create([
 
-                        'user_id' =>
-                            auth()->id(),
+                    'user_id' =>
+                        auth()->id(),
 
-                        'request_number' =>
-                            $requestNumber,
+                    'request_number' =>
+                        $requestNumber,
 
-                        'first_name' =>
-                            $validated['first_name'],
+                    'first_name' =>
+                        $validated['first_name'],
 
-                        'last_name' =>
-                            $validated['last_name'],
+                    'last_name' =>
+                        $validated['last_name'],
 
-                        'phone' =>
-                            $validated['phone'],
+                    'phone' =>
+                        $validated['phone'],
 
-                        'email' =>
-                            $validated['email'],
+                    'email' =>
+                        $validated['email'],
 
-                        'country' =>
-                            $validated['country'],
+                    'country' =>
+                        $validated['country'],
 
-                        'city' =>
-                            $validated['city'],
+                    'city' =>
+                        $validated['city'],
 
-                        'zip_code' =>
-                            $validated['zip_code'] ?? null,
+                    'zip_code' =>
+                        $validated['zip_code'] ?? null,
 
-                        'delivery_address' =>
-                            $validated['delivery_address'],
+                    'delivery_address' =>
+                        $validated['delivery_address'],
 
-                        'status' =>
-                            'pending',
+                    'status' =>
+                        'pending',
 
-                    ]);
-
+                ]);
 
                 /*
                 |--------------------------------------------------------------------------
-                | Create Items
+                | Create Smart Buy Items
                 |--------------------------------------------------------------------------
                 */
 
@@ -369,23 +359,77 @@ class MySmartBuyController extends Controller
 
                     $productImage = null;
 
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Upload Product Image
+                    |--------------------------------------------------------------------------
+                    */
 
                     if (
-                        isset(
-                            $item['product_image']
-                        )
-                        &&
-                        $item['product_image']
+                        isset($item['product_image'])
+                        && $item['product_image']
                     ) {
 
-                        $productImage =
-                            $item['product_image']->store(
-                                'smart-buy/products',
-                                'public'
+                        $uploadPath = public_path(
+                            'uploads/smart-buy/products'
+                        );
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Create Directory If Not Exists
+                        |--------------------------------------------------------------------------
+                        */
+
+                        if (!file_exists($uploadPath)) {
+
+                            mkdir(
+                                $uploadPath,
+                                0755,
+                                true
                             );
+
+                        }
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Generate Unique File Name
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $fileName = 'smart-buy-'
+                            . Str::uuid()
+                            . '.'
+                            . $item['product_image']
+                                ->getClientOriginalExtension();
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Move Product Image
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $item['product_image']->move(
+                            $uploadPath,
+                            $fileName
+                        );
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Save Relative Image Path
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $productImage =
+                            'uploads/smart-buy/products/'
+                            . $fileName;
 
                     }
 
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Create Smart Buy Item
+                    |--------------------------------------------------------------------------
+                    */
 
                     $smartBuyRequest
                         ->items()
@@ -416,16 +460,14 @@ class MySmartBuyController extends Controller
 
                 }
 
-
                 return $smartBuyRequest;
 
             }
         );
 
-
         return redirect()
             ->route(
-                'my-smart-buy-details',
+                'my-smart-buy.details',
                 $smartBuyRequest->id
             )
             ->with(
@@ -433,7 +475,6 @@ class MySmartBuyController extends Controller
                 'Your Smart Buy request has been submitted successfully.'
             );
     }
-
 
     /**
      * Show Smart Buy request details.

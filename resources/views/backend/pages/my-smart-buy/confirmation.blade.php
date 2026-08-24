@@ -178,7 +178,7 @@
                 <div class="confirmation-actions">
 
                     <a
-                        href="{{ route('my-smart-buy-details', $smartBuy) }}"
+                        href="{{ route('my-smart-buy.details', $smartBuy) }}"
                         class="primary-button"
                     >
                         <i class="ri-file-list-3-line"></i>

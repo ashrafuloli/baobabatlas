@@ -70,7 +70,7 @@ class MySmartBuyQuoteController extends Controller
 
             return redirect()
                 ->route(
-                    'my-smart-buy-details',
+                    'my-smart-buy.details',
                     $smartBuy->id
                 )
                 ->with(
@@ -316,7 +316,7 @@ class MySmartBuyQuoteController extends Controller
 
         return redirect()
             ->route(
-                'smart-buy-payment',
+                'my-smart-buy.payment',
                 $smartBuy->id
             )
             ->with(
@@ -325,7 +325,6 @@ class MySmartBuyQuoteController extends Controller
             );
 
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -481,11 +480,45 @@ class MySmartBuyQuoteController extends Controller
         |--------------------------------------------------------------------------
         | Prepare Rejection Notes
         |--------------------------------------------------------------------------
+        |
+        | Remove all previous rejection reasons
+        | and keep only the latest rejection reason.
+        |
         */
 
         $notes =
             $quote->notes;
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | Remove Previous Rejection Reason
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            !empty($notes)
+        ) {
+
+            $notes =
+                preg_replace(
+                    '/\s*Rejection Reason:\s*.*/s',
+                    '',
+                    $notes
+                );
+
+
+            $notes =
+                trim($notes);
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Add Latest Rejection Reason
+        |--------------------------------------------------------------------------
+        */
 
         if (
             !empty(
@@ -499,7 +532,9 @@ class MySmartBuyQuoteController extends Controller
 
                 .
 
-                $validated['reason'];
+                trim(
+                    $validated['reason']
+                );
 
 
             $notes =
@@ -584,13 +619,157 @@ class MySmartBuyQuoteController extends Controller
 
         return redirect()
             ->route(
-                'my-smart-buy-details',
+                'my-smart-buy.details',
                 $smartBuy->id
             )
             ->with(
                 'success',
                 'Quote has been rejected successfully.'
             );
+
+    }
+
+
+    /**
+     * Request quote extension.
+     */
+    public function requestExtension(
+        SmartBuyRequest $smartBuy
+    ) {
+
+        /*
+        |--------------------------------------------------------------------------
+        | Authorization
+        |--------------------------------------------------------------------------
+        */
+
+        abort_unless(
+            $smartBuy->user_id === auth()->id(),
+            403
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Load Quote
+        |--------------------------------------------------------------------------
+        */
+
+        $smartBuy->load([
+
+            'latestQuote',
+
+            'quote',
+
+        ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Get Quote
+        |--------------------------------------------------------------------------
+        */
+
+        $quote =
+            $smartBuy->latestQuote
+            ?? $smartBuy->quote;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Quote Not Found
+        |--------------------------------------------------------------------------
+        */
+
+        if (!$quote) {
+
+            return back()->with(
+                'error',
+                'Quote not found.'
+            );
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Check Quote Expiration
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            !$quote->isExpired()
+        ) {
+
+            return back()->with(
+                'error',
+                'This quote has not expired yet.'
+            );
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Prevent Duplicate Request
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $quote->status
+            ===
+            SmartBuyQuote::STATUS_EXTENSION_REQUESTED
+        ) {
+
+            return back()->with(
+                'error',
+                'A quote extension request has already been submitted.'
+            );
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Update Quote Status
+        |--------------------------------------------------------------------------
+        */
+
+        DB::transaction(
+            function () use (
+                $quote,
+                $smartBuy
+            ) {
+
+                $quote->update([
+
+                    'status' =>
+                        SmartBuyQuote::STATUS_EXTENSION_REQUESTED,
+
+                ]);
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Update Smart Buy Status
+                |--------------------------------------------------------------------------
+                */
+
+                $smartBuy->update([
+
+                    'status' =>
+                        'quote_extension_requested',
+
+                ]);
+
+            }
+        );
+
+
+        return back()->with(
+            'success',
+            'Your quote extension request has been sent successfully.'
+        );
 
     }
 }
