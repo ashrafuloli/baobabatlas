@@ -297,7 +297,7 @@ Declined
 
 
 Expiry date:
-12/34
+12/34 123
 
 CVC:
 123

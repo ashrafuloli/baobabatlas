@@ -1,0 +1,732 @@
+@use "../../common" as *;
+
+.attribute-edit-page {
+
+    width: 100%;
+    padding-bottom: 30px;
+
+
+    // =========================================================================
+    // PAGE HEADER
+    // =========================================================================
+
+    .attribute-edit-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 30px;
+
+        &__content {
+            min-width: 0;
+        }
+
+        &__eyebrow {
+            display: inline-block;
+            margin-bottom: 8px;
+            color: $theme-color;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        &__title {
+            margin: 0 0 8px;
+            color: $heading-color;
+            font-family: $header-fonts;
+            font-size: 24px;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        &__description {
+            margin: 0;
+            color: $body-color;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+    }
+
+
+    // =========================================================================
+    // BACK BUTTON
+    // =========================================================================
+
+    .attribute-edit-back {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        gap: 8px;
+        min-height: 42px;
+        padding: 0 16px;
+        border: 1px solid $hr-color;
+        border-radius: 6px;
+        background: $white;
+        color: $heading-color;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1;
+        text-decoration: none;
+        white-space: nowrap;
+        @include transition(0.3s);
+
+        i {
+            font-size: 18px;
+        }
+
+        &:hover {
+            border-color: $theme-color;
+            background: $theme-color;
+            color: $white;
+        }
+    }
+
+
+    // =========================================================================
+    // FORM
+    // =========================================================================
+
+    .attribute-edit-form {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+
+    // =========================================================================
+    // CARD
+    // =========================================================================
+
+    .attribute-edit-card {
+        overflow: hidden;
+        border: 1px solid $hr-color;
+        border-radius: 8px;
+        background: $white;
+
+        &__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 20px 24px;
+            border-bottom: 1px solid $hr-color;
+        }
+
+        &__title {
+            margin: 0 0 6px;
+            color: $heading-color;
+            font-family: $header-fonts;
+            font-size: 18px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        &__description {
+            margin: 0;
+            color: $body-color;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        &__body {
+            padding: 24px;
+        }
+    }
+
+
+    // =========================================================================
+    // ATTRIBUTE INFORMATION FIELDS
+    // =========================================================================
+
+    .attribute-edit-fields {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+
+    // =========================================================================
+    // FORM FIELD
+    // =========================================================================
+
+    .attribute-edit-field {
+
+        min-width: 0;
+
+        &__label {
+            display: block;
+            margin-bottom: 8px;
+            color: $heading-color;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.5;
+
+            span {
+                color: $danger;
+            }
+        }
+
+        &__input {
+            display: block;
+            width: 100%;
+            height: 44px;
+            margin: 0;
+            padding: 0 14px;
+            border: 1px solid $hr-color;
+            border-radius: 6px;
+            outline: none;
+            background: $white;
+            color: $heading-color;
+            font-family: $body-fonts;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+            @include transition(0.3s);
+
+            @include placeholder {
+                color: $gray;
+            }
+
+            &:hover {
+                border-color: $gray;
+            }
+
+            &:focus {
+                border-color: $theme-color;
+                box-shadow: 0 0 0 3px rgba($theme-color, 0.08);
+            }
+
+            &.is-invalid {
+                border-color: $danger;
+            }
+        }
+
+        &__hint {
+            display: block;
+            margin-top: 7px;
+            color: $gray;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        &__error {
+            margin-top: 7px;
+            color: $danger;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+    }
+
+
+    // =========================================================================
+    // ADD VALUE BUTTON
+    // =========================================================================
+
+    .attribute-edit-add-value {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        gap: 7px;
+        min-height: 40px;
+        padding: 0 14px;
+        border: 1px solid $theme-color;
+        border-radius: 6px;
+        background: $theme-color;
+        color: $white;
+        cursor: pointer;
+        font-family: $body-fonts;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1;
+        white-space: nowrap;
+        @include transition(0.3s);
+
+        i {
+            font-size: 18px;
+        }
+
+        &:hover {
+            border-color: $theme-color-2;
+            background: $theme-color-2;
+        }
+
+        &:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba($theme-color, 0.12);
+        }
+    }
+
+
+    // =========================================================================
+    // VALUES
+    // =========================================================================
+
+    .attribute-edit-values {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+
+    // =========================================================================
+    // VALUE ROW
+    // =========================================================================
+
+    .attribute-edit-value-row {
+        display: grid;
+        grid-template-columns: 42px minmax(0, 1fr) minmax(0, 1fr) 42px;
+        align-items: end;
+        gap: 14px;
+        padding: 16px;
+        border: 1px solid $hr-color;
+        border-radius: 6px;
+        background: $light;
+        @include transition(0.3s);
+
+        &:hover {
+            border-color: rgba($theme-color, 0.35);
+        }
+    }
+
+
+    // =========================================================================
+    // VALUE NUMBER
+    // =========================================================================
+
+    .attribute-edit-value-number {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 42px;
+        height: 44px;
+        border: 1px solid $hr-color;
+        border-radius: 6px;
+        background: $white;
+        color: $heading-color;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1;
+    }
+
+
+    // =========================================================================
+    // VALUE FIELD
+    // =========================================================================
+
+    .attribute-edit-value-field {
+        min-width: 0;
+
+        .attribute-edit-field__label {
+            margin-bottom: 8px;
+        }
+    }
+
+
+    // =========================================================================
+    // REMOVE VALUE
+    // =========================================================================
+
+    .attribute-edit-remove-value {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 42px;
+        height: 44px;
+        padding: 0;
+        border: 1px solid rgba($danger, 0.25);
+        border-radius: 6px;
+        background: $white;
+        color: $danger;
+        cursor: pointer;
+        font-family: $body-fonts;
+        @include transition(0.3s);
+
+        i {
+            font-size: 18px;
+        }
+
+        &:hover {
+            border-color: $danger;
+            background: $danger;
+            color: $white;
+        }
+
+        &:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba($danger, 0.1);
+        }
+    }
+
+
+    // =========================================================================
+    // VALUES ERROR
+    // =========================================================================
+
+    .attribute-edit-values-error {
+        margin-top: 14px;
+    }
+
+
+    // =========================================================================
+    // VALUES HINT
+    // =========================================================================
+
+    .attribute-edit-values-hint {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-top: 18px;
+        padding: 13px 14px;
+        border: 1px solid rgba($info, 0.2);
+        border-radius: 6px;
+        background: rgba($info, 0.06);
+        color: $body-color;
+        font-size: 14px;
+        line-height: 1.6;
+
+        i {
+            flex: 0 0 auto;
+            margin-top: 2px;
+            color: $info;
+            font-size: 18px;
+        }
+
+        p {
+            margin: 0;
+        }
+
+        strong {
+            color: $heading-color;
+            font-weight: 600;
+        }
+    }
+
+
+    // =========================================================================
+    // SETTINGS
+    // =========================================================================
+
+    .attribute-edit-setting {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 16px 18px;
+        border: 1px solid $hr-color;
+        border-radius: 6px;
+        background: $light;
+
+        &__content {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 0;
+        }
+
+        &__icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 42px;
+            width: 42px;
+            height: 42px;
+            border-radius: 6px;
+            background: rgba($success, 0.1);
+            color: $success;
+
+            i {
+                font-size: 20px;
+            }
+        }
+
+        &__text {
+
+            strong {
+                display: block;
+                margin-bottom: 4px;
+                color: $heading-color;
+                font-size: 14px;
+                font-weight: 600;
+                line-height: 1.5;
+            }
+
+            span {
+                display: block;
+                color: $body-color;
+                font-size: 14px;
+                line-height: 1.5;
+            }
+        }
+    }
+
+
+    // =========================================================================
+    // SWITCH
+    // =========================================================================
+
+    .attribute-edit-switch {
+        position: relative;
+        display: inline-flex;
+        flex: 0 0 48px;
+        width: 48px;
+        height: 26px;
+        margin: 0;
+        cursor: pointer;
+
+        input {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            opacity: 0;
+
+            &:checked + .attribute-edit-switch__slider {
+                background: $theme-color;
+
+                &::after {
+                    transform: translateX(22px);
+                }
+            }
+
+            &:focus + .attribute-edit-switch__slider {
+                box-shadow: 0 0 0 3px rgba($theme-color, 0.12);
+            }
+        }
+
+        &__slider {
+            position: absolute;
+            inset: 0;
+            border-radius: 30px;
+            background: $gray;
+            @include transition(0.3s);
+
+            &::after {
+                position: absolute;
+                top: 3px;
+                left: 3px;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: $white;
+                content: "";
+                @include transition(0.3s);
+            }
+        }
+    }
+
+
+    // =========================================================================
+    // ACTIONS
+    // =========================================================================
+
+    .attribute-edit-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
+        padding-top: 2px;
+
+        &__cancel,
+        &__submit {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 44px;
+            padding: 0 18px;
+            border-radius: 6px;
+            font-family: $body-fonts;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1;
+            text-decoration: none;
+            cursor: pointer;
+            @include transition(0.3s);
+        }
+
+        &__cancel {
+            border: 1px solid $hr-color;
+            background: $white;
+            color: $heading-color;
+
+            &:hover {
+                border-color: $theme-color;
+                color: $theme-color;
+            }
+
+            &:focus {
+                outline: none;
+                box-shadow: 0 0 0 3px rgba($theme-color, 0.08);
+            }
+        }
+
+        &__submit {
+            border: 1px solid $theme-color;
+            background: $theme-color;
+            color: $white;
+
+            i {
+                font-size: 18px;
+            }
+
+            &:hover {
+                border-color: $theme-color-2;
+                background: $theme-color-2;
+            }
+
+            &:focus {
+                outline: none;
+                box-shadow: 0 0 0 3px rgba($theme-color, 0.12);
+            }
+
+            &:disabled {
+                cursor: not-allowed;
+                opacity: 0.65;
+            }
+        }
+    }
+
+
+    // =========================================================================
+    // XL
+    // =========================================================================
+
+    @include mq('xl') {
+
+        .attribute-edit-fields {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+    }
+
+
+    // =========================================================================
+    // MD
+    // =========================================================================
+
+    @include mq('md') {
+
+        .attribute-edit-header {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 18px;
+        }
+
+        .attribute-edit-back {
+            width: fit-content;
+        }
+
+        .attribute-edit-card {
+
+            &__header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            &__body {
+                padding: 20px;
+            }
+        }
+
+        .attribute-edit-fields {
+            grid-template-columns: 1fr;
+        }
+
+        .attribute-edit-value-row {
+            grid-template-columns: 42px minmax(0, 1fr) 42px;
+            align-items: start;
+        }
+
+        .attribute-edit-value-field:first-of-type {
+            grid-column: 2 / 3;
+        }
+
+        .attribute-edit-value-field:nth-of-type(2) {
+            grid-column: 2 / 3;
+        }
+
+        .attribute-edit-remove-value {
+            grid-column: 3;
+            grid-row: 1;
+        }
+
+        .attribute-edit-setting {
+            align-items: flex-start;
+        }
+
+    }
+
+
+    // =========================================================================
+    // XS
+    // =========================================================================
+
+    @include mq('xs') {
+
+        .attribute-edit-header {
+            margin-bottom: 24px;
+        }
+
+        .attribute-edit-header__title {
+            font-size: 22px;
+        }
+
+        .attribute-edit-back {
+            width: 100%;
+        }
+
+        .attribute-edit-card {
+
+            &__header {
+                padding: 18px;
+            }
+
+            &__body {
+                padding: 18px;
+            }
+        }
+
+        .attribute-edit-add-value {
+            width: 100%;
+        }
+
+        .attribute-edit-value-row {
+            grid-template-columns: 36px minmax(0, 1fr) 38px;
+            gap: 10px;
+            padding: 12px;
+        }
+
+        .attribute-edit-value-number {
+            width: 36px;
+            height: 42px;
+        }
+
+        .attribute-edit-remove-value {
+            width: 38px;
+            height: 42px;
+        }
+
+        .attribute-edit-setting {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .attribute-edit-switch {
+            margin-left: 56px;
+        }
+
+        .attribute-edit-actions {
+            flex-direction: column-reverse;
+
+            &__cancel,
+            &__submit {
+                width: 100%;
+            }
+        }
+
+    }
+
+}

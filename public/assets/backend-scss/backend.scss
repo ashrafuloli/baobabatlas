@@ -96,6 +96,16 @@
 @use "ecommerce/admin/categories-details";
 @use "ecommerce/admin/categories-edit";
 
+@use "ecommerce/admin/brands-index";
+@use "ecommerce/admin/brands-create";
+//@use "ecommerce/admin/categories-details";
+@use "ecommerce/admin/brands-edit";
+
+@use "ecommerce/admin/attribute-index";
+@use "ecommerce/admin/attribute-create";
+@use "ecommerce/admin/attribute-edit";
+@use "ecommerce/admin/attribute-details";
+
 @use "ecommerce/admin/inventory-index";
 @use "ecommerce/admin/inventory-low-stock";
 @use "ecommerce/admin/inventory-out-of-stock";

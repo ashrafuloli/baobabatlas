@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Backend\AttributeController;
+use App\Http\Controllers\Backend\BrandController;
+use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\PermissionController;
 use App\Http\Controllers\Backend\ProfileController;
 use App\Http\Controllers\Backend\RoleController;
@@ -35,11 +38,12 @@ Route::view('/', 'frontend.pages.home.index')->name('home');
 */
 
 Route::view('/shop', 'frontend.pages.shop.index')->name('shop');
-
-Route::view(
-    '/shop/{product}',
-    'frontend.pages.shop.details'
-)->name('product-details');
+Route::view('/shop/{product}', 'frontend.pages.shop.details')->name('product-details');
+Route::view('/cart', 'frontend.pages.shop.cart')->name('product-cart');
+Route::view('/checkout', 'frontend.pages.shop.checkout')->name('product-cart');
+Route::view('/orders', 'frontend.pages.shop.orders')->name('product-cart');
+Route::view('/my-account', 'frontend.pages.shop.my-account')->name('product-cart');
+Route::view('/wishlist', 'frontend.pages.shop.wishlist')->name('product-cart');
 
 
 /*
@@ -926,38 +930,89 @@ Route::middleware('auth')
                         |--------------------------------------------------------------------------
                         */
 
-                        Route::view(
-                            '/categories',
-                            'backend.pages.ecommerce.admin.categories.index'
-                        )->name('admin-categories');
+//                        Route::view(
+//                            '/categories',
+//                            'backend.pages.ecommerce.admin.categories.index'
+//                        )->name('admin-categories');
+//
+//
+//                        Route::view(
+//                            '/categories/create',
+//                            'backend.pages.ecommerce.admin.categories.create'
+//                        )->name('admin-category-create');
+//
+//
+//                        Route::get(
+//                            '/categories/{category}',
+//                            function ($category) {
+//                                return view(
+//                                    'backend.pages.ecommerce.admin.categories.details',
+//                                    compact('category')
+//                                );
+//                            }
+//                        )->name('admin-category-details');
+//
+//
+//                        Route::get(
+//                            '/categories/{category}/edit',
+//                            function ($category) {
+//                                return view(
+//                                    'backend.pages.ecommerce.admin.categories.edit',
+//                                    compact('category')
+//                                );
+//                            }
+//                        )->name('admin-category-edit');
 
+                        Route::resource(
+                            'admin-categories',
+                            CategoryController::class
+                        )
+                        ->parameters([
+                            'admin-categories' => 'category',
+                        ])
+                        ->names([
+                            'index' => 'admin-categories',
+                            'create' => 'admin-categories.create',
+                            'store' => 'admin-categories.store',
+                            'show' => 'admin-categories.show',
+                            'edit' => 'admin-categories.edit',
+                            'update' => 'admin-categories.update',
+                            'destroy' => 'admin-categories.destroy',
+                        ]);
 
-                        Route::view(
-                            '/categories/create',
-                            'backend.pages.ecommerce.admin.categories.create'
-                        )->name('admin-category-create');
+                        Route::resource(
+                            'admin-brands',
+                            BrandController::class,
+                        )
+                            ->parameters([
+                                'admin-brands' => 'brand',
+                            ])
+                            ->names([
+                                'index' => 'admin-brands',
+                                'create' => 'admin-brands.create',
+                                'store' => 'admin-brands.store',
+                                'show' => 'admin-brands.show',
+                                'edit' => 'admin-brands.edit',
+                                'update' => 'admin-brands.update',
+                                'destroy' => 'admin-brands.destroy',
+                            ]);
 
-
-                        Route::get(
-                            '/categories/{category}',
-                            function ($category) {
-                                return view(
-                                    'backend.pages.ecommerce.admin.categories.details',
-                                    compact('category')
-                                );
-                            }
-                        )->name('admin-category-details');
-
-
-                        Route::get(
-                            '/categories/{category}/edit',
-                            function ($category) {
-                                return view(
-                                    'backend.pages.ecommerce.admin.categories.edit',
-                                    compact('category')
-                                );
-                            }
-                        )->name('admin-category-edit');
+                        Route::resource(
+                            'admin-attributes',
+                            AttributeController::class,
+                        )
+                            ->parameters([
+                                'admin-attributes' => 'attribute',
+                            ])
+                            ->names([
+                                'index' => 'admin-attributes',
+                                'create' => 'admin-attributes.create',
+                                'store' => 'admin-attributes.store',
+                                'show' => 'admin-attributes.show',
+                                'edit' => 'admin-attributes.edit',
+                                'update' => 'admin-attributes.update',
+                                'destroy' => 'admin-attributes.destroy',
+                            ]);
 
 
                         /*

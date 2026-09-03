@@ -1,0 +1,766 @@
+@use "../../common" as *;
+
+.attribute-create-page {
+
+    width: 100%;
+
+
+    // ---------------------------------------------------------
+    // PAGE HEADER
+    // ---------------------------------------------------------
+
+    &__header {
+
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+
+
+        h1 {
+
+            margin: 6px 0 8px;
+            font-family: $header-fonts;
+            font-size: 24px;
+            font-weight: 600;
+            line-height: 1.3;
+            color: $heading-color;
+
+        }
+
+
+        p {
+
+            margin: 0;
+            font-family: $body-fonts;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.6;
+            color: $body-color;
+
+        }
+
+    }
+
+
+    &__eyebrow {
+
+        display: inline-block;
+        font-family: $body-fonts;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.4;
+        color: $theme-color;
+
+    }
+
+
+    &__back-btn {
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 44px;
+        padding: 0 17px;
+        border: 1px solid $hr-color;
+        border-radius: 8px;
+        background: $white;
+        color: $heading-color;
+        font-family: $body-fonts;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1;
+        text-decoration: none;
+        white-space: nowrap;
+        @include transition(0.3s);
+
+
+        i {
+
+            font-size: 18px;
+
+        }
+
+
+        &:hover {
+
+            border-color: $theme-color;
+            color: $theme-color;
+
+        }
+
+    }
+
+
+    // ---------------------------------------------------------
+    // CARD
+    // ---------------------------------------------------------
+
+    .attribute-create-card {
+
+        margin-bottom: 20px;
+        border: 1px solid $hr-color;
+        border-radius: 10px;
+        background: $white;
+
+
+        &__header {
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 20px 22px;
+            border-bottom: 1px solid $hr-color;
+
+
+            h4 {
+
+                margin: 0 0 5px;
+                font-family: $header-fonts;
+                font-size: 18px;
+                font-weight: 600;
+                line-height: 1.4;
+                color: $heading-color;
+
+            }
+
+
+            p {
+
+                margin: 0;
+                font-family: $body-fonts;
+                font-size: 14px;
+                font-weight: 400;
+                line-height: 1.5;
+                color: $body-color;
+
+            }
+
+        }
+
+
+        &__body {
+
+            padding: 22px;
+
+        }
+
+    }
+
+
+    // ---------------------------------------------------------
+    // GRID
+    // ---------------------------------------------------------
+
+    .attribute-create-grid {
+
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+
+    }
+
+
+    // ---------------------------------------------------------
+    // FIELD
+    // ---------------------------------------------------------
+
+    .attribute-create-field {
+
+        min-width: 0;
+
+
+        label {
+
+            display: block;
+            margin-bottom: 8px;
+            font-family: $body-fonts;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.4;
+            color: $heading-color;
+
+
+            span {
+
+                color: $danger;
+
+            }
+
+        }
+
+
+        input,
+        textarea {
+
+            display: block;
+            width: 100%;
+            min-height: 44px;
+            padding: 0 13px;
+            border: 1px solid $hr-color;
+            border-radius: 7px;
+            outline: none;
+            background: $white;
+            color: $heading-color;
+            font-family: $body-fonts;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+            @include transition(0.3s);
+
+
+            &:focus {
+
+                border-color: $theme-color;
+
+            }
+
+
+            @include placeholder {
+
+                color: $body-color;
+                opacity: 0.7;
+
+            }
+
+        }
+
+
+        textarea {
+
+            min-height: 120px;
+            padding-top: 12px;
+            padding-bottom: 12px;
+            resize: vertical;
+
+        }
+
+
+        small {
+
+            display: block;
+            margin-top: 7px;
+            font-family: $body-fonts;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+            color: $body-color;
+
+        }
+
+    }
+
+
+    // ---------------------------------------------------------
+    // VALUES
+    // ---------------------------------------------------------
+
+    .attribute-create-values {
+
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+
+    }
+
+
+    .attribute-create-value-row {
+
+        display: grid;
+        grid-template-columns: 34px minmax(0, 1fr) minmax(0, 1fr) 40px;
+        align-items: end;
+        gap: 12px;
+
+    }
+
+
+    .attribute-create-value-number {
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 44px;
+        border-radius: 7px;
+        background: $light;
+        color: $heading-color;
+        font-family: $body-fonts;
+        font-size: 14px;
+        font-weight: 500;
+
+    }
+
+
+    .attribute-create-remove-value {
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 44px;
+        padding: 0;
+        border: 1px solid rgba($danger, 0.2);
+        border-radius: 7px;
+        background: rgba($danger, 0.05);
+        color: $danger;
+        font-size: 17px;
+        cursor: pointer;
+        @include transition(0.3s);
+
+
+        &:hover {
+
+            border-color: $danger;
+            background: $danger;
+            color: $white;
+
+        }
+
+    }
+
+
+    .attribute-create-add-value {
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-height: 38px;
+        padding: 0 13px;
+        border: 1px solid $theme-color;
+        border-radius: 7px;
+        background: $white;
+        color: $theme-color;
+        font-family: $body-fonts;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        white-space: nowrap;
+        @include transition(0.3s);
+
+
+        i {
+
+            font-size: 17px;
+
+        }
+
+
+        &:hover {
+
+            background: $theme-color;
+            color: $white;
+
+        }
+
+    }
+
+
+    .attribute-create-values-hint {
+
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        margin-top: 18px;
+        padding: 12px 14px;
+        border: 1px solid rgba($info, 0.18);
+        border-radius: 7px;
+        background: rgba($info, 0.05);
+        color: $body-color;
+        font-family: $body-fonts;
+        font-size: 14px;
+        line-height: 1.5;
+
+
+        i {
+
+            flex: 0 0 auto;
+            margin-top: 2px;
+            color: $info;
+            font-size: 17px;
+
+        }
+
+    }
+
+
+    // ---------------------------------------------------------
+    // ERROR
+    // ---------------------------------------------------------
+
+    .attribute-create-error {
+
+        margin-top: 7px;
+        font-family: $body-fonts;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.5;
+        color: $danger;
+
+    }
+
+
+    // ---------------------------------------------------------
+    // SETTINGS
+    // ---------------------------------------------------------
+
+    .attribute-create-settings {
+
+        display: flex;
+        flex-direction: column;
+
+    }
+
+
+    .attribute-create-setting {
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+
+
+        &__content {
+
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            min-width: 0;
+
+
+            > div:last-child {
+
+                min-width: 0;
+
+            }
+
+        }
+
+
+        &__icon {
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 42px;
+            width: 42px;
+            height: 42px;
+            border-radius: 8px;
+            background: $light;
+            color: $theme-color;
+
+
+            i {
+
+                font-size: 20px;
+
+            }
+
+        }
+
+
+        strong {
+
+            display: block;
+            margin-bottom: 4px;
+            font-family: $header-fonts;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.4;
+            color: $heading-color;
+
+        }
+
+
+        span {
+
+            display: block;
+            font-family: $body-fonts;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+            color: $body-color;
+
+        }
+
+    }
+
+
+    // ---------------------------------------------------------
+    // SWITCH
+    // ---------------------------------------------------------
+
+    .attribute-create-switch {
+
+        position: relative;
+        display: inline-flex;
+        flex: 0 0 auto;
+        width: 48px;
+        height: 26px;
+        margin: 0;
+        cursor: pointer;
+
+
+        input {
+
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+
+        }
+
+
+        span {
+
+            position: absolute;
+            inset: 0;
+            display: block;
+            border-radius: 20px;
+            background: $gray;
+            @include transition(0.3s);
+
+
+            &::before {
+
+                position: absolute;
+                top: 3px;
+                left: 3px;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: $white;
+                content: "";
+                @include transition(0.3s);
+
+            }
+
+        }
+
+
+        input:checked + span {
+
+            background: $theme-color;
+
+        }
+
+
+        input:checked + span::before {
+
+            @include transform(translateX(22px));
+
+        }
+
+    }
+
+
+    // ---------------------------------------------------------
+    // FORM ACTIONS
+    // ---------------------------------------------------------
+
+    .attribute-create-actions {
+
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 10px;
+        padding-top: 4px;
+
+
+        &__cancel,
+        &__submit {
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 44px;
+            padding: 0 18px;
+            border-radius: 7px;
+            font-family: $body-fonts;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1;
+            text-decoration: none;
+            cursor: pointer;
+            @include transition(0.3s);
+
+        }
+
+
+        &__cancel {
+
+            border: 1px solid $hr-color;
+            background: $white;
+            color: $heading-color;
+
+
+            &:hover {
+
+                border-color: $theme-color;
+                color: $theme-color;
+
+            }
+
+        }
+
+
+        &__submit {
+
+            border: 1px solid $theme-color;
+            background: $theme-color;
+            color: $white;
+
+
+            i {
+
+                font-size: 17px;
+
+            }
+
+
+            &:hover {
+
+                border-color: $theme-color-2;
+                background: $theme-color-2;
+
+            }
+
+
+            &:disabled {
+
+                cursor: not-allowed;
+                opacity: 0.65;
+
+            }
+
+        }
+
+    }
+
+
+    // ---------------------------------------------------------
+    // RESPONSIVE
+    // ---------------------------------------------------------
+
+    @include mq('lg') {
+
+        .attribute-create-grid {
+
+            grid-template-columns: 1fr;
+
+        }
+
+    }
+
+
+    @include mq('md') {
+
+        &__header {
+
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 18px;
+
+        }
+
+
+        &__back-btn {
+
+            width: 100%;
+
+        }
+
+
+        .attribute-create-card__header {
+
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 18px;
+
+        }
+
+
+        .attribute-create-card__body {
+
+            padding: 18px;
+
+        }
+
+
+        .attribute-create-add-value {
+
+            width: 100%;
+
+        }
+
+
+        .attribute-create-actions {
+
+            flex-direction: column-reverse;
+
+
+            &__cancel,
+            &__submit {
+
+                width: 100%;
+
+            }
+
+        }
+
+    }
+
+
+    @include mq('xs') {
+
+        &__header h1 {
+
+            font-size: 22px;
+
+        }
+
+
+        .attribute-create-value-row {
+
+            grid-template-columns: 30px minmax(0, 1fr)  38px;
+            gap: 8px;
+
+        }
+
+
+        .attribute-create-value-number {
+
+            width: 30px;
+            height: 42px;
+
+        }
+
+
+        .attribute-create-remove-value {
+
+            width: 38px;
+            height: 42px;
+
+        }
+
+
+        .attribute-create-setting {
+
+            align-items: flex-start;
+
+        }
+
+
+        .attribute-create-setting__content {
+
+            align-items: flex-start;
+
+        }
+
+    }
+
+}

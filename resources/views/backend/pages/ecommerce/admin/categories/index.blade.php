@@ -14,9 +14,9 @@
 
             <div>
 
-            <span class="categories-page__eyebrow">
-                Ecommerce
-            </span>
+                <span class="categories-page__eyebrow">
+                    Ecommerce
+                </span>
 
                 <h1>
                     Categories
@@ -31,7 +31,7 @@
 
             {{-- Add Category --}}
             <a
-                href="{{ route('admin-category-create') }}"
+                href="{{ route('admin-categories.create') }}"
                 class="categories-page__add-btn"
             >
 
@@ -61,12 +61,12 @@
 
                 <div>
 
-                <span>
-                    Total Categories
-                </span>
+                    <span>
+                        Total Categories
+                    </span>
 
                     <strong>
-                        18
+                        {{ $totalCategories }}
                     </strong>
 
                 </div>
@@ -85,12 +85,12 @@
 
                 <div>
 
-                <span>
-                    Active Categories
-                </span>
+                    <span>
+                        Active Categories
+                    </span>
 
                     <strong>
-                        15
+                        {{ $activeCategories }}
                     </strong>
 
                 </div>
@@ -109,12 +109,12 @@
 
                 <div>
 
-                <span>
-                    Products Assigned
-                </span>
+                    <span>
+                        Products Assigned
+                    </span>
 
                     <strong>
-                        248
+                        {{ $productsAssigned }}
                     </strong>
 
                 </div>
@@ -133,12 +133,12 @@
 
                 <div>
 
-                <span>
-                    Empty Categories
-                </span>
+                    <span>
+                        Empty Categories
+                    </span>
 
                     <strong>
-                        3
+                        {{--                        {{ $emptyCategories }}--}}
                     </strong>
 
                 </div>
@@ -168,6 +168,7 @@
                     <input
                         type="search"
                         name="search"
+                        value="{{ $search }}"
                         placeholder="Search categories..."
                     >
 
@@ -186,11 +187,17 @@
                             All Status
                         </option>
 
-                        <option value="active">
+                        <option
+                            value="active"
+                            {{ $status === 'active' ? 'selected' : '' }}
+                        >
                             Active
                         </option>
 
-                        <option value="inactive">
+                        <option
+                            value="inactive"
+                            {{ $status === 'inactive' ? 'selected' : '' }}
+                        >
                             Inactive
                         </option>
 
@@ -207,11 +214,17 @@
                             All Types
                         </option>
 
-                        <option value="parent">
+                        <option
+                            value="parent"
+                            {{ $type === 'parent' ? 'selected' : '' }}
+                        >
                             Main Categories
                         </option>
 
-                        <option value="subcategory">
+                        <option
+                            value="subcategory"
+                            {{ $type === 'subcategory' ? 'selected' : '' }}
+                        >
                             Subcategories
                         </option>
 
@@ -281,891 +294,331 @@
 
                     <tbody>
 
+                    @forelse($categories as $category)
 
-                    {{-- ================================================= --}}
-                    {{-- CATEGORY 1 --}}
-                    {{-- ================================================= --}}
+                        {{-- ================================================= --}}
+                        {{-- MAIN CATEGORY --}}
+                        {{-- ================================================= --}}
 
-                    <tr>
+                        @if($type !== 'subcategory')
 
-                        <td>
+                            <tr>
 
-                            <div class="category-info">
+                                <td>
 
-                                <div class="category-info__icon">
+                                    <div class="category-info">
 
-                                    <i class="ri-smartphone-line"></i>
+                                        <div class="category-info__icon">
+                                            @if ( $category && !empty($category->image))
+                                                <img src="{{ asset($category->image) }}" alt="image">
+                                            @else
+                                                <i class="ri-folder-2-line"></i>
+                                            @endif
+                                        </div>
 
-                                </div>
+
+                                        <div class="category-info__content">
+
+                                            <strong>
+                                                {{ $category->name }}
+                                            </strong>
+
+                                            <span>
+                                                {{ $category->slug }}
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
 
 
-                                <div class="category-info__content">
+                                {{-- Type --}}
+                                <td>
 
-                                    <strong>
-                                        Electronics
-                                    </strong>
+                                    <span class="category-type category-type--parent">
 
-                                    <span>
-                                        electronics
+                                        <i class="ri-folder-2-line"></i>
+
+                                        Main Category
+
                                     </span>
 
-                                </div>
-
-                            </div>
-
-                        </td>
+                                </td>
 
 
-                        {{-- Type --}}
-                        <td>
+                                {{-- Parent --}}
+                                <td>
 
-                            <span class="category-type category-type--parent">
-
-                                <i class="ri-folder-2-line"></i>
-
-                                Main Category
-
-                            </span>
-
-                        </td>
-
-
-                        {{-- Parent --}}
-                        <td>
-
-                            <span class="category-parent-empty">
-                                —
-                            </span>
-
-                        </td>
-
-
-                        {{-- Products --}}
-                        <td>
-
-                            <span class="category-product-count">
-                                48 Products
-                            </span>
-
-                        </td>
-
-
-                        {{-- Status --}}
-                        <td>
-
-                            <span class="category-status active">
-
-                                <i></i>
-
-                                Active
-
-                            </span>
-
-                        </td>
-
-
-                        {{-- Created --}}
-                        <td>
-                            Aug 01, 2026
-                        </td>
-
-
-                        {{-- Actions --}}
-                        <td>
-
-                            <div class="category-actions">
-
-                                {{-- Details --}}
-                                <a
-                                    href="{{ route('admin-category-details', 1) }}"
-                                    title="View Details"
-                                >
-
-                                    <i class="ri-eye-line"></i>
-
-                                </a>
-
-
-                                {{-- Edit --}}
-                                <a
-                                    href="{{ route('admin-category-edit', 1) }}"
-                                    title="Edit Category"
-                                >
-
-                                    <i class="ri-edit-line"></i>
-
-                                </a>
-
-
-                                {{-- More --}}
-                                <button
-                                    type="button"
-                                    title="More"
-                                >
-
-                                    <i class="ri-more-2-fill"></i>
-
-                                </button>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-
-                    {{-- ================================================= --}}
-                    {{-- SUBCATEGORY --}}
-                    {{-- ================================================= --}}
-
-                    <tr class="category-row category-row--child">
-
-                        <td>
-
-                            <div class="category-info category-info--child">
-
-                                <div class="category-info__connector">
-                                    ↳
-                                </div>
-
-
-                                <div class="category-info__icon subcategory">
-
-                                    <i class="ri-smartphone-line"></i>
-
-                                </div>
-
-
-                                <div class="category-info__content">
-
-                                    <strong>
-                                        Smartphones
-                                    </strong>
-
-                                    <span>
-                                        smartphones
+                                    <span class="category-parent-empty">
+                                        —
                                     </span>
 
-                                </div>
-
-                            </div>
-
-                        </td>
+                                </td>
 
 
-                        {{-- Type --}}
-                        <td>
+                                {{-- Products --}}
+                                <td>
 
-                            <span class="category-type category-type--child">
+                                    <span
+                                        class="category-product-count {{ $category->products_count == 0 ? 'empty' : '' }}"
+                                    >
 
-                                <i class="ri-corner-down-right-line"></i>
+                                        {{ $category->products_count }}
 
-                                Subcategory
+                                        {{ $category->products_count == 1 ? 'Product' : 'Products' }}
 
-                            </span>
-
-                        </td>
-
-
-                        {{-- Parent --}}
-                        <td>
-
-                            <span class="category-parent">
-
-                                <i class="ri-folder-2-line"></i>
-
-                                Electronics
-
-                            </span>
-
-                        </td>
-
-
-                        {{-- Products --}}
-                        <td>
-
-                            <span class="category-product-count">
-                                18 Products
-                            </span>
-
-                        </td>
-
-
-                        {{-- Status --}}
-                        <td>
-
-                            <span class="category-status active">
-
-                                <i></i>
-
-                                Active
-
-                            </span>
-
-                        </td>
-
-
-                        {{-- Created --}}
-                        <td>
-                            Aug 02, 2026
-                        </td>
-
-
-                        {{-- Actions --}}
-                        <td>
-
-                            <div class="category-actions">
-
-                                <a
-                                    href="{{ route('admin-category-details', 7) }}"
-                                    title="View Details"
-                                >
-
-                                    <i class="ri-eye-line"></i>
-
-                                </a>
-
-
-                                <a
-                                    href="{{ route('admin-category-edit', 7) }}"
-                                    title="Edit Category"
-                                >
-
-                                    <i class="ri-edit-line"></i>
-
-                                </a>
-
-
-                                <button
-                                    type="button"
-                                    title="More"
-                                >
-
-                                    <i class="ri-more-2-fill"></i>
-
-                                </button>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-
-                    {{-- ================================================= --}}
-                    {{-- CATEGORY 2 --}}
-                    {{-- ================================================= --}}
-
-                    <tr>
-
-                        <td>
-
-                            <div class="category-info">
-
-                                <div class="category-info__icon fashion">
-
-                                    <i class="ri-t-shirt-line"></i>
-
-                                </div>
-
-
-                                <div class="category-info__content">
-
-                                    <strong>
-                                        Fashion
-                                    </strong>
-
-                                    <span>
-                                        fashion
                                     </span>
 
-                                </div>
-
-                            </div>
-
-                        </td>
+                                </td>
 
 
-                        <td>
+                                {{-- Status --}}
+                                <td>
 
-                            <span class="category-type category-type--parent">
+                                    <span
+                                        class="category-status {{ $category->status ? 'active' : 'inactive' }}"
+                                    >
 
-                                <i class="ri-folder-2-line"></i>
+                                        <i></i>
 
-                                Main Category
+                                        {{ $category->status ? 'Active' : 'Inactive' }}
 
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="category-parent-empty">
-                                —
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="category-product-count">
-                                76 Products
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="category-status active">
-
-                                <i></i>
-
-                                Active
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-                            Jul 28, 2026
-                        </td>
-
-
-                        <td>
-
-                            <div class="category-actions">
-
-                                <a
-                                    href="{{ route('admin-category-details', 2) }}"
-                                    title="View Details"
-                                >
-
-                                    <i class="ri-eye-line"></i>
-
-                                </a>
-
-
-                                <a
-                                    href="{{ route('admin-category-edit', 2) }}"
-                                    title="Edit Category"
-                                >
-
-                                    <i class="ri-edit-line"></i>
-
-                                </a>
-
-
-                                <button
-                                    type="button"
-                                    title="More"
-                                >
-
-                                    <i class="ri-more-2-fill"></i>
-
-                                </button>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-
-                    {{-- ================================================= --}}
-                    {{-- CATEGORY 3 --}}
-                    {{-- ================================================= --}}
-
-                    <tr>
-
-                        <td>
-
-                            <div class="category-info">
-
-                                <div class="category-info__icon home">
-
-                                    <i class="ri-home-5-line"></i>
-
-                                </div>
-
-
-                                <div class="category-info__content">
-
-                                    <strong>
-                                        Home & Living
-                                    </strong>
-
-                                    <span>
-                                        home-living
                                     </span>
 
-                                </div>
-
-                            </div>
-
-                        </td>
+                                </td>
 
 
-                        <td>
+                                {{-- Created --}}
+                                <td>
 
-                            <span class="category-type category-type--parent">
+                                    {{ $category->created_at->format('M d, Y') }}
 
-                                <i class="ri-folder-2-line"></i>
-
-                                Main Category
-
-                            </span>
-
-                        </td>
+                                </td>
 
 
-                        <td>
+                                {{-- Actions --}}
+                                <td>
 
-                            <span class="category-parent-empty">
-                                —
-                            </span>
+                                    <div class="category-actions">
 
-                        </td>
+                                        {{-- Details --}}
+                                        <a
+                                            href="{{ route('admin-categories.show', $category->id) }}"
+                                            title="View Details"
+                                        >
 
+                                            <i class="ri-eye-line"></i>
 
-                        <td>
-
-                            <span class="category-product-count">
-                                34 Products
-                            </span>
-
-                        </td>
+                                        </a>
 
 
-                        <td>
+                                        {{-- Edit --}}
+                                        <a
+                                            href="{{ route('admin-categories.edit', $category->id) }}"
+                                            title="Edit Category"
+                                        >
 
-                            <span class="category-status active">
+                                            <i class="ri-edit-line"></i>
 
-                                <i></i>
-
-                                Active
-
-                            </span>
-
-                        </td>
+                                        </a>
 
 
-                        <td>
-                            Jul 25, 2026
-                        </td>
+                                        {{-- More --}}
+                                        <form action="{{ route('admin-categories.destroy', $category->id) }}"
+                                              method="POST" style="display: inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" title="Delete Category"
+                                                    onclick="return confirm('Are you sure you want to delete this category?')">
+                                                <i class="ri-delete-bin-line"></i>
+                                            </button>
+                                        </form>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        @endif
 
 
-                        <td>
+                        {{-- ================================================= --}}
+                        {{-- SUBCATEGORIES --}}
+                        {{-- ================================================= --}}
 
-                            <div class="category-actions">
+                        @foreach($category->children as $child)
 
-                                <a
-                                    href="{{ route('admin-category-details', 3) }}"
-                                    title="View Details"
-                                >
+                            <tr class="category-row category-row--child">
 
-                                    <i class="ri-eye-line"></i>
+                                <td>
 
-                                </a>
+                                    <div class="category-info category-info--child">
 
-
-                                <a
-                                    href="{{ route('admin-category-edit', 3) }}"
-                                    title="Edit Category"
-                                >
-
-                                    <i class="ri-edit-line"></i>
-
-                                </a>
+                                        <div class="category-info__connector">
+                                            ↳
+                                        </div>
 
 
-                                <button
-                                    type="button"
-                                    title="More"
-                                >
+                                        <div class="category-info__icon subcategory">
 
-                                    <i class="ri-more-2-fill"></i>
+                                            @if ( $child && !empty($child->image))
+                                                <img src="{{ asset($child->image) }}" alt="image">
+                                            @else
+                                                <i class="ri-folder-2-line"></i>
+                                            @endif
 
-                                </button>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
+                                        </div>
 
 
-                    {{-- ================================================= --}}
-                    {{-- CATEGORY 4 --}}
-                    {{-- ================================================= --}}
+                                        <div class="category-info__content">
 
-                    <tr>
+                                            <strong>
+                                                {{ $child->name }}
+                                            </strong>
 
-                        <td>
+                                            <span>
+                                                {{ $child->slug }}
+                                            </span>
 
-                            <div class="category-info">
+                                        </div>
 
-                                <div class="category-info__icon beauty">
+                                    </div>
 
-                                    <i class="ri-heart-pulse-line"></i>
-
-                                </div>
+                                </td>
 
 
-                                <div class="category-info__content">
+                                {{-- Type --}}
+                                <td>
 
-                                    <strong>
-                                        Beauty
-                                    </strong>
+                                    <span class="category-type category-type--child">
 
-                                    <span>
-                                        beauty
+                                        <i class="ri-corner-down-right-line"></i>
+
+                                        Subcategory
+
                                     </span>
 
-                                </div>
-
-                            </div>
-
-                        </td>
+                                </td>
 
 
-                        <td>
+                                {{-- Parent --}}
+                                <td>
 
-                            <span class="category-type category-type--parent">
+                                    <span class="category-parent">
 
-                                <i class="ri-folder-2-line"></i>
+                                        <i class="ri-folder-2-line"></i>
 
-                                Main Category
+                                        {{ $category->name }}
 
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="category-parent-empty">
-                                —
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="category-product-count">
-                                29 Products
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="category-status active">
-
-                                <i></i>
-
-                                Active
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-                            Jul 20, 2026
-                        </td>
-
-
-                        <td>
-
-                            <div class="category-actions">
-
-                                <a
-                                    href="{{ route('admin-category-details', 4) }}"
-                                    title="View Details"
-                                >
-
-                                    <i class="ri-eye-line"></i>
-
-                                </a>
-
-
-                                <a
-                                    href="{{ route('admin-category-edit', 4) }}"
-                                    title="Edit Category"
-                                >
-
-                                    <i class="ri-edit-line"></i>
-
-                                </a>
-
-
-                                <button
-                                    type="button"
-                                    title="More"
-                                >
-
-                                    <i class="ri-more-2-fill"></i>
-
-                                </button>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-
-                    {{-- ================================================= --}}
-                    {{-- CATEGORY 5 --}}
-                    {{-- ================================================= --}}
-
-                    <tr>
-
-                        <td>
-
-                            <div class="category-info">
-
-                                <div class="category-info__icon sports">
-
-                                    <i class="ri-football-line"></i>
-
-                                </div>
-
-
-                                <div class="category-info__content">
-
-                                    <strong>
-                                        Sports & Fitness
-                                    </strong>
-
-                                    <span>
-                                        sports-fitness
                                     </span>
 
-                                </div>
-
-                            </div>
-
-                        </td>
+                                </td>
 
 
-                        <td>
+                                {{-- Products --}}
+                                <td>
 
-                            <span class="category-type category-type--parent">
+                                    <span
+                                        class="category-product-count {{ $child->products_count == 0 ? 'empty' : '' }}"
+                                    >
 
-                                <i class="ri-folder-2-line"></i>
+                                        {{ $child->products_count }}
 
-                                Main Category
+                                        {{ $child->products_count == 1 ? 'Product' : 'Products' }}
 
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="category-parent-empty">
-                                —
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="category-product-count">
-                                18 Products
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="category-status inactive">
-
-                                <i></i>
-
-                                Inactive
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-                            Jul 18, 2026
-                        </td>
-
-
-                        <td>
-
-                            <div class="category-actions">
-
-                                <a
-                                    href="{{ route('admin-category-details', 5) }}"
-                                    title="View Details"
-                                >
-
-                                    <i class="ri-eye-line"></i>
-
-                                </a>
-
-
-                                <a
-                                    href="{{ route('admin-category-edit', 5) }}"
-                                    title="Edit Category"
-                                >
-
-                                    <i class="ri-edit-line"></i>
-
-                                </a>
-
-
-                                <button
-                                    type="button"
-                                    title="More"
-                                >
-
-                                    <i class="ri-more-2-fill"></i>
-
-                                </button>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-
-                    {{-- ================================================= --}}
-                    {{-- CATEGORY 6 --}}
-                    {{-- ================================================= --}}
-
-                    <tr>
-
-                        <td>
-
-                            <div class="category-info">
-
-                                <div class="category-info__icon">
-
-                                    <i class="ri-book-open-line"></i>
-
-                                </div>
-
-
-                                <div class="category-info__content">
-
-                                    <strong>
-                                        Books
-                                    </strong>
-
-                                    <span>
-                                        books
                                     </span>
 
-                                </div>
-
-                            </div>
-
-                        </td>
+                                </td>
 
 
-                        <td>
+                                {{-- Status --}}
+                                <td>
 
-                            <span class="category-type category-type--parent">
+                                    <span
+                                        class="category-status {{ $child->status ? 'active' : 'inactive' }}"
+                                    >
 
-                                <i class="ri-folder-2-line"></i>
+                                        <i></i>
 
-                                Main Category
+                                        {{ $child->status ? 'Active' : 'Inactive' }}
 
-                            </span>
+                                    </span>
 
-                        </td>
-
-
-                        <td>
-
-                            <span class="category-parent-empty">
-                                —
-                            </span>
-
-                        </td>
+                                </td>
 
 
-                        <td>
+                                {{-- Created --}}
+                                <td>
 
-                            <span class="category-product-count empty">
-                                0 Products
-                            </span>
+                                    {{ $child->created_at->format('M d, Y') }}
 
-                        </td>
-
-
-                        <td>
-
-                            <span class="category-status active">
-
-                                <i></i>
-
-                                Active
-
-                            </span>
-
-                        </td>
+                                </td>
 
 
-                        <td>
-                            Jul 15, 2026
-                        </td>
+                                {{-- Actions --}}
+                                <td>
+
+                                    <div class="category-actions">
+
+                                        {{-- Details --}}
+                                        <a
+                                            href="{{ route('admin-categories.show', $child->id) }}"
+                                            title="View Details"
+                                        >
+
+                                            <i class="ri-eye-line"></i>
+
+                                        </a>
 
 
-                        <td>
+                                        {{-- Edit --}}
+                                        <a
+                                            href="{{ route('admin-categories.edit', $child->id) }}"
+                                            title="Edit Category"
+                                        >
 
-                            <div class="category-actions">
+                                            <i class="ri-edit-line"></i>
 
-                                <a
-                                    href="{{ route('admin-category-details', 6) }}"
-                                    title="View Details"
-                                >
+                                        </a>
 
-                                    <i class="ri-eye-line"></i>
+                                        {{-- Delete --}}
+                                        <form action="{{ route('admin-categories.destroy', $child->id) }}"
+                                              method="POST" style="display: inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" title="Delete Category"
+                                                    onclick="return confirm('Are you sure you want to delete this category?')">
+                                                <i class="ri-delete-bin-line"></i>
+                                            </button>
+                                        </form>
 
-                                </a>
+                                    </div>
 
+                                </td>
 
-                                <a
-                                    href="{{ route('admin-category-edit', 6) }}"
-                                    title="Edit Category"
-                                >
+                            </tr>
 
-                                    <i class="ri-edit-line"></i>
+                        @endforeach
 
-                                </a>
+                    @empty
 
+                        <tr>
 
-                                <button
-                                    type="button"
-                                    title="More"
-                                >
+                            <td
+                                colspan="7"
+                                style="text-align: center; padding: 40px;"
+                            >
 
-                                    <i class="ri-more-2-fill"></i>
+                                No categories found.
 
-                                </button>
+                            </td>
 
-                            </div>
+                        </tr>
 
-                        </td>
-
-                    </tr>
-
+                    @endforelse
 
                     </tbody>
 
@@ -1182,13 +635,18 @@
 
                 <div class="categories-pagination__info">
 
-                    Showing 1–7 of 18 categories
+                    Showing
+                    {{ $categories->count() }}
+                    of
+                    {{ $totalCategories }}
+                    categories
 
                 </div>
 
 
                 <div class="categories-pagination__buttons">
 
+                    {{-- Previous --}}
                     <button
                         type="button"
                         disabled
@@ -1199,6 +657,7 @@
                     </button>
 
 
+                    {{-- Current --}}
                     <button
                         type="button"
                         class="active"
@@ -1207,17 +666,11 @@
                     </button>
 
 
-                    <button type="button">
-                        2
-                    </button>
-
-
-                    <button type="button">
-                        3
-                    </button>
-
-
-                    <button type="button">
+                    {{-- Next --}}
+                    <button
+                        type="button"
+                        disabled
+                    >
 
                         <i class="ri-arrow-right-s-line"></i>
 
@@ -1232,3 +685,211 @@
     </div>
 
 @endsection
+
+
+{{-- ================================================================ --}}
+{{-- PAGE SCRIPT --}}
+{{-- ================================================================ --}}
+
+@push('scripts')
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const page =
+                document.querySelector('.categories-page');
+
+            if (!page) {
+                return;
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Elements
+            |--------------------------------------------------------------------------
+            */
+
+            const searchInput =
+                page.querySelector(
+                    'input[name="search"]'
+                );
+
+            const statusSelect =
+                page.querySelector(
+                    'select[name="status"]'
+                );
+
+            const typeSelect =
+                page.querySelector(
+                    'select[name="type"]'
+                );
+
+            const filterButton =
+                page.querySelector(
+                    '.categories-filter-btn'
+                );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Apply Filters
+            |--------------------------------------------------------------------------
+            */
+
+            function applyFilters() {
+
+                const params =
+                    new URLSearchParams();
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Search
+                |--------------------------------------------------------------------------
+                */
+
+                const search =
+                    searchInput
+                        ? searchInput.value.trim()
+                        : '';
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Status
+                |--------------------------------------------------------------------------
+                */
+
+                const status =
+                    statusSelect
+                        ? statusSelect.value
+                        : '';
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Type
+                |--------------------------------------------------------------------------
+                */
+
+                const type =
+                    typeSelect
+                        ? typeSelect.value
+                        : '';
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Build Query
+                |--------------------------------------------------------------------------
+                */
+
+                if (search) {
+
+                    params.set(
+                        'search',
+                        search
+                    );
+
+                }
+
+
+                if (status) {
+
+                    params.set(
+                        'status',
+                        status
+                    );
+
+                }
+
+
+                if (type) {
+
+                    params.set(
+                        'type',
+                        type
+                    );
+
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Redirect
+                |--------------------------------------------------------------------------
+                */
+
+                const queryString =
+                    params.toString();
+
+
+                const url =
+                    window.location.pathname
+                    +
+                    (
+                        queryString
+                            ? '?' + queryString
+                            : ''
+                    );
+
+
+                window.location.href = url;
+
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Filter Button
+            |--------------------------------------------------------------------------
+            */
+
+            if (filterButton) {
+
+                filterButton.addEventListener(
+                    'click',
+                    function () {
+
+                        applyFilters();
+
+                    }
+                );
+
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Search By Enter
+            |--------------------------------------------------------------------------
+            */
+
+            if (searchInput) {
+
+                searchInput.addEventListener(
+                    'keydown',
+                    function (event) {
+
+                        if (
+                            event.key === 'Enter'
+                        ) {
+
+                            event.preventDefault();
+
+                            applyFilters();
+
+                        }
+
+                    }
+                );
+
+            }
+
+        });
+
+    </script>
+
+@endpush

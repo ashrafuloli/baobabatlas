@@ -413,17 +413,11 @@
                 )
 
                     <li class="has-submenu {{ request()->routeIs(
-                        'admin-products',
-                        'admin-product-create',
-                        'admin-product-details',
-                        'admin-product-edit',
-                        'admin-categories',
-                        'admin-category-create',
-                        'admin-category-details',
-                        'admin-category-edit',
-                        'admin-inventory',
-                        'admin-inventory-low-stock',
-                        'admin-inventory-out-of-stock',
+                        'admin-products*',
+                        'admin-categories*',
+                        'admin-brands*',
+                        'admin-inventory*',
+                        'admin-attributes*',
                         'admin-orders',
                         'admin-order-details',
                         'admin-ecommerce-payments',
@@ -450,12 +444,7 @@
                             {{-- PRODUCTS --}}
                             @if(auth()->user()->hasPermission('view-products'))
 
-                                <li class="{{ request()->routeIs(
-                                    'admin-products',
-                                    'admin-product-create',
-                                    'admin-product-details',
-                                    'admin-product-edit'
-                                ) ? 'active' : '' }}">
+                                <li class="{{ request()->routeIs('admin-products*') ? 'active' : '' }}">
 
                                     <a href="{{ route('admin-products') }}">
 
@@ -473,17 +462,46 @@
                             {{-- CATEGORIES --}}
                             @if(auth()->user()->hasPermission('view-categories'))
 
-                                <li class="{{ request()->routeIs(
-                                    'admin-categories',
-                                    'admin-category-create',
-                                    'admin-category-details',
-                                    'admin-category-edit'
-                                ) ? 'active' : '' }}">
+                                <li class="{{ request()->routeIs( 'admin-categories*' ) ? 'active' : '' }}">
 
                                     <a href="{{ route('admin-categories') }}">
 
                                         <span>
                                             Categories
+                                        </span>
+
+                                    </a>
+
+                                </li>
+
+                            @endif
+
+                            {{-- Brands --}}
+                            @if(auth()->user()->hasPermission('view-brands'))
+
+                                <li class="{{ request()->routeIs('admin-brands*') ? 'active' : '' }}">
+
+                                    <a href="{{ route('admin-brands') }}">
+
+                                        <span>
+                                            Brands
+                                        </span>
+
+                                    </a>
+
+                                </li>
+
+                            @endif
+
+                            {{-- Attributes --}}
+                            @if(auth()->user()->hasPermission('view-attributes'))
+
+                                <li class="{{ request()->routeIs('admin-attributes*') ? 'active' : '' }}">
+
+                                    <a href="{{ route('admin-attributes') }}">
+
+                                        <span>
+                                            Attributes
                                         </span>
 
                                     </a>
@@ -597,21 +615,7 @@
                     auth()->user()->hasPermission('smart-buy-shipment')
                 )
 
-                    <li class="has-submenu {{ request()->routeIs(
-                        'smart-buy',
-                        'smart-buy.details',
-                        'smart-buy.status.update',
-                        'smart-buy.quote.create',
-                        'smart-buy.quote.store',
-                        'smart-buy.quote.show',
-                        'smart-buy.quote.edit',
-                        'smart-buy.quote.update',
-                        'smart-buy.payment.store',
-                        'smart-buy.payment.update',
-                        'smart-buy.shipment',
-                        'smart-buy.shipment.store',
-                        'smart-buy.shipment.update'
-                    ) ? 'active open' : '' }}">
+                    <li class="has-submenu {{ request()->routeIs('smart-buy*') ? 'active open' : '' }}">
 
                         <a href="javascript:void(0);">
 

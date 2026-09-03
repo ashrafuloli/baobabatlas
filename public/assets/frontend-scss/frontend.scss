@@ -3,4 +3,12 @@
 @use "sections/header";
 @use "sections/sections";
 @use "sections/tracking";
+@use "shop/shop";
+@use "shop/shop-details";
+@use "shop/shop-cart";
+@use "shop/shop-checkout";
+@use "shop/shop-dashbord";
+@use "shop/shop-myaccount";
+@use "shop/shop-orders";
+@use "shop/shop-wishlist";
 @use "sections/footer";

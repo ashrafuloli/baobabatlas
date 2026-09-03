@@ -4,72 +4,55 @@
 
 @section('content')
 
-    <div class="category-edit-page">
+    <div class="category-create-page">
 
-        {{-- ================================================================ --}}
         {{-- PAGE HEADER --}}
-        {{-- ================================================================ --}}
-
-        <div class="category-edit-page__header">
+        <div class="category-create-page__header">
 
             <div>
 
-            <span class="category-edit-page__eyebrow">
-                Ecommerce / Categories
-            </span>
+                <span class="category-create-page__eyebrow">
+                    Ecommerce / Categories
+                </span>
 
                 <h1>
                     Edit Category
                 </h1>
 
                 <p>
-                    Update category information, settings, media and SEO.
+                    Update the information and settings for this category.
                 </p>
 
             </div>
 
-
-            <div class="category-edit-page__header-actions">
-
-                <a
-                    href="{{ route('admin-category-details', $category) }}"
-                    class="category-edit-page__back-btn"
-                >
-
-                    <i class="ri-arrow-left-line"></i>
-
-                    Back to Details
-
-                </a>
-
-            </div>
+            <a
+                href="{{ route('admin-categories') }}"
+                class="category-create-page__back-btn"
+            >
+                <i class="ri-arrow-left-line"></i>
+                Back to Categories
+            </a>
 
         </div>
 
 
-        {{-- ================================================================ --}}
         {{-- FORM --}}
-        {{-- ================================================================ --}}
-
         <form
-            action="#"
+            action="{{ route('admin-categories.update', ['category' => $category->id]) }}"
             method="POST"
             enctype="multipart/form-data"
-            class="category-edit-form"
+            class="category-create-form"
         >
 
             @csrf
 
-            {{-- Later use @method('PUT') when update route is created --}}
+            @method('PUT')
 
 
-            {{-- ============================================================ --}}
             {{-- CATEGORY TYPE --}}
-            {{-- ============================================================ --}}
+            <div class="category-create-card">
 
-            <div class="category-edit-card">
-
-                <div class="category-edit-card__header">
+                <div class="category-create-card__header">
 
                     <div>
 
@@ -78,110 +61,100 @@
                         </h4>
 
                         <p>
-                            Choose whether this category is a main category or a subcategory.
+                            Choose whether this will be a main category or a subcategory.
                         </p>
 
                     </div>
 
                 </div>
 
-
-                <div class="category-edit-card__body">
+                <div class="category-create-card__body">
 
                     <div class="category-type-options">
 
-
-                        {{-- Main Category --}}
+                        {{-- MAIN CATEGORY --}}
                         <label class="category-type-option">
 
                             <input
                                 type="radio"
                                 name="category_type"
                                 value="parent"
-                                checked
+                                {{ old('category_type', is_null($category->parent_id) ? 'parent' : 'subcategory') === 'parent' ? 'checked' : '' }}
                             >
 
                             <span class="category-type-option__box">
 
-                            <span class="category-type-option__radio">
+                                <span class="category-type-option__radio">
+                                    <i class="ri-check-line"></i>
+                                </span>
 
-                                <i class="ri-check-line"></i>
+                                <span class="category-type-option__icon">
+                                    <i class="ri-folder-2-line"></i>
+                                </span>
 
-                            </span>
+                                <span class="category-type-option__content">
 
+                                    <strong>
+                                        Main Category
+                                    </strong>
 
-                            <span class="category-type-option__icon">
+                                    <span>
+                                        Create a top-level category without a parent.
+                                    </span>
 
-                                <i class="ri-folder-2-line"></i>
-
-                            </span>
-
-
-                            <span class="category-type-option__content">
-
-                                <strong>
-                                    Main Category
-                                </strong>
-
-                                <span>
-                                    Top-level category without a parent category.
                                 </span>
 
                             </span>
 
-                        </span>
-
                         </label>
 
 
-                        {{-- Subcategory --}}
+                        {{-- SUBCATEGORY --}}
                         <label class="category-type-option">
 
                             <input
                                 type="radio"
                                 name="category_type"
                                 value="subcategory"
+                                {{ old('category_type', is_null($category->parent_id) ? 'parent' : 'subcategory') === 'subcategory' ? 'checked' : '' }}
                             >
 
                             <span class="category-type-option__box">
 
-                            <span class="category-type-option__radio">
+                                <span class="category-type-option__radio">
+                                    <i class="ri-check-line"></i>
+                                </span>
 
-                                <i class="ri-check-line"></i>
+                                <span class="category-type-option__icon">
+                                    <i class="ri-folder-open-line"></i>
+                                </span>
 
-                            </span>
+                                <span class="category-type-option__content">
 
+                                    <strong>
+                                        Subcategory
+                                    </strong>
 
-                            <span class="category-type-option__icon">
+                                    <span>
+                                        Create a category under an existing parent category.
+                                    </span>
 
-                                <i class="ri-folder-open-line"></i>
-
-                            </span>
-
-
-                            <span class="category-type-option__content">
-
-                                <strong>
-                                    Subcategory
-                                </strong>
-
-                                <span>
-                                    Place this category under an existing parent category.
                                 </span>
 
                             </span>
-
-                        </span>
 
                         </label>
 
                     </div>
 
 
-                    {{-- Parent Category --}}
-                    <div class="category-edit-parent-field">
+                    {{-- PARENT CATEGORY --}}
+                    <div
+                        class="category-parent-field"
+                        id="parentCategoryField"
+                    >
 
-                        <label for="parent_category">
+                        <label for="parent_id">
 
                             Parent Category
 
@@ -189,46 +162,39 @@
 
                         </label>
 
-
                         <select
-                            id="parent_category"
-                            name="parent_category"
+                            id="parent_id"
+                            name="parent_id"
                         >
 
                             <option value="">
                                 Select Parent Category
                             </option>
 
-                            <option value="electronics">
-                                Electronics
-                            </option>
+                            @foreach($parentCategories as $parentCategory)
 
-                            <option value="fashion">
-                                Fashion
-                            </option>
+                                <option
+                                    value="{{ $parentCategory->id }}"
+                                    {{ old('parent_id', $category->parent_id) == $parentCategory->id ? 'selected' : '' }}
+                                >
+                                    {{ $parentCategory->name }}
+                                </option>
 
-                            <option value="home-living">
-                                Home & Living
-                            </option>
-
-                            <option value="beauty">
-                                Beauty
-                            </option>
-
-                            <option value="sports-fitness">
-                                Sports & Fitness
-                            </option>
-
-                            <option value="books">
-                                Books
-                            </option>
+                            @endforeach
 
                         </select>
 
-
                         <small>
-                            Select the parent category for this subcategory.
+                            Select the main category where this subcategory will belong.
                         </small>
+
+                        @error('parent_id')
+
+                        <div class="category-create-error">
+                            {{ $message }}
+                        </div>
+
+                        @enderror
 
                     </div>
 
@@ -237,13 +203,10 @@
             </div>
 
 
-            {{-- ============================================================ --}}
             {{-- CATEGORY INFORMATION --}}
-            {{-- ============================================================ --}}
+            <div class="category-create-card">
 
-            <div class="category-edit-card">
-
-                <div class="category-edit-card__header">
+                <div class="category-create-card__header">
 
                     <div>
 
@@ -259,14 +222,12 @@
 
                 </div>
 
+                <div class="category-create-card__body">
 
-                <div class="category-edit-card__body">
+                    <div class="category-create-grid">
 
-                    <div class="category-edit-grid">
-
-
-                        {{-- Category Name --}}
-                        <div class="category-edit-field">
+                        {{-- NAME --}}
+                        <div class="category-create-field">
 
                             <label for="name">
 
@@ -280,9 +241,17 @@
                                 type="text"
                                 id="name"
                                 name="name"
-                                value="Electronics"
-                                placeholder="e.g. Electronics"
+                                value="{{ old('name', $category->name) }}"
+                                placeholder="e.g. Smartphones"
                             >
+
+                            @error('name')
+
+                            <div class="category-create-error">
+                                {{ $message }}
+                            </div>
+
+                            @enderror
 
                             <small>
                                 Enter a clear and recognizable category name.
@@ -291,34 +260,39 @@
                         </div>
 
 
-                        {{-- Slug --}}
-                        <div class="category-edit-field">
+                        {{-- SLUG --}}
+                        <div class="category-create-field">
 
                             <label for="slug">
-
                                 Slug
-
-                                <span>*</span>
-
                             </label>
 
                             <input
                                 type="text"
                                 id="slug"
                                 name="slug"
-                                value="electronics"
-                                placeholder="e.g. electronics"
+                                value="{{ old('slug', $category->slug) }}"
+                                placeholder="e.g. smartphones"
+                                data-manual="true"
                             >
 
+                            @error('slug')
+
+                            <div class="category-create-error">
+                                {{ $message }}
+                            </div>
+
+                            @enderror
+
                             <small>
-                                Use lowercase letters, numbers and hyphens.
+                                Use a unique URL-friendly slug for this category.
                             </small>
 
                         </div>
 
 
-                        {{-- Description --}}
-                        <div class="category-edit-field category-edit-field--full">
+                        {{-- DESCRIPTION --}}
+                        <div class="category-create-field category-create-field--full">
 
                             <label for="description">
                                 Description
@@ -328,11 +302,49 @@
                                 id="description"
                                 name="description"
                                 rows="6"
-                                placeholder="Write a short description..."
-                            >Explore our collection of electronics including smartphones, laptops, headphones, accessories and other technology products.</textarea>
+                                placeholder="Write a short description for this category..."
+                            >{{ old('description', $category->description) }}</textarea>
+
+                            @error('description')
+
+                            <div class="category-create-error">
+                                {{ $message }}
+                            </div>
+
+                            @enderror
 
                             <small>
-                                Keep the category description clear and useful for customers.
+                                A short description can help customers understand the category.
+                            </small>
+
+                        </div>
+
+
+                        {{-- SORT ORDER --}}
+                        <div class="category-create-field">
+
+                            <label for="sort_order">
+                                Sort Order
+                            </label>
+
+                            <input
+                                type="number"
+                                id="sort_order"
+                                name="sort_order"
+                                value="{{ old('sort_order', $category->sort_order ?? 0) }}"
+                                min="0"
+                            >
+
+                            @error('sort_order')
+
+                            <div class="category-create-error">
+                                {{ $message }}
+                            </div>
+
+                            @enderror
+
+                            <small>
+                                Lower numbers appear first.
                             </small>
 
                         </div>
@@ -344,13 +356,10 @@
             </div>
 
 
-            {{-- ============================================================ --}}
             {{-- CATEGORY SETTINGS --}}
-            {{-- ============================================================ --}}
+            <div class="category-create-card">
 
-            <div class="category-edit-card">
-
-                <div class="category-edit-card__header">
+                <div class="category-create-card__header">
 
                     <div>
 
@@ -359,28 +368,24 @@
                         </h4>
 
                         <p>
-                            Control the visibility and featured status of this category.
+                            Configure how this category behaves in your store.
                         </p>
 
                     </div>
 
                 </div>
 
+                <div class="category-create-card__body">
 
-                <div class="category-edit-card__body">
+                    <div class="category-create-settings">
 
-                    <div class="category-edit-settings">
+                        {{-- STATUS --}}
+                        <div class="category-create-setting">
 
+                            <div class="category-create-setting__content">
 
-                        {{-- Status --}}
-                        <div class="category-edit-setting">
-
-                            <div class="category-edit-setting__content">
-
-                                <div class="category-edit-setting__icon">
-
+                                <div class="category-create-setting__icon">
                                     <i class="ri-checkbox-circle-line"></i>
-
                                 </div>
 
                                 <div>
@@ -390,21 +395,20 @@
                                     </strong>
 
                                     <span>
-                                    Make this category available in your store.
-                                </span>
+                                        Make this category available in your store.
+                                    </span>
 
                                 </div>
 
                             </div>
 
-
-                            <label class="category-edit-switch">
+                            <label class="category-create-switch">
 
                                 <input
                                     type="checkbox"
                                     name="status"
-                                    value="active"
-                                    checked
+                                    value="1"
+                                    {{ old('status', $category->status) ? 'checked' : '' }}
                                 >
 
                                 <span></span>
@@ -414,15 +418,13 @@
                         </div>
 
 
-                        {{-- Featured --}}
-                        <div class="category-edit-setting">
+                        {{-- FEATURED --}}
+                        <div class="category-create-setting">
 
-                            <div class="category-edit-setting__content">
+                            <div class="category-create-setting__content">
 
-                                <div class="category-edit-setting__icon">
-
+                                <div class="category-create-setting__icon">
                                     <i class="ri-star-line"></i>
-
                                 </div>
 
                                 <div>
@@ -432,21 +434,20 @@
                                     </strong>
 
                                     <span>
-                                    Display this category in featured sections.
-                                </span>
+                                        Display this category in featured sections.
+                                    </span>
 
                                 </div>
 
                             </div>
 
-
-                            <label class="category-edit-switch">
+                            <label class="category-create-switch">
 
                                 <input
                                     type="checkbox"
                                     name="featured"
                                     value="1"
-                                    checked
+                                    {{ old('featured', $category->featured) ? 'checked' : '' }}
                                 >
 
                                 <span></span>
@@ -462,13 +463,10 @@
             </div>
 
 
-            {{-- ============================================================ --}}
             {{-- CATEGORY IMAGE --}}
-            {{-- ============================================================ --}}
+            <div class="category-create-card">
 
-            <div class="category-edit-card">
-
-                <div class="category-edit-card__header">
+                <div class="category-create-card__header">
 
                     <div>
 
@@ -477,98 +475,90 @@
                         </h4>
 
                         <p>
-                            Update the image used to represent this category.
+                            Update the image used to visually represent this category.
                         </p>
 
                     </div>
 
                 </div>
 
+                <div class="category-create-card__body">
 
-                <div class="category-edit-card__body">
+                    <div class="category-create-image-upload">
 
-                    <div class="category-edit-image-section">
-
-
-                        {{-- Current Image --}}
-                        <div class="category-edit-current-image">
-
-                            <div class="category-edit-current-image__label">
-                                Current Image
-                            </div>
-
-
-                            <div class="category-edit-current-image__preview">
-
-                                <img
-                                    src="https://placehold.co/800x500"
-                                    alt="Electronics Category"
-                                >
-
-                            </div>
-
+                        <div class="category-create-image-upload__icon">
+                            <i class="ri-image-add-line"></i>
                         </div>
 
+                        <div class="category-create-image-upload__content">
 
-                        {{-- Upload --}}
-                        <div class="category-edit-upload">
+                            <strong>
+                                Upload Category Image
+                            </strong>
 
-                            <div class="category-edit-upload__icon">
-
-                                <i class="ri-image-add-line"></i>
-
-                            </div>
-
-
-                            <div class="category-edit-upload__content">
-
-                                <strong>
-                                    Replace Category Image
-                                </strong>
-
-                                <span>
-                                PNG, JPG or WEBP. Recommended size 800 × 800px.
+                            <span>
+                                PNG, JPG or WEBP. Maximum size 2MB.
                             </span>
 
-                            </div>
-
-
-                            <label
-                                for="category_image"
-                                class="category-edit-upload__btn"
-                            >
-
-                                <i class="ri-upload-2-line"></i>
-
-                                Choose Image
-
-                            </label>
-
-
-                            <input
-                                type="file"
-                                id="category_image"
-                                name="category_image"
-                                accept=".jpg,.jpeg,.png,.webp"
-                                hidden
-                            >
-
                         </div>
 
+                        <label
+                            for="image"
+                            class="category-create-image-upload__btn"
+                        >
+
+                            <i class="ri-upload-2-line"></i>
+
+                            Choose Image
+
+                        </label>
+
+                        <input
+                            type="file"
+                            id="image"
+                            name="category_image"
+                            accept=".jpg,.jpeg,.png,.webp"
+                            hidden
+                        >
+
                     </div>
+
+
+                    {{-- EXISTING / NEW IMAGE PREVIEW --}}
+                    <div
+                        class="category-create-image-preview"
+                        id="categoryImagePreview"
+                    >
+
+                        @if($category->image)
+
+                            <img
+                                src="{{ asset($category->image) }}"
+                                alt="{{ $category->name }}"
+                            >
+
+                        @endif
+
+                    </div>
+
+
+                    @error('category_image')
+
+                    <div class="category-create-error">
+                        {{ $message }}
+                    </div>
+
+                    @enderror
 
                 </div>
 
             </div>
 
 
-            {{-- ============================================================ --}}
             {{-- SEO --}}
-            {{-- ============================================================ --}}
+            <div class="category-create-card">
 
-            <div class="category-edit-card">
-
-                <div class="category-edit-card__header">
+                <div class="category-create-card__header">
 
                     <div>
 
@@ -584,14 +574,12 @@
 
                 </div>
 
+                <div class="category-create-card__body">
 
-                <div class="category-edit-card__body">
+                    <div class="category-create-grid">
 
-                    <div class="category-edit-grid">
-
-
-                        {{-- Meta Title --}}
-                        <div class="category-edit-field category-edit-field--full">
+                        {{-- META TITLE --}}
+                        <div class="category-create-field category-create-field--full">
 
                             <label for="meta_title">
                                 Meta Title
@@ -601,9 +589,18 @@
                                 type="text"
                                 id="meta_title"
                                 name="meta_title"
-                                value="Electronics | Baobab Atlas"
-                                placeholder="e.g. Electronics | Baobab Atlas"
+                                value="{{ old('meta_title', $category->meta_title) }}"
+                                maxlength="60"
+                                placeholder="e.g. Smartphones | Baobab Atlas"
                             >
+
+                            @error('meta_title')
+
+                            <div class="category-create-error">
+                                {{ $message }}
+                            </div>
+
+                            @enderror
 
                             <small>
                                 Recommended length is around 50–60 characters.
@@ -612,8 +609,8 @@
                         </div>
 
 
-                        {{-- Meta Description --}}
-                        <div class="category-edit-field category-edit-field--full">
+                        {{-- META DESCRIPTION --}}
+                        <div class="category-create-field category-create-field--full">
 
                             <label for="meta_description">
                                 Meta Description
@@ -623,8 +620,17 @@
                                 id="meta_description"
                                 name="meta_description"
                                 rows="5"
+                                maxlength="160"
                                 placeholder="Write a short description for search engines..."
-                            >Shop electronics at Baobab Atlas including smartphones, laptops, headphones and other technology products.</textarea>
+                            >{{ old('meta_description', $category->meta_description) }}</textarea>
+
+                            @error('meta_description')
+
+                            <div class="category-create-error">
+                                {{ $message }}
+                            </div>
+
+                            @enderror
 
                             <small>
                                 Recommended length is around 150–160 characters.
@@ -639,30 +645,24 @@
             </div>
 
 
-            {{-- ============================================================ --}}
             {{-- FORM ACTIONS --}}
-            {{-- ============================================================ --}}
-
-            <div class="category-edit-actions">
+            <div class="category-create-actions">
 
                 <a
-                    href="{{ route('admin-category-details', $category) }}"
-                    class="category-edit-actions__cancel"
+                    href="{{ route('admin-categories') }}"
+                    class="category-create-actions__cancel"
                 >
-
                     Cancel
-
                 </a>
-
 
                 <button
                     type="submit"
-                    class="category-edit-actions__submit"
+                    class="category-create-actions__submit"
                 >
 
                     <i class="ri-save-line"></i>
 
-                    Save Changes
+                    Update Category
 
                 </button>
 
@@ -673,3 +673,391 @@
     </div>
 
 @endsection
+
+
+@push('scripts')
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const page =
+                document.querySelector(
+                    '.category-create-page'
+                );
+
+            if (!page) {
+                return;
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | CATEGORY TYPE
+            |--------------------------------------------------------------------------
+            */
+
+            const typeInputs =
+                page.querySelectorAll(
+                    'input[name="category_type"]'
+                );
+
+            const parentField =
+                page.querySelector(
+                    '#parentCategoryField'
+                );
+
+            const parentSelect =
+                page.querySelector(
+                    '#parent_id'
+                );
+
+
+            function toggleParentField() {
+
+                const selected =
+                    page.querySelector(
+                        'input[name="category_type"]:checked'
+                    );
+
+                if (
+                    !selected ||
+                    !parentField
+                ) {
+                    return;
+                }
+
+
+                if (
+                    selected.value === 'subcategory'
+                ) {
+
+                    parentField.style.display =
+                        'block';
+
+
+                    if (parentSelect) {
+
+                        parentSelect.required =
+                            true;
+
+                    }
+
+                } else {
+
+                    parentField.style.display =
+                        'none';
+
+
+                    if (parentSelect) {
+
+                        parentSelect.required =
+                            false;
+
+                    }
+
+                }
+
+            }
+
+
+            typeInputs.forEach(function (input) {
+
+                input.addEventListener(
+                    'change',
+                    toggleParentField
+                );
+
+            });
+
+
+            toggleParentField();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | SLUG
+            |--------------------------------------------------------------------------
+            */
+
+            const nameInput =
+                page.querySelector('#name');
+
+            const slugInput =
+                page.querySelector('#slug');
+
+
+            if (
+                nameInput &&
+                slugInput
+            ) {
+
+                nameInput.addEventListener(
+                    'input',
+                    function () {
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Existing slug is treated as manual
+                        |--------------------------------------------------------------------------
+                        */
+
+                        if (
+                            slugInput.dataset.manual === 'true'
+                        ) {
+                            return;
+                        }
+
+
+                        slugInput.value =
+                            this.value
+                                .toLowerCase()
+                                .trim()
+                                .replace(
+                                    /[^a-z0-9]+/g,
+                                    '-'
+                                )
+                                .replace(
+                                    /^-+|-+$/g,
+                                    ''
+                                );
+
+                    }
+                );
+
+
+                slugInput.addEventListener(
+                    'input',
+                    function () {
+
+                        this.dataset.manual =
+                            this.value.trim().length > 0
+                                ? 'true'
+                                : 'false';
+
+                    }
+                );
+
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | IMAGE PREVIEW
+            |--------------------------------------------------------------------------
+            */
+
+            const imageInput =
+                page.querySelector('#image');
+
+            const imagePreview =
+                page.querySelector(
+                    '#categoryImagePreview'
+                );
+
+
+            if (
+                imageInput &&
+                imagePreview
+            ) {
+
+                imageInput.addEventListener(
+                    'change',
+                    function () {
+
+                        const file =
+                            this.files[0];
+
+
+                        if (!file) {
+                            return;
+                        }
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Validate Image
+                        |--------------------------------------------------------------------------
+                        */
+
+                        if (
+                            !file.type.startsWith(
+                                'image/'
+                            )
+                        ) {
+
+                            this.value = '';
+
+                            return;
+
+                        }
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | File Size - 2MB
+                        |--------------------------------------------------------------------------
+                        */
+
+                        if (
+                            file.size >
+                            2 * 1024 * 1024
+                        ) {
+
+                            alert(
+                                'Image size must be less than 2MB.'
+                            );
+
+                            this.value = '';
+
+                            return;
+
+                        }
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Preview
+                        |--------------------------------------------------------------------------
+                        */
+
+                        const reader =
+                            new FileReader();
+
+
+                        reader.onload =
+                            function (event) {
+
+                                imagePreview.innerHTML = '';
+
+
+                                const image =
+                                    document.createElement(
+                                        'img'
+                                    );
+
+
+                                image.src =
+                                    event.target.result;
+
+
+                                image.alt =
+                                    'Category preview';
+
+
+                                imagePreview.appendChild(
+                                    image
+                                );
+
+                            };
+
+
+                        reader.readAsDataURL(
+                            file
+                        );
+
+                    }
+                );
+
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | FORM SUBMIT
+            |--------------------------------------------------------------------------
+            */
+
+            const form =
+                page.querySelector(
+                    '.category-create-form'
+                );
+
+
+            if (form) {
+
+                form.addEventListener(
+                    'submit',
+                    function (event) {
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Ensure Subcategory Has Parent
+                        |--------------------------------------------------------------------------
+                        */
+
+                        const selectedType =
+                            page.querySelector(
+                                'input[name="category_type"]:checked'
+                            );
+
+
+                        if (
+                            selectedType &&
+                            selectedType.value === 'subcategory' &&
+                            parentSelect &&
+                            !parentSelect.value
+                        ) {
+
+                            event.preventDefault();
+
+                            parentSelect.focus();
+
+                            return;
+
+                        }
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Prevent Double Submit
+                        |--------------------------------------------------------------------------
+                        */
+
+                        const submitButton =
+                            form.querySelector(
+                                '.category-create-actions__submit'
+                            );
+
+
+                        if (
+                            submitButton &&
+                            submitButton.disabled
+                        ) {
+
+                            event.preventDefault();
+
+                            return;
+
+                        }
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Disable Button
+                        |--------------------------------------------------------------------------
+                        */
+
+                        if (submitButton) {
+
+                            submitButton.disabled =
+                                true;
+
+
+                            submitButton.innerHTML = `
+                                <i class="ri-loader-4-line"></i>
+                                Updating...
+                            `;
+
+                        }
+
+                    }
+                );
+
+            }
+
+        });
+
+    </script>
+
+@endpush

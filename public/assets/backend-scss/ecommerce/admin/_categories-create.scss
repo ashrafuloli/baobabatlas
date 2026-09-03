@@ -780,6 +780,16 @@
 
 }
 
+.category-create-image-preview {
+    img {
+        max-width: 400px;
+        padding: 18px;
+        border: 1px dashed argb($theme-color, 0.35);
+        border-radius: 10px;
+        margin-top: 20px;
+    }
+}
+
 
 /*
 |--------------------------------------------------------------------------

@@ -5,6 +5,11 @@
 sass --watch "/Users/ashrafuloli/www/baobabatlas/public/assets/frontend-scss/frontend.scss":"/Users/ashrafuloli/www/baobabatlas/public/assets/css/frontend.css"
 ```
 
+windows
+```bash
+sass --watch "/Users/ashrafuloli/www/baobabatlas/public/assets/frontend-scss/frontend.scss":"/Users/ashrafuloli/www/baobabatlas/public/assets/css/frontend.css"
+```
+
 ## Start Back end scss
 
 ```bash

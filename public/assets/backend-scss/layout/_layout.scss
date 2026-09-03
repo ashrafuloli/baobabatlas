@@ -172,8 +172,9 @@
                         margin-left: auto;
                     }
                 }
-                &.open{
-                    ul.submenu{
+
+                &.open {
+                    ul.submenu {
                         display: block;
                     }
                 }
@@ -190,8 +191,11 @@
                     a {
                         background: transparent;
                         font-size: 14px;
+                    }
 
-                        &:hover{
+                    &.active,
+                    &:hover {
+                        a {
                             color: $theme-color;
                             background: argb($theme-color, 0.1);
                         }
@@ -432,9 +436,8 @@
 
     background: #fff !important;
 
-    box-shadow:
-        0 8px 30px rgba(0, 0, 0, .10),
-        0 2px 8px rgba(0, 0, 0, .04) !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, .10),
+    0 2px 8px rgba(0, 0, 0, .04) !important;
 
     font-family: $body-fonts !important;
 }
