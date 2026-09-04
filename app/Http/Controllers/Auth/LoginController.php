@@ -84,7 +84,7 @@ final class LoginController extends Controller
         }
 
         return redirect()
-            ->intended(route('dashboard'))
+            ->intended(route('my-account'))
             ->with(
                 'success',
                 'Welcome back, ' . $user->name . '!'
@@ -100,7 +100,7 @@ final class LoginController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()
-            ->route('login')
+            ->route('home')
             ->with(
                 'success',
                 'You have been logged out successfully.'

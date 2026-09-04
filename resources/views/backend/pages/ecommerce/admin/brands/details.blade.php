@@ -1,782 +1,355 @@
 @extends('backend.layouts.backend')
 
-@section('title', 'Category Details')
+@section('title', 'Brand Details')
 
 @section('content')
-
-    <div class="category-details-page">
-
-        {{-- ================================================================ --}}
-        {{-- PAGE HEADER --}}
-        {{-- ================================================================ --}}
-
-        <div class="category-details-page__header">
-
-            <div>
-
-            <span class="category-details-page__eyebrow">
-                Ecommerce / Categories
-            </span>
-
-                <div class="category-details-page__title-row">
-
-                    <div class="category-details-page__title-icon">
-
-                        <i class="ri-smartphone-line"></i>
-
-                    </div>
-
-                    <div>
-
-                        <div class="category-details-page__title">
-
-                            <h1>
-                                Electronics
-                            </h1>
-
-                            <span class="category-details-status category-details-status--active">
-                            <i></i>
-                            Active
-                        </span>
-
-                        </div>
-
-                        <p>
-                            Main product category
-                        </p>
-
-                    </div>
-
+    <div class="brand-details-page">
+        <div class="brand-details-page__header">
+            <div class="brand-details-page__header-content">
+                <div class="brand-details-page__eyebrow">
+                    <i class="ri-price-tag-3-line"></i>
+                    Brand Management
                 </div>
 
+                <div class="brand-details-page__title-row">
+                    <div>
+                        <h1>Brand Details</h1>
+                        <p>View brand information, status, SEO details and quick actions.</p>
+                    </div>
+
+                    <div class="brand-details-page__actions">
+                        <a
+                            href="{{ route('admin-brands') }}"
+                            class="brand-details-page__action brand-details-page__action--light"
+                        >
+                            <i class="ri-arrow-left-line"></i>
+                            <span>Back</span>
+                        </a>
+
+                        <a
+                            href="{{ route('admin-brands.edit', $brand) }}"
+                            class="brand-details-page__action brand-details-page__action--primary"
+                        >
+                            <i class="ri-edit-line"></i>
+                            <span>Edit Brand</span>
+                        </a>
+                    </div>
+                </div>
             </div>
-
-
-            <div class="category-details-page__actions">
-
-                {{-- Back to Categories --}}
-                <a
-                    href="{{ route('admin-categories') }}"
-                    class="category-details-btn category-details-btn--secondary"
-                >
-
-                    <i class="ri-arrow-left-line"></i>
-
-                    Back to Categories
-
-                </a>
-
-
-                {{-- Edit route will be added later --}}
-                <button
-                    type="button"
-                    class="category-details-btn category-details-btn--primary"
-                >
-
-                    <i class="ri-edit-line"></i>
-
-                    Edit Category
-
-                </button>
-
-            </div>
-
         </div>
 
-
-        {{-- ================================================================ --}}
-        {{-- OVERVIEW --}}
-        {{-- ================================================================ --}}
-
-        <div class="category-details-overview">
-
-
-            {{-- Category Information --}}
-            <div class="category-details-overview__main">
-
-                <div class="category-details-card">
-
-                    <div class="category-details-card__header">
-
+        <div class="brand-details-page__content">
+            <div class="brand-details-page__main">
+                {{-- Brand Overview --}}
+                <div class="brand-details-page__card brand-details-page__overview">
+                    <div class="brand-details-page__card-header">
                         <div>
-
-                            <h4>
-                                Category Information
-                            </h4>
-
-                            <p>
-                                Basic information about this category.
-                            </p>
-
+                            <h2>Brand Overview</h2>
+                            <p>Basic information about this brand.</p>
                         </div>
 
+                        @if ($brand->status)
+                            <span class="brand-details-page__badge brand-details-page__badge--success">
+                                <i class="ri-checkbox-circle-line"></i>
+                                Active
+                            </span>
+                        @else
+                            <span class="brand-details-page__badge brand-details-page__badge--danger">
+                                <i class="ri-close-circle-line"></i>
+                                Inactive
+                            </span>
+                        @endif
                     </div>
 
-
-                    <div class="category-details-card__body">
-
-                        <div class="category-info-grid">
-
-
-                            <div class="category-info-item">
-
-                            <span>
-                                Category Name
-                            </span>
-
-                                <strong>
-                                    Electronics
-                                </strong>
-
-                            </div>
-
-
-                            <div class="category-info-item">
-
-                            <span>
-                                Slug
-                            </span>
-
-                                <strong>
-                                    electronics
-                                </strong>
-
-                            </div>
-
-
-                            <div class="category-info-item">
-
-                            <span>
-                                Category Type
-                            </span>
-
-                                <strong>
-                                    Main Category
-                                </strong>
-
-                            </div>
-
-
-                            <div class="category-info-item">
-
-                            <span>
-                                Parent Category
-                            </span>
-
-                                <strong>
-                                    None
-                                </strong>
-
-                            </div>
-
-
-                            <div class="category-info-item category-info-item--full">
-
-                            <span>
-                                Description
-                            </span>
-
-                                <p>
-                                    Explore our collection of electronics including
-                                    smartphones, laptops, headphones, accessories
-                                    and other technology products.
-                                </p>
-
-                            </div>
-
-
+                    <div class="brand-details-page__overview-body">
+                        <div class="brand-details-page__logo">
+                            @if ($brand->logo)
+                                <img
+                                    src="{{ asset($brand->logo) }}"
+                                    alt="{{ $brand->name }}"
+                                    data-brand-logo
+                                >
+                            @else
+                                <div class="brand-details-page__logo-placeholder">
+                                    <i class="ri-price-tag-3-line"></i>
+                                </div>
+                            @endif
                         </div>
 
-                    </div>
+                        <div class="brand-details-page__brand-info">
+                            <h3>{{ $brand->name }}</h3>
 
+                            <div class="brand-details-page__slug">
+                                <span>Slug</span>
+                                <code>{{ $brand->slug }}</code>
+                            </div>
+
+                            @if ($brand->description)
+                                <div class="brand-details-page__description">
+                                    <span class="brand-details-page__label">Description</span>
+                                    <p>{{ $brand->description }}</p>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
                 </div>
 
-
-                {{-- Category Image --}}
-                <div class="category-details-card">
-
-                    <div class="category-details-card__header">
-
-                        <div>
-
-                            <h4>
-                                Category Image
-                            </h4>
-
-                            <p>
-                                Main image used to represent this category.
-                            </p>
-
+                {{-- Description --}}
+                @if ($brand->description)
+                    <div class="brand-details-page__card">
+                        <div class="brand-details-page__card-header">
+                            <div>
+                                <h2>Description</h2>
+                                <p>Full brand description.</p>
+                            </div>
                         </div>
 
-                    </div>
-
-
-                    <div class="category-details-card__body">
-
-                        <div class="category-details-image">
-
-                            <img
-                                src="https://placehold.co/800x500"
-                                alt="Electronics Category"
-                            >
-
+                        <div class="brand-details-page__text">
+                            {!! nl2br(e($brand->description)) !!}
                         </div>
-
                     </div>
-
-                </div>
-
+                @endif
 
                 {{-- SEO --}}
-                <div class="category-details-card">
-
-                    <div class="category-details-card__header">
-
+                <div class="brand-details-page__card">
+                    <div class="brand-details-page__card-header">
                         <div>
-
-                            <h4>
-                                SEO
-                            </h4>
-
-                            <p>
-                                Search engine optimization information.
-                            </p>
-
+                            <h2>SEO Information</h2>
+                            <p>Search engine optimization information for this brand.</p>
                         </div>
 
+                        <i class="ri-seo-line brand-details-page__card-icon"></i>
                     </div>
 
+                    <div class="brand-details-page__seo">
+                        <div class="brand-details-page__seo-item">
+                            <span class="brand-details-page__label">Meta Title</span>
 
-                    <div class="category-details-card__body">
-
-                        <div class="category-info-grid">
-
-
-                            <div class="category-info-item category-info-item--full">
-
-                            <span>
-                                Meta Title
-                            </span>
-
-                                <strong>
-                                    Electronics | Baobab Atlas
-                                </strong>
-
+                            <div class="brand-details-page__seo-value">
+                                {{ $brand->meta_title ?: 'Not provided' }}
                             </div>
-
-
-                            <div class="category-info-item category-info-item--full">
-
-                            <span>
-                                Meta Description
-                            </span>
-
-                                <p>
-                                    Shop electronics at Baobab Atlas including
-                                    smartphones, laptops, headphones and other
-                                    technology products.
-                                </p>
-
-                            </div>
-
-
-                            <div class="category-info-item category-info-item--full">
-
-                            <span>
-                                Slug
-                            </span>
-
-                                <strong>
-                                    electronics
-                                </strong>
-
-                            </div>
-
-
                         </div>
 
-                    </div>
+                        <div class="brand-details-page__seo-item">
+                            <span class="brand-details-page__label">Meta Description</span>
 
+                            <div class="brand-details-page__seo-value">
+                                {{ $brand->meta_description ?: 'Not provided' }}
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
+                {{-- Record Information --}}
+                <div class="brand-details-page__card">
+                    <div class="brand-details-page__card-header">
+                        <div>
+                            <h2>Record Information</h2>
+                            <p>System information for this brand.</p>
+                        </div>
+                    </div>
+
+                    <div class="brand-details-page__record-grid">
+                        <div class="brand-details-page__record-item">
+                            <span>Brand ID</span>
+                            <strong>#{{ $brand->id }}</strong>
+                        </div>
+
+                        <div class="brand-details-page__record-item">
+                            <span>Sort Order</span>
+                            <strong>{{ $brand->sort_order }}</strong>
+                        </div>
+
+                        <div class="brand-details-page__record-item">
+                            <span>Created</span>
+                            <strong>{{ $brand->created_at?->format('d M Y, h:i A') }}</strong>
+                        </div>
+
+                        <div class="brand-details-page__record-item">
+                            <span>Last Updated</span>
+                            <strong>{{ $brand->updated_at?->format('d M Y, h:i A') }}</strong>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-
-            {{-- ============================================================ --}}
-            {{-- SIDEBAR --}}
-            {{-- ============================================================ --}}
-
-            <aside class="category-details-overview__sidebar">
-
-
-                {{-- Statistics --}}
-                <div class="category-details-card">
-
-                    <div class="category-details-card__header">
-
+            <aside class="brand-details-page__sidebar">
+                {{-- Status --}}
+                <div class="brand-details-page__card">
+                    <div class="brand-details-page__card-header">
                         <div>
-
-                            <h4>
-                                Category Overview
-                            </h4>
-
+                            <h2>Brand Status</h2>
+                            <p>Current brand settings.</p>
                         </div>
-
                     </div>
 
-
-                    <div class="category-details-card__body">
-
-                        <div class="category-stat-list">
-
-
-                            <div class="category-stat-item">
-
-                                <div class="category-stat-item__icon">
-                                    <i class="ri-shopping-bag-3-line"></i>
-                                </div>
-
-                                <div>
-
-                                <span>
-                                    Products
-                                </span>
-
-                                    <strong>
-                                        48
-                                    </strong>
-
-                                </div>
-
-                            </div>
-
-
-                            <div class="category-stat-item">
-
-                                <div class="category-stat-item__icon">
-                                    <i class="ri-folder-open-line"></i>
-                                </div>
-
-                                <div>
-
-                                <span>
-                                    Subcategories
-                                </span>
-
-                                    <strong>
-                                        5
-                                    </strong>
-
-                                </div>
-
-                            </div>
-
-
-                            <div class="category-stat-item">
-
-                                <div class="category-stat-item__icon">
-                                    <i class="ri-eye-line"></i>
-                                </div>
-
-                                <div>
-
-                                <span>
-                                    Status
-                                </span>
-
-                                    <strong class="category-stat-item__success">
-                                        Active
-                                    </strong>
-
-                                </div>
-
-                            </div>
-
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                {{-- Category Dates --}}
-                <div class="category-details-card">
-
-                    <div class="category-details-card__header">
-
-                        <div>
-
-                            <h4>
-                                Category Dates
-                            </h4>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="category-details-card__body">
-
-                        <div class="category-date-list">
-
-
-                            <div class="category-date-item">
-
-                            <span>
-                                Created
-                            </span>
-
-                                <strong>
-                                    Aug 01, 2026
-                                </strong>
-
-                            </div>
-
-
-                            <div class="category-date-item">
-
-                            <span>
-                                Last Updated
-                            </span>
-
-                                <strong>
-                                    Aug 15, 2026
-                                </strong>
-
-                            </div>
-
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                {{-- Category Status --}}
-                <div class="category-details-card">
-
-                    <div class="category-details-card__header">
-
-                        <div>
-
-                            <h4>
-                                Category Status
-                            </h4>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="category-details-card__body">
-
-                        <div class="category-status-box">
-
-                            <div class="category-status-box__icon">
-
-                                <i class="ri-checkbox-circle-line"></i>
-
+                    <div class="brand-details-page__status-list">
+                        <div class="brand-details-page__status-item">
+                            <div class="brand-details-page__status-icon">
+                                <i class="ri-toggle-line"></i>
                             </div>
 
                             <div>
+                                <span>Status</span>
 
-                                <strong>
-                                    Active
+                                <strong class="{{ $brand->status ? 'is-success' : 'is-danger' }}">
+                                    {{ $brand->status ? 'Active' : 'Inactive' }}
                                 </strong>
+                            </div>
+                        </div>
 
-                                <span>
-                                This category is currently visible
-                                in the store.
-                            </span>
-
+                        <div class="brand-details-page__status-item">
+                            <div class="brand-details-page__status-icon">
+                                <i class="ri-star-line"></i>
                             </div>
 
+                            <div>
+                                <span>Featured</span>
+
+                                <strong class="{{ $brand->featured ? 'is-success' : 'is-muted' }}">
+                                    {{ $brand->featured ? 'Yes' : 'No' }}
+                                </strong>
+                            </div>
                         </div>
 
-                    </div>
+                        <div class="brand-details-page__status-item">
+                            <div class="brand-details-page__status-icon">
+                                <i class="ri-sort-asc"></i>
+                            </div>
 
+                            <div>
+                                <span>Sort Order</span>
+                                <strong>{{ $brand->sort_order }}</strong>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
+                {{-- Quick Actions --}}
+                <div class="brand-details-page__card">
+                    <div class="brand-details-page__card-header">
+                        <div>
+                            <h2>Quick Actions</h2>
+                            <p>Manage this brand quickly.</p>
+                        </div>
+                    </div>
 
+                    <div class="brand-details-page__quick-actions">
+                        <a
+                            href="{{ route('admin-brands.edit', $brand) }}"
+                            class="brand-details-page__quick-action"
+                        >
+                            <span class="brand-details-page__quick-action-icon">
+                                <i class="ri-edit-line"></i>
+                            </span>
+
+                            <span class="brand-details-page__quick-action-content">
+                                <strong>Edit Brand</strong>
+                                <small>Update brand information</small>
+                            </span>
+
+                            <i class="ri-arrow-right-s-line"></i>
+                        </a>
+
+                        <a
+                            href="{{ route('admin-brands') }}"
+                            class="brand-details-page__quick-action"
+                        >
+                            <span class="brand-details-page__quick-action-icon">
+                                <i class="ri-list-check-2"></i>
+                            </span>
+
+                            <span class="brand-details-page__quick-action-content">
+                                <strong>All Brands</strong>
+                                <small>View all brands</small>
+                            </span>
+
+                            <i class="ri-arrow-right-s-line"></i>
+                        </a>
+                    </div>
+                </div>
+
+                {{-- Delete --}}
+                <div class="brand-details-page__card brand-details-page__danger-card">
+                    <div class="brand-details-page__danger-content">
+                        <div class="brand-details-page__danger-icon">
+                            <i class="ri-delete-bin-line"></i>
+                        </div>
+
+                        <div>
+                            <h3>Delete Brand</h3>
+                            <p>
+                                This action cannot be undone. Make sure this brand is no longer needed.
+                            </p>
+                        </div>
+                    </div>
+
+                    <form
+                        action="{{ route('admin-brands.destroy', $brand) }}"
+                        method="POST"
+                        data-delete-brand-form
+                    >
+                        @csrf
+                        @method('DELETE')
+
+                        <button type="submit" class="brand-details-page__delete-button">
+                            <i class="ri-delete-bin-line"></i>
+                            Delete Brand
+                        </button>
+                    </form>
+                </div>
             </aside>
-
         </div>
-
-
-        {{-- ================================================================ --}}
-        {{-- SUBCATEGORIES --}}
-        {{-- ================================================================ --}}
-
-        <div class="category-details-card">
-
-            <div class="category-details-card__header">
-
-                <div>
-
-                    <h4>
-                        Subcategories
-                    </h4>
-
-                    <p>
-                        Categories that belong to Electronics.
-                    </p>
-
-                </div>
-
-
-                <span class="category-details-count">
-                5 Subcategories
-            </span>
-
-            </div>
-
-
-            <div class="category-details-card__body">
-
-                <div class="category-subcategories">
-
-
-                    {{-- Subcategory 1 --}}
-                    <div class="category-subcategory">
-
-                        <div class="category-subcategory__icon">
-                            <i class="ri-smartphone-line"></i>
-                        </div>
-
-                        <div class="category-subcategory__content">
-
-                            <strong>
-                                Smartphones
-                            </strong>
-
-                            <span>
-                            18 Products
-                        </span>
-
-                        </div>
-
-                        <span class="category-details-status category-details-status--active">
-                        <i></i>
-                        Active
-                    </span>
-
-                    </div>
-
-
-                    {{-- Subcategory 2 --}}
-                    <div class="category-subcategory">
-
-                        <div class="category-subcategory__icon">
-                            <i class="ri-macbook-line"></i>
-                        </div>
-
-                        <div class="category-subcategory__content">
-
-                            <strong>
-                                Laptops
-                            </strong>
-
-                            <span>
-                            12 Products
-                        </span>
-
-                        </div>
-
-                        <span class="category-details-status category-details-status--active">
-                        <i></i>
-                        Active
-                    </span>
-
-                    </div>
-
-
-                    {{-- Subcategory 3 --}}
-                    <div class="category-subcategory">
-
-                        <div class="category-subcategory__icon">
-                            <i class="ri-headphone-line"></i>
-                        </div>
-
-                        <div class="category-subcategory__content">
-
-                            <strong>
-                                Headphones
-                            </strong>
-
-                            <span>
-                            8 Products
-                        </span>
-
-                        </div>
-
-                        <span class="category-details-status category-details-status--active">
-                        <i></i>
-                        Active
-                    </span>
-
-                    </div>
-
-
-                    {{-- Subcategory 4 --}}
-                    <div class="category-subcategory">
-
-                        <div class="category-subcategory__icon">
-                            <i class="ri-keyboard-line"></i>
-                        </div>
-
-                        <div class="category-subcategory__content">
-
-                            <strong>
-                                Computer Accessories
-                            </strong>
-
-                            <span>
-                            6 Products
-                        </span>
-
-                        </div>
-
-                        <span class="category-details-status category-details-status--active">
-                        <i></i>
-                        Active
-                    </span>
-
-                    </div>
-
-
-                    {{-- Subcategory 5 --}}
-                    <div class="category-subcategory">
-
-                        <div class="category-subcategory__icon">
-                            <i class="ri-camera-line"></i>
-                        </div>
-
-                        <div class="category-subcategory__content">
-
-                            <strong>
-                                Cameras
-                            </strong>
-
-                            <span>
-                            4 Products
-                        </span>
-
-                        </div>
-
-                        <span class="category-details-status category-details-status--inactive">
-                        <i></i>
-                        Inactive
-                    </span>
-
-                    </div>
-
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        {{-- ================================================================ --}}
-        {{-- PRODUCT SUMMARY --}}
-        {{-- ================================================================ --}}
-
-        <div class="category-details-card">
-
-            <div class="category-details-card__header">
-
-                <div>
-
-                    <h4>
-                        Product Summary
-                    </h4>
-
-                    <p>
-                        Product distribution within this category.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div class="category-details-card__body">
-
-                <div class="category-product-summary">
-
-
-                    <div class="category-product-summary__item">
-
-                        <div class="category-product-summary__icon">
-                            <i class="ri-checkbox-circle-line"></i>
-                        </div>
-
-                        <div>
-
-                        <span>
-                            Active Products
-                        </span>
-
-                            <strong>
-                                42
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="category-product-summary__item">
-
-                        <div class="category-product-summary__icon category-product-summary__icon--warning">
-                            <i class="ri-draft-line"></i>
-                        </div>
-
-                        <div>
-
-                        <span>
-                            Draft Products
-                        </span>
-
-                            <strong>
-                                4
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="category-product-summary__item">
-
-                        <div class="category-product-summary__icon category-product-summary__icon--danger">
-                            <i class="ri-error-warning-line"></i>
-                        </div>
-
-                        <div>
-
-                        <span>
-                            Out of Stock
-                        </span>
-
-                            <strong>
-                                2
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const page = document.querySelector('.brand-details-page');
+
+            if (!page) {
+                return;
+            }
+
+            const logo = page.querySelector('[data-brand-logo]');
+
+            if (logo) {
+                logo.addEventListener('error', () => {
+                    const placeholder = document.createElement('div');
+
+                    placeholder.className = 'brand-details-page__logo-placeholder';
+                    placeholder.innerHTML = '<i class="ri-price-tag-3-line"></i>';
+
+                    logo.replaceWith(placeholder);
+                });
+            }
+
+            const deleteForm = page.querySelector('[data-delete-brand-form]');
+
+            if (deleteForm) {
+                deleteForm.addEventListener('submit', (event) => {
+                    const confirmed = window.confirm(
+                        'Are you sure you want to delete this brand? This action cannot be undone.'
+                    );
+
+                    if (!confirmed) {
+                        event.preventDefault();
+                    }
+                });
+            }
+
+            const quickActions = page.querySelectorAll(
+                '.brand-details-page__quick-action'
+            );
+
+            quickActions.forEach((action) => {
+                action.addEventListener('mouseenter', () => {
+                    action.classList.add('is-hovered');
+                });
+
+                action.addEventListener('mouseleave', () => {
+                    action.classList.remove('is-hovered');
+                });
+            });
+        });
+    </script>
 @endsection

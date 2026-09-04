@@ -86,13 +86,13 @@ class CategoryController extends Controller
 
 
                     $query
-//                        ->withCount('products')
+                        ->withCount('products')
                         ->orderBy('sort_order')
                         ->orderBy('name');
 
                 }
-            ]);
-//            ->withCount('products');
+            ])
+            ->withCount('products');
 
 
         /*
@@ -290,7 +290,7 @@ class CategoryController extends Controller
         */
 
         $productsAssigned = Category::query()
-//            ->withCount('products')
+            ->withCount('products')
             ->get()
             ->sum('products_count');
 
@@ -302,13 +302,13 @@ class CategoryController extends Controller
         */
 
         $emptyCategories = Category::query()
-//            ->withCount('products')
+            ->withCount('products')
             ->having(
                 'products_count',
                 '=',
                 0
-            );
-//            ->count();
+            )
+            ->count();
 
 
         /*
@@ -574,11 +574,16 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        $category->load('parent', 'children');
+        $category->load([
+            'parent',
+            'children',
+        ]);
+
+        $category->loadCount('products');
 
         return view(
             'backend.pages.ecommerce.admin.categories.details',
-            compact('category')
+            compact('category'),
         );
     }
 

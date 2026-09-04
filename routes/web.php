@@ -6,6 +6,7 @@ use App\Http\Controllers\Backend\AttributeController;
 use App\Http\Controllers\Backend\BrandController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\PermissionController;
+use App\Http\Controllers\Backend\ProductController;
 use App\Http\Controllers\Backend\ProfileController;
 use App\Http\Controllers\Backend\RoleController;
 use App\Http\Controllers\Backend\SmartBuyController;
@@ -39,12 +40,22 @@ Route::view('/', 'frontend.pages.home.index')->name('home');
 
 Route::view('/shop', 'frontend.pages.shop.index')->name('shop');
 Route::view('/shop/{product}', 'frontend.pages.shop.details')->name('product-details');
-Route::view('/cart', 'frontend.pages.shop.cart')->name('product-cart');
-Route::view('/checkout', 'frontend.pages.shop.checkout')->name('product-cart');
-Route::view('/orders', 'frontend.pages.shop.orders')->name('product-cart');
-Route::view('/my-account', 'frontend.pages.shop.my-account')->name('product-cart');
-Route::view('/wishlist', 'frontend.pages.shop.wishlist')->name('product-cart');
+Route::view('/cart', 'frontend.pages.shop.cart')->name('my-cart');
+Route::view('/checkout', 'frontend.pages.shop.checkout')->name('my-checkout');
 
+Route::middleware('auth')->group(function () {
+    Route::view('/my-account', 'frontend.pages.shop.my-account')
+        ->name('my-account');
+
+    Route::view('/my-orders', 'frontend.pages.shop.my-orders')
+        ->name('my-orders');
+
+    Route::view('/my-wishlist', 'frontend.pages.shop.my-wishlist')
+        ->name('my-wishlist');
+
+    Route::view('/my-profile', 'frontend.pages.shop.my-profile')
+        ->name('my-profile');
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -890,38 +901,22 @@ Route::middleware('auth')
                         |--------------------------------------------------------------------------
                         */
 
-                        Route::view(
-                            '/products',
-                            'backend.pages.ecommerce.admin.products.index'
-                        )->name('admin-products');
-
-
-                        Route::view(
-                            '/products/create',
-                            'backend.pages.ecommerce.admin.products.create'
-                        )->name('admin-product-create');
-
-
-                        Route::get(
-                            '/products/{product}',
-                            function ($product) {
-                                return view(
-                                    'backend.pages.ecommerce.admin.products.details',
-                                    compact('product')
-                                );
-                            }
-                        )->name('admin-product-details');
-
-
-                        Route::get(
-                            '/products/{product}/edit',
-                            function ($product) {
-                                return view(
-                                    'backend.pages.ecommerce.admin.products.edit',
-                                    compact('product')
-                                );
-                            }
-                        )->name('admin-product-edit');
+                        Route::resource(
+                            'admin-products',
+                            ProductController::class,
+                        )
+                            ->parameters([
+                                'admin-products' => 'product',
+                            ])
+                            ->names([
+                                'index' => 'admin-products',
+                                'create' => 'admin-products.create',
+                                'store' => 'admin-products.store',
+                                'show' => 'admin-products.show',
+                                'edit' => 'admin-products.edit',
+                                'update' => 'admin-products.update',
+                                'destroy' => 'admin-products.destroy',
+                            ]);
 
 
                         /*
@@ -930,55 +925,28 @@ Route::middleware('auth')
                         |--------------------------------------------------------------------------
                         */
 
-//                        Route::view(
-//                            '/categories',
-//                            'backend.pages.ecommerce.admin.categories.index'
-//                        )->name('admin-categories');
-//
-//
-//                        Route::view(
-//                            '/categories/create',
-//                            'backend.pages.ecommerce.admin.categories.create'
-//                        )->name('admin-category-create');
-//
-//
-//                        Route::get(
-//                            '/categories/{category}',
-//                            function ($category) {
-//                                return view(
-//                                    'backend.pages.ecommerce.admin.categories.details',
-//                                    compact('category')
-//                                );
-//                            }
-//                        )->name('admin-category-details');
-//
-//
-//                        Route::get(
-//                            '/categories/{category}/edit',
-//                            function ($category) {
-//                                return view(
-//                                    'backend.pages.ecommerce.admin.categories.edit',
-//                                    compact('category')
-//                                );
-//                            }
-//                        )->name('admin-category-edit');
-
                         Route::resource(
                             'admin-categories',
                             CategoryController::class
                         )
-                        ->parameters([
-                            'admin-categories' => 'category',
-                        ])
-                        ->names([
-                            'index' => 'admin-categories',
-                            'create' => 'admin-categories.create',
-                            'store' => 'admin-categories.store',
-                            'show' => 'admin-categories.show',
-                            'edit' => 'admin-categories.edit',
-                            'update' => 'admin-categories.update',
-                            'destroy' => 'admin-categories.destroy',
-                        ]);
+                            ->parameters([
+                                'admin-categories' => 'category',
+                            ])
+                            ->names([
+                                'index' => 'admin-categories',
+                                'create' => 'admin-categories.create',
+                                'store' => 'admin-categories.store',
+                                'show' => 'admin-categories.show',
+                                'edit' => 'admin-categories.edit',
+                                'update' => 'admin-categories.update',
+                                'destroy' => 'admin-categories.destroy',
+                            ]);
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Brands
+                        |--------------------------------------------------------------------------
+                        */
 
                         Route::resource(
                             'admin-brands',
@@ -996,6 +964,12 @@ Route::middleware('auth')
                                 'update' => 'admin-brands.update',
                                 'destroy' => 'admin-brands.destroy',
                             ]);
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Attributes
+                        |--------------------------------------------------------------------------
+                        */
 
                         Route::resource(
                             'admin-attributes',

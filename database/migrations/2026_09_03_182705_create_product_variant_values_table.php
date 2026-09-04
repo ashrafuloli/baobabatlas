@@ -27,11 +27,14 @@ return new class extends Migration
 
             $table->timestamps();
 
-            $table->unique([
-                'product_variant_id',
-                'attribute_id',
-                'attribute_value_id',
-            ]);
+            $table->unique(
+                [
+                    'product_variant_id',
+                    'attribute_id',
+                    'attribute_value_id',
+                ],
+                'variant_value_unique',
+            );
 
             $table->index('product_variant_id');
             $table->index('attribute_id');

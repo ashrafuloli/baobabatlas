@@ -5,15 +5,8 @@
     ================================================= --}}
     <div class="sidebar-logo">
 
-        <a href="{{ auth()->user()->roles()->where('slug', 'admin')->exists()
-            ? route('admin-dashboard')
-            : route('dashboard') }}">
-
-            <img
-                src="{{ asset('logo.png') }}"
-                alt="Baobab Atlas"
-            >
-
+        <a href="{{route('home')}}">
+            <img src="{{ asset('logo.png') }}" alt="Baobab Atlas">
         </a>
 
         <div class="close-menu d-xl-none d-inline-flex">

@@ -52,8 +52,20 @@
                     <div class="header-account">
                         <div class="current"><i class="ri-account-circle-2-line"></i></div>
                         <div class="sub-menu">
-                            <a href="{{route('login')}}">login</a>
-                            <a href="{{route('register')}}">Register</a>
+                            @if(auth()->check())
+                                <a href="{{route('my-account')}}">My Account</a>
+                                <a href="{{route('my-profile')}}">My Profile</a>
+                                <a href="{{route('my-orders')}}">My Orders</a>
+                                <a href="{{route('my-wishlist')}}">My Wishlist</a>
+                                <a href="{{route('dashboard')}}">My Dashboard</a>
+                                <form action="{{ route('logout') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="logout-btn" data-logout-button>Logout</button>
+                                </form>
+                            @else
+                                <a href="{{route('login')}}">login</a>
+                                <a href="{{route('register')}}">Register</a>
+                            @endif
                         </div>
                     </div>
                     <div class="header-btns">
@@ -84,8 +96,20 @@
         </div>
         <div class="offcanvas-btns">
             <a href="{{route('contact')}}" class="quote">Get a Quote</a>
-            <a href="{{route('login')}}" class="login">login</a>
-            <a href="{{route('register')}}" class="register">Register</a>
+            @if(auth()->check())
+                <a href="{{route('my-account')}}">My Account</a>
+                <a href="{{route('my-profile')}}">My Profile</a>
+                <a href="{{route('my-orders')}}">My Orders</a>
+                <a href="{{route('my-wishlist')}}">My Wishlist</a>
+                <a href="{{route('dashboard')}}">My Dashboard</a>
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="logout-btn" data-logout-button>Logout</button>
+                </form>
+            @else
+                <a href="{{route('login')}}" class="login">login</a>
+                <a href="{{route('register')}}" class="register">Register</a>
+            @endif
         </div>
     </div>
     <div class="offcanvas-close">

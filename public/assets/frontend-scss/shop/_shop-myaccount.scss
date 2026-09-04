@@ -1,0 +1,612 @@
+@use "../common" as *;
+
+.my-account-page {
+
+    padding: 70px 0 80px;
+
+    background: $white;
+
+
+    // ==========================================
+    // Main Layout
+    // ==========================================
+
+
+    // ==========================================
+    // Sidebar
+    // ==========================================
+
+    &__sidebar {
+        min-height: 390px;
+        padding-right: 30px;
+
+        border-right: 1px solid $hr-color;
+    }
+
+    &__sidebar-heading {
+        padding: 0 15px 17px;
+        margin-bottom: 14px;
+
+        border-bottom: 1px solid $hr-color;
+
+        span {
+            display: block;
+
+            color: $heading-color;
+            font-family: $header-fonts;
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+    }
+
+
+    // ==========================================
+    // Navigation
+    // ==========================================
+
+    &__navigation {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    &__nav-link {
+        width: 100%;
+        min-height: 43px;
+        padding: 0 15px;
+
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        border: 0;
+        border-radius: 10px;
+
+        background: transparent;
+
+        color: $heading-color;
+        font-family: $body-fonts;
+        font-size: 15px;
+        font-weight: 500;
+        line-height: 1.5;
+
+        text-align: left;
+        text-decoration: none;
+
+        cursor: pointer;
+
+        @include transition(0.3s);
+
+
+        i {
+            width: 19px;
+
+            color: $body-color;
+            font-size: 18px;
+            line-height: 1;
+
+            @include transition(0.3s);
+        }
+
+
+        &:hover {
+
+            background: rgba($dark, 0.04);
+
+            color: $theme-color;
+
+
+            i {
+                color: $theme-color;
+            }
+        }
+
+
+        &--active {
+
+            background: rgba($dark, 0.06);
+
+            color: $heading-color;
+            font-weight: 600;
+
+
+            i {
+                color: $theme-color;
+            }
+        }
+
+
+        &--logout {
+
+            color: $body-color;
+
+
+            &:hover {
+
+                color: $danger;
+
+
+                i {
+                    color: $danger;
+                }
+            }
+        }
+
+
+        &:focus-visible {
+            outline: 2px solid $theme-color;
+            outline-offset: 2px;
+        }
+
+
+        &:disabled {
+            cursor: wait;
+            opacity: 0.7;
+        }
+    }
+
+
+    &__logout-form {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+
+    // ==========================================
+    // Content
+    // ==========================================
+
+    &__content {
+        min-width: 0;
+        padding-top: 2px;
+    }
+
+
+    // ==========================================
+    // Welcome
+    // ==========================================
+
+    &__welcome {
+        margin-bottom: 27px;
+    }
+
+
+    &__welcome-message {
+        margin: 0 0 13px;
+
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 4px;
+
+        color: $body-color;
+        font-family: $body-fonts;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 1.6;
+
+
+        strong {
+            color: $heading-color;
+            font-weight: 600;
+        }
+    }
+
+
+    &__description {
+        max-width: 950px;
+        margin: 0;
+
+        color: $body-color;
+        font-family: $body-fonts;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 1.7;
+
+
+        a {
+            color: $theme-color;
+            text-decoration: none;
+
+            @include transition(0.3s);
+
+
+            &:hover {
+                color: $theme-color-2;
+            }
+        }
+    }
+
+
+    // ==========================================
+    // Inline Logout
+    // ==========================================
+
+    &__inline-logout {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+
+        margin: 0;
+        padding: 0;
+
+        color: $body-color;
+        font-family: $body-fonts;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: inherit;
+    }
+
+
+    &__inline-logout button {
+        margin: 0;
+        padding: 0;
+
+        border: 0;
+
+        background: transparent;
+
+        color: $theme-color;
+        font: inherit;
+
+        cursor: pointer;
+
+        @include transition(0.3s);
+
+
+        &:hover {
+            color: $theme-color-2;
+        }
+
+
+        &:focus-visible {
+            outline: 2px solid $theme-color;
+            outline-offset: 2px;
+        }
+    }
+
+
+    // ==========================================
+    // Dashboard Cards
+    // ==========================================
+
+    &__cards {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+
+    &__card-form {
+        display: block;
+
+        min-width: 0;
+        width: 100%;
+
+        margin: 0;
+        padding: 0;
+    }
+
+
+    &__card {
+        position: relative;
+
+        width: 100%;
+        min-height: 130px;
+        padding: 24px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+
+        border: 1px solid $hr-color;
+        border-radius: 12px;
+
+        background: $white;
+
+        color: $heading-color;
+        font-family: $body-fonts;
+        text-decoration: none;
+
+        box-shadow: 0 2px 8px rgba($dark, 0.03);
+
+        cursor: pointer;
+
+        @include transition(0.3s);
+
+
+        &:hover {
+
+            border-color: rgba($theme-color, 0.25);
+
+            box-shadow: 0 8px 24px rgba($dark, 0.07);
+
+            transform: translateY(-3px);
+
+
+            .my-account-page__card-icon {
+                color: $theme-color;
+                transform: translateY(-2px);
+            }
+
+
+            .my-account-page__card-arrow {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+
+        &:focus-visible {
+            outline: 2px solid $theme-color;
+            outline-offset: 3px;
+        }
+
+
+        &--logout {
+
+            &:hover {
+
+                border-color: rgba($danger, 0.25);
+
+
+                .my-account-page__card-icon {
+                    color: $danger;
+                }
+
+
+                .my-account-page__card-arrow {
+                    color: $danger;
+                }
+            }
+        }
+
+
+        &.is-loading {
+
+            cursor: wait;
+            opacity: 0.7;
+
+
+            .my-account-page__card-arrow {
+                opacity: 0;
+            }
+        }
+    }
+
+
+    // ==========================================
+    // Card Icon
+    // ==========================================
+
+    &__card-icon {
+        margin-bottom: 12px;
+
+        color: rgba($dark, 0.28);
+
+        font-size: 42px;
+        line-height: 1;
+
+        @include transition(0.3s);
+    }
+
+
+    // ==========================================
+    // Card Title
+    // ==========================================
+
+    &__card-title {
+        color: $heading-color;
+
+        font-family: $body-fonts;
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 1.5;
+    }
+
+
+    // ==========================================
+    // Card Arrow
+    // ==========================================
+
+    &__card-arrow {
+        position: absolute;
+        top: 15px;
+        right: 16px;
+
+        color: $theme-color;
+
+        font-size: 18px;
+        line-height: 1;
+
+        opacity: 0;
+        transform: translateX(-5px);
+
+        @include transition(0.3s);
+    }
+
+
+    // ==========================================
+    // Large Devices
+    // ==========================================
+
+    @include mq('lg') {
+
+        padding: 60px 0 70px;
+
+
+        &__layout {
+            grid-template-columns: 225px minmax(0, 1fr);
+            gap: 25px;
+        }
+
+
+        &__sidebar {
+            padding-right: 25px;
+        }
+    }
+
+
+    // ==========================================
+    // Medium Devices
+    // ==========================================
+
+    @include mq('md') {
+
+        padding: 50px 0 60px;
+
+
+        &__layout {
+            grid-template-columns: 1fr;
+            gap: 35px;
+        }
+
+
+        &__sidebar {
+            min-height: auto;
+
+            padding-right: 0;
+            padding-bottom: 20px;
+
+            border-right: 0;
+            border-bottom: 1px solid $hr-color;
+        }
+
+
+        &__navigation {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 5px;
+        }
+
+
+        &__nav-link {
+            justify-content: center;
+
+            padding: 0 10px;
+
+            text-align: center;
+        }
+
+
+        &__nav-link i {
+            display: none;
+        }
+    }
+
+
+    // ==========================================
+    // Small Devices
+    // ==========================================
+
+    @include mq('sm') {
+
+        padding: 45px 0 55px;
+
+
+        &__navigation {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+
+        &__welcome-message,
+        &__description,
+        &__inline-logout {
+            font-size: 15px;
+        }
+
+
+        &__cards {
+            gap: 15px;
+        }
+
+
+        &__card {
+            min-height: 125px;
+            padding: 20px;
+        }
+
+
+        &__card-icon {
+            font-size: 38px;
+        }
+    }
+
+
+    // ==========================================
+    // Extra Small Devices
+    // ==========================================
+
+    @include mq('xs') {
+
+        padding: 35px 0 45px;
+
+
+        &__layout {
+            gap: 28px;
+        }
+
+
+        &__sidebar-heading {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+
+        &__navigation {
+            grid-template-columns: 1fr;
+        }
+
+
+        &__nav-link {
+            justify-content: flex-start;
+
+            min-height: 42px;
+            padding: 0 12px;
+
+            text-align: left;
+        }
+
+
+        &__nav-link i {
+            display: block;
+        }
+
+
+        &__welcome {
+            margin-bottom: 23px;
+        }
+
+
+        &__welcome-message {
+            align-items: flex-start;
+
+            line-height: 1.7;
+        }
+
+
+        &__description {
+            line-height: 1.65;
+        }
+
+
+        &__cards {
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+
+        &__card {
+            min-height: 115px;
+        }
+
+
+        &__card-arrow {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+}

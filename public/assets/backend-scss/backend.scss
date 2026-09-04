@@ -98,7 +98,7 @@
 
 @use "ecommerce/admin/brands-index";
 @use "ecommerce/admin/brands-create";
-//@use "ecommerce/admin/categories-details";
+@use "ecommerce/admin/brands-details";
 @use "ecommerce/admin/brands-edit";
 
 @use "ecommerce/admin/attribute-index";

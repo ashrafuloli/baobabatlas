@@ -3,1179 +3,698 @@
 @section('title', 'Products')
 
 @section('content')
-
-    <div class="products-page">
-
-        {{-- ================================================================ --}}
-        {{-- PAGE HEADER --}}
-        {{-- ================================================================ --}}
-
-        <div class="products-page__header">
-
+    <div class="product-index-page">
+        {{-- Header --}}
+        <div class="product-index-page__header">
             <div>
+                <span class="product-index-page__eyebrow">Ecommerce</span>
 
-            <span class="products-page__eyebrow">
-                Ecommerce
-            </span>
-
-                <h1>
+                <h1 class="product-index-page__title">
                     Products
                 </h1>
 
-                <p>
-                    Manage your ecommerce products, inventory and product information.
+                <p class="product-index-page__subtitle">
+                    Manage your products, inventory, and product information.
                 </p>
-
             </div>
 
-
-            {{-- Add Product --}}
             <a
-                href="{{ route('admin-product-create') }}"
-                class="products-page__add-btn"
+                href="{{ route('admin-products.create') }}"
+                class="product-index-page__add-button"
             >
-
                 <i class="ri-add-line"></i>
-
-                Add Product
-
+                <span>Add Product</span>
             </a>
-
         </div>
 
-
-        {{-- ================================================================ --}}
-        {{-- SUMMARY --}}
-        {{-- ================================================================ --}}
-
-        <div class="products-summary">
-
-            {{-- Total Products --}}
-            <div class="products-summary__card">
-
-                <div class="products-summary__icon">
-                    <i class="ri-shopping-bag-3-line"></i>
-                </div>
-
-                <div>
-
-                <span>
-                    Total Products
-                </span>
-
-                    <strong>
-                        248
-                    </strong>
-
-                </div>
-
+        {{-- Success Message --}}
+        @if (session('success'))
+            <div class="product-index-page__alert product-index-page__alert--success">
+                <i class="ri-checkbox-circle-line"></i>
+                <span>{{ session('success') }}</span>
             </div>
+        @endif
 
+        {{-- Product Card --}}
+        <div class="product-index-page__card">
 
-            {{-- Active Products --}}
-            <div class="products-summary__card">
-
-                <div class="products-summary__icon products-summary__icon--success">
-                    <i class="ri-checkbox-circle-line"></i>
-                </div>
-
-                <div>
-
-                <span>
-                    Active Products
-                </span>
-
-                    <strong>
-                        214
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            {{-- Draft Products --}}
-            <div class="products-summary__card">
-
-                <div class="products-summary__icon products-summary__icon--warning">
-                    <i class="ri-draft-line"></i>
-                </div>
-
-                <div>
-
-                <span>
-                    Draft Products
-                </span>
-
-                    <strong>
-                        21
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            {{-- Out Of Stock --}}
-            <div class="products-summary__card">
-
-                <div class="products-summary__icon products-summary__icon--danger">
-                    <i class="ri-error-warning-line"></i>
-                </div>
-
-                <div>
-
-                <span>
-                    Out of Stock
-                </span>
-
-                    <strong>
-                        13
-                    </strong>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        {{-- ================================================================ --}}
-        {{-- PRODUCTS CARD --}}
-        {{-- ================================================================ --}}
-
-        <div class="products-card">
-
-
-            {{-- ============================================================ --}}
-            {{-- FILTERS --}}
-            {{-- ============================================================ --}}
-
-            <div class="products-card__filters">
-
-                {{-- Search --}}
-                <div class="products-search">
-
+            {{-- Filter Bar --}}
+            <div class="product-index-page__filters">
+                <div class="product-index-page__search">
                     <i class="ri-search-line"></i>
 
                     <input
                         type="search"
-                        name="search"
+                        id="product-search"
                         placeholder="Search products..."
+                        autocomplete="off"
                     >
 
+                    <button
+                        type="button"
+                        class="product-index-page__search-clear"
+                        id="product-search-clear"
+                        aria-label="Clear search"
+                    >
+                        <i class="ri-close-line"></i>
+                    </button>
                 </div>
 
+                <div class="product-index-page__filter-group">
+                    {{-- Status --}}
+                    <div class="product-index-page__select">
+                        <select id="product-status-filter">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
 
-                {{-- Filters --}}
-                <div class="products-filter-group">
-
-                    {{-- Category --}}
-                    <select name="category">
-
-                        <option value="">
-                            All Categories
-                        </option>
-
-                        <option value="electronics">
-                            Electronics
-                        </option>
-
-                        <option value="fashion">
-                            Fashion
-                        </option>
-
-                        <option value="home-living">
-                            Home & Living
-                        </option>
-
-                        <option value="beauty">
-                            Beauty
-                        </option>
-
-                        <option value="sports-fitness">
-                            Sports & Fitness
-                        </option>
-
-                    </select>
-
+                        <i class="ri-arrow-down-s-line"></i>
+                    </div>
 
                     {{-- Source --}}
-                    <select name="source">
+                    <div class="product-index-page__select">
+                        <select id="product-source-filter">
+                            <option value="">All Sources</option>
+                            <option value="own">Own</option>
+                            <option value="amazon">Amazon</option>
+                            <option value="aliexpress">AliExpress</option>
+                        </select>
 
-                        <option value="">
-                            All Sources
-                        </option>
+                        <i class="ri-arrow-down-s-line"></i>
+                    </div>
 
-                        <option value="own">
-                            Own Product
-                        </option>
+                    {{-- Category --}}
+                    <div class="product-index-page__select">
+                        <select id="product-category-filter">
+                            <option value="">All Categories</option>
 
-                        <option value="amazon">
-                            Amazon
-                        </option>
+                            @foreach (
+                                $products
+                                    ->flatMap(fn ($product) => $product->categories)
+                                    ->unique('id')
+                                    ->sortBy('name')
+                                as $category
+                            )
+                                <option value="{{ $category->id }}">
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
+                        </select>
 
-                        <option value="aliexpress">
-                            AliExpress
-                        </option>
+                        <i class="ri-arrow-down-s-line"></i>
+                    </div>
 
-                    </select>
+                    {{-- Brand --}}
+                    <div class="product-index-page__select">
+                        <select id="product-brand-filter">
+                            <option value="">All Brands</option>
 
+                            @foreach (
+                                $products
+                                    ->pluck('brand')
+                                    ->filter()
+                                    ->unique('id')
+                                    ->sortBy('name')
+                                as $brand
+                            )
+                                <option value="{{ $brand->id }}">
+                                    {{ $brand->name }}
+                                </option>
+                            @endforeach
+                        </select>
 
-                    {{-- Status --}}
-                    <select name="status">
+                        <i class="ri-arrow-down-s-line"></i>
+                    </div>
 
-                        <option value="">
-                            All Status
-                        </option>
+                    {{-- Filter Button --}}
+                    <button
+                        type="button"
+                        class="product-index-page__filter-button"
+                        id="product-filter-button"
+                    >
+                        <i class="ri-equalizer-line"></i>
+                        <span>Filter</span>
+                    </button>
 
-                        <option value="active">
-                            Active
-                        </option>
-
-                        <option value="draft">
-                            Draft
-                        </option>
-
-                        <option value="inactive">
-                            Inactive
-                        </option>
-
-                        <option value="out-of-stock">
-                            Out of Stock
-                        </option>
-
-                    </select>
-
+                    {{-- Clear Button --}}
+                    <button
+                        type="button"
+                        class="product-index-page__clear-button"
+                        id="product-clear-filters"
+                    >
+                        <i class="ri-close-circle-line"></i>
+                        <span>Clear</span>
+                    </button>
                 </div>
-
             </div>
 
+            {{-- Filter Summary --}}
+            <div class="product-index-page__filter-summary">
+                <div class="product-index-page__result-count">
+                    <span>
+                        Showing
+                        <strong id="product-visible-count">
+                            {{ $products->count() }}
+                        </strong>
+                        of
+                        <strong>{{ $products->count() }}</strong>
+                        products
+                    </span>
+                </div>
 
-            {{-- ============================================================ --}}
-            {{-- TABLE --}}
-            {{-- ============================================================ --}}
+                <div
+                    class="product-index-page__active-filters"
+                    id="product-active-filters"
+                ></div>
+            </div>
 
-            <div class="products-table-wrapper">
-
-                <table class="products-table">
-
+            {{-- Table --}}
+            <div class="product-index-page__table-wrapper">
+                <table class="product-index-page__table">
                     <thead>
-
                     <tr>
-
-                        <th class="products-table__check">
-
-                            <input
-                                type="checkbox"
-                                class="products-checkbox"
-                            >
-
-                        </th>
-
-                        <th>
-                            Product
-                        </th>
-
-                        <th>
-                            Category
-                        </th>
-
-                        <th>
-                            Source
-                        </th>
-
-                        <th>
-                            Price
-                        </th>
-
-                        <th>
-                            Stock
-                        </th>
-
-                        <th>
-                            Variants
-                        </th>
-
-                        <th>
-                            Status
-                        </th>
-
-                        <th>
-                            Updated
-                        </th>
-
-                        <th>
-                            Action
-                        </th>
-
+                        <th>Product</th>
+                        <th>Source</th>
+                        <th>Category</th>
+                        <th>Brand</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Status</th>
+                        <th>Actions</th>
                     </tr>
-
                     </thead>
 
+                    <tbody id="products-table-body">
+                    @forelse ($products as $product)
+                        @php
+                            $productCategories = $product->categories;
+                            $categoryIds = $productCategories
+                                ->pluck('id')
+                                ->implode(',');
 
-                    <tbody>
+                            $categoryNames = $productCategories
+                                ->pluck('name')
+                                ->implode(' ');
 
+                            $brandId = $product->brand?->id ?? '';
+                            $brandName = $product->brand?->name ?? '';
 
-                    {{-- ================================================= --}}
-                    {{-- PRODUCT 1 --}}
-                    {{-- ================================================= --}}
+                            $searchText = strtolower(
+                                $product->name .
+                                ' ' .
+                                ($product->sku ?? '') .
+                                ' ' .
+                                $categoryNames .
+                                ' ' .
+                                $brandName
+                            );
+                        @endphp
 
-                    <tr>
+                        <tr
+                            class="product-index-page__product-row"
+                            data-product-row
+                            data-search="{{ $searchText }}"
+                            data-status="{{ $product->status ? 'active' : 'inactive' }}"
+                            data-source="{{ strtolower($product->source) }}"
+                            data-categories="{{ $categoryIds }}"
+                            data-brand="{{ $brandId }}"
+                        >
+                            {{-- Product --}}
+                            <td>
+                                <div class="product-index-page__product">
+                                    <div class="product-index-page__thumbnail">
+                                        @if ($product->thumbnail)
+                                            <img
+                                                src="{{ asset($product->thumbnail) }}"
+                                                alt="{{ $product->name }}"
+                                            >
+                                        @else
+                                            <i class="ri-shopping-bag-3-line"></i>
+                                        @endif
+                                    </div>
 
-                        <td>
+                                    <div class="product-index-page__product-info">
+                                        <a
+                                            href="{{ route('admin-products.show', $product) }}"
+                                            class="product-index-page__product-name"
+                                        >
+                                            {{ $product->name }}
+                                        </a>
 
-                            <input
-                                type="checkbox"
-                                class="products-checkbox"
-                                value="1"
-                            >
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="product-table-product">
-
-                                <div class="product-table-product__image">
-
-                                    <img
-                                        src="https://placehold.co/80x80"
-                                        alt="Premium Cotton T-Shirt"
-                                    >
-
+                                        @if ($product->sku)
+                                            <span class="product-index-page__sku">
+                                                    SKU: {{ $product->sku }}
+                                                </span>
+                                        @endif
+                                    </div>
                                 </div>
+                            </td>
 
-
-                                <div class="product-table-product__info">
-
-                                    <a
-                                        href="{{ route('admin-product-details', 1) }}"
+                            {{-- Source --}}
+                            <td>
+                                    <span
+                                        class="product-index-page__source product-index-page__source--{{ strtolower($product->source) }}"
                                     >
-                                        Premium Cotton T-Shirt
+                                        {{ $product->source === 'aliexpress'
+                                            ? 'AliExpress'
+                                            : ucfirst($product->source) }}
+                                    </span>
+                            </td>
+
+                            {{-- Categories --}}
+                            <td>
+                                <div class="product-index-page__categories">
+                                    @forelse ($product->categories as $category)
+                                        <span>
+                                                {{ $category->name }}
+                                            </span>
+                                    @empty
+                                        <span class="product-index-page__muted">
+                                                —
+                                            </span>
+                                    @endforelse
+                                </div>
+                            </td>
+
+                            {{-- Brand --}}
+                            <td>
+                                @if ($product->brand)
+                                    <span class="product-index-page__brand">
+                                            {{ $product->brand->name }}
+                                        </span>
+                                @else
+                                    <span class="product-index-page__muted">
+                                            —
+                                        </span>
+                                @endif
+                            </td>
+
+                            {{-- Price --}}
+                            <td>
+                                <div class="product-index-page__price">
+                                    <strong>
+                                        ${{ number_format((float) $product->price, 2) }}
+                                    </strong>
+
+                                    @if ($product->compare_price)
+                                        <del>
+                                            ${{ number_format((float) $product->compare_price, 2) }}
+                                        </del>
+                                    @endif
+                                </div>
+                            </td>
+
+                            {{-- Stock --}}
+                            <td>
+                                @php
+                                    $stock = $product->variants->sum('stock');
+                                @endphp
+
+                                @if ($product->variants->isNotEmpty())
+                                    <span
+                                        class="
+                                                product-index-page__stock
+                                                {{ $stock <= 0 ? 'product-index-page__stock--empty' : '' }}
+                                            "
+                                    >
+                                            {{ $stock }}
+                                        </span>
+                                @else
+                                    <span class="product-index-page__muted">
+                                            —
+                                        </span>
+                                @endif
+                            </td>
+
+                            {{-- Status --}}
+                            <td>
+                                @if ($product->status)
+                                    <span class="product-index-page__status product-index-page__status--active">
+                                            Active
+                                        </span>
+                                @else
+                                    <span class="product-index-page__status product-index-page__status--inactive">
+                                            Inactive
+                                        </span>
+                                @endif
+                            </td>
+
+                            {{-- Actions --}}
+                            <td>
+                                <div class="product-index-page__actions">
+                                    <a
+                                        href="{{ route('admin-products.show', $product) }}"
+                                        class="product-index-page__action"
+                                        title="View"
+                                    >
+                                        <i class="ri-eye-line"></i>
                                     </a>
 
-                                    <span>
-                                        SKU: BA-TS-001
+                                    <a
+                                        href="{{ route('admin-products.edit', $product) }}"
+                                        class="product-index-page__action"
+                                        title="Edit"
+                                    >
+                                        <i class="ri-edit-line"></i>
+                                    </a>
+
+                                    <form
+                                        action="{{ route('admin-products.destroy', $product) }}"
+                                        method="POST"
+                                        data-delete-product
+                                    >
+                                        @csrf
+                                        @method('DELETE')
+
+                                        <button
+                                            type="submit"
+                                            class="product-index-page__action product-index-page__action--danger"
+                                            title="Delete"
+                                        >
+                                            <i class="ri-delete-bin-line"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td
+                                colspan="8"
+                                class="product-index-page__empty product-index-page__empty--initial"
+                            >
+                                <i class="ri-shopping-bag-3-line"></i>
+                                <strong>No products found.</strong>
+                                <span>
+                                        Add your first product to get started.
                                     </span>
 
+                                <a href="{{ route('admin-products.create') }}">
+                                    Add Product
+                                </a>
+                            </td>
+                        </tr>
+                    @endforelse
+
+                    {{-- JS Empty State --}}
+                    <tr
+                        id="product-filter-empty"
+                        class="product-index-page__filter-empty"
+                        hidden
+                    >
+                        <td colspan="8">
+                            <div class="product-index-page__empty-content">
+                                <div class="product-index-page__empty-icon">
+                                    <i class="ri-search-line"></i>
                                 </div>
 
-                            </div>
-
-                        </td>
-
-
-                        <td>
-                            Fashion
-                        </td>
-
-
-                        <td>
-
-                            <span class="product-source-badge product-source-badge--own">
-
-                                <i class="ri-store-2-line"></i>
-
-                                Own
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="product-price">
-
-                                <strong>
-                                    $29.99
-                                </strong>
+                                <strong>No matching products</strong>
 
                                 <span>
-                                    $39.99
-                                </span>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="product-stock product-stock--available">
-                                125
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="product-variant-badge">
-                                8 Variants
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="product-status product-status--active">
-
-                                <i></i>
-
-                                Active
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-                            Aug 15, 2026
-                        </td>
-
-
-                        <td>
-
-                            <div class="product-actions">
-
-                                {{-- View --}}
-                                <a
-                                    href="{{ route('admin-product-details', 1) }}"
-                                    class="product-action-btn"
-                                    title="View"
-                                >
-                                    <i class="ri-eye-line"></i>
-                                </a>
-
-
-                                {{-- Edit --}}
-                                <a
-                                    href="{{ route('admin-product-edit', 1) }}"
-                                    class="product-action-btn"
-                                    title="Edit"
-                                >
-                                    <i class="ri-edit-line"></i>
-                                </a>
-
-
-                                {{-- Delete - Route not available yet --}}
-                                <button
-                                    type="button"
-                                    class="product-action-btn product-action-btn--danger"
-                                    title="Delete"
-                                >
-                                    <i class="ri-delete-bin-line"></i>
-                                </button>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-
-                    {{-- ================================================= --}}
-                    {{-- PRODUCT 2 --}}
-                    {{-- ================================================= --}}
-
-                    <tr>
-
-                        <td>
-
-                            <input
-                                type="checkbox"
-                                class="products-checkbox"
-                                value="2"
-                            >
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="product-table-product">
-
-                                <div class="product-table-product__image">
-
-                                    <img
-                                        src="https://placehold.co/80x80"
-                                        alt="Wireless Headphones"
-                                    >
-
-                                </div>
-
-
-                                <div class="product-table-product__info">
-
-                                    <a
-                                        href="{{ route('admin-product-details', 2) }}"
-                                    >
-                                        Wireless Headphones
-                                    </a>
-
-                                    <span>
-                                        SKU: BA-WH-002
+                                        Try changing your search or filter options.
                                     </span>
 
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-                            Electronics
-                        </td>
-
-
-                        <td>
-
-                            <span class="product-source-badge product-source-badge--amazon">
-
-                                <i class="ri-amazon-line"></i>
-
-                                Amazon
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="product-price">
-
-                                <strong>
-                                    $79.99
-                                </strong>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="product-stock product-stock--available">
-                                48
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="product-variant-badge">
-                                4 Variants
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="product-status product-status--active">
-
-                                <i></i>
-
-                                Active
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-                            Aug 14, 2026
-                        </td>
-
-
-                        <td>
-
-                            <div class="product-actions">
-
-                                {{-- View --}}
-                                <a
-                                    href="{{ route('admin-product-details', 2) }}"
-                                    class="product-action-btn"
-                                    title="View"
-                                >
-                                    <i class="ri-eye-line"></i>
-                                </a>
-
-
-                                {{-- Edit --}}
-                                <a
-                                    href="{{ route('admin-product-edit', 2) }}"
-                                    class="product-action-btn"
-                                    title="Edit"
-                                >
-                                    <i class="ri-edit-line"></i>
-                                </a>
-
-
-                                {{-- Delete --}}
                                 <button
                                     type="button"
-                                    class="product-action-btn product-action-btn--danger"
-                                    title="Delete"
+                                    id="product-empty-clear"
                                 >
-                                    <i class="ri-delete-bin-line"></i>
+                                    Clear Filters
                                 </button>
-
                             </div>
-
                         </td>
-
                     </tr>
-
-
-                    {{-- ================================================= --}}
-                    {{-- PRODUCT 3 --}}
-                    {{-- ================================================= --}}
-
-                    <tr>
-
-                        <td>
-
-                            <input
-                                type="checkbox"
-                                class="products-checkbox"
-                                value="3"
-                            >
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="product-table-product">
-
-                                <div class="product-table-product__image">
-
-                                    <img
-                                        src="https://placehold.co/80x80"
-                                        alt="Leather Travel Bag"
-                                    >
-
-                                </div>
-
-
-                                <div class="product-table-product__info">
-
-                                    <a
-                                        href="{{ route('admin-product-details', 3) }}"
-                                    >
-                                        Leather Travel Bag
-                                    </a>
-
-                                    <span>
-                                        SKU: BA-LTB-003
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-                            Fashion
-                        </td>
-
-
-                        <td>
-
-                            <span class="product-source-badge product-source-badge--aliexpress">
-
-                                <i class="ri-global-line"></i>
-
-                                AliExpress
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="product-price">
-
-                                <strong>
-                                    $59.00
-                                </strong>
-
-                                <span>
-                                    $69.00
-                                </span>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="product-stock product-stock--low">
-                                7
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="product-variant-badge">
-                                6 Variants
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="product-status product-status--active">
-
-                                <i></i>
-
-                                Active
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-                            Aug 13, 2026
-                        </td>
-
-
-                        <td>
-
-                            <div class="product-actions">
-
-                                {{-- View --}}
-                                <a
-                                    href="{{ route('admin-product-details', 3) }}"
-                                    class="product-action-btn"
-                                    title="View"
-                                >
-                                    <i class="ri-eye-line"></i>
-                                </a>
-
-
-                                {{-- Edit --}}
-                                <a
-                                    href="{{ route('admin-product-edit', 3) }}"
-                                    class="product-action-btn"
-                                    title="Edit"
-                                >
-                                    <i class="ri-edit-line"></i>
-                                </a>
-
-
-                                {{-- Delete --}}
-                                <button
-                                    type="button"
-                                    class="product-action-btn product-action-btn--danger"
-                                    title="Delete"
-                                >
-                                    <i class="ri-delete-bin-line"></i>
-                                </button>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-
-                    {{-- ================================================= --}}
-                    {{-- PRODUCT 4 --}}
-                    {{-- ================================================= --}}
-
-                    <tr>
-
-                        <td>
-
-                            <input
-                                type="checkbox"
-                                class="products-checkbox"
-                                value="4"
-                            >
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="product-table-product">
-
-                                <div class="product-table-product__image">
-
-                                    <img
-                                        src="https://placehold.co/80x80"
-                                        alt="Ceramic Coffee Mug"
-                                    >
-
-                                </div>
-
-
-                                <div class="product-table-product__info">
-
-                                    <a
-                                        href="{{ route('admin-product-details', 4) }}"
-                                    >
-                                        Ceramic Coffee Mug
-                                    </a>
-
-                                    <span>
-                                        SKU: BA-CM-004
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-                            Home & Living
-                        </td>
-
-
-                        <td>
-
-                            <span class="product-source-badge product-source-badge--own">
-
-                                <i class="ri-store-2-line"></i>
-
-                                Own
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="product-price">
-
-                                <strong>
-                                    $18.50
-                                </strong>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="product-stock product-stock--out">
-                                0
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="product-variant-badge">
-                                3 Variants
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="product-status product-status--inactive">
-
-                                <i></i>
-
-                                Inactive
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-                            Aug 12, 2026
-                        </td>
-
-
-                        <td>
-
-                            <div class="product-actions">
-
-                                {{-- View --}}
-                                <a
-                                    href="{{ route('admin-product-details', 4) }}"
-                                    class="product-action-btn"
-                                    title="View"
-                                >
-                                    <i class="ri-eye-line"></i>
-                                </a>
-
-
-                                {{-- Edit --}}
-                                <a
-                                    href="{{ route('admin-product-edit', 4) }}"
-                                    class="product-action-btn"
-                                    title="Edit"
-                                >
-                                    <i class="ri-edit-line"></i>
-                                </a>
-
-
-                                {{-- Delete --}}
-                                <button
-                                    type="button"
-                                    class="product-action-btn product-action-btn--danger"
-                                    title="Delete"
-                                >
-                                    <i class="ri-delete-bin-line"></i>
-                                </button>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-
-                    {{-- ================================================= --}}
-                    {{-- PRODUCT 5 --}}
-                    {{-- ================================================= --}}
-
-                    <tr>
-
-                        <td>
-
-                            <input
-                                type="checkbox"
-                                class="products-checkbox"
-                                value="5"
-                            >
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="product-table-product">
-
-                                <div class="product-table-product__image">
-
-                                    <img
-                                        src="https://placehold.co/80x80"
-                                        alt="Running Shoes"
-                                    >
-
-                                </div>
-
-
-                                <div class="product-table-product__info">
-
-                                    <a
-                                        href="{{ route('admin-product-details', 5) }}"
-                                    >
-                                        Running Shoes
-                                    </a>
-
-                                    <span>
-                                        SKU: BA-RS-005
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-                            Sports & Fitness
-                        </td>
-
-
-                        <td>
-
-                            <span class="product-source-badge product-source-badge--own">
-
-                                <i class="ri-store-2-line"></i>
-
-                                Own
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="product-price">
-
-                                <strong>
-                                    $89.99
-                                </strong>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="product-stock product-stock--available">
-                                72
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="product-variant-badge">
-                                10 Variants
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="product-status product-status--draft">
-
-                                <i></i>
-
-                                Draft
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-                            Aug 11, 2026
-                        </td>
-
-
-                        <td>
-
-                            <div class="product-actions">
-
-                                {{-- View --}}
-                                <a
-                                    href="{{ route('admin-product-details', 5) }}"
-                                    class="product-action-btn"
-                                    title="View"
-                                >
-                                    <i class="ri-eye-line"></i>
-                                </a>
-
-
-                                {{-- Edit --}}
-                                <a
-                                    href="{{ route('admin-product-edit', 5) }}"
-                                    class="product-action-btn"
-                                    title="Edit"
-                                >
-                                    <i class="ri-edit-line"></i>
-                                </a>
-
-
-                                {{-- Delete --}}
-                                <button
-                                    type="button"
-                                    class="product-action-btn product-action-btn--danger"
-                                    title="Delete"
-                                >
-                                    <i class="ri-delete-bin-line"></i>
-                                </button>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-
                     </tbody>
-
                 </table>
-
             </div>
-
-
-            {{-- ============================================================ --}}
-            {{-- PAGINATION --}}
-            {{-- ============================================================ --}}
-
-            <div class="products-card__footer">
-
-            <span>
-                Showing 1–5 of 248 products
-            </span>
-
-
-                <div class="products-pagination">
-
-                    <button
-                        type="button"
-                        disabled
-                    >
-                        <i class="ri-arrow-left-s-line"></i>
-                    </button>
-
-
-                    <button
-                        type="button"
-                        class="active"
-                    >
-                        1
-                    </button>
-
-
-                    <button type="button">
-                        2
-                    </button>
-
-
-                    <button type="button">
-                        3
-                    </button>
-
-
-                    <span>
-                    ...
-                </span>
-
-
-                    <button type="button">
-                        50
-                    </button>
-
-
-                    <button type="button">
-                        <i class="ri-arrow-right-s-line"></i>
-                    </button>
-
-                </div>
-
-            </div>
-
         </div>
-
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const page = document.querySelector('.product-index-page');
+
+            if (!page) {
+                return;
+            }
+
+            const searchInput = page.querySelector('#product-search');
+            const searchClear = page.querySelector('#product-search-clear');
+
+            const statusFilter = page.querySelector(
+                '#product-status-filter'
+            );
+
+            const sourceFilter = page.querySelector(
+                '#product-source-filter'
+            );
+
+            const categoryFilter = page.querySelector(
+                '#product-category-filter'
+            );
+
+            const brandFilter = page.querySelector(
+                '#product-brand-filter'
+            );
+
+            const filterButton = page.querySelector(
+                '#product-filter-button'
+            );
+
+            const clearFiltersButton = page.querySelector(
+                '#product-clear-filters'
+            );
+
+            const activeFilters = page.querySelector(
+                '#product-active-filters'
+            );
+
+            const visibleCount = page.querySelector(
+                '#product-visible-count'
+            );
+
+            const emptyState = page.querySelector(
+                '#product-filter-empty'
+            );
+
+            const emptyClearButton = page.querySelector(
+                '#product-empty-clear'
+            );
+
+            const rows = Array.from(
+                page.querySelectorAll('[data-product-row]')
+            );
+
+            const normalize = (value) => {
+                return String(value || '')
+                    .toLowerCase()
+                    .trim();
+            };
+
+            const getSelectedText = (select) => {
+                if (!select || !select.value) {
+                    return '';
+                }
+
+                return select.options[select.selectedIndex]?.text || '';
+            };
+
+            const renderActiveFilters = () => {
+                activeFilters.innerHTML = '';
+
+                const filters = [];
+
+                if (searchInput.value.trim()) {
+                    filters.push({
+                        label: `Search: ${searchInput.value.trim()}`,
+                    });
+                }
+
+                if (statusFilter.value) {
+                    filters.push({
+                        label: `Status: ${getSelectedText(statusFilter)}`,
+                    });
+                }
+
+                if (sourceFilter.value) {
+                    filters.push({
+                        label: `Source: ${getSelectedText(sourceFilter)}`,
+                    });
+                }
+
+                if (categoryFilter.value) {
+                    filters.push({
+                        label: `Category: ${getSelectedText(categoryFilter)}`,
+                    });
+                }
+
+                if (brandFilter.value) {
+                    filters.push({
+                        label: `Brand: ${getSelectedText(brandFilter)}`,
+                    });
+                }
+
+                filters.forEach((filter) => {
+                    const badge = document.createElement('span');
+
+                    badge.className =
+                        'product-index-page__active-filter';
+
+                    badge.textContent = filter.label;
+
+                    activeFilters.appendChild(badge);
+                });
+            };
+
+            const applyFilters = () => {
+                const search = normalize(searchInput.value);
+                const status = normalize(statusFilter.value);
+                const source = normalize(sourceFilter.value);
+                const category = categoryFilter.value;
+                const brand = brandFilter.value;
+
+                let matchedCount = 0;
+
+                rows.forEach((row) => {
+                    const rowSearch = normalize(
+                        row.dataset.search
+                    );
+
+                    const rowStatus = normalize(
+                        row.dataset.status
+                    );
+
+                    const rowSource = normalize(
+                        row.dataset.source
+                    );
+
+                    const rowCategories = row.dataset.categories
+                        ? row.dataset.categories.split(',')
+                        : [];
+
+                    const rowBrand = row.dataset.brand || '';
+
+                    const matchesSearch =
+                        !search ||
+                        rowSearch.includes(search);
+
+                    const matchesStatus =
+                        !status ||
+                        rowStatus === status;
+
+                    const matchesSource =
+                        !source ||
+                        rowSource === source;
+
+                    const matchesCategory =
+                        !category ||
+                        rowCategories.includes(category);
+
+                    const matchesBrand =
+                        !brand ||
+                        rowBrand === brand;
+
+                    const matches =
+                        matchesSearch &&
+                        matchesStatus &&
+                        matchesSource &&
+                        matchesCategory &&
+                        matchesBrand;
+
+                    row.hidden = !matches;
+
+                    if (matches) {
+                        matchedCount++;
+                    }
+                });
+
+                visibleCount.textContent = matchedCount;
+
+                emptyState.hidden = matchedCount !== 0;
+
+                searchClear.classList.toggle(
+                    'is-visible',
+                    searchInput.value.length > 0
+                );
+
+                renderActiveFilters();
+            };
+
+            const clearFilters = () => {
+                searchInput.value = '';
+                statusFilter.value = '';
+                sourceFilter.value = '';
+                categoryFilter.value = '';
+                brandFilter.value = '';
+
+                applyFilters();
+                searchInput.focus();
+            };
+
+            searchInput.addEventListener(
+                'input',
+                applyFilters
+            );
+
+            searchClear.addEventListener(
+                'click',
+                () => {
+                    searchInput.value = '';
+                    applyFilters();
+                    searchInput.focus();
+                }
+            );
+
+            statusFilter.addEventListener(
+                'change',
+                applyFilters
+            );
+
+            sourceFilter.addEventListener(
+                'change',
+                applyFilters
+            );
+
+            categoryFilter.addEventListener(
+                'change',
+                applyFilters
+            );
+
+            brandFilter.addEventListener(
+                'change',
+                applyFilters
+            );
+
+            filterButton.addEventListener(
+                'click',
+                applyFilters
+            );
+
+            clearFiltersButton.addEventListener(
+                'click',
+                clearFilters
+            );
+
+            emptyClearButton.addEventListener(
+                'click',
+                clearFilters
+            );
+
+            page.querySelectorAll(
+                '[data-delete-product]'
+            ).forEach((form) => {
+                form.addEventListener('submit', (event) => {
+                    const confirmed = window.confirm(
+                        'Are you sure you want to delete this product? This action cannot be undone.'
+                    );
+
+                    if (!confirmed) {
+                        event.preventDefault();
+                    }
+                });
+            });
+
+            applyFilters();
+        });
+    </script>
 @endsection
