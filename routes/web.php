@@ -19,6 +19,7 @@ use App\Http\Controllers\Customer\MySmartBuyController;
 use App\Http\Controllers\Customer\MySmartBuyPaymentController;
 use App\Http\Controllers\Customer\MySmartBuyQuoteController;
 use App\Http\Controllers\Customer\MySmartBuyTrackingController;
+use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\FrontendTrackingController;
 use App\Http\Controllers\Frontend\MarketplaceController;
 use Illuminate\Support\Facades\Route;
@@ -39,25 +40,75 @@ Route::view('/', 'frontend.pages.home.index')->name('home');
 |--------------------------------------------------------------------------
 */
 
-Route::get('/shop', [MarketplaceController::class, 'index'])
-    ->name('shop');
-Route::get('/shop/{product:slug}', [MarketplaceController::class, 'show'])
-    ->name('shop.details');
-Route::view('/cart', 'frontend.pages.shop.cart')->name('my-cart');
-Route::view('/checkout', 'frontend.pages.shop.checkout')->name('my-checkout');
+Route::get(
+    '/shop',
+    [MarketplaceController::class, 'index'],
+)->name('shop');
+
+Route::get(
+    '/shop/{product:slug}',
+    [MarketplaceController::class, 'show'],
+)->name('shop.details');
+
+/*
+|--------------------------------------------------------------------------
+| Cart
+|--------------------------------------------------------------------------
+*/
+
+Route::get(
+    '/cart',
+    [CartController::class, 'index'],
+)->name('my-cart');
+
+Route::post(
+    '/cart/items',
+    [CartController::class, 'store'],
+)->name('cart.items.store');
+
+Route::patch(
+    '/cart/items/{cartItem}',
+    [CartController::class, 'update'],
+)->name('cart.items.update');
+
+Route::delete(
+    '/cart/items/{cartItem}',
+    [CartController::class, 'destroy'],
+)->name('cart.items.destroy');
+
+Route::delete(
+    '/cart',
+    [CartController::class, 'clear'],
+)->name('cart.clear');
+
 
 Route::middleware('auth')->group(function () {
-    Route::view('/my-account', 'frontend.pages.shop.my-account')
-        ->name('my-account');
+    Route::view(
+        '/my-account',
+        'frontend.pages.shop.my-account',
+    )->name('my-account');
 
-    Route::view('/my-orders', 'frontend.pages.shop.my-orders')
-        ->name('my-orders');
+    Route::view(
+        '/my-orders',
+        'frontend.pages.shop.my-orders',
+    )->name('my-orders');
 
-    Route::view('/my-wishlist', 'frontend.pages.shop.my-wishlist')
-        ->name('my-wishlist');
+    Route::view(
+        '/my-wishlist',
+        'frontend.pages.shop.my-wishlist',
+    )->name('my-wishlist');
 
-    Route::view('/my-profile', 'frontend.pages.shop.my-profile')
-        ->name('my-profile');
+    Route::view(
+        '/my-profile',
+        'frontend.pages.shop.my-profile',
+    )->name('my-profile');
+
+    Route::get(
+        '/checkout',
+        function () {
+            return view('frontend.pages.shop.checkout');
+        },
+    )->name('my-checkout');
 });
 
 /*

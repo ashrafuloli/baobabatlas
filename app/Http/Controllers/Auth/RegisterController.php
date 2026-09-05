@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Actions\Cart\MergeGuestCart;
 use App\Http\Controllers\Controller;
 use App\Models\Role;
 use App\Models\User;
@@ -78,6 +79,12 @@ final class RegisterController extends Controller
                 ->withInput();
         }
 
+        /*
+         * Capture the guest cart session ID before authentication
+         * regenerates the session ID.
+         */
+        $guestSessionId = $request->session()->getId();
+
         $user = DB::transaction(function () use (
             $request,
             $validated,
@@ -129,6 +136,16 @@ final class RegisterController extends Controller
 
         Auth::login($user);
 
+        /*
+         * Merge the guest session cart into the newly created
+         * authenticated user's cart before regenerating the
+         * session ID.
+         */
+        app(MergeGuestCart::class)->execute(
+            $user,
+            $guestSessionId,
+        );
+
         $request->session()->regenerate();
 
         return redirect()
@@ -147,11 +164,15 @@ final class RegisterController extends Controller
             return redirect()->route('dashboard');
         }
 
-        return view('backend.pages.auth.verify-email', compact('user'));
+        return view(
+            'backend.pages.auth.verify-email',
+            compact('user'),
+        );
     }
 
-    public function verifyEmail(EmailVerificationRequest $request): RedirectResponse
-    {
+    public function verifyEmail(
+        EmailVerificationRequest $request,
+    ): RedirectResponse {
         if ($request->user()->hasVerifiedEmail()) {
             return redirect()
                 ->route('dashboard')
@@ -175,8 +196,7 @@ final class RegisterController extends Controller
 
     public function resendVerificationEmail(
         Request $request,
-    ): RedirectResponse
-    {
+    ): RedirectResponse {
         $user = $request->user();
 
         if ($user->hasVerifiedEmail()) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Database\Factories\UserFactory;
@@ -7,6 +9,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -14,7 +17,6 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
-
 
     /*
     |--------------------------------------------------------------------------
@@ -33,7 +35,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'status',
     ];
 
-
     /*
     |--------------------------------------------------------------------------
     | Hidden Attributes
@@ -44,7 +45,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'remember_token',
     ];
-
 
     /*
     |--------------------------------------------------------------------------
@@ -60,7 +60,6 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-
     /*
     |--------------------------------------------------------------------------
     | Full Name
@@ -70,10 +69,20 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getNameAttribute(): string
     {
         return trim(
-            $this->first_name . ' ' . ($this->last_name ?? '')
+            $this->first_name . ' ' . ($this->last_name ?? ''),
         );
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Cart
+    |--------------------------------------------------------------------------
+    */
+
+    public function cart(): HasOne
+    {
+        return $this->hasOne(Cart::class);
+    }
 
     /*
     |--------------------------------------------------------------------------
@@ -85,7 +94,6 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(SmartBuyRequest::class);
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -100,10 +108,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsToMany(
             Role::class,
-            'user_roles'
+            'user_roles',
         )->withTimestamps();
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -139,7 +146,6 @@ class User extends Authenticatable implements MustVerifyEmail
             ->exists();
     }
 
-
     /*
     |--------------------------------------------------------------------------
     | Check Any Role
@@ -153,7 +159,6 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasRole($roles);
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -182,7 +187,6 @@ class User extends Authenticatable implements MustVerifyEmail
                 ->count() === count($roles);
     }
 
-
     /*
     |--------------------------------------------------------------------------
     | Admin
@@ -194,7 +198,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasRole('admin');
     }
 
-
     /*
     |--------------------------------------------------------------------------
     | Client
@@ -205,7 +208,6 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasRole('client');
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -221,7 +223,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasRole('staff');
     }
 
-
     /*
     |--------------------------------------------------------------------------
     | Seller
@@ -235,7 +236,6 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasRole('seller');
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -259,7 +259,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this;
     }
 
-
     /*
     |--------------------------------------------------------------------------
     | Remove Role
@@ -273,15 +272,13 @@ class User extends Authenticatable implements MustVerifyEmail
             : Role::where('slug', $role)->first();
 
         if ($roleModel) {
-
             $this->roles()->detach(
-                $roleModel->id
+                $roleModel->id,
             );
         }
 
         return $this;
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -303,7 +300,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
         $roleIds = Role::whereIn(
             'slug',
-            $roles
+            $roles,
         )
             ->pluck('id')
             ->toArray();
@@ -312,7 +309,6 @@ class User extends Authenticatable implements MustVerifyEmail
 
         return $this;
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -334,58 +330,23 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $permission = trim($permission);
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Empty Permission
-        |--------------------------------------------------------------------------
-        */
-
         if ($permission === '') {
             return false;
         }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Admin Bypass
-        |--------------------------------------------------------------------------
-        |
-        | Admin automatically has access to custom permission protected
-        | functionality as well.
-        |
-        */
 
         if ($this->isAdmin()) {
             return true;
         }
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Check Through Roles
-        |--------------------------------------------------------------------------
-        |
-        | User
-        |   ↓
-        | Roles
-        |   ↓
-        | Role Permissions
-        |
-        */
-
         return $this->roles()
             ->whereHas('permissions', function ($query) use ($permission) {
-
                 $query->where(
                     'slug',
-                    $permission
+                    $permission,
                 );
-
             })
             ->exists();
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -393,13 +354,6 @@ class User extends Authenticatable implements MustVerifyEmail
     |--------------------------------------------------------------------------
     |
     | Returns true when the user has at least one permission.
-    |
-    | Example:
-    |
-    | hasAnyPermission([
-    |     'view-reports',
-    |     'view-orders',
-    | ])
     |
     */
 
@@ -412,41 +366,23 @@ class User extends Authenticatable implements MustVerifyEmail
             ->values()
             ->toArray();
 
-
         if (empty($permissions)) {
             return false;
         }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Admin Bypass
-        |--------------------------------------------------------------------------
-        */
 
         if ($this->isAdmin()) {
             return true;
         }
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Check Permissions
-        |--------------------------------------------------------------------------
-        */
-
         return $this->roles()
             ->whereHas('permissions', function ($query) use ($permissions) {
-
                 $query->whereIn(
                     'slug',
-                    $permissions
+                    $permissions,
                 );
-
             })
             ->exists();
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -454,13 +390,6 @@ class User extends Authenticatable implements MustVerifyEmail
     |--------------------------------------------------------------------------
     |
     | Returns true only when the user has every requested permission.
-    |
-    | Example:
-    |
-    | hasAllPermissions([
-    |     'view-reports',
-    |     'edit-reports',
-    | ])
     |
     */
 
@@ -473,79 +402,27 @@ class User extends Authenticatable implements MustVerifyEmail
             ->values()
             ->toArray();
 
-
         if (empty($permissions)) {
             return true;
         }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Admin Bypass
-        |--------------------------------------------------------------------------
-        */
 
         if ($this->isAdmin()) {
             return true;
         }
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Check Permission Count
-        |--------------------------------------------------------------------------
-        */
-
-        $permissionCount = $this->roles()
-            ->whereHas('permissions', function ($query) use ($permissions) {
-
-                $query->whereIn(
-                    'slug',
-                    $permissions
-                );
-
-            })
-            ->withCount([
-                'permissions as matched_permissions_count' => function ($query) use ($permissions) {
-
-                    $query->whereIn(
-                        'slug',
-                        $permissions
-                    );
-
-                },
-            ])
-            ->get()
-            ->sum('matched_permissions_count');
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Unique Permission Count
-        |--------------------------------------------------------------------------
-        |
-        | A permission can exist through multiple roles.
-        | Therefore we check unique permission IDs separately.
-        |
-        */
-
         $matchedPermissions = $this->roles()
             ->whereHas('permissions', function ($query) use ($permissions) {
-
                 $query->whereIn(
                     'slug',
-                    $permissions
+                    $permissions,
                 );
-
             })
             ->with([
                 'permissions' => function ($query) use ($permissions) {
-
                     $query->whereIn(
                         'slug',
-                        $permissions
+                        $permissions,
                     );
-
                 },
             ])
             ->get()
@@ -555,10 +432,8 @@ class User extends Authenticatable implements MustVerifyEmail
             ->unique()
             ->count();
 
-
         return $matchedPermissions === count($permissions);
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -571,12 +446,10 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->status === 'active';
     }
 
-
     public function isInactive(): bool
     {
         return $this->status === 'inactive';
     }
-
 
     public function isSuspended(): bool
     {

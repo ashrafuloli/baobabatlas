@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Actions\Cart\MergeGuestCart;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -72,7 +73,23 @@ final class LoginController extends Controller
                 );
         }
 
+        /*
+         * Capture the guest cart session before regenerating
+         * the authenticated session ID.
+         */
+        $guestSessionId = $request->session()->getId();
+
         $request->session()->regenerate();
+
+        /*
+         * Merge the guest cart into the authenticated user's cart.
+         * This runs before the email verification redirect so the
+         * guest cart is preserved even when verification is required.
+         */
+        app(MergeGuestCart::class)->execute(
+            $user,
+            $guestSessionId,
+        );
 
         if (!$user->hasVerifiedEmail()) {
             return redirect()
@@ -90,7 +107,6 @@ final class LoginController extends Controller
                 'Welcome back, ' . $user->name . '!'
             );
     }
-
     public function logout(Request $request): RedirectResponse
     {
         Auth::logout();
