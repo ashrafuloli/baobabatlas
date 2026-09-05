@@ -48,6 +48,7 @@
                         id="product-search"
                         placeholder="Search products..."
                         autocomplete="off"
+                        value="{{ request('search', '') }}"
                     >
 
                     <button
@@ -65,8 +66,20 @@
                     <div class="product-index-page__select">
                         <select id="product-status-filter">
                             <option value="">All Status</option>
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
+
+                            <option
+                                value="active"
+                                @selected(request('status') === 'active')
+                            >
+                                Active
+                            </option>
+
+                            <option
+                                value="inactive"
+                                @selected(request('status') === 'inactive')
+                            >
+                                Inactive
+                            </option>
                         </select>
 
                         <i class="ri-arrow-down-s-line"></i>
@@ -76,9 +89,27 @@
                     <div class="product-index-page__select">
                         <select id="product-source-filter">
                             <option value="">All Sources</option>
-                            <option value="own">Own</option>
-                            <option value="amazon">Amazon</option>
-                            <option value="aliexpress">AliExpress</option>
+
+                            <option
+                                value="own"
+                                @selected(request('source') === 'own')
+                            >
+                                Own
+                            </option>
+
+                            <option
+                                value="amazon"
+                                @selected(request('source') === 'amazon')
+                            >
+                                Amazon
+                            </option>
+
+                            <option
+                                value="aliexpress"
+                                @selected(request('source') === 'aliexpress')
+                            >
+                                AliExpress
+                            </option>
                         </select>
 
                         <i class="ri-arrow-down-s-line"></i>
@@ -89,16 +120,22 @@
                         <select id="product-category-filter">
                             <option value="">All Categories</option>
 
-                            @foreach (
-                                $products
-                                    ->flatMap(fn ($product) => $product->categories)
-                                    ->unique('id')
-                                    ->sortBy('name')
-                                as $category
-                            )
-                                <option value="{{ $category->id }}">
+                            @foreach ($categories as $category)
+                                <option
+                                    value="{{ $category->id }}"
+                                    @selected((string) request('category') === (string) $category->id)
+                                >
                                     {{ $category->name }}
                                 </option>
+
+                                @foreach ($category->children as $subcategory)
+                                    <option
+                                        value="{{ $subcategory->id }}"
+                                        @selected((string) request('category') === (string) $subcategory->id)
+                                    >
+                                        — {{ $subcategory->name }}
+                                    </option>
+                                @endforeach
                             @endforeach
                         </select>
 
@@ -110,15 +147,11 @@
                         <select id="product-brand-filter">
                             <option value="">All Brands</option>
 
-                            @foreach (
-                                $products
-                                    ->pluck('brand')
-                                    ->filter()
-                                    ->unique('id')
-                                    ->sortBy('name')
-                                as $brand
-                            )
-                                <option value="{{ $brand->id }}">
+                            @foreach ($brands as $brand)
+                                <option
+                                    value="{{ $brand->id }}"
+                                    @selected((string) request('brand') === (string) $brand->id)
+                                >
                                     {{ $brand->name }}
                                 </option>
                             @endforeach
@@ -158,7 +191,7 @@
                             {{ $products->count() }}
                         </strong>
                         of
-                        <strong>{{ $products->count() }}</strong>
+                        <strong>{{ $products->total() }}</strong>
                         products
                     </span>
                 </div>
@@ -189,36 +222,14 @@
                     @forelse ($products as $product)
                         @php
                             $productCategories = $product->categories;
-                            $categoryIds = $productCategories
-                                ->pluck('id')
-                                ->implode(',');
-
-                            $categoryNames = $productCategories
-                                ->pluck('name')
-                                ->implode(' ');
 
                             $brandId = $product->brand?->id ?? '';
                             $brandName = $product->brand?->name ?? '';
-
-                            $searchText = strtolower(
-                                $product->name .
-                                ' ' .
-                                ($product->sku ?? '') .
-                                ' ' .
-                                $categoryNames .
-                                ' ' .
-                                $brandName
-                            );
                         @endphp
 
                         <tr
                             class="product-index-page__product-row"
                             data-product-row
-                            data-search="{{ $searchText }}"
-                            data-status="{{ $product->status ? 'active' : 'inactive' }}"
-                            data-source="{{ strtolower($product->source) }}"
-                            data-categories="{{ $categoryIds }}"
-                            data-brand="{{ $brandId }}"
                         >
                             {{-- Product --}}
                             <td>
@@ -244,8 +255,8 @@
 
                                         @if ($product->sku)
                                             <span class="product-index-page__sku">
-                                                    SKU: {{ $product->sku }}
-                                                </span>
+                                                SKU: {{ $product->sku }}
+                                            </span>
                                         @endif
                                     </div>
                                 </div>
@@ -253,26 +264,26 @@
 
                             {{-- Source --}}
                             <td>
-                                    <span
-                                        class="product-index-page__source product-index-page__source--{{ strtolower($product->source) }}"
-                                    >
-                                        {{ $product->source === 'aliexpress'
-                                            ? 'AliExpress'
-                                            : ucfirst($product->source) }}
-                                    </span>
+                                <span
+                                    class="product-index-page__source product-index-page__source--{{ strtolower($product->source) }}"
+                                >
+                                    {{ $product->source === 'aliexpress'
+                                        ? 'AliExpress'
+                                        : ucfirst($product->source) }}
+                                </span>
                             </td>
 
                             {{-- Categories --}}
                             <td>
                                 <div class="product-index-page__categories">
-                                    @forelse ($product->categories as $category)
+                                    @forelse ($productCategories as $category)
                                         <span>
-                                                {{ $category->name }}
-                                            </span>
+                                            {{ $category->name }}
+                                        </span>
                                     @empty
                                         <span class="product-index-page__muted">
-                                                —
-                                            </span>
+                                            —
+                                        </span>
                                     @endforelse
                                 </div>
                             </td>
@@ -281,12 +292,12 @@
                             <td>
                                 @if ($product->brand)
                                     <span class="product-index-page__brand">
-                                            {{ $product->brand->name }}
-                                        </span>
+                                        {{ $brandName }}
+                                    </span>
                                 @else
                                     <span class="product-index-page__muted">
-                                            —
-                                        </span>
+                                        —
+                                    </span>
                                 @endif
                             </td>
 
@@ -314,16 +325,16 @@
                                 @if ($product->variants->isNotEmpty())
                                     <span
                                         class="
-                                                product-index-page__stock
-                                                {{ $stock <= 0 ? 'product-index-page__stock--empty' : '' }}
-                                            "
+                                            product-index-page__stock
+                                            {{ $stock <= 0 ? 'product-index-page__stock--empty' : '' }}
+                                        "
                                     >
-                                            {{ $stock }}
-                                        </span>
+                                        {{ $stock }}
+                                    </span>
                                 @else
                                     <span class="product-index-page__muted">
-                                            —
-                                        </span>
+                                        —
+                                    </span>
                                 @endif
                             </td>
 
@@ -331,12 +342,12 @@
                             <td>
                                 @if ($product->status)
                                     <span class="product-index-page__status product-index-page__status--active">
-                                            Active
-                                        </span>
+                                        Active
+                                    </span>
                                 @else
                                     <span class="product-index-page__status product-index-page__status--inactive">
-                                            Inactive
-                                        </span>
+                                        Inactive
+                                    </span>
                                 @endif
                             </td>
 
@@ -385,48 +396,54 @@
                                 class="product-index-page__empty product-index-page__empty--initial"
                             >
                                 <i class="ri-shopping-bag-3-line"></i>
-                                <strong>No products found.</strong>
-                                <span>
-                                        Add your first product to get started.
-                                    </span>
 
-                                <a href="{{ route('admin-products.create') }}">
-                                    Add Product
-                                </a>
+                                <strong>
+                                    {{ request()->hasAny([
+                                        'search',
+                                        'status',
+                                        'source',
+                                        'category',
+                                        'brand',
+                                    ])
+                                        ? 'No products found.'
+                                        : 'No products found.' }}
+                                </strong>
+
+                                <span>
+                                    {{ request()->hasAny([
+                                        'search',
+                                        'status',
+                                        'source',
+                                        'category',
+                                        'brand',
+                                    ])
+                                        ? 'Try changing your search or filter options.'
+                                        : 'Add your first product to get started.' }}
+                                </span>
+
+                                @if (
+                                    !request()->hasAny([
+                                        'search',
+                                        'status',
+                                        'source',
+                                        'category',
+                                        'brand',
+                                    ])
+                                )
+                                    <a href="{{ route('admin-products.create') }}">
+                                        Add Product
+                                    </a>
+                                @endif
                             </td>
                         </tr>
                     @endforelse
-
-                    {{-- JS Empty State --}}
-                    <tr
-                        id="product-filter-empty"
-                        class="product-index-page__filter-empty"
-                        hidden
-                    >
-                        <td colspan="8">
-                            <div class="product-index-page__empty-content">
-                                <div class="product-index-page__empty-icon">
-                                    <i class="ri-search-line"></i>
-                                </div>
-
-                                <strong>No matching products</strong>
-
-                                <span>
-                                        Try changing your search or filter options.
-                                    </span>
-
-                                <button
-                                    type="button"
-                                    id="product-empty-clear"
-                                >
-                                    Clear Filters
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
                     </tbody>
                 </table>
             </div>
+
+            {{-- Pagination --}}
+            {{ $products->links('backend.components.pagination') }}
+
         </div>
     </div>
 
@@ -439,7 +456,10 @@
             }
 
             const searchInput = page.querySelector('#product-search');
-            const searchClear = page.querySelector('#product-search-clear');
+
+            const searchClear = page.querySelector(
+                '#product-search-clear'
+            );
 
             const statusFilter = page.querySelector(
                 '#product-status-filter'
@@ -473,33 +493,101 @@
                 '#product-visible-count'
             );
 
-            const emptyState = page.querySelector(
-                '#product-filter-empty'
-            );
+            /*
+             * Build URL from the current filter values.
+             */
+            const buildFilterUrl = () => {
+                const url = new URL(
+                    window.location.href
+                );
 
-            const emptyClearButton = page.querySelector(
-                '#product-empty-clear'
-            );
+                url.searchParams.delete('search');
+                url.searchParams.delete('status');
+                url.searchParams.delete('source');
+                url.searchParams.delete('category');
+                url.searchParams.delete('brand');
+                url.searchParams.delete('page');
 
-            const rows = Array.from(
-                page.querySelectorAll('[data-product-row]')
-            );
+                const search = searchInput.value.trim();
+                const status = statusFilter.value;
+                const source = sourceFilter.value;
+                const category = categoryFilter.value;
+                const brand = brandFilter.value;
 
-            const normalize = (value) => {
-                return String(value || '')
-                    .toLowerCase()
-                    .trim();
-            };
-
-            const getSelectedText = (select) => {
-                if (!select || !select.value) {
-                    return '';
+                if (search) {
+                    url.searchParams.set(
+                        'search',
+                        search
+                    );
                 }
 
-                return select.options[select.selectedIndex]?.text || '';
+                if (status) {
+                    url.searchParams.set(
+                        'status',
+                        status
+                    );
+                }
+
+                if (source) {
+                    url.searchParams.set(
+                        'source',
+                        source
+                    );
+                }
+
+                if (category) {
+                    url.searchParams.set(
+                        'category',
+                        category
+                    );
+                }
+
+                if (brand) {
+                    url.searchParams.set(
+                        'brand',
+                        brand
+                    );
+
+                }
+
+                return url;
             };
 
+            /*
+             * Apply filters through URL.
+             */
+            const applyFilters = () => {
+                const url = buildFilterUrl();
+
+                window.location.href = url.toString();
+            };
+
+            /*
+             * Clear all URL filters.
+             */
+            const clearFilters = () => {
+                const url = new URL(
+                    window.location.href
+                );
+
+                url.searchParams.delete('search');
+                url.searchParams.delete('status');
+                url.searchParams.delete('source');
+                url.searchParams.delete('category');
+                url.searchParams.delete('brand');
+                url.searchParams.delete('page');
+
+                window.location.href = url.toString();
+            };
+
+            /*
+             * Render active filter badges.
+             */
             const renderActiveFilters = () => {
+                if (!activeFilters) {
+                    return;
+                }
+
                 activeFilters.innerHTML = '';
 
                 const filters = [];
@@ -512,189 +600,157 @@
 
                 if (statusFilter.value) {
                     filters.push({
-                        label: `Status: ${getSelectedText(statusFilter)}`,
+                        label: `Status: ${
+                            statusFilter.options[
+                                statusFilter.selectedIndex
+                                ]?.text || ''
+                        }`,
                     });
                 }
 
                 if (sourceFilter.value) {
                     filters.push({
-                        label: `Source: ${getSelectedText(sourceFilter)}`,
+                        label: `Source: ${
+                            sourceFilter.options[
+                                sourceFilter.selectedIndex
+                                ]?.text || ''
+                        }`,
                     });
                 }
 
                 if (categoryFilter.value) {
                     filters.push({
-                        label: `Category: ${getSelectedText(categoryFilter)}`,
+                        label: `Category: ${
+                            categoryFilter.options[
+                                categoryFilter.selectedIndex
+                                ]?.text || ''
+                        }`,
                     });
                 }
 
                 if (brandFilter.value) {
                     filters.push({
-                        label: `Brand: ${getSelectedText(brandFilter)}`,
+                        label: `Brand: ${
+                            brandFilter.options[
+                                brandFilter.selectedIndex
+                                ]?.text || ''
+                        }`,
                     });
                 }
 
                 filters.forEach((filter) => {
-                    const badge = document.createElement('span');
+                    const badge =
+                        document.createElement('span');
 
                     badge.className =
                         'product-index-page__active-filter';
 
-                    badge.textContent = filter.label;
+                    badge.textContent =
+                        filter.label;
 
-                    activeFilters.appendChild(badge);
+                    activeFilters.appendChild(
+                        badge
+                    );
                 });
             };
 
-            const applyFilters = () => {
-                const search = normalize(searchInput.value);
-                const status = normalize(statusFilter.value);
-                const source = normalize(sourceFilter.value);
-                const category = categoryFilter.value;
-                const brand = brandFilter.value;
-
-                let matchedCount = 0;
-
-                rows.forEach((row) => {
-                    const rowSearch = normalize(
-                        row.dataset.search
-                    );
-
-                    const rowStatus = normalize(
-                        row.dataset.status
-                    );
-
-                    const rowSource = normalize(
-                        row.dataset.source
-                    );
-
-                    const rowCategories = row.dataset.categories
-                        ? row.dataset.categories.split(',')
-                        : [];
-
-                    const rowBrand = row.dataset.brand || '';
-
-                    const matchesSearch =
-                        !search ||
-                        rowSearch.includes(search);
-
-                    const matchesStatus =
-                        !status ||
-                        rowStatus === status;
-
-                    const matchesSource =
-                        !source ||
-                        rowSource === source;
-
-                    const matchesCategory =
-                        !category ||
-                        rowCategories.includes(category);
-
-                    const matchesBrand =
-                        !brand ||
-                        rowBrand === brand;
-
-                    const matches =
-                        matchesSearch &&
-                        matchesStatus &&
-                        matchesSource &&
-                        matchesCategory &&
-                        matchesBrand;
-
-                    row.hidden = !matches;
-
-                    if (matches) {
-                        matchedCount++;
-                    }
-                });
-
-                visibleCount.textContent = matchedCount;
-
-                emptyState.hidden = matchedCount !== 0;
-
+            /*
+             * Update search clear button.
+             */
+            const updateSearchClear = () => {
                 searchClear.classList.toggle(
                     'is-visible',
                     searchInput.value.length > 0
                 );
-
-                renderActiveFilters();
             };
 
-            const clearFilters = () => {
-                searchInput.value = '';
-                statusFilter.value = '';
-                sourceFilter.value = '';
-                categoryFilter.value = '';
-                brandFilter.value = '';
-
-                applyFilters();
-                searchInput.focus();
-            };
-
+            /*
+             * Search on Enter.
+             *
+             * Search is intentionally NOT applied
+             * on every keystroke because filtering is
+             * server-side.
+             */
             searchInput.addEventListener(
-                'input',
-                applyFilters
+                'keydown',
+                (event) => {
+                    if (event.key !== 'Enter') {
+                        return;
+                    }
+
+                    event.preventDefault();
+
+                    applyFilters();
+                }
             );
 
+            /*
+             * Search clear.
+             */
             searchClear.addEventListener(
                 'click',
                 () => {
                     searchInput.value = '';
+
                     applyFilters();
-                    searchInput.focus();
                 }
             );
 
-            statusFilter.addEventListener(
-                'change',
-                applyFilters
-            );
-
-            sourceFilter.addEventListener(
-                'change',
-                applyFilters
-            );
-
-            categoryFilter.addEventListener(
-                'change',
-                applyFilters
-            );
-
-            brandFilter.addEventListener(
-                'change',
-                applyFilters
-            );
-
+            /*
+             * Filter button.
+             */
             filterButton.addEventListener(
                 'click',
                 applyFilters
             );
 
+            /*
+             * Clear all filters.
+             */
             clearFiltersButton.addEventListener(
                 'click',
                 clearFilters
             );
 
-            emptyClearButton.addEventListener(
-                'click',
-                clearFilters
+            /*
+             * Update clear button while typing.
+             */
+            searchInput.addEventListener(
+                'input',
+                updateSearchClear
             );
 
+            /*
+             * Delete confirmation.
+             */
             page.querySelectorAll(
                 '[data-delete-product]'
             ).forEach((form) => {
-                form.addEventListener('submit', (event) => {
-                    const confirmed = window.confirm(
-                        'Are you sure you want to delete this product? This action cannot be undone.'
-                    );
+                form.addEventListener(
+                    'submit',
+                    (event) => {
+                        const confirmed =
+                            window.confirm(
+                                'Are you sure you want to delete this product? This action cannot be undone.'
+                            );
 
-                    if (!confirmed) {
-                        event.preventDefault();
+                        if (!confirmed) {
+                            event.preventDefault();
+                        }
                     }
-                });
+                );
             });
 
-            applyFilters();
+            /*
+             * Initial state.
+             */
+            updateSearchClear();
+            renderActiveFilters();
+
+            if (visibleCount) {
+                visibleCount.textContent =
+                    {{ $products->count() }};
+            }
         });
     </script>
 @endsection

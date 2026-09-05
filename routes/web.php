@@ -20,6 +20,7 @@ use App\Http\Controllers\Customer\MySmartBuyPaymentController;
 use App\Http\Controllers\Customer\MySmartBuyQuoteController;
 use App\Http\Controllers\Customer\MySmartBuyTrackingController;
 use App\Http\Controllers\Frontend\FrontendTrackingController;
+use App\Http\Controllers\Frontend\MarketplaceController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -38,8 +39,10 @@ Route::view('/', 'frontend.pages.home.index')->name('home');
 |--------------------------------------------------------------------------
 */
 
-Route::view('/shop', 'frontend.pages.shop.index')->name('shop');
-Route::view('/shop/{product}', 'frontend.pages.shop.details')->name('product-details');
+Route::get('/shop', [MarketplaceController::class, 'index'])
+    ->name('shop');
+Route::get('/shop/{product:slug}', [MarketplaceController::class, 'show'])
+    ->name('shop.details');
 Route::view('/cart', 'frontend.pages.shop.cart')->name('my-cart');
 Route::view('/checkout', 'frontend.pages.shop.checkout')->name('my-checkout');
 

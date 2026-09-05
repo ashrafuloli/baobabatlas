@@ -4,17 +4,23 @@
 
     <div class="marketplace-page">
 
-        {{-- Hero --}}
+        {{-- =========================================
+            Hero
+        ========================================== --}}
         <div
             class="c-hero-section"
             style="background-image: url({{ asset('assets/img/bg/bg-1.jpg') }});"
         >
             <div class="container">
+
                 <div class="row align-items-center">
+
                     <div class="col-xl-6 col-lg-6 col-md-10">
+
                         <div class="c-hero-content">
 
                             <ul class="breadcrumb-wrap">
+
                                 <li>
                                     <a href="{{ route('home') }}">
                                         Home
@@ -32,6 +38,7 @@
                                         Marketplace
                                     </span>
                                 </li>
+
                             </ul>
 
                             <h1 class="title">
@@ -39,14 +46,20 @@
                             </h1>
 
                         </div>
+
                     </div>
+
                 </div>
+
             </div>
         </div>
 
 
-        {{-- Shop By Categories --}}
+        {{-- =========================================
+            Shop By Categories
+        ========================================== --}}
         <section class="marketplace-categories">
+
             <div class="container">
 
                 <div class="marketplace-section-title">
@@ -55,7 +68,7 @@
                         Shop by Categories
                     </h3>
 
-                    <a href="#">
+                    <a href="{{ route('shop') }}">
                         View All Categories
 
                         <i class="ri-arrow-right-line"></i>
@@ -63,1125 +76,1251 @@
 
                 </div>
 
-
                 <div class="category-marquee">
 
-                    {{-- First Layout --}}
+                    {{-- =========================================
+                        First Marquee
+                    ========================================== --}}
                     <div class="category-layout">
 
-                        <a href="#" class="category-card">
-                            <div class="category-icon">
-                                <i class="ri-seedling-line"></i>
-                            </div>
+                        {{-- All Categories --}}
+                        <a
+                            href="{{ route('shop') }}"
+                            class="category-card"
+                        >
 
-                            <span>
-                                Agriculture
-                            </span>
-                        </a>
-
-
-                        <a href="#" class="category-card">
-                            <div class="category-icon">
-                                <i class="ri-gemini-line"></i>
-                            </div>
-
-                            <span>
-                                Minerals &amp; Metals
-                            </span>
-                        </a>
-
-
-                        <a href="#" class="category-card">
-                            <div class="category-icon">
-                                <i class="ri-t-shirt-line"></i>
-                            </div>
-
-                            <span>
-                                Textiles &amp; Fashion
-                            </span>
-                        </a>
-
-
-                        <a href="#" class="category-card">
-                            <div class="category-icon">
-                                <i class="ri-settings-3-line"></i>
-                            </div>
-
-                            <span>
-                                Machinery &amp; Equipment
-                            </span>
-                        </a>
-
-
-                        <a href="#" class="category-card">
-                            <div class="category-icon">
-                                <i class="ri-macbook-line"></i>
-                            </div>
-
-                            <span>
-                                Electronics
-                            </span>
-                        </a>
-
-
-                        <a href="#" class="category-card">
-                            <div class="category-icon">
-                                <i class="ri-car-line"></i>
-                            </div>
-
-                            <span>
-                                Vehicles
-                            </span>
-                        </a>
-
-
-                        <a href="#" class="category-card">
-                            <div class="category-icon">
-                                <i class="ri-home-4-line"></i>
-                            </div>
-
-                            <span>
-                                Home &amp; Living
-                            </span>
-                        </a>
-
-
-                        <a href="#" class="category-card">
-                            <div class="category-icon">
-                                <i class="ri-heart-pulse-line"></i>
-                            </div>
-
-                            <span>
-                                Health &amp; Beauty
-                            </span>
-                        </a>
-
-
-                        <a href="#" class="category-card">
                             <div class="category-icon">
                                 <i class="ri-apps-line"></i>
                             </div>
 
                             <span>
-                                All Categories
-                            </span>
+                        All Categories
+                    </span>
+
                         </a>
+
+
+                        @foreach ($categories as $category)
+
+                            @php
+                                $categoryIcon = match ($category->slug) {
+                                    'electronics' => 'ri-macbook-line',
+                                    'fashion' => 'ri-t-shirt-line',
+                                    'home-living' => 'ri-home-4-line',
+                                    'computers' => 'ri-computer-line',
+                                    default => 'ri-apps-line',
+                                };
+
+                                $categoryImage = $category->image ?? null;
+
+                                $categoryImageUrl = $categoryImage
+                                    ? (
+                                        filter_var(
+                                            $categoryImage,
+                                            FILTER_VALIDATE_URL
+                                        )
+                                            ? $categoryImage
+                                            : asset($categoryImage)
+                                    )
+                                    : null;
+                            @endphp
+
+                            {{-- =========================================
+                                Parent Category
+                            ========================================== --}}
+                            <a
+                                href="{{ route('shop', [
+                            'category[]' => $category->slug,
+                        ]) }}"
+                                class="category-card"
+                            >
+
+                                <div class="category-icon">
+
+                                    @if ($categoryImageUrl)
+
+                                        <img
+                                            src="{{ $categoryImageUrl }}"
+                                            alt="{{ $category->name }}"
+                                            loading="lazy"
+                                        >
+
+                                    @else
+
+                                        <i class="{{ $categoryIcon }}"></i>
+
+                                    @endif
+
+                                </div>
+
+                                <span>
+                            {{ $category->name }}
+                        </span>
+
+                            </a>
+
+
+                            {{-- =========================================
+                                Child Categories
+                            ========================================== --}}
+                            @foreach ($category->children as $child)
+
+                                @php
+                                    $childIcon = match ($child->slug) {
+                                        'smartphones' => 'ri-smartphone-line',
+                                        'laptops' => 'ri-macbook-line',
+                                        'audio' => 'ri-headphone-line',
+                                        'accessories' => 'ri-usb-line',
+                                        'mens-clothing' => 'ri-shirt-line',
+                                        'womens-clothing' => 'ri-shirt-line',
+                                        'shoes' => 'ri-footprint-line',
+                                        'sportswear' => 'ri-run-line',
+                                        'kitchen' => 'ri-restaurant-line',
+                                        'home-accessories' => 'ri-home-gear-line',
+                                        'lighting' => 'ri-lightbulb-line',
+                                        'keyboards' => 'ri-keyboard-line',
+                                        'mice' => 'ri-mouse-line',
+                                        'webcams' => 'ri-camera-line',
+                                        'computer-accessories' => 'ri-tools-line',
+                                        default => 'ri-apps-line',
+                                    };
+
+                                    $childImage = $child->image ?? null;
+
+                                    $childImageUrl = $childImage
+                                        ? (
+                                            filter_var(
+                                                $childImage,
+                                                FILTER_VALIDATE_URL
+                                            )
+                                                ? $childImage
+                                                : asset($childImage)
+                                        )
+                                        : null;
+                                @endphp
+
+                                <a
+                                    href="{{ route('shop', [
+                                'category[]' => $child->slug,
+                            ]) }}"
+                                    class="category-card"
+                                >
+
+                                    <div class="category-icon">
+
+                                        @if ($childImageUrl)
+
+                                            <img
+                                                src="{{ $childImageUrl }}"
+                                                alt="{{ $child->name }}"
+                                                loading="lazy"
+                                            >
+
+                                        @else
+
+                                            <i class="{{ $childIcon }}"></i>
+
+                                        @endif
+
+                                    </div>
+
+                                    <span>
+                                {{ $child->name }}
+                            </span>
+
+                                </a>
+
+                            @endforeach
+
+                        @endforeach
 
                     </div>
 
 
-                    {{-- Duplicate Layout --}}
+                    {{-- =========================================
+                        Second Marquee
+                    ========================================== --}}
                     <div class="category-layout">
 
-                        <a href="#" class="category-card">
-                            <div class="category-icon">
-                                <i class="ri-seedling-line"></i>
-                            </div>
+                        {{-- All Categories --}}
+                        <a
+                            href="{{ route('shop') }}"
+                            class="category-card"
+                        >
 
-                            <span>
-                                Agriculture
-                            </span>
-                        </a>
-
-
-                        <a href="#" class="category-card">
-                            <div class="category-icon">
-                                <i class="ri-gemini-line"></i>
-                            </div>
-
-                            <span>
-                                Minerals &amp; Metals
-                            </span>
-                        </a>
-
-
-                        <a href="#" class="category-card">
-                            <div class="category-icon">
-                                <i class="ri-t-shirt-line"></i>
-                            </div>
-
-                            <span>
-                                Textiles &amp; Fashion
-                            </span>
-                        </a>
-
-
-                        <a href="#" class="category-card">
-                            <div class="category-icon">
-                                <i class="ri-settings-3-line"></i>
-                            </div>
-
-                            <span>
-                                Machinery &amp; Equipment
-                            </span>
-                        </a>
-
-
-                        <a href="#" class="category-card">
-                            <div class="category-icon">
-                                <i class="ri-macbook-line"></i>
-                            </div>
-
-                            <span>
-                                Electronics
-                            </span>
-                        </a>
-
-
-                        <a href="#" class="category-card">
-                            <div class="category-icon">
-                                <i class="ri-car-line"></i>
-                            </div>
-
-                            <span>
-                                Vehicles
-                            </span>
-                        </a>
-
-
-                        <a href="#" class="category-card">
-                            <div class="category-icon">
-                                <i class="ri-home-4-line"></i>
-                            </div>
-
-                            <span>
-                                Home &amp; Living
-                            </span>
-                        </a>
-
-
-                        <a href="#" class="category-card">
-                            <div class="category-icon">
-                                <i class="ri-heart-pulse-line"></i>
-                            </div>
-
-                            <span>
-                                Health &amp; Beauty
-                            </span>
-                        </a>
-
-
-                        <a href="#" class="category-card">
                             <div class="category-icon">
                                 <i class="ri-apps-line"></i>
                             </div>
 
                             <span>
-                                All Categories
-                            </span>
+                        All Categories
+                    </span>
+
                         </a>
+
+
+                        @foreach ($categories as $category)
+
+                            @php
+                                $categoryIcon = match ($category->slug) {
+                                    'electronics' => 'ri-macbook-line',
+                                    'fashion' => 'ri-t-shirt-line',
+                                    'home-living' => 'ri-home-4-line',
+                                    'computers' => 'ri-computer-line',
+                                    default => 'ri-apps-line',
+                                };
+
+                                $categoryImage = $category->image ?? null;
+
+                                $categoryImageUrl = $categoryImage
+                                    ? (
+                                        filter_var(
+                                            $categoryImage,
+                                            FILTER_VALIDATE_URL
+                                        )
+                                            ? $categoryImage
+                                            : asset($categoryImage)
+                                    )
+                                    : null;
+                            @endphp
+
+                            {{-- Parent Category --}}
+                            <a
+                                href="{{ route('shop', [
+                            'category[]' => $category->slug,
+                        ]) }}"
+                                class="category-card"
+                            >
+
+                                <div class="category-icon">
+
+                                    @if ($categoryImageUrl)
+
+                                        <img
+                                            src="{{ $categoryImageUrl }}"
+                                            alt="{{ $category->name }}"
+                                            loading="lazy"
+                                        >
+
+                                    @else
+
+                                        <i class="{{ $categoryIcon }}"></i>
+
+                                    @endif
+
+                                </div>
+
+                                <span>
+                            {{ $category->name }}
+                        </span>
+
+                            </a>
+
+
+                            {{-- Child Categories --}}
+                            @foreach ($category->children as $child)
+
+                                @php
+                                    $childIcon = match ($child->slug) {
+                                        'smartphones' => 'ri-smartphone-line',
+                                        'laptops' => 'ri-macbook-line',
+                                        'audio' => 'ri-headphone-line',
+                                        'accessories' => 'ri-usb-line',
+                                        'mens-clothing' => 'ri-shirt-line',
+                                        'womens-clothing' => 'ri-shirt-line',
+                                        'shoes' => 'ri-footprint-line',
+                                        'sportswear' => 'ri-run-line',
+                                        'kitchen' => 'ri-restaurant-line',
+                                        'home-accessories' => 'ri-home-gear-line',
+                                        'lighting' => 'ri-lightbulb-line',
+                                        'keyboards' => 'ri-keyboard-line',
+                                        'mice' => 'ri-mouse-line',
+                                        'webcams' => 'ri-camera-line',
+                                        'computer-accessories' => 'ri-tools-line',
+                                        default => 'ri-apps-line',
+                                    };
+
+                                    $childImage = $child->image ?? null;
+
+                                    $childImageUrl = $childImage
+                                        ? (
+                                            filter_var(
+                                                $childImage,
+                                                FILTER_VALIDATE_URL
+                                            )
+                                                ? $childImage
+                                                : asset($childImage)
+                                        )
+                                        : null;
+                                @endphp
+
+                                <a
+                                    href="{{ route('shop', [
+                                'category[]' => $child->slug,
+                            ]) }}"
+                                    class="category-card"
+                                >
+
+                                    <div class="category-icon">
+
+                                        @if ($childImageUrl)
+
+                                            <img
+                                                src="{{ $childImageUrl }}"
+                                                alt="{{ $child->name }}"
+                                                loading="lazy"
+                                            >
+
+                                        @else
+
+                                            <i class="{{ $childIcon }}"></i>
+
+                                        @endif
+
+                                    </div>
+
+                                    <span>
+                                {{ $child->name }}
+                            </span>
+
+                                </a>
+
+                            @endforeach
+
+                        @endforeach
 
                     </div>
 
                 </div>
 
             </div>
+
         </section>
 
-
-        {{-- Products --}}
+        {{-- =========================================
+            Products
+        ========================================== --}}
         <section class="marketplace-products">
+
             <div class="container">
 
-                <div class="marketplace-products-layout">
+                <form
+                    class="marketplace-products-form"
+                    method="GET"
+                    action="{{ route('shop') }}"
+                >
+
+                    <div class="marketplace-products-layout">
 
 
-                    {{-- Filters --}}
-                    <aside class="marketplace-filter">
+                        {{-- =====================================
+                            Sidebar Filters
+                        ====================================== --}}
+                        <aside class="marketplace-filter">
 
-                        <div class="filter-header">
+                            <div class="filter-header">
 
-                            <h4>
-                                Filters
-                            </h4>
+                                <h4>
+                                    Filters
+                                </h4>
 
-                            <button type="button" class="clear-all">
-                                Clear All
-                            </button>
+                                <a
+                                    href="{{ route('shop') }}"
+                                    class="clear-all"
+                                >
+                                    Clear All
+                                </a>
 
-                        </div>
-
-
-                        {{-- Category --}}
-                        <div class="filter-group is-open">
-
-                            <button
-                                type="button"
-                                class="filter-group-title"
-                                aria-expanded="true"
-                            >
-                                <span>
-                                    Category
-                                </span>
-
-                                <i class="ri-arrow-up-s-line"></i>
-                            </button>
-
-
-                            <div class="filter-group-content">
-                                <div class="filter-group-content-inner">
-
-                                    <label class="filter-checkbox">
-                                        <input
-                                            type="checkbox"
-                                            name="category[]"
-                                            value="all"
-                                            checked
-                                        >
-
-                                        <span class="checkmark"></span>
-
-                                        <span class="label-text">
-                                            All Categories
-                                        </span>
-                                    </label>
-
-
-                                    <label class="filter-checkbox">
-                                        <input
-                                            type="checkbox"
-                                            name="category[]"
-                                            value="agriculture"
-                                        >
-
-                                        <span class="checkmark"></span>
-
-                                        <span class="label-text">
-                                            Agriculture
-                                        </span>
-                                    </label>
-
-
-                                    <label class="filter-checkbox">
-                                        <input
-                                            type="checkbox"
-                                            name="category[]"
-                                            value="minerals-metals"
-                                        >
-
-                                        <span class="checkmark"></span>
-
-                                        <span class="label-text">
-                                            Minerals &amp; Metals
-                                        </span>
-                                    </label>
-
-
-                                    <label class="filter-checkbox">
-                                        <input
-                                            type="checkbox"
-                                            name="category[]"
-                                            value="textiles-fashion"
-                                        >
-
-                                        <span class="checkmark"></span>
-
-                                        <span class="label-text">
-                                            Textiles &amp; Fashion
-                                        </span>
-                                    </label>
-
-
-                                    <label class="filter-checkbox">
-                                        <input
-                                            type="checkbox"
-                                            name="category[]"
-                                            value="machinery-equipment"
-                                        >
-
-                                        <span class="checkmark"></span>
-
-                                        <span class="label-text">
-                                            Machinery &amp; Equipment
-                                        </span>
-                                    </label>
-
-
-                                    <label class="filter-checkbox">
-                                        <input
-                                            type="checkbox"
-                                            name="category[]"
-                                            value="electronics"
-                                        >
-
-                                        <span class="checkmark"></span>
-
-                                        <span class="label-text">
-                                            Electronics
-                                        </span>
-                                    </label>
-
-
-                                    <label class="filter-checkbox">
-                                        <input
-                                            type="checkbox"
-                                            name="category[]"
-                                            value="vehicles"
-                                        >
-
-                                        <span class="checkmark"></span>
-
-                                        <span class="label-text">
-                                            Vehicles
-                                        </span>
-                                    </label>
-
-
-                                    <label class="filter-checkbox">
-                                        <input
-                                            type="checkbox"
-                                            name="category[]"
-                                            value="home-living"
-                                        >
-
-                                        <span class="checkmark"></span>
-
-                                        <span class="label-text">
-                                            Home &amp; Living
-                                        </span>
-                                    </label>
-
-
-                                    <label class="filter-checkbox">
-                                        <input
-                                            type="checkbox"
-                                            name="category[]"
-                                            value="health-beauty"
-                                        >
-
-                                        <span class="checkmark"></span>
-
-                                        <span class="label-text">
-                                            Health &amp; Beauty
-                                        </span>
-                                    </label>
-
-                                </div>
                             </div>
 
-                        </div>
+
+                            {{-- =================================
+                                Category Filter
+                            ================================== --}}
+                            <div class="filter-group is-open">
+
+                                <button
+                                    type="button"
+                                    class="filter-group-title"
+                                    aria-expanded="true"
+                                >
+
+                                    <span>
+                                        Category
+                                    </span>
+
+                                    <i class="ri-arrow-up-s-line"></i>
+
+                                </button>
 
 
-                        {{-- Price Range --}}
-                        <div class="filter-group is-open">
+                                <div class="filter-group-content">
 
-                            <button
-                                type="button"
-                                class="filter-group-title"
-                                aria-expanded="true"
-                            >
-                                <span>
-                                    Price Range
-                                </span>
-
-                                <i class="ri-arrow-up-s-line"></i>
-                            </button>
+                                    <div class="filter-group-content-inner">
 
 
-                            <div class="filter-group-content">
-                                <div class="filter-group-content-inner">
+                                        {{-- All Categories --}}
+                                        <label class="filter-checkbox">
 
-                                    <div class="price-range">
+                                            <input
+                                                type="radio"
+                                                name="category"
+                                                value=""
+                                                @checked(!request()->filled('category'))
+                                            >
 
-                                        <div class="range-slider">
+                                            <span class="checkmark"></span>
 
-                                            <div class="range-track">
-                                                <span class="range-progress"></span>
+                                            <span class="label-text">
+                                                All Categories
+                                            </span>
+
+                                        </label>
+
+
+                                        {{-- Main Categories --}}
+                                        @foreach ($categories as $category)
+
+                                            @php
+                                                $children = $category->children ?? collect();
+
+                                                $hasSelectedChild = $children->contains(
+                                                    fn ($child) =>
+                                                        request('category') === $child->slug
+                                                );
+
+                                                $categoryIsSelected =
+                                                    request('category') === $category->slug ||
+                                                    $hasSelectedChild;
+                                            @endphp
+
+
+                                            <div
+                                                class="category-filter-item {{ $categoryIsSelected ? 'is-selected' : '' }}"
+                                            >
+
+                                                <div class="category-filter-heading">
+
+                                                    <label class="filter-checkbox">
+
+                                                        <input
+                                                            type="radio"
+                                                            name="category"
+                                                            value="{{ $category->slug }}"
+                                                            @checked(request('category') === $category->slug)
+                                                        >
+
+                                                        <span class="checkmark"></span>
+
+                                                        <span class="label-text">
+                                                            {{ $category->name }}
+                                                        </span>
+
+                                                    </label>
+
+
+                                                    @if ($children->isNotEmpty())
+
+                                                        <button
+                                                            type="button"
+                                                            class="subcategory-toggle"
+                                                            aria-expanded="{{ $categoryIsSelected ? 'true' : 'false' }}"
+                                                        >
+
+                                                            <i class="ri-arrow-down-s-line"></i>
+
+                                                        </button>
+
+                                                    @endif
+
+                                                </div>
+
+
+                                                @if ($children->isNotEmpty())
+
+                                                    <div
+                                                        class="subcategory-list"
+                                                        style="{{ $categoryIsSelected ? 'display: block;' : '' }}"
+                                                    >
+
+                                                        @foreach ($children as $subcategory)
+
+                                                            <label class="filter-checkbox filter-checkbox-subcategory">
+
+                                                                <input
+                                                                    type="radio"
+                                                                    name="category"
+                                                                    value="{{ $subcategory->slug }}"
+                                                                    @checked(request('category') === $subcategory->slug)
+                                                                >
+
+                                                                <span class="checkmark"></span>
+
+                                                                <span class="label-text">
+                                                                    {{ $subcategory->name }}
+                                                                </span>
+
+                                                            </label>
+
+                                                        @endforeach
+
+                                                    </div>
+
+                                                @endif
+
+                                            </div>
+
+                                        @endforeach
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            {{-- =================================
+                                Price Range
+                            ================================== --}}
+                            <div class="filter-group is-open">
+
+                                <button
+                                    type="button"
+                                    class="filter-group-title"
+                                    aria-expanded="true"
+                                >
+
+                                    <span>
+                                        Price Range
+                                    </span>
+
+                                    <i class="ri-arrow-up-s-line"></i>
+
+                                </button>
+
+
+                                <div class="filter-group-content">
+
+                                    <div class="filter-group-content-inner">
+
+                                        <div class="price-range">
+
+                                            <div class="range-slider">
+
+                                                <div class="range-track">
+
+                                                    <span class="range-progress"></span>
+
+                                                </div>
+
+
+                                                <input
+                                                    type="range"
+                                                    class="range-input range-input-min"
+                                                    min="0"
+                                                    max="{{ $priceMax }}"
+                                                    value="{{ request('min_price', 0) }}"
+                                                    step="1"
+                                                >
+
+
+                                                <input
+                                                    type="range"
+                                                    class="range-input range-input-max"
+                                                    min="0"
+                                                    max="{{ $priceMax }}"
+                                                    value="{{ request('max_price', $priceMax) }}"
+                                                    step="1"
+                                                >
+
+                                            </div>
+
+
+                                            <div class="range-values">
+
+                                                <span class="range-value-min">
+                                                    ${{ number_format((float) request('min_price', 0), 0) }}
+                                                </span>
+
+                                                <span class="range-value-max">
+                                                    ${{ number_format((float) request('max_price', $priceMax), 0) }}{{ request('max_price', $priceMax) >= $priceMax ? '+' : '' }}
+                                                </span>
+
                                             </div>
 
 
                                             <input
-                                                type="range"
-                                                class="range-input range-input-min"
-                                                min="0"
-                                                max="10000"
-                                                value="0"
-                                                step="100"
+                                                type="hidden"
+                                                name="min_price"
+                                                class="min-price-input"
+                                                value="{{ request('min_price', 0) }}"
                                             >
 
 
                                             <input
-                                                type="range"
-                                                class="range-input range-input-max"
-                                                min="0"
-                                                max="10000"
-                                                value="10000"
-                                                step="100"
+                                                type="hidden"
+                                                name="max_price"
+                                                class="max-price-input"
+                                                value="{{ request('max_price', $priceMax) }}"
                                             >
 
                                         </div>
 
+                                    </div>
 
-                                        <div class="range-values">
+                                </div>
 
-                                            <span class="range-value-min">
-                                                $0
+                            </div>
+
+
+                            {{-- =================================
+                                Brands
+                            ================================== --}}
+                            <div class="filter-group is-open">
+
+                                <button
+                                    type="button"
+                                    class="filter-group-title"
+                                    aria-expanded="true"
+                                >
+
+                                    <span>
+                                        Brands
+                                    </span>
+
+                                    <i class="ri-arrow-up-s-line"></i>
+
+                                </button>
+
+
+                                <div class="filter-group-content">
+
+                                    <div class="filter-group-content-inner">
+
+
+                                        {{-- All Brands --}}
+                                        <label class="filter-checkbox">
+
+                                            <input
+                                                type="radio"
+                                                name="brand"
+                                                value=""
+                                                @checked(!request()->filled('brand'))
+                                            >
+
+                                            <span class="checkmark"></span>
+
+                                            <span class="label-text">
+                                                All Brands
                                             </span>
 
-                                            <span class="range-value-max">
-                                                $10,000+
-                                            </span>
+                                        </label>
+
+
+                                        @foreach ($brands as $brand)
+
+                                            <label class="filter-checkbox">
+
+                                                <input
+                                                    type="radio"
+                                                    name="brand"
+                                                    value="{{ $brand->slug }}"
+                                                    @checked(request('brand') === $brand->slug)
+                                                >
+
+                                                <span class="checkmark"></span>
+
+                                                <span class="label-text">
+                                                    {{ $brand->name }}
+                                                </span>
+
+                                            </label>
+
+                                        @endforeach
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            {{-- =================================
+                                Attributes
+                            ================================== --}}
+                            @foreach ($attributes as $attribute)
+
+                                @php
+                                    $selectedAttributeValues = collect(
+                                        (array) request("attribute.{$attribute->slug}", [])
+                                    );
+                                @endphp
+
+                                <div class="filter-group is-open">
+
+                                    <button
+                                        type="button"
+                                        class="filter-group-title"
+                                        aria-expanded="true"
+                                    >
+
+                                        <span>
+                                            {{ $attribute->name }}
+                                        </span>
+
+                                        <i class="ri-arrow-up-s-line"></i>
+
+                                    </button>
+
+
+                                    <div class="filter-group-content">
+
+                                        <div class="filter-group-content-inner">
+
+                                            @foreach ($attribute->values as $value)
+
+                                                <label class="filter-checkbox">
+
+                                                    <input
+                                                        type="checkbox"
+                                                        name="attribute[{{ $attribute->slug }}][]"
+                                                        value="{{ $value->slug }}"
+                                                        @checked(
+                                                            $selectedAttributeValues->contains($value->slug)
+                                                        )
+                                                    >
+
+                                                    <span class="checkmark"></span>
+
+                                                    <span class="label-text">
+                                                        {{ $value->label }}
+                                                    </span>
+
+                                                </label>
+
+                                            @endforeach
 
                                         </div>
 
                                     </div>
 
                                 </div>
-                            </div>
 
-                        </div>
+                            @endforeach
 
-
-                        {{-- Location --}}
-                        <div class="filter-group is-open">
 
                             <button
-                                type="button"
-                                class="filter-group-title"
-                                aria-expanded="true"
+                                type="submit"
+                                class="apply-filter"
                             >
-                                <span>
-                                    Location
-                                </span>
-
-                                <i class="ri-arrow-up-s-line"></i>
+                                Apply Filters
                             </button>
 
+                        </aside>
 
-                            <div class="filter-group-content">
-                                <div class="filter-group-content-inner">
 
-                                    <label class="filter-checkbox">
+                        {{-- =====================================
+                            Product Area
+                        ====================================== --}}
+                        <div class="marketplace-product-area">
+
+
+                            {{-- Toolbar --}}
+                            <div class="product-toolbar">
+
+
+                                {{-- Search --}}
+                                <div class="marketplace-search">
+
+                                    <div class="search-input">
+
+                                        <i class="ri-search-line"></i>
+
                                         <input
-                                            type="checkbox"
-                                            name="location[]"
-                                            value="all"
-                                            checked
+                                            type="search"
+                                            name="search"
+                                            value="{{ request('search') }}"
+                                            placeholder="Search products..."
                                         >
 
-                                        <span class="checkmark"></span>
-
-                                        <span class="label-text">
-                                            All Locations
-                                        </span>
-                                    </label>
+                                    </div>
 
 
-                                    <label class="filter-checkbox">
-                                        <input
-                                            type="checkbox"
-                                            name="location[]"
-                                            value="conakry"
-                                        >
+                                    <button type="submit">
 
-                                        <span class="checkmark"></span>
+                                        <i class="ri-search-line"></i>
 
-                                        <span class="label-text">
-                                            Conakry
-                                        </span>
-                                    </label>
-
-
-                                    <label class="filter-checkbox">
-                                        <input
-                                            type="checkbox"
-                                            name="location[]"
-                                            value="boke"
-                                        >
-
-                                        <span class="checkmark"></span>
-
-                                        <span class="label-text">
-                                            Boke
-                                        </span>
-                                    </label>
-
-
-                                    <label class="filter-checkbox">
-                                        <input
-                                            type="checkbox"
-                                            name="location[]"
-                                            value="kankan"
-                                        >
-
-                                        <span class="checkmark"></span>
-
-                                        <span class="label-text">
-                                            Kankan
-                                        </span>
-                                    </label>
-
-
-                                    <label class="filter-checkbox">
-                                        <input
-                                            type="checkbox"
-                                            name="location[]"
-                                            value="nzerekore"
-                                        >
-
-                                        <span class="checkmark"></span>
-
-                                        <span class="label-text">
-                                            Nzerekore
-                                        </span>
-                                    </label>
-
-
-                                    <label class="filter-checkbox">
-                                        <input
-                                            type="checkbox"
-                                            name="location[]"
-                                            value="other-region"
-                                        >
-
-                                        <span class="checkmark"></span>
-
-                                        <span class="label-text">
-                                            Other Region
-                                        </span>
-                                    </label>
+                                    </button>
 
                                 </div>
-                            </div>
-
-                        </div>
 
 
-                        {{-- Supplier Type --}}
-                        <div class="filter-group is-open">
+                                {{-- Sort --}}
+                                <div class="sort-select">
 
-                            <button
-                                type="button"
-                                class="filter-group-title"
-                                aria-expanded="true"
-                            >
-                                <span>
-                                    Supplier Type
-                                </span>
+                                    @php
+                                        $currentSort = request('sort', 'featured');
 
-                                <i class="ri-arrow-up-s-line"></i>
-                            </button>
+                                        $sortLabel = match ($currentSort) {
+                                            'newest' => 'Newest Arrivals',
+                                            'price-low-high' => 'Price: Low to High',
+                                            'price-high-low' => 'Price: High to Low',
+                                            default => 'Featured',
+                                        };
+                                    @endphp
 
 
-                            <div class="filter-group-content">
-                                <div class="filter-group-content-inner">
+                                    <button
+                                        type="button"
+                                        class="sort-select-trigger"
+                                        aria-expanded="false"
+                                    >
 
-                                    <label class="filter-checkbox">
-                                        <input
-                                            type="checkbox"
-                                            name="supplier[]"
-                                            value="all"
-                                            checked
-                                        >
+                                        <span class="sort-select-value">
 
-                                        <span class="checkmark"></span>
+                                            <span class="sort-label">
+                                                Sort by:
+                                            </span>
 
-                                        <span class="label-text">
-                                            All Suppliers
+                                            <strong>
+                                                {{ $sortLabel }}
+                                            </strong>
+
                                         </span>
-                                    </label>
 
 
-                                    <label class="filter-checkbox">
-                                        <input
-                                            type="checkbox"
-                                            name="supplier[]"
-                                            value="verified"
+                                        <i class="ri-arrow-down-s-line"></i>
+
+                                    </button>
+
+
+                                    <div class="sort-select-options">
+
+                                        <button
+                                            type="button"
+                                            class="sort-option {{ $currentSort === 'featured' ? 'is-selected' : '' }}"
+                                            data-value="featured"
                                         >
-
-                                        <span class="checkmark"></span>
-
-                                        <span class="label-text">
-                                            Verified Suppliers
-                                        </span>
-                                    </label>
+                                            Featured
+                                        </button>
 
 
-                                    <label class="filter-checkbox">
-                                        <input
-                                            type="checkbox"
-                                            name="supplier[]"
-                                            value="premium"
+                                        <button
+                                            type="button"
+                                            class="sort-option {{ $currentSort === 'newest' ? 'is-selected' : '' }}"
+                                            data-value="newest"
                                         >
-
-                                        <span class="checkmark"></span>
-
-                                        <span class="label-text">
-                                            Premium Suppliers
-                                        </span>
-                                    </label>
-
-                                </div>
-                            </div>
-
-                        </div>
+                                            Newest Arrivals
+                                        </button>
 
 
-                        <button type="button" class="apply-filter">
-                            Apply Filters
-                        </button>
-
-                    </aside>
-
-
-                    {{-- Product Area --}}
-                    <div class="marketplace-product-area">
-
-                        <div class="product-toolbar">
+                                        <button
+                                            type="button"
+                                            class="sort-option {{ $currentSort === 'price-low-high' ? 'is-selected' : '' }}"
+                                            data-value="price-low-high"
+                                        >
+                                            Price: Low to High
+                                        </button>
 
 
-                            {{-- Search --}}
-                            <form class="marketplace-search">
+                                        <button
+                                            type="button"
+                                            class="sort-option {{ $currentSort === 'price-high-low' ? 'is-selected' : '' }}"
+                                            data-value="price-high-low"
+                                        >
+                                            Price: High to Low
+                                        </button>
 
-                                <div class="search-input">
+                                    </div>
 
-                                    <i class="ri-search-line"></i>
 
                                     <input
-                                        type="text"
-                                        name="search"
-                                        placeholder="Search products..."
+                                        type="hidden"
+                                        name="sort"
+                                        value="{{ $currentSort }}"
+                                        class="sort-input"
                                     >
 
                                 </div>
 
-
-                                <button type="submit">
-                                    <i class="ri-search-line"></i>
-                                </button>
-
-                            </form>
-
-
-                            {{-- Sort --}}
-                            <div class="sort-select">
-                                <button
-                                    type="button"
-                                    class="sort-select-trigger"
-                                    aria-expanded="false"
-                                >
-        <span class="sort-select-value">
-            <span class="sort-label">Sort by:</span>
-            <strong>Featured</strong>
-        </span>
-
-                                    <i class="ri-arrow-down-s-line"></i>
-                                </button>
-
-                                <div class="sort-select-options">
-
-                                    <button
-                                        type="button"
-                                        class="sort-option is-selected"
-                                        data-value="featured"
-                                    >
-                                        Featured
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        class="sort-option"
-                                        data-value="newest"
-                                    >
-                                        Newest Arrivals
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        class="sort-option"
-                                        data-value="best-selling"
-                                    >
-                                        Best Selling
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        class="sort-option"
-                                        data-value="price-low-high"
-                                    >
-                                        Price: Low to High
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        class="sort-option"
-                                        data-value="price-high-low"
-                                    >
-                                        Price: High to Low
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        class="sort-option"
-                                        data-value="top-rated"
-                                    >
-                                        Top Rated
-                                    </button>
-
-                                </div>
-
-                                <input
-                                    type="hidden"
-                                    name="sort"
-                                    value="featured"
-                                    class="sort-input"
-                                >
                             </div>
 
-                        </div>
 
+                            {{-- Product Result Summary --}}
+                            <div class="filter-summary">
 
-                        {{-- Product Grid --}}
-                        <div class="product-grid">
+                                <div class="result-count">
 
-
-                            <div class="product-card">
-
-                                <div class="product-image">
-
-                                    <span class="product-badge bestseller">
-                                        BEST SELLER
-                                    </span>
-
-                                    <button type="button" class="wishlist">
-                                        <i class="ri-heart-line"></i>
-                                    </button>
-
-                                    <a href="#">
-                                        <img
-                                            src="{{ asset('assets/img/products/thumb-1.jpeg') }}"
-                                            alt="Raw Cashew Nuts"
-                                        >
-                                    </a>
+                                    Showing
+                                    <strong>
+                                        {{ $products->firstItem() ?? 0 }}
+                                    </strong>
+                                    to
+                                    <strong>
+                                        {{ $products->lastItem() ?? 0 }}
+                                    </strong>
+                                    of
+                                    <strong>
+                                        {{ $products->total() }}
+                                    </strong>
+                                    products
 
                                 </div>
 
 
-                                <div class="product-content">
+                                @if (
+                                    request()->filled('search') ||
+                                    request()->filled('category') ||
+                                    request()->filled('brand') ||
+                                    request()->filled('min_price') ||
+                                    request()->filled('max_price') ||
+                                    request()->filled('sort')
+                                )
 
-                                    <h4>
-                                        <a href="#">
-                                            Raw Cashew Nuts
+                                    <div class="active-filters">
+
+                                        <a
+                                            href="{{ route('shop') }}"
+                                            class="active-filter"
+                                        >
+
+                                            Clear Filters
+
+                                            <i class="ri-close-line"></i>
+
                                         </a>
-                                    </h4>
 
-                                    <strong class="product-price">
-                                        $2.45
-                                    </strong>
-
-                                    <div class="product-rating">
-                                        <span class="stars">★★★★★</span>
-                                        <span>4.8 (120)</span>
                                     </div>
 
-                                </div>
+                                @endif
 
                             </div>
 
 
-                            <div class="product-card">
+                            {{-- =================================
+                                Product Grid
+                            ================================== --}}
+                            <div class="product-grid">
 
-                                <div class="product-image">
+                                @forelse ($products as $product)
 
-                                    <span class="product-badge premium">
-                                        PREMIUM
-                                    </span>
+                                    @php
+                                        $thumbnail = $product->thumbnail;
 
-                                    <button type="button" class="wishlist">
-                                        <i class="ri-heart-line"></i>
-                                    </button>
+                                        $imageUrl = $thumbnail
+                                            ? (
+                                                filter_var(
+                                                    $thumbnail,
+                                                    FILTER_VALIDATE_URL
+                                                )
+                                                    ? $thumbnail
+                                                    : asset($thumbnail)
+                                            )
+                                            : asset(
+                                                'assets/img/products/product-placeholder.jpg'
+                                            );
 
-                                    <a href="#">
-                                        <img
-                                            src="{{ asset('assets/img/products/thumb-2.jpeg') }}"
-                                            alt="Gold Nuggets"
-                                        >
-                                    </a>
-
-                                </div>
+                                        $stock = $product->variants->sum('stock');
+                                    @endphp
 
 
-                                <div class="product-content">
+                                    <div class="product-card">
 
-                                    <h4>
-                                        <a href="#">
-                                            Gold Nuggets
-                                        </a>
-                                    </h4>
+                                        <div class="product-image">
 
-                                    <strong class="product-price">
-                                        $58,500
-                                    </strong>
 
-                                    <div class="product-rating">
-                                        <span class="stars">★★★★★</span>
-                                        <span>4.9 (85)</span>
+                                            {{-- Source Badge --}}
+                                            @if ($product->source !== 'own')
+
+                                                <span class="product-badge premium">
+                                                    {{ strtoupper($product->source) }}
+                                                </span>
+
+                                            @endif
+
+
+                                            {{-- Out Of Stock --}}
+                                            @if ($stock <= 0)
+
+                                                <span class="product-badge out-of-stock">
+                                                    OUT OF STOCK
+                                                </span>
+
+                                            @endif
+
+
+                                            {{-- Wishlist --}}
+                                            <button
+                                                type="button"
+                                                class="wishlist"
+                                                data-product-id="{{ $product->id }}"
+                                                aria-label="Add {{ $product->name }} to wishlist"
+                                            >
+
+                                                <i class="ri-heart-line"></i>
+
+                                            </button>
+
+
+                                            {{-- Product Image --}}
+                                            <a
+                                                href="{{ route('shop.details', $product->slug) }}"
+                                            >
+
+                                                <img
+                                                    src="{{ $imageUrl }}"
+                                                    alt="{{ $product->name }}"
+                                                    loading="lazy"
+                                                >
+
+                                            </a>
+
+                                        </div>
+
+
+                                        <div class="product-content">
+
+                                            {{-- Brand --}}
+                                            @if ($product->brand)
+
+                                                <span class="product-brand">
+                                                    {{ $product->brand->name }}
+                                                </span>
+
+                                            @endif
+
+
+                                            {{-- Product Name --}}
+                                            <h4>
+
+                                                <a
+                                                    href="{{ route('shop.details', $product->slug) }}"
+                                                >
+                                                    {{ $product->name }}
+                                                </a>
+
+                                            </h4>
+
+
+                                            {{-- Price --}}
+                                            <strong class="product-price">
+
+                                                ${{ number_format(
+                                                    (float) $product->price,
+                                                    2
+                                                ) }}
+
+                                            </strong>
+
+
+                                            {{-- Category --}}
+                                            @if ($product->categories->isNotEmpty())
+
+                                                <span class="product-category">
+
+                                                    {{ $product->categories->first()->name }}
+
+                                                </span>
+
+                                            @endif
+
+                                        </div>
+
                                     </div>
 
-                                </div>
+                                @empty
 
-                            </div>
+                                    <div class="marketplace-empty">
+
+                                        <div class="marketplace-empty-icon">
+
+                                            <i class="ri-shopping-bag-3-line"></i>
+
+                                        </div>
 
 
-                            <div class="product-card">
+                                        <h4>
+                                            No Products Found
+                                        </h4>
 
-                                <div class="product-image">
 
-                                    <button type="button" class="wishlist">
-                                        <i class="ri-heart-line"></i>
-                                    </button>
+                                        <p>
+                                            We couldn't find any products matching your current filters.
+                                        </p>
 
-                                    <a href="#">
-                                        <img
-                                            src="{{ asset('assets/img/products/thumb-3.jpeg') }}"
-                                            alt="African Wax Print Fabric"
+
+                                        <a
+                                            href="{{ route('shop') }}"
+                                            class="apply-filter"
                                         >
-                                    </a>
-
-                                </div>
-
-
-                                <div class="product-content">
-
-                                    <h4>
-                                        <a href="#">
-                                            African Wax Print Fabric
+                                            Clear Filters
                                         </a>
-                                    </h4>
 
-                                    <strong class="product-price">
-                                        $4.75
-                                    </strong>
-
-                                    <div class="product-rating">
-                                        <span class="stars">★★★★★</span>
-                                        <span>4.7 (60)</span>
                                     </div>
 
-                                </div>
+                                @endforelse
 
                             </div>
 
 
-                            <div class="product-card">
+                            {{-- =================================
+                                Pagination
+                            ================================== --}}
+                            @if ($products->hasPages())
 
-                                <div class="product-image">
+                                <div class="marketplace-pagination">
 
-                                    <span class="product-badge bestseller">
-                                        BEST SELLER
-                                    </span>
-
-                                    <button type="button" class="wishlist">
-                                        <i class="ri-heart-line"></i>
-                                    </button>
-
-                                    <a href="#">
-                                        <img
-                                            src="{{ asset('assets/img/products/thumb-1.jpeg') }}"
-                                            alt="Raw Cashew Nuts"
-                                        >
-                                    </a>
+                                    {{ $products->links('frontend.components.pagination') }}
 
                                 </div>
 
-
-                                <div class="product-content">
-
-                                    <h4>
-                                        <a href="#">
-                                            Raw Cashew Nuts
-                                        </a>
-                                    </h4>
-
-                                    <strong class="product-price">
-                                        $2.45
-                                    </strong>
-
-                                    <div class="product-rating">
-                                        <span class="stars">★★★★★</span>
-                                        <span>4.8 (120)</span>
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-
-                            <div class="product-card">
-
-                                <div class="product-image">
-
-                                    <span class="product-badge premium">
-                                        PREMIUM
-                                    </span>
-
-                                    <button type="button" class="wishlist">
-                                        <i class="ri-heart-line"></i>
-                                    </button>
-
-                                    <a href="#">
-                                        <img
-                                            src="{{ asset('assets/img/products/thumb-2.jpeg') }}"
-                                            alt="Gold Nuggets"
-                                        >
-                                    </a>
-
-                                </div>
-
-
-                                <div class="product-content">
-
-                                    <h4>
-                                        <a href="#">
-                                            Gold Nuggets
-                                        </a>
-                                    </h4>
-
-                                    <strong class="product-price">
-                                        $58,500
-                                    </strong>
-
-                                    <div class="product-rating">
-                                        <span class="stars">★★★★★</span>
-                                        <span>4.9 (85)</span>
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-
-                            <div class="product-card">
-
-                                <div class="product-image">
-
-                                    <button type="button" class="wishlist">
-                                        <i class="ri-heart-line"></i>
-                                    </button>
-
-                                    <a href="#">
-                                        <img
-                                            src="{{ asset('assets/img/products/thumb-3.jpeg') }}"
-                                            alt="African Wax Print Fabric"
-                                        >
-                                    </a>
-
-                                </div>
-
-
-                                <div class="product-content">
-
-                                    <h4>
-                                        <a href="#">
-                                            African Wax Print Fabric
-                                        </a>
-                                    </h4>
-
-                                    <strong class="product-price">
-                                        $4.75
-                                    </strong>
-
-                                    <div class="product-rating">
-                                        <span class="stars">★★★★★</span>
-                                        <span>4.7 (60)</span>
-                                    </div>
-
-                                </div>
-
-                            </div>
+                            @endif
 
                         </div>
 
                     </div>
 
-                </div>
+                </form>
 
             </div>
+
         </section>
 
-        <!--================================
-            Why Buy
-        =================================-->
+
+        {{-- =========================================
+            Benefits
+        ========================================== --}}
         <section class="marketplace-benefits">
+
             <div class="container">
 
                 <div class="benefits-heading">
-                    <h2>Why Buy on Baobab Atlas Marketplace?</h2>
+
+                    <h2>
+                        Why Buy on Baobab Atlas Marketplace?
+                    </h2>
+
                 </div>
+
 
                 <div class="benefits-grid">
 
                     <div class="benefit-card">
+
                         <div class="benefit-icon">
                             <i class="ri-shield-check-line"></i>
                         </div>
 
                         <div>
-                            <h4>Verified Suppliers</h4>
+
+                            <h4>
+                                Verified Suppliers
+                            </h4>
+
                             <p>
                                 All suppliers are carefully verified for your peace of mind.
                             </p>
+
                         </div>
+
                     </div>
 
+
                     <div class="benefit-card">
+
                         <div class="benefit-icon">
                             <i class="ri-bank-card-line"></i>
                         </div>
 
                         <div>
-                            <h4>Secure Payments</h4>
+
+                            <h4>
+                                Secure Payments
+                            </h4>
+
                             <p>
                                 Your payments are protected with secure and trusted methods.
                             </p>
+
                         </div>
+
                     </div>
 
+
                     <div class="benefit-card">
+
                         <div class="benefit-icon">
                             <i class="ri-award-line"></i>
                         </div>
 
                         <div>
-                            <h4>Quality Assurance</h4>
+
+                            <h4>
+                                Quality Assurance
+                            </h4>
+
                             <p>
                                 Quality products that meet international standards.
                             </p>
+
                         </div>
+
                     </div>
 
+
                     <div class="benefit-card">
+
                         <div class="benefit-icon">
                             <i class="ri-global-line"></i>
                         </div>
 
                         <div>
-                            <h4>Global Shipping</h4>
+
+                            <h4>
+                                Global Shipping
+                            </h4>
+
                             <p>
                                 Fast and reliable delivery to anywhere in the world.
                             </p>
+
                         </div>
+
                     </div>
 
+
                     <div class="benefit-card">
+
                         <div class="benefit-icon">
                             <i class="ri-arrow-go-back-line"></i>
                         </div>
 
                         <div>
-                            <h4>Easy Returns</h4>
+
+                            <h4>
+                                Easy Returns
+                            </h4>
+
                             <p>
                                 Hassle-free returns and dedicated customer support.
                             </p>
+
                         </div>
+
                     </div>
 
                 </div>
+
             </div>
+
         </section>
 
     </div>
 
+@endsection
+
+
+@push('scripts')
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -1194,19 +1333,29 @@
             }
 
 
+            const productsForm =
+                marketplacePage.querySelector(
+                    '.marketplace-products-form'
+                );
+
+
             /*
             =====================================
                 Filter Accordion
             =====================================
             */
             const filterGroups =
-                marketplacePage.querySelectorAll('.filter-group');
+                marketplacePage.querySelectorAll(
+                    '.filter-group'
+                );
 
 
             filterGroups.forEach(function (filterGroup) {
 
                 const title =
-                    filterGroup.querySelector('.filter-group-title');
+                    filterGroup.querySelector(
+                        '.filter-group-title'
+                    );
 
 
                 if (!title) {
@@ -1214,24 +1363,99 @@
                 }
 
 
-                title.addEventListener('click', function () {
+                title.addEventListener(
+                    'click',
+                    function () {
 
-                    const isOpen =
-                        filterGroup.classList.contains('is-open');
+                        const isOpen =
+                            filterGroup.classList.contains(
+                                'is-open'
+                            );
 
 
-                    filterGroup.classList.toggle(
-                        'is-open',
-                        !isOpen
+                        filterGroup.classList.toggle(
+                            'is-open',
+                            !isOpen
+                        );
+
+
+                        title.setAttribute(
+                            'aria-expanded',
+                            !isOpen ? 'true' : 'false'
+                        );
+
+                    }
+                );
+
+            });
+
+
+            /*
+            =====================================
+                Category / Subcategory Accordion
+            =====================================
+            */
+            const categoryItems =
+                marketplacePage.querySelectorAll(
+                    '.category-filter-item'
+                );
+
+
+            categoryItems.forEach(function (categoryItem) {
+
+                const toggle =
+                    categoryItem.querySelector(
+                        '.subcategory-toggle'
                     );
 
 
-                    title.setAttribute(
-                        'aria-expanded',
-                        !isOpen ? 'true' : 'false'
+                const subcategoryList =
+                    categoryItem.querySelector(
+                        '.subcategory-list'
                     );
 
-                });
+
+                if (!toggle || !subcategoryList) {
+                    return;
+                }
+
+
+                toggle.addEventListener(
+                    'click',
+                    function () {
+
+                        const isOpen =
+                            categoryItem.classList.contains(
+                                'is-open'
+                            );
+
+
+                        categoryItem.classList.toggle(
+                            'is-open',
+                            !isOpen
+                        );
+
+
+                        toggle.setAttribute(
+                            'aria-expanded',
+                            !isOpen ? 'true' : 'false'
+                        );
+
+
+                        if (isOpen) {
+
+                            subcategoryList.style.display =
+                                'none';
+
+                        } else {
+
+                            subcategoryList.style.display =
+                                'block';
+
+                        }
+
+                    }
+                );
 
             });
 
@@ -1242,146 +1466,183 @@
             =====================================
             */
             const priceRange =
-                marketplacePage.querySelector('.price-range');
+                marketplacePage.querySelector(
+                    '.price-range'
+                );
 
 
             if (priceRange) {
 
-                const minInput =
-                    priceRange.querySelector('.range-input-min');
+                const minRange =
+                    priceRange.querySelector(
+                        '.range-input-min'
+                    );
 
-                const maxInput =
-                    priceRange.querySelector('.range-input-max');
+
+                const maxRange =
+                    priceRange.querySelector(
+                        '.range-input-max'
+                    );
+
+
+                const minHidden =
+                    priceRange.querySelector(
+                        '.min-price-input'
+                    );
+
+
+                const maxHidden =
+                    priceRange.querySelector(
+                        '.max-price-input'
+                    );
+
 
                 const progress =
-                    priceRange.querySelector('.range-progress');
+                    priceRange.querySelector(
+                        '.range-progress'
+                    );
+
 
                 const minValue =
-                    priceRange.querySelector('.range-value-min');
+                    priceRange.querySelector(
+                        '.range-value-min'
+                    );
+
 
                 const maxValue =
-                    priceRange.querySelector('.range-value-max');
+                    priceRange.querySelector(
+                        '.range-value-max'
+                    );
 
 
-                const minimumGap = 100;
+                const minimumGap = 1;
 
 
-                const formatPrice = function (value) {
+                const formatPrice =
+                    function (value) {
 
-                    return '$' +
-                        Number(value).toLocaleString();
+                        return '$' +
+                            Number(value).toLocaleString();
 
-                };
-
-
-                const updatePriceRange = function () {
-
-                    let min =
-                        parseInt(minInput.value, 10);
-
-                    let max =
-                        parseInt(maxInput.value, 10);
+                    };
 
 
-                    if (max - min < minimumGap) {
+                const updatePriceRange =
+                    function () {
+
+                        let min =
+                            parseFloat(
+                                minRange.value
+                            );
+
+
+                        let max =
+                            parseFloat(
+                                maxRange.value
+                            );
+
 
                         if (
-                            document.activeElement === minInput
+                            max - min <
+                            minimumGap
                         ) {
 
-                            min = max - minimumGap;
+                            if (
+                                document.activeElement ===
+                                minRange
+                            ) {
 
-                            minInput.value = min;
+                                min =
+                                    Math.max(
+                                        parseFloat(
+                                            minRange.min
+                                        ),
+                                        max - minimumGap
+                                    );
 
-                        } else {
+                                minRange.value =
+                                    min;
 
-                            max = min + minimumGap;
+                            } else {
 
-                            maxInput.value = max;
+                                max =
+                                    Math.min(
+                                        parseFloat(
+                                            maxRange.max
+                                        ),
+                                        min + minimumGap
+                                    );
+
+                                maxRange.value =
+                                    max;
+
+                            }
 
                         }
 
-                    }
+
+                        const rangeMin =
+                            parseFloat(
+                                minRange.min
+                            );
 
 
-                    const rangeMin =
-                        parseInt(minInput.min, 10);
-
-                    const rangeMax =
-                        parseInt(minInput.max, 10);
-
-
-                    const minPercent =
-                        ((min - rangeMin) /
-                            (rangeMax - rangeMin)) * 100;
+                        const rangeMax =
+                            parseFloat(
+                                minRange.max
+                            );
 
 
-                    const maxPercent =
-                        ((max - rangeMin) /
-                            (rangeMax - rangeMin)) * 100;
+                        const minPercent =
+                            (
+                                (min - rangeMin) /
+                                (rangeMax - rangeMin)
+                            ) * 100;
 
 
-                    progress.style.left =
-                        minPercent + '%';
+                        const maxPercent =
+                            (
+                                (max - rangeMin) /
+                                (rangeMax - rangeMin)
+                            ) * 100;
 
 
-                    progress.style.right =
-                        (100 - maxPercent) + '%';
+                        progress.style.left =
+                            minPercent + '%';
 
 
-                    minValue.textContent =
-                        formatPrice(min);
+                        progress.style.right =
+                            (100 - maxPercent) + '%';
 
 
-                    if (max === rangeMax) {
+                        minValue.textContent =
+                            formatPrice(min);
+
 
                         maxValue.textContent =
-                            formatPrice(max) + '+';
-
-                    } else {
-
-                        maxValue.textContent =
-                            formatPrice(max);
-
-                    }
+                            max >= rangeMax
+                                ? formatPrice(max) + '+'
+                                : formatPrice(max);
 
 
-                    if (min > rangeMin) {
-
-                        minInput.style.zIndex = '4';
-
-                    } else {
-
-                        minInput.style.zIndex = '2';
-
-                    }
+                        minHidden.value =
+                            min;
 
 
-                    maxInput.style.zIndex = '3';
+                        maxHidden.value =
+                            max;
 
-                };
+                    };
 
 
-                minInput.addEventListener(
+                minRange.addEventListener(
                     'input',
                     updatePriceRange
                 );
 
 
-                maxInput.addEventListener(
+                maxRange.addEventListener(
                     'input',
-                    updatePriceRange
-                );
-
-
-                minInput.addEventListener(
-                    'change',
-                    updatePriceRange
-                );
-
-
-                maxInput.addEventListener(
-                    'change',
                     updatePriceRange
                 );
 
@@ -1393,30 +1654,26 @@
 
             /*
             =====================================
-                Custom Sort Dropdown
+                Sort Dropdown
             =====================================
             */
             const sortSelect =
-                marketplacePage.querySelector('.sort-select');
+                marketplacePage.querySelector(
+                    '.sort-select'
+                );
 
 
             if (sortSelect) {
 
-                const sortTrigger =
+                const trigger =
                     sortSelect.querySelector(
                         '.sort-select-trigger'
                     );
 
 
-                const sortOptions =
+                const options =
                     sortSelect.querySelectorAll(
                         '.sort-option'
-                    );
-
-
-                const sortValue =
-                    sortSelect.querySelector(
-                        '.sort-select-value strong'
                     );
 
 
@@ -1426,9 +1683,15 @@
                     );
 
 
-                if (sortTrigger) {
+                const sortValue =
+                    sortSelect.querySelector(
+                        '.sort-select-value strong'
+                    );
 
-                    sortTrigger.addEventListener(
+
+                if (trigger) {
+
+                    trigger.addEventListener(
                         'click',
                         function () {
 
@@ -1444,7 +1707,7 @@
                             );
 
 
-                            sortTrigger.setAttribute(
+                            trigger.setAttribute(
                                 'aria-expanded',
                                 !isOpen
                                     ? 'true'
@@ -1457,72 +1720,85 @@
                 }
 
 
-                sortOptions.forEach(
-                    function (option) {
+                options.forEach(function (option) {
 
-                        option.addEventListener(
-                            'click',
-                            function () {
+                    option.addEventListener(
+                        'click',
+                        function () {
 
-                                const value =
-                                    option.dataset.value;
-
-
-                                const text =
-                                    option.textContent.trim();
+                            const value =
+                                option.dataset.value;
 
 
-                                if (sortValue) {
-
-                                    sortValue.textContent =
-                                        text;
-
-                                }
+                            const label =
+                                option.textContent.trim();
 
 
-                                if (sortInput) {
-
-                                    sortInput.value =
-                                        value;
-
-                                }
+                            sortInput.value =
+                                value;
 
 
-                                sortOptions.forEach(
-                                    function (item) {
-
-                                        item.classList.remove(
-                                            'is-selected'
-                                        );
-
-                                    }
-                                );
+                            sortValue.textContent =
+                                label;
 
 
-                                option.classList.add(
-                                    'is-selected'
-                                );
+                            options.forEach(
+                                function (item) {
 
-
-                                sortSelect.classList.remove(
-                                    'is-open'
-                                );
-
-
-                                if (sortTrigger) {
-
-                                    sortTrigger.setAttribute(
-                                        'aria-expanded',
-                                        'false'
+                                    item.classList.remove(
+                                        'is-selected'
                                     );
 
                                 }
+                            );
+
+
+                            option.classList.add(
+                                'is-selected'
+                            );
+
+
+                            sortSelect.classList.remove(
+                                'is-open'
+                            );
+
+
+                            trigger.setAttribute(
+                                'aria-expanded',
+                                'false'
+                            );
+
+
+                            /*
+                             * Submit GET request.
+                             */
+                            if (productsForm) {
+
+                                /*
+                                 * Remove current page so
+                                 * sorting starts from page 1.
+                                 */
+                                const pageInput =
+                                    productsForm.querySelector(
+                                        'input[name="page"]'
+                                    );
+
+
+                                if (pageInput) {
+
+                                    pageInput.remove();
+
+                                }
+
+
+                                productsForm.submit();
 
                             }
-                        );
 
-                    }
-                );
+                        }
+                    );
+
+                });
 
 
                 document.addEventListener(
@@ -1540,14 +1816,10 @@
                             );
 
 
-                            if (sortTrigger) {
-
-                                sortTrigger.setAttribute(
-                                    'aria-expanded',
-                                    'false'
-                                );
-
-                            }
+                            trigger.setAttribute(
+                                'aria-expanded',
+                                'false'
+                            );
 
                         }
 
@@ -1559,67 +1831,147 @@
 
             /*
             =====================================
-                Clear All
+                Category Selection
             =====================================
             */
-            const clearAll =
-                marketplacePage.querySelector('.clear-all');
+            const categoryInputs =
+                marketplacePage.querySelectorAll(
+                    'input[name="category"]'
+                );
 
 
-            if (clearAll) {
+            categoryInputs.forEach(function (input) {
 
-                clearAll.addEventListener(
-                    'click',
+                input.addEventListener(
+                    'change',
                     function () {
 
-                        const checkboxes =
-                            marketplacePage.querySelectorAll(
-                                '.filter-checkbox input[type="checkbox"]'
+                        /*
+                         * If a subcategory is selected,
+                         * open its parent category.
+                         */
+                        const categoryItem =
+                            input.closest(
+                                '.category-filter-item'
                             );
 
 
-                        checkboxes.forEach(
-                            function (checkbox) {
+                        if (
+                            categoryItem &&
+                            input.closest(
+                                '.filter-checkbox-subcategory'
+                            )
+                        ) {
 
-                                checkbox.checked = false;
+                            categoryItem.classList.add(
+                                'is-open'
+                            );
+
+
+                            const toggle =
+                                categoryItem.querySelector(
+                                    '.subcategory-toggle'
+                                );
+
+
+                            const list =
+                                categoryItem.querySelector(
+                                    '.subcategory-list'
+                                );
+
+
+                            if (toggle) {
+
+                                toggle.setAttribute(
+                                    'aria-expanded',
+                                    'true'
+                                );
 
                             }
-                        );
 
 
-                        marketplacePage
-                            .querySelectorAll(
-                                'input[value="all"]'
-                            )
-                            .forEach(
-                                function (checkbox) {
+                            if (list) {
 
-                                    checkbox.checked = true;
+                                list.style.display =
+                                    'block';
 
-                                }
-                            );
-
-
-                        if (priceRange) {
-
-                            minInput.value =
-                                minInput.min;
-
-
-                            maxInput.value =
-                                maxInput.max;
-
-
-                            updatePriceRange();
+                            }
 
                         }
 
                     }
                 );
 
-            }
+            });
+
+
+            /*
+            =====================================
+                Wishlist UI
+            =====================================
+            */
+            const wishlistButtons =
+                marketplacePage.querySelectorAll(
+                    '.wishlist'
+                );
+
+
+            wishlistButtons.forEach(
+                function (button) {
+
+                    button.addEventListener(
+                        'click',
+                        function () {
+
+                            button.classList.toggle(
+                                'is-active'
+                            );
+
+
+                            const icon =
+                                button.querySelector('i');
+
+
+                            if (!icon) {
+                                return;
+                            }
+
+
+                            if (
+                                button.classList.contains(
+                                    'is-active'
+                                )
+                            ) {
+
+                                icon.classList.remove(
+                                    'ri-heart-line'
+                                );
+
+
+                                icon.classList.add(
+                                    'ri-heart-fill'
+                                );
+
+                            } else {
+
+                                icon.classList.remove(
+                                    'ri-heart-fill'
+                                );
+
+
+                                icon.classList.add(
+                                    'ri-heart-line'
+                                );
+
+                            }
+
+                        }
+                    );
+
+                }
+            );
 
         });
     </script>
 
-@endsection
+@endpush

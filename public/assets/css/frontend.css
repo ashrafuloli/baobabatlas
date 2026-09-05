@@ -656,6 +656,143 @@ label {
   background: #D4AF37;
 }
 
+.common-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  padding: 16px;
+}
+.common-pagination__info {
+  flex: 0 0 auto;
+  color: #555555;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.common-pagination__info strong {
+  color: #0D2B5A;
+  font-weight: 600;
+}
+.common-pagination__links {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+.common-pagination__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  height: 38px;
+  padding: 0 10px;
+  border: 1px solid #e9edef;
+  border-radius: 6px;
+  background-color: white;
+  color: #0D2B5A;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-transition: all 0.25s linear 0s;
+  -o-transition: all 0.25s linear 0s;
+  transition: all 0.25s linear 0s;
+}
+.common-pagination__link i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  line-height: 1;
+}
+.common-pagination__link:hover {
+  border-color: #177245;
+  background-color: #177245;
+  color: white;
+}
+.common-pagination__link--active {
+  border-color: #177245;
+  background-color: #177245;
+  color: white;
+  cursor: default;
+}
+.common-pagination__link--active:hover {
+  border-color: #177245;
+  background-color: #177245;
+  color: white;
+}
+.common-pagination__link--disabled {
+  border-color: #e9edef;
+  background-color: #F2F4F7;
+  color: #555555;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.common-pagination__link--disabled:hover {
+  border-color: #e9edef;
+  background-color: #F2F4F7;
+  color: #555555;
+}
+.common-pagination__dots {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  height: 38px;
+  padding: 0 4px;
+  color: #555555;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+}
+@media (min-width: 768px) and (max-width: 991px) {
+  .common-pagination {
+    align-items: center;
+    flex-direction: column;
+    gap: 15px;
+  }
+  .common-pagination__info {
+    width: 100%;
+    text-align: center;
+  }
+  .common-pagination__links {
+    justify-content: center;
+    width: 100%;
+  }
+}
+@media (min-width: 480px) and (max-width: 767px) {
+  .common-pagination {
+    padding: 15px 0;
+    gap: 12px;
+  }
+  .common-pagination__links {
+    gap: 4px;
+  }
+  .common-pagination__link {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 8px;
+    border-radius: 5px;
+    font-size: 13px;
+  }
+  .common-pagination__link i {
+    font-size: 17px;
+  }
+  .common-pagination__dots {
+    min-width: 26px;
+    height: 36px;
+    font-size: 13px;
+  }
+  .common-pagination__info {
+    font-size: 13px;
+  }
+}
+
 .hero-section {
   background-position: center center;
   background-repeat: no-repeat;
@@ -3045,6 +3182,7 @@ label {
   font-family: "Poppins", sans-serif;
   font-size: 16px;
   font-weight: 600;
+  text-decoration: none;
   -webkit-transition: all 0.3s linear 0s;
   -o-transition: all 0.3s linear 0s;
   transition: all 0.3s linear 0s;
@@ -3070,6 +3208,7 @@ label {
 }
 .marketplace-page .category-marquee {
   display: flex;
+  width: 100%;
   overflow-x: clip;
 }
 .marketplace-page .category-layout {
@@ -3092,17 +3231,18 @@ label {
 .marketplace-page .category-card {
   min-width: 140px;
   min-height: 110px;
-  flex: none;
-  padding: 20px;
+  flex: 0 0 140px;
+  padding: 10px;
   margin-right: 10px;
   border: 1px solid #edf0f1;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 16px;
   background: white;
+  text-decoration: none;
   -webkit-transition: all 0.3s linear 0s;
   -o-transition: all 0.3s linear 0s;
   transition: all 0.3s linear 0s;
@@ -3114,15 +3254,23 @@ label {
   transform: translateY(-2px);
 }
 .marketplace-page .category-card .category-icon {
-  width: 30px;
-  height: 30px;
+  width: 100%;
+  height: 80px;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  border-radius: 10px;
+  background: rgba(23, 114, 69, 0.1);
 }
 .marketplace-page .category-card .category-icon i {
   color: #177245;
   font-size: 24px;
+}
+.marketplace-page .category-card .category-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .marketplace-page .category-card span {
   max-width: 120px;
@@ -3142,6 +3290,9 @@ label {
   padding: 40px 0;
   background: white;
 }
+.marketplace-page .marketplace-products-form {
+  width: 100%;
+}
 .marketplace-page .marketplace-products-layout {
   display: grid;
   grid-template-columns: 280px minmax(0, 1fr);
@@ -3149,7 +3300,7 @@ label {
 }
 .marketplace-page {
   /*================================
-      Filter
+      Filter Sidebar
   =================================*/
 }
 .marketplace-page .marketplace-filter {
@@ -3180,8 +3331,9 @@ label {
   background: transparent;
   color: #177245;
   font-family: "Poppins", sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
+  text-decoration: none;
   cursor: pointer;
   -webkit-transition: all 0.3s linear 0s;
   -o-transition: all 0.3s linear 0s;
@@ -3192,7 +3344,7 @@ label {
 }
 .marketplace-page {
   /*================================
-      Accordion
+      Filter Groups
   =================================*/
 }
 .marketplace-page .filter-group {
@@ -3216,7 +3368,7 @@ label {
   overflow: hidden;
 }
 .marketplace-page .filter-group.is-open .filter-group-title {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 .marketplace-page .filter-group.is-open .filter-group-title i {
   -webkit-transform: rotate(0deg);
@@ -3245,6 +3397,7 @@ label {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  color: #0D2B5A;
   text-align: left;
   cursor: pointer;
   -webkit-transition: all 0.3s linear 0s;
@@ -3252,7 +3405,6 @@ label {
   transition: all 0.3s linear 0s;
 }
 .marketplace-page .filter-group-title span {
-  color: #0D2B5A;
   font-family: "Poppins", sans-serif;
   font-size: 16px;
   font-weight: 700;
@@ -3266,11 +3418,69 @@ label {
 }
 .marketplace-page {
   /*================================
+      Category Filter
+  =================================*/
+}
+.marketplace-page .category-filter-item {
+  margin-bottom: 6px;
+}
+.marketplace-page .category-filter-item:last-child {
+  margin-bottom: 0;
+}
+.marketplace-page .category-filter-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.marketplace-page .subcategory-toggle {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #737b81;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  -webkit-transition: all 0.25s linear 0s;
+  -o-transition: all 0.25s linear 0s;
+  transition: all 0.25s linear 0s;
+}
+.marketplace-page .subcategory-toggle i {
+  font-size: 18px;
+  -webkit-transition: all 0.25s linear 0s;
+  -o-transition: all 0.25s linear 0s;
+  transition: all 0.25s linear 0s;
+}
+.marketplace-page .subcategory-toggle:hover {
+  background: rgba(23, 114, 69, 0.06);
+  color: #177245;
+}
+.marketplace-page .category-filter-item.is-open .subcategory-toggle i {
+  -webkit-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
+.marketplace-page .subcategory-list {
+  display: none;
+  padding-left: 28px;
+  margin-top: 5px;
+}
+.marketplace-page .filter-checkbox-subcategory .label-text {
+  font-size: 14px;
+}
+.marketplace-page {
+  /*================================
       Checkbox
   =================================*/
 }
 .marketplace-page .filter-checkbox {
   min-height: 24px;
+  flex: 1;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -3294,7 +3504,7 @@ label {
   height: 18px;
   flex: 0 0 18px;
   border: 1px solid #c5ccd1;
-  border-radius: 3px;
+  border-radius: 50%;
   background: white;
   position: relative;
   -webkit-transition: all 0.2s linear 0s;
@@ -3303,17 +3513,14 @@ label {
 }
 .marketplace-page .filter-checkbox .checkmark::after {
   content: "";
-  width: 5px;
-  height: 9px;
-  border: solid white;
-  border-width: 0 2px 2px 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: white;
   opacity: 0;
   position: absolute;
-  left: 5px;
-  top: 2px;
-  -webkit-transform: rotate(45deg);
-  -ms-transform: rotate(45deg);
-  transform: rotate(45deg);
+  left: 4px;
+  top: 4px;
   -webkit-transition: all 0.15s linear 0s;
   -o-transition: all 0.15s linear 0s;
   transition: all 0.15s linear 0s;
@@ -3329,7 +3536,7 @@ label {
   flex: 1;
   color: #515960;
   font-family: "Poppins", sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1.4;
 }
 .marketplace-page {
@@ -3425,19 +3632,28 @@ label {
 .marketplace-page .range-values span {
   color: #6c747a;
   font-family: "Poppins", sans-serif;
-  font-size: 16px;
+  font-size: 14px;
+}
+.marketplace-page {
+  /*================================
+      Apply Filter
+  =================================*/
 }
 .marketplace-page .apply-filter {
   width: 100%;
-  height: 44px;
-  padding: 0 20px;
+  min-height: 44px;
+  padding: 10px 20px;
   border: 0;
   border-radius: 5px;
   background: #177245;
   color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-family: "Poppins", sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
+  text-decoration: none;
   cursor: pointer;
   -webkit-transition: all 0.3s linear 0s;
   -o-transition: all 0.3s linear 0s;
@@ -3445,18 +3661,22 @@ label {
 }
 .marketplace-page .apply-filter:hover {
   background: #D4AF37;
+  color: white;
 }
 .marketplace-page {
   /*================================
-      Product Toolbar
+      Product Area
   =================================*/
+}
+.marketplace-page .marketplace-product-area {
+  min-width: 0;
 }
 .marketplace-page .product-toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 .marketplace-page {
   /*================================
@@ -3512,7 +3732,7 @@ label {
 .marketplace-page .marketplace-search .search-input input:-ms-input-placeholder {
   color: #8b9298;
 }
-.marketplace-page .marketplace-search button {
+.marketplace-page .marketplace-search > button {
   width: 46px;
   height: 46px;
   flex: 0 0 46px;
@@ -3526,12 +3746,12 @@ label {
   -o-transition: all 0.3s linear 0s;
   transition: all 0.3s linear 0s;
 }
-.marketplace-page .marketplace-search button:hover {
+.marketplace-page .marketplace-search > button:hover {
   background: #D4AF37;
 }
 .marketplace-page {
   /*================================
-      Sort Select
+      Sort
   =================================*/
 }
 .marketplace-page .sort-select {
@@ -3540,7 +3760,7 @@ label {
   z-index: 20;
   font-family: "Poppins", sans-serif;
 }
-.marketplace-page .sort-select .sort-select-trigger {
+.marketplace-page .sort-select-trigger {
   width: 100%;
   height: 46px;
   padding: 0 14px;
@@ -3556,35 +3776,35 @@ label {
   -o-transition: all 0.3s linear 0s;
   transition: all 0.3s linear 0s;
 }
-.marketplace-page .sort-select .sort-select-trigger:hover {
+.marketplace-page .sort-select-trigger:hover {
   border-color: #177245;
 }
-.marketplace-page .sort-select .sort-select-trigger > i {
+.marketplace-page .sort-select-trigger > i {
   color: #6d757b;
   font-size: 18px;
   -webkit-transition: all 0.3s linear 0s;
   -o-transition: all 0.3s linear 0s;
   transition: all 0.3s linear 0s;
 }
-.marketplace-page .sort-select .sort-select-value {
+.marketplace-page .sort-select-value {
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 5px;
-  min-width: 0;
 }
-.marketplace-page .sort-select .sort-select-value .sort-label {
+.marketplace-page .sort-select-value .sort-label {
   color: #7b8389;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   white-space: nowrap;
 }
-.marketplace-page .sort-select .sort-select-value strong {
+.marketplace-page .sort-select-value strong {
   color: #0D2B5A;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
 }
-.marketplace-page .sort-select .sort-select-options {
+.marketplace-page .sort-select-options {
   width: 100%;
   border: 1px solid #d9dfe3;
   border-radius: 0 0 7px 7px;
@@ -3593,7 +3813,6 @@ label {
   position: absolute;
   top: calc(100% - 1px);
   left: 0;
-  z-index: 30;
   visibility: hidden;
   opacity: 0;
   pointer-events: none;
@@ -3601,7 +3820,7 @@ label {
   -o-transition: all 0.25s linear 0s;
   transition: all 0.25s linear 0s;
 }
-.marketplace-page .sort-select .sort-option {
+.marketplace-page .sort-option {
   width: 100%;
   min-height: 40px;
   padding: 8px 14px;
@@ -3610,7 +3829,7 @@ label {
   display: block;
   color: #0D2B5A;
   font-family: "Poppins", sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   text-align: left;
   cursor: pointer;
@@ -3618,12 +3837,9 @@ label {
   -o-transition: all 0.25s linear 0s;
   transition: all 0.25s linear 0s;
 }
-.marketplace-page .sort-select .sort-option:hover, .marketplace-page .sort-select .sort-option.is-selected {
+.marketplace-page .sort-option:hover, .marketplace-page .sort-option.is-selected {
   background: #177245;
   color: white;
-}
-.marketplace-page .sort-select.is-open {
-  z-index: 50;
 }
 .marketplace-page .sort-select.is-open .sort-select-trigger {
   border-color: #177245;
@@ -3639,215 +3855,63 @@ label {
   opacity: 1;
   pointer-events: auto;
 }
-@media (max-width: 767px) {
-  .marketplace-page .sort-select {
-    width: 100%;
-  }
-  .marketplace-page .sort-select .sort-label,
-  .marketplace-page .sort-select .sort-select-value strong,
-  .marketplace-page .sort-select .sort-option {
-    font-size: 14px;
-  }
-}
 .marketplace-page {
   /*================================
-      Benefits
+      Filter Summary
   =================================*/
 }
-.marketplace-page .marketplace-benefits {
-  padding: 80px 0;
-  background: white;
-}
-.marketplace-page .benefits-heading {
-  margin-bottom: 20px;
-  text-align: center;
-}
-.marketplace-page .benefits-heading h2 {
-  margin: 0;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-}
-.marketplace-page .benefits-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 30px;
-}
-@media (min-width: 768px) and (max-width: 991px) {
-  .marketplace-page .benefits-grid {
-    gap: 20px;
-  }
-}
-.marketplace-page .benefit-card {
-  width: calc((100% - 60px) / 3);
-  min-height: 72px;
-  padding: 20px;
+.marketplace-page .filter-summary {
+  min-height: 28px;
+  margin-bottom: 16px;
   display: flex;
   align-items: center;
-  gap: 20px;
-  border: 1px solid #e9edef;
-  border-radius: 6px;
-  background: white;
+  justify-content: space-between;
+  gap: 15px;
 }
-.marketplace-page .benefit-card .benefit-icon {
-  width: 60px;
-  height: 60px;
-  flex: 0 0 60px;
-  border-radius: 50%;
-  background: rgba(23, 114, 69, 0.06);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.marketplace-page .benefit-card .benefit-icon i {
-  color: #177245;
-  font-size: 24px;
-}
-.marketplace-page .benefit-card h4 {
-  margin: 0 0 6px;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-}
-.marketplace-page .benefit-card p {
-  margin: 0;
-  color: #6e767c;
+.marketplace-page .result-count {
+  color: #555555;
   font-family: "Poppins", sans-serif;
   font-size: 14px;
-  line-height: 1.45;
 }
-@media (min-width: 992px) and (max-width: 1199px) {
-  .marketplace-page .benefit-card {
-    width: calc((100% - 20px) / 2);
-  }
+.marketplace-page .result-count strong {
+  color: #0D2B5A;
+  font-weight: 600;
 }
-@media (max-width: 767px) {
-  .marketplace-page .benefit-card {
-    width: 100%;
-    gap: 16px;
-    padding: 16px;
-  }
-  .marketplace-page .benefit-card .benefit-icon {
-    width: 50px;
-    height: 50px;
-    flex: 0 0 50px;
-  }
+.marketplace-page .active-filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.marketplace-page .active-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #177245;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  -webkit-transition: all 0.25s linear 0s;
+  -o-transition: all 0.25s linear 0s;
+  transition: all 0.25s linear 0s;
+}
+.marketplace-page .active-filter:hover {
+  color: #D4AF37;
+}
+.marketplace-page .active-filter i {
+  font-size: 15px;
 }
 .marketplace-page {
   /*================================
-      Responsive
+      Product Grid
   =================================*/
 }
-@media (min-width: 992px) and (max-width: 1199px) {
-  .marketplace-page .marketplace-products-layout {
-    grid-template-columns: 240px minmax(0, 1fr);
-  }
-  .marketplace-page .marketplace-search {
-    width: 280px;
-  }
-}
-@media (min-width: 768px) and (max-width: 991px) {
-  .marketplace-page .marketplace-products-layout {
-    grid-template-columns: 1fr;
-  }
-  .marketplace-page .marketplace-filter {
-    width: 100%;
-  }
-}
-@media (max-width: 767px) {
-  .marketplace-page .marketplace-products-layout {
-    grid-template-columns: 1fr;
-  }
-  .marketplace-page .marketplace-filter {
-    width: 100%;
-  }
-  .marketplace-page .marketplace-categories, .marketplace-page .marketplace-benefits {
-    padding: 60px 0;
-  }
-  .marketplace-page .marketplace-products {
-    padding: 20px 0;
-  }
-  .marketplace-page .marketplace-section-title {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  .marketplace-page .product-toolbar {
-    align-items: stretch;
-    flex-direction: column;
-  }
-  .marketplace-page .marketplace-search {
-    width: 100%;
-  }
-  .marketplace-page .sort-select {
-    width: 100%;
-    min-width: 0;
-  }
-  .marketplace-page .filter-checkbox .label-text {
-    font-size: 14px;
-  }
-  .marketplace-page .range-values span {
-    font-size: 14px;
-  }
-  .marketplace-page .sort-label {
-    font-size: 14px;
-  }
-  .marketplace-page .sort-select-field select {
-    font-size: 14px;
-  }
-}
-
-/*================================
-        Product Grid
-    =================================*/
-.product-grid {
+.marketplace-page .product-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 20px;
 }
-@media (min-width: 992px) and (max-width: 1199px) {
-  .product-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (min-width: 768px) and (max-width: 991px) {
-  .product-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (max-width: 767px) {
-  .product-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-}
-.product-grid.related {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-@media (min-width: 1200px) and (max-width: 1399px) {
-  .product-grid.related {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-@media (min-width: 992px) and (max-width: 1199px) {
-  .product-grid.related {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-@media (min-width: 768px) and (max-width: 991px) {
-  .product-grid.related {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (max-width: 767px) {
-  .product-grid.related {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-}
-.product-grid .product-card {
+.marketplace-page .product-card {
   overflow: hidden;
   border: 1px solid #e9edef;
   border-radius: 8px;
@@ -3857,34 +3921,24 @@ label {
   -o-transition: all 0.3s linear 0s;
   transition: all 0.3s linear 0s;
 }
-.product-grid .product-card:hover {
+.marketplace-page .product-card:hover {
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
   -webkit-transform: translateY(-3px);
   -ms-transform: translateY(-3px);
   transform: translateY(-3px);
 }
-.product-grid .product-card:hover .product-image img {
+.marketplace-page .product-card:hover .product-image img {
   -webkit-transform: scale(1.04);
   -ms-transform: scale(1.04);
   transform: scale(1.04);
 }
-.product-grid .product-card .product-image {
+.marketplace-page .product-image {
   height: 300px;
   position: relative;
   overflow: hidden;
   background: #f4f5f5;
 }
-@media (min-width: 992px) and (max-width: 1199px) {
-  .product-grid .product-card .product-image {
-    height: 260px;
-  }
-}
-@media (max-width: 767px) {
-  .product-grid .product-card .product-image {
-    height: 300px;
-  }
-}
-.product-grid .product-card .product-image img {
+.marketplace-page .product-image img {
   width: 100%;
   height: 100%;
   display: block;
@@ -3893,12 +3947,12 @@ label {
   -o-transition: all 0.4s linear 0s;
   transition: all 0.4s linear 0s;
 }
-.product-grid .product-card .product-badge {
-  padding: 6px 12px;
+.marketplace-page .product-badge {
+  padding: 6px 10px;
   border-radius: 4px;
   color: white;
   font-family: "Poppins", sans-serif;
-  font-size: 14px;
+  font-size: 12px;
   line-height: 1;
   font-weight: 700;
   position: absolute;
@@ -3906,13 +3960,14 @@ label {
   top: 9px;
   z-index: 2;
 }
-.product-grid .product-card .product-badge.bestseller {
-  background: #177245;
-}
-.product-grid .product-card .product-badge.premium {
+.marketplace-page .product-badge.premium {
   background: #D4AF37;
 }
-.product-grid .product-card .wishlist {
+.marketplace-page .product-badge.out-of-stock {
+  background: #DC3545;
+  top: 40px;
+}
+.marketplace-page .wishlist {
   width: 34px;
   height: 34px;
   padding: 0;
@@ -3932,55 +3987,309 @@ label {
   -o-transition: all 0.3s linear 0s;
   transition: all 0.3s linear 0s;
 }
-.product-grid .product-card .wishlist i {
+.marketplace-page .wishlist i {
   font-size: 16px;
 }
-.product-grid .product-card .wishlist:hover, .product-grid .product-card .wishlist.is-active {
+.marketplace-page .wishlist:hover, .marketplace-page .wishlist.is-active {
   background: #177245;
 }
-.product-grid .product-card .product-content {
+.marketplace-page .product-content {
   padding: 16px 20px;
 }
-.product-grid .product-card .product-content h4 {
+.marketplace-page .product-brand {
+  display: block;
+  margin-bottom: 5px;
+  color: #177245;
+  font-family: "Poppins", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+}
+.marketplace-page .product-content h4 {
   margin: 0 0 10px;
   color: #0D2B5A;
   font-family: "Poppins", sans-serif;
-  font-size: 20px;
-  line-height: 1.3;
+  font-size: 18px;
+  line-height: 1.35;
   font-weight: 700;
 }
-.product-grid .product-card .product-content h4 a {
+.marketplace-page .product-content h4 a {
   color: inherit;
+  text-decoration: none;
   -webkit-transition: all 0.3s linear 0s;
   -o-transition: all 0.3s linear 0s;
   transition: all 0.3s linear 0s;
 }
-.product-grid .product-card .product-content h4 a:hover {
+.marketplace-page .product-content h4 a:hover {
   color: #D4AF37;
 }
-.product-grid .product-card .product-content .product-price {
+.marketplace-page .product-price {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
   color: #0D2B5A;
   font-family: "Poppins", sans-serif;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
 }
-.product-grid .product-card .product-content .product-rating {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  margin-bottom: 7px;
-}
-.product-grid .product-card .product-content .product-rating .stars {
-  color: #D4AF37;
-  font-size: 14px;
-  letter-spacing: -1px;
-}
-.product-grid .product-card .product-content .product-rating > span:last-child {
+.marketplace-page .product-category {
+  display: block;
   color: #737b81;
   font-family: "Poppins", sans-serif;
+  font-size: 13px;
+}
+.marketplace-page {
+  /*================================
+      Empty State
+  =================================*/
+}
+.marketplace-page .marketplace-empty {
+  grid-column: 1/-1;
+  min-height: 320px;
+  padding: 50px 20px;
+  border: 1px dashed #dfe4e7;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.marketplace-page .marketplace-empty-icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 15px;
+  border-radius: 50%;
+  background: rgba(23, 114, 69, 0.07);
+  color: #177245;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.marketplace-page .marketplace-empty-icon i {
+  font-size: 28px;
+}
+.marketplace-page .marketplace-empty h4 {
+  margin: 0 0 8px;
+  color: #0D2B5A;
+  font-family: "Poppins", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+}
+.marketplace-page .marketplace-empty p {
+  max-width: 450px;
+  margin: 0 0 20px;
+  color: #555555;
+  font-family: "Poppins", sans-serif;
   font-size: 14px;
+  line-height: 1.6;
+}
+.marketplace-page {
+  /*================================
+      Pagination
+  =================================*/
+}
+.marketplace-page .marketplace-pagination {
+  margin-top: 30px;
+}
+.marketplace-page {
+  /*================================
+      Benefits
+  =================================*/
+}
+.marketplace-page .marketplace-benefits {
+  padding: 80px 0;
+  background: white;
+}
+.marketplace-page .benefits-heading {
+  margin-bottom: 30px;
+  text-align: center;
+}
+.marketplace-page .benefits-heading h2 {
+  margin: 0;
+  color: #0D2B5A;
+  font-family: "Poppins", sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+}
+.marketplace-page .benefits-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+.marketplace-page .benefit-card {
+  width: calc((100% - 40px) / 3);
+  min-height: 72px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border: 1px solid #e9edef;
+  border-radius: 6px;
+  background: white;
+}
+.marketplace-page .benefit-icon {
+  width: 60px;
+  height: 60px;
+  flex: 0 0 60px;
+  border-radius: 50%;
+  background: rgba(23, 114, 69, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.marketplace-page .benefit-icon i {
+  color: #177245;
+  font-size: 24px;
+}
+.marketplace-page .benefit-card h4 {
+  margin: 0 0 6px;
+  color: #0D2B5A;
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+}
+.marketplace-page .benefit-card p {
+  margin: 0;
+  color: #6e767c;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.marketplace-page {
+  /*================================
+      Large Desktop
+  =================================*/
+}
+@media (min-width: 1200px) and (max-width: 1399px) {
+  .marketplace-page .marketplace-products-layout {
+    grid-template-columns: 250px minmax(0, 1fr);
+  }
+  .marketplace-page .marketplace-search {
+    width: 280px;
+  }
+  .marketplace-page .product-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.marketplace-page {
+  /*================================
+      Desktop
+  =================================*/
+}
+@media (min-width: 992px) and (max-width: 1199px) {
+  .marketplace-page .marketplace-products-layout {
+    grid-template-columns: 230px minmax(0, 1fr);
+  }
+  .marketplace-page .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .marketplace-page .marketplace-search {
+    width: 250px;
+  }
+  .marketplace-page .benefit-card {
+    width: calc((100% - 20px) / 2);
+  }
+}
+.marketplace-page {
+  /*================================
+      Tablet
+  =================================*/
+}
+@media (min-width: 768px) and (max-width: 991px) {
+  .marketplace-page .marketplace-products-layout {
+    grid-template-columns: 1fr;
+  }
+  .marketplace-page .marketplace-filter {
+    width: 100%;
+  }
+  .marketplace-page .product-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .marketplace-page .marketplace-search {
+    width: 100%;
+  }
+  .marketplace-page .sort-select {
+    width: 100%;
+  }
+  .marketplace-page .benefit-card {
+    width: 100%;
+  }
+}
+.marketplace-page {
+  /*================================
+      Mobile
+  =================================*/
+}
+@media (min-width: 480px) and (max-width: 767px) {
+  .marketplace-page .marketplace-categories,
+  .marketplace-page .marketplace-benefits {
+    padding: 60px 0;
+  }
+  .marketplace-page .marketplace-products {
+    padding: 25px 0;
+  }
+  .marketplace-page .marketplace-section-title {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .marketplace-page .marketplace-section-title h3 {
+    font-size: 20px;
+  }
+  .marketplace-page .marketplace-section-title a {
+    font-size: 14px;
+  }
+  .marketplace-page .product-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .marketplace-page .product-image {
+    height: 280px;
+  }
+  .marketplace-page .filter-summary {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .marketplace-page .benefit-card {
+    padding: 16px;
+  }
+  .marketplace-page .benefit-icon {
+    width: 50px;
+    height: 50px;
+    flex: 0 0 50px;
+  }
+  .marketplace-page .benefit-icon i {
+    font-size: 20px;
+  }
+}
+@media (max-width: 767px) {
+  .marketplace-page .marketplace-section-title h3 {
+    font-size: 20px;
+  }
+  .marketplace-page .category-card {
+    min-width: 125px;
+    min-height: 100px;
+    flex-basis: 125px;
+  }
+  .marketplace-page .marketplace-filter {
+    padding: 14px 12px;
+  }
+  .marketplace-page .product-image {
+    height: 270px;
+  }
+  .marketplace-page .product-content {
+    padding: 14px 16px;
+  }
+  .marketplace-page .product-content h4 {
+    font-size: 17px;
+  }
+  .marketplace-page .sort-select-value .sort-label,
+  .marketplace-page .sort-select-value strong {
+    font-size: 13px;
+  }
+  .marketplace-page .benefits-heading h2 {
+    font-size: 20px;
+  }
 }
 
 .product-details-page {

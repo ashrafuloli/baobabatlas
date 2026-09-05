@@ -37,6 +37,17 @@ class DatabaseSeeder extends Seeder
             */
 
             UserSeeder::class,
+
+            /*
+            |--------------------------------------------------------------------------
+            | Product Catalog
+            |--------------------------------------------------------------------------
+            */
+
+            BrandSeeder::class,
+            CategorySeeder::class,
+            AttributeSeeder::class,
+            ProductSeeder::class,
         ]);
     }
 }

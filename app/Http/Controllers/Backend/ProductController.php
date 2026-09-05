@@ -34,19 +34,67 @@ final class ProductController extends Controller
 
     public function index(): View
     {
-        $products = Product::query()
+        $query = Product::query()
             ->with([
                 'brand',
                 'categories',
                 'variants',
-            ])
+            ]);
+
+        // Search
+        if ($search = request('search')) {
+            $query->where(function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('sku', 'like', "%{$search}%");
+            });
+        }
+
+        // Status filter
+        if ($status = request('status')) {
+            $query->where('status', $status);
+        }
+
+        // Source filter
+        if ($source = request('source')) {
+            $query->where('source', $source);
+        }
+
+        // Brand filter
+        if ($brand = request('brand')) {
+            $query->where('brand_id', $brand);
+        }
+
+        // Category filter
+        if ($category = request('category')) {
+            $query->whereHas('categories', function ($query) use ($category) {
+                $query->where('categories.id', $category);
+            });
+        }
+
+        $products = $query
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->paginate(15)
+            ->withQueryString();
+
+        $brands = Brand::query()
+            ->orderBy('name')
+            ->get();
+
+        $categories = Category::query()
+            ->whereNull('parent_id')
+            ->with('children')
             ->orderBy('sort_order')
             ->orderBy('name')
             ->get();
 
         return view(
             'backend.pages.ecommerce.admin.products.index',
-            compact('products'),
+            compact(
+                'products',
+                'brands',
+                'categories',
+            ),
         );
     }
 

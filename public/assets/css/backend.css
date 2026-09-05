@@ -643,6 +643,143 @@ label {
   background: rgba(220, 53, 69, 0.1);
 }
 
+.common-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  padding: 16px;
+}
+.common-pagination__info {
+  flex: 0 0 auto;
+  color: #555555;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.common-pagination__info strong {
+  color: #0D2B5A;
+  font-weight: 600;
+}
+.common-pagination__links {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+.common-pagination__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  height: 38px;
+  padding: 0 10px;
+  border: 1px solid #eaecf0;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #0D2B5A;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-transition: all 0.25s linear 0s;
+  -o-transition: all 0.25s linear 0s;
+  transition: all 0.25s linear 0s;
+}
+.common-pagination__link i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  line-height: 1;
+}
+.common-pagination__link:hover {
+  border-color: #177245;
+  background-color: #177245;
+  color: #fff;
+}
+.common-pagination__link--active {
+  border-color: #177245;
+  background-color: #177245;
+  color: #fff;
+  cursor: default;
+}
+.common-pagination__link--active:hover {
+  border-color: #177245;
+  background-color: #177245;
+  color: #fff;
+}
+.common-pagination__link--disabled {
+  border-color: #eaecf0;
+  background-color: #F2F4F7;
+  color: #555555;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.common-pagination__link--disabled:hover {
+  border-color: #eaecf0;
+  background-color: #F2F4F7;
+  color: #555555;
+}
+.common-pagination__dots {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  height: 38px;
+  padding: 0 4px;
+  color: #555555;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+}
+@media (min-width: 768px) and (max-width: 991px) {
+  .common-pagination {
+    align-items: center;
+    flex-direction: column;
+    gap: 15px;
+  }
+  .common-pagination__info {
+    width: 100%;
+    text-align: center;
+  }
+  .common-pagination__links {
+    justify-content: center;
+    width: 100%;
+  }
+}
+@media (min-width: 480px) and (max-width: 767px) {
+  .common-pagination {
+    padding: 15px 0;
+    gap: 12px;
+  }
+  .common-pagination__links {
+    gap: 4px;
+  }
+  .common-pagination__link {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 8px;
+    border-radius: 5px;
+    font-size: 13px;
+  }
+  .common-pagination__link i {
+    font-size: 17px;
+  }
+  .common-pagination__dots {
+    min-width: 26px;
+    height: 36px;
+    font-size: 13px;
+  }
+  .common-pagination__info {
+    font-size: 13px;
+  }
+}
+
 /*
 |--------------------------------------------------------------------------
 | SweetAlert2 - Global

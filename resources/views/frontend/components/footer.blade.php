@@ -93,6 +93,9 @@
 
 <!-- Main Js -->
 <script src="{{asset('assets/js/frontend.js')}}"></script>
+
+<!-- Page Specific Js -->
+@stack('scripts')
 </body>
 
 </html>
