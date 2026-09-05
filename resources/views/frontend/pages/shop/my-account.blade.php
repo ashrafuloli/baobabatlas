@@ -138,7 +138,7 @@
 
                             and edit your
 
-                            <a href="{{ route('my-profile') }}">
+                            <a href="{{ route('profile') }}">
                                 profile details
                             </a>.
 
@@ -171,6 +171,33 @@
 
                             <span class="my-account-page__card-title">
                                 Dashboard
+                            </span>
+
+                            <span class="my-account-page__card-arrow">
+
+                                <i class="ri-arrow-right-line"></i>
+
+                            </span>
+
+                        </a>
+
+                        {{-- ==========================================
+                            Cart
+                        =========================================== --}}
+
+                        <a
+                            href="{{ route('my-cart') }}"
+                            class="my-account-page__card"
+                        >
+
+                            <div class="my-account-page__card-icon">
+
+                                <i class="ri-shopping-bag-3-line"></i>
+
+                            </div>
+
+                            <span class="my-account-page__card-title">
+                                Cart
                             </span>
 
                             <span class="my-account-page__card-arrow">
@@ -243,7 +270,7 @@
                         =========================================== --}}
 
                         <a
-                            href="{{ route('my-profile') }}"
+                            href="{{ route('profile') }}"
                             class="my-account-page__card"
                         >
 

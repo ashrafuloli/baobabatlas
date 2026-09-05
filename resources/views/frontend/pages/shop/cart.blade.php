@@ -470,7 +470,7 @@
 
                             @if ($cartItems->isNotEmpty())
 
-                                <a href="{{ route('my-checkout') }}"
+                                <a href="{{ route('checkout') }}"
                                    class="checkout-btn">
                                     <span>
                                         Proceed to Checkout
@@ -709,59 +709,35 @@
             };
 
 
+            /*
+            |--------------------------------------------------------------------------
+            | Global Toast Message
+            |--------------------------------------------------------------------------
+            */
+
             const showMessage = function (
                 message,
                 type = 'error'
             ) {
 
-                let messageElement =
-                    cartPage.querySelector(
-                        '.cart-action-message'
-                    );
+                if (
+                    window.AppToast &&
+                    typeof window.AppToast.fire === 'function'
+                ) {
 
+                    window.AppToast.fire({
+                        icon: type,
+                        title: message
+                    });
 
-                if (!messageElement) {
-
-                    messageElement =
-                        document.createElement('div');
-
-                    messageElement.className =
-                        'cart-action-message';
-
-                    cartPage
-                        .querySelector('.container')
-                        .prepend(messageElement);
-
+                    return;
                 }
 
 
-                messageElement.textContent =
-                    message;
-
-                messageElement.dataset.type =
-                    type;
-
-                messageElement.classList.add(
-                    'is-visible'
-                );
-
-
-                window.clearTimeout(
-                    messageElement.hideTimer
-                );
-
-
-                messageElement.hideTimer =
-                    window.setTimeout(
-                        function () {
-
-                            messageElement.classList.remove(
-                                'is-visible'
-                            );
-
-                        },
-                        4000
-                    );
+                console[type === 'error'
+                    ? 'error'
+                    : 'log'
+                    ](message);
 
             };
 
@@ -1334,6 +1310,7 @@
                                 data.cart_count ?? 0
                             );
 
+
                             showMessage(
                                 data.message ||
                                 'Item removed from cart.',
@@ -1405,6 +1382,7 @@
                             updateHeaderCartCount(
                                 data.cart_count ?? 0
                             );
+
 
                             showMessage(
                                 data.message ||

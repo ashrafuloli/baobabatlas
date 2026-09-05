@@ -90,9 +90,13 @@
 <script src="{{asset('assets/vendor/swiper/swiper-bundle.min.js')}}"></script>
 <script src="{{asset('assets/vendor/aos/aos.js')}}"></script>
 <script src="{{asset('assets/vendor/fancybox/fancybox.umd.js')}}"></script>
+<script src="{{asset('assets/vendor/sweetalert2/sweetalert2@11.js')}}"></script>
+
 
 <!-- Main Js -->
 <script src="{{asset('assets/js/frontend.js')}}"></script>
+
+@include('frontend.components.alerts')
 
 <!-- Page Specific Js -->
 @stack('scripts')

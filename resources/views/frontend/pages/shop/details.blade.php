@@ -701,7 +701,9 @@
                                     type="number"
                                     value="1"
                                     min="1"
-                                    max="{{ max(1, $initialVariant['stock'] ?? 1) }}"
+                                    @if($initialVariant)
+                                        max="{{ max(1, $initialVariant['stock']) }}"
+                                    @endif
                                     data-product-quantity
                                     aria-label="Quantity"
                                 >
@@ -850,8 +852,6 @@
 
                     <div class="product-tabs-content">
 
-                        {{-- Description --}}
-
                         <div
                             class="product-tab-panel is-active"
                             data-tab-panel="description"
@@ -873,8 +873,6 @@
 
                         </div>
 
-
-                        {{-- Specifications --}}
 
                         <div
                             class="product-tab-panel"
@@ -1170,7 +1168,6 @@
 
 
 @push('scripts')
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const page = document.querySelector(
@@ -1181,11 +1178,14 @@
                 return;
             }
 
+
             /*
             |--------------------------------------------------------------------------
             | Product Data
             |--------------------------------------------------------------------------
             */
+
+            const productId = @json($product->id);
 
             const productName = @json($product->name);
 
@@ -1195,6 +1195,10 @@
 
             const productComparePrice = @json(
                 $product->compare_price
+            );
+
+            const productSku = @json(
+                $product->sku ?: '—'
             );
 
             const thumbnail = @json(
@@ -1298,8 +1302,14 @@
                 ...initialSelections,
             };
 
-            let selectedVariant =
-                variants[0] || null;
+            let selectedVariant = null;
+
+            /*
+             * This only controls whether the currently selected
+             * attributes represent an exact valid combination.
+             */
+            let hasValidVariantSelection =
+                !variants.length;
 
 
             /*
@@ -1344,9 +1354,15 @@
             */
 
             function hasCompleteSelection() {
+                if (!requiredAttributeIds.length) {
+                    return true;
+                }
+
                 return requiredAttributeIds.every(
                     (attributeId) => {
-                        const key = String(attributeId);
+                        const key = String(
+                            attributeId
+                        );
 
                         return (
                             selectedAttributes[key] !== undefined &&
@@ -1360,7 +1376,7 @@
 
             /*
             |--------------------------------------------------------------------------
-            | Exact Variant
+            | Exact Variant Matching
             |--------------------------------------------------------------------------
             */
 
@@ -1369,10 +1385,18 @@
                     return null;
                 }
 
+                /*
+                 * If there are no attribute groups but variants exist,
+                 * use the first active variant.
+                 */
                 if (!requiredAttributeIds.length) {
                     return variants[0] || null;
                 }
 
+                /*
+                 * Do not match until every required attribute
+                 * has been selected.
+                 */
                 if (!hasCompleteSelection()) {
                     return null;
                 }
@@ -1381,8 +1405,9 @@
                     (variant) => {
                         return requiredAttributeIds.every(
                             (attributeId) => {
-                                const key =
-                                    String(attributeId);
+                                const key = String(
+                                    attributeId
+                                );
 
                                 return (
                                     Number(
@@ -1407,12 +1432,17 @@
 
             function getAllVariantImages() {
                 const images = [];
+
                 const seen = new Set();
+
 
                 variants.forEach(
                     (variant) => {
                         const variantId =
-                            Number(variant.id);
+                            Number(
+                                variant.id
+                            );
+
 
                         /*
                          * Direct ProductVariant.image
@@ -1439,7 +1469,8 @@
 
 
                         /*
-                         * ProductImage records
+                         * ProductImage records attached
+                         * to this variant.
                          */
                         if (
                             Array.isArray(
@@ -1467,6 +1498,7 @@
                                         url: imageUrl,
                                         alt:
                                             image.alt ||
+                                            image.alt_text ||
                                             productName,
                                         variantId,
                                     });
@@ -1479,8 +1511,6 @@
 
                 /*
                  * Product-level images.
-                 *
-                 * These are fallback/general product images.
                  */
                 if (
                     Array.isArray(
@@ -1508,6 +1538,7 @@
                                 url: imageUrl,
                                 alt:
                                     image.alt ||
+                                    image.alt_text ||
                                     productName,
                                 variantId: null,
                             });
@@ -1530,6 +1561,7 @@
                     });
                 }
 
+
                 return images;
             }
 
@@ -1546,10 +1578,17 @@
                 }
 
                 const images = [];
+
                 const seen = new Set();
 
+                const variantId =
+                    Number(
+                        variant.id
+                    );
+
+
                 /*
-                 * Direct variant image.
+                 * Direct ProductVariant.image
                  */
                 if (variant.image) {
                     const imageUrl =
@@ -1563,9 +1602,7 @@
                         images.push({
                             url: imageUrl,
                             alt: productName,
-                            variantId: Number(
-                                variant.id
-                            ),
+                            variantId,
                         });
                     }
                 }
@@ -1600,15 +1637,19 @@
                                 url: imageUrl,
                                 alt:
                                     image.alt ||
+                                    image.alt_text ||
                                     productName,
-                                variantId: Number(
-                                    variant.id
-                                ),
+                                variantId,
                             });
                         }
                     );
                 }
 
+
+                /*
+                 * If this variant has no image,
+                 * use the complete gallery.
+                 */
                 return images.length
                     ? images
                     : getAllVariantImages();
@@ -1630,12 +1671,18 @@
                 }
 
                 mainImage.src = imageUrl;
-                mainImage.alt = productName;
+
+                mainImage.alt =
+                    productName;
+
                 mainImage.hidden = false;
 
+
                 if (imagePlaceholder) {
-                    imagePlaceholder.hidden = true;
+                    imagePlaceholder.hidden =
+                        true;
                 }
+
 
                 page
                     .querySelectorAll(
@@ -1665,7 +1712,7 @@
 
             /*
             |--------------------------------------------------------------------------
-            | Render ALL Thumbnails
+            | Render Gallery
             |--------------------------------------------------------------------------
             */
 
@@ -1679,6 +1726,7 @@
 
                 galleryThumbnails.innerHTML = '';
 
+
                 if (!images.length) {
                     if (mainImage) {
                         mainImage.hidden = true;
@@ -1689,11 +1737,13 @@
                     }
 
                     if (imagePlaceholder) {
-                        imagePlaceholder.hidden = false;
+                        imagePlaceholder.hidden =
+                            false;
                     }
 
                     return;
                 }
+
 
                 const selectedImage =
                     activeUrl ||
@@ -1707,12 +1757,14 @@
                             return;
                         }
 
+
                         const button =
                             document.createElement(
                                 'button'
                             );
 
-                        button.type = 'button';
+                        button.type =
+                            'button';
 
                         button.className =
                             'product-thumbnail';
@@ -1731,6 +1783,7 @@
                         const isActive =
                             image.url ===
                             selectedImage;
+
 
                         if (isActive) {
                             button.classList.add(
@@ -1815,7 +1868,9 @@
                                     selectedAttributes[
                                         attributeId
                                         ]
-                                ) === valueId;
+                                ) ===
+                                valueId;
+
 
                             button.classList.toggle(
                                 'is-selected',
@@ -1850,27 +1905,34 @@
                                         ]
                                 );
 
+
                             const selectedButton =
                                 group.querySelector(
                                     `[data-value-id="${selectedValue}"]`
                                 );
+
 
                             const selectedLabel =
                                 group.querySelector(
                                     '[data-option-selected]'
                                 );
 
+
                             if (!selectedLabel) {
                                 return;
                             }
 
+
                             if (selectedButton) {
                                 selectedLabel.textContent =
                                     selectedButton.textContent.trim();
-                            } else {
-                                selectedLabel.textContent =
-                                    `Select ${group.dataset.attributeName}`;
+
+                                return;
                             }
+
+
+                            selectedLabel.textContent =
+                                `Select ${group.dataset.attributeName}`;
                         }
                     );
             }
@@ -1899,6 +1961,23 @@
                                     button.dataset.valueId
                                 );
 
+
+                            /*
+                             * If variants do not exist,
+                             * all options are irrelevant.
+                             */
+                            if (!variants.length) {
+                                button.disabled =
+                                    false;
+
+                                button.classList.remove(
+                                    'is-unavailable'
+                                );
+
+                                return;
+                            }
+
+
                             const possible =
                                 variants.some(
                                     (variant) => {
@@ -1909,10 +1988,10 @@
                                                         requiredAttributeId
                                                     );
 
+
                                                 /*
-                                                 * For the option
-                                                 * currently being checked,
-                                                 * use the candidate value.
+                                                 * Current option
+                                                 * being checked.
                                                  */
                                                 if (
                                                     key ===
@@ -1928,13 +2007,19 @@
 
 
                                                 /*
-                                                 * For other attributes,
-                                                 * respect current selection.
+                                                 * Other selected
+                                                 * attributes.
                                                  */
                                                 if (
                                                     selectedAttributes[
                                                         key
-                                                        ] !== undefined
+                                                        ] !== undefined &&
+                                                    selectedAttributes[
+                                                        key
+                                                        ] !== null &&
+                                                    selectedAttributes[
+                                                        key
+                                                        ] !== ''
                                                 ) {
                                                     return (
                                                         Number(
@@ -1950,14 +2035,15 @@
 
 
                                                 /*
-                                                 * No current selection
-                                                 * for this attribute.
+                                                 * Attribute has not
+                                                 * been selected yet.
                                                  */
                                                 return true;
                                             }
                                         );
                                     }
                                 );
+
 
                             button.disabled =
                                 !possible;
@@ -1973,7 +2059,7 @@
 
             /*
             |--------------------------------------------------------------------------
-            | Product Information
+            | Product Price
             |--------------------------------------------------------------------------
             */
 
@@ -1982,7 +2068,9 @@
                     variant &&
                     variant.price !== null &&
                     variant.price !== undefined
-                        ? Number(variant.price)
+                        ? Number(
+                            variant.price
+                        )
                         : productPrice;
 
 
@@ -2013,7 +2101,8 @@
 
                 if (comparePriceElement) {
                     if (
-                        comparePrice &&
+                        comparePrice !== null &&
+                        Number.isFinite(comparePrice) &&
                         comparePrice > currentPrice
                     ) {
                         comparePriceElement.textContent =
@@ -2032,7 +2121,8 @@
 
                 if (discountElement) {
                     if (
-                        comparePrice &&
+                        comparePrice !== null &&
+                        Number.isFinite(comparePrice) &&
                         comparePrice > currentPrice
                     ) {
                         const discount =
@@ -2045,6 +2135,7 @@
                                     comparePrice
                                 ) * 100
                             );
+
 
                         discountElement.textContent =
                             `${discount}% OFF`;
@@ -2066,9 +2157,6 @@
             */
 
             function updateSku(variant) {
-                const productSku =
-                    @json($product->sku ?: '—');
-
                 const sku =
                     variant?.sku ||
                     productSku;
@@ -2098,15 +2186,53 @@
                     return;
                 }
 
-                if (!variant) {
-                    stockElement.innerHTML = '';
+
+                /*
+                 * Non-variant products do not have
+                 * product-level stock in the current model.
+                 */
+                if (!variants.length) {
+                    stockElement.innerHTML = `
+                        <i class="ri-checkbox-circle-line"></i>
+                        <span>Available</span>
+                    `;
 
                     return;
                 }
 
+
+                /*
+                 * No valid exact combination.
+                 *
+                 * Keep the selectedVariant information
+                 * visible instead of clearing it.
+                 */
+                if (!hasValidVariantSelection) {
+                    stockElement.innerHTML = `
+                        <i class="ri-information-line"></i>
+                        <span>Please select a valid combination</span>
+                    `;
+
+                    return;
+                }
+
+
+                if (!variant) {
+                    stockElement.innerHTML = `
+                        <i class="ri-information-line"></i>
+                        <span>Select product options</span>
+                    `;
+
+                    return;
+                }
+
+
                 const stock =
-                    Number(
-                        variant.stock || 0
+                    Math.max(
+                        0,
+                        Number(
+                            variant.stock || 0
+                        )
                     );
 
 
@@ -2116,12 +2242,15 @@
                         <span>In Stock</span>
                         <small>${stock} available</small>
                     `;
-                } else {
-                    stockElement.innerHTML = `
-                        <i class="ri-close-circle-line"></i>
-                        <span>Out of Stock</span>
-                    `;
+
+                    return;
                 }
+
+
+                stockElement.innerHTML = `
+                    <i class="ri-close-circle-line"></i>
+                    <span>Out of Stock</span>
+                `;
             }
 
 
@@ -2137,18 +2266,123 @@
                 }
 
 
-                if (!variant) {
-                    quantityInput.value = '1';
-                    quantityInput.max = '1';
-                    quantityInput.disabled = true;
+                /*
+                 * Non-variant product.
+                 *
+                 * There is no product-level stock field,
+                 * so do not create an artificial max.
+                 */
+                if (!variants.length) {
+                    quantityInput.disabled =
+                        false;
+
+                    quantityInput.min =
+                        '1';
+
+                    quantityInput.removeAttribute(
+                        'max'
+                    );
+
+
+                    let quantity =
+                        Number(
+                            quantityInput.value
+                        ) || 1;
+
+
+                    quantity =
+                        Math.max(
+                            1,
+                            quantity
+                        );
+
+
+                    quantityInput.value =
+                        String(
+                            quantity
+                        );
+
 
                     if (quantityDecrease) {
-                        quantityDecrease.disabled = true;
+                        quantityDecrease.disabled =
+                            quantity <= 1;
                     }
 
+
                     if (quantityIncrease) {
-                        quantityIncrease.disabled = true;
+                        quantityIncrease.disabled =
+                            false;
                     }
+
+
+                    return;
+                }
+
+
+                /*
+                 * Variant product with an invalid
+                 * attribute combination.
+                 *
+                 * Keep current variant information,
+                 * but disable quantity controls.
+                 */
+                if (!hasValidVariantSelection) {
+                    quantityInput.disabled =
+                        true;
+
+                    quantityInput.value =
+                        '1';
+
+                    quantityInput.min =
+                        '1';
+
+                    quantityInput.removeAttribute(
+                        'max'
+                    );
+
+
+                    if (quantityDecrease) {
+                        quantityDecrease.disabled =
+                            true;
+                    }
+
+
+                    if (quantityIncrease) {
+                        quantityIncrease.disabled =
+                            true;
+                    }
+
+
+                    return;
+                }
+
+
+                /*
+                 * Valid combination but no variant.
+                 */
+                if (!variant) {
+                    quantityInput.disabled =
+                        true;
+
+                    quantityInput.value =
+                        '1';
+
+                    quantityInput.removeAttribute(
+                        'max'
+                    );
+
+
+                    if (quantityDecrease) {
+                        quantityDecrease.disabled =
+                            true;
+                    }
+
+
+                    if (quantityIncrease) {
+                        quantityIncrease.disabled =
+                            true;
+                    }
+
 
                     return;
                 }
@@ -2166,7 +2400,8 @@
                 quantityInput.disabled =
                     stock <= 0;
 
-                quantityInput.min = '1';
+                quantityInput.min =
+                    '1';
 
                 quantityInput.max =
                     String(
@@ -2194,7 +2429,9 @@
 
 
                 quantityInput.value =
-                    String(quantity);
+                    String(
+                        quantity
+                    );
 
 
                 if (quantityDecrease) {
@@ -2223,13 +2460,32 @@
                     return;
                 }
 
-                if (variants.length) {
+
+                /*
+                 * Non-variant product.
+                 *
+                 * Backend accepts variant_id = null.
+                 */
+                if (!variants.length) {
                     addToCartButton.disabled =
-                        !variant ||
-                        Number(
-                            variant.stock || 0
-                        ) <= 0;
+                        false;
+
+                    return;
                 }
+
+
+                /*
+                 * Variant product.
+                 *
+                 * Must have an exact combination
+                 * and available stock.
+                 */
+                addToCartButton.disabled =
+                    !hasValidVariantSelection ||
+                    !variant ||
+                    Number(
+                        variant.stock || 0
+                    ) <= 0;
             }
 
 
@@ -2264,6 +2520,527 @@
 
             /*
             |--------------------------------------------------------------------------
+            | Add To Cart Loading State
+            |--------------------------------------------------------------------------
+            */
+
+            function setAddToCartLoading(
+                loading
+            ) {
+                if (!addToCartButton) {
+                    return;
+                }
+
+
+                addToCartButton.classList.toggle(
+                    'is-loading',
+                    loading
+                );
+
+
+                addToCartButton.setAttribute(
+                    'aria-busy',
+                    loading
+                        ? 'true'
+                        : 'false'
+                );
+
+
+                if (loading) {
+                    addToCartButton.disabled =
+                        true;
+                } else {
+                    updateAddToCart(
+                        selectedVariant
+                    );
+                }
+
+
+                const icon =
+                    addToCartButton.querySelector(
+                        'i'
+                    );
+
+                const text =
+                    addToCartButton.querySelector(
+                        'span'
+                    );
+
+
+                if (loading) {
+                    if (icon) {
+                        icon.className =
+                            'ri-loader-4-line';
+                    }
+
+                    if (text) {
+                        text.textContent =
+                            'Adding...';
+                    }
+
+                    return;
+                }
+
+
+                if (icon) {
+                    icon.className =
+                        'ri-shopping-bag-3-line';
+                }
+
+                if (text) {
+                    text.textContent =
+                        'Add to Cart';
+                }
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Global Cart Toast
+            |--------------------------------------------------------------------------
+            */
+
+            function showCartToast(
+                message,
+                type = 'success'
+            ) {
+                if (
+                    window.AppToast &&
+                    typeof window.AppToast.fire ===
+                    'function'
+                ) {
+                    window.AppToast.fire({
+                        icon: type,
+                        title: message,
+                    });
+
+                    return;
+                }
+
+                console[type === 'error'
+                    ? 'error'
+                    : 'log'
+                    ](
+                    message
+                );
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Update Cart Count
+            |--------------------------------------------------------------------------
+            */
+
+            function updateCartCount(count) {
+                const normalizedCount =
+                    Math.max(
+                        0,
+                        Number(count) || 0
+                    );
+
+
+                document
+                    .querySelectorAll(
+                        '[data-cart-count]'
+                    )
+                    .forEach(
+                        (element) => {
+                            element.textContent =
+                                String(
+                                    normalizedCount
+                                );
+                        }
+                    );
+
+
+                /*
+                 * Notify other frontend components.
+                 */
+                document.dispatchEvent(
+                    new CustomEvent(
+                        'cart:updated',
+                        {
+                            detail: {
+                                count:
+                                normalizedCount,
+                            },
+                        }
+                    )
+                );
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | CSRF Token
+            |--------------------------------------------------------------------------
+            */
+
+            function getCsrfToken() {
+                const meta =
+                    document.querySelector(
+                        'meta[name="csrf-token"]'
+                    );
+
+
+                return (
+                    meta?.getAttribute(
+                        'content'
+                    ) || ''
+                );
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Add Product To Cart
+            |--------------------------------------------------------------------------
+            */
+
+            async function addProductToCart() {
+                if (
+                    !addToCartButton ||
+                    addToCartButton.disabled
+                ) {
+                    return;
+                }
+
+
+                /*
+                 * Variant product must have
+                 * an exact valid combination.
+                 */
+                if (
+                    variants.length &&
+                    (
+                        !selectedVariant ||
+                        !hasValidVariantSelection
+                    )
+                ) {
+                    showCartToast(
+                        'Please select a valid product option.',
+                        'error'
+                    );
+
+                    return;
+                }
+
+
+                const csrfToken =
+                    getCsrfToken();
+
+
+                /*
+                 * Do not submit a state-changing request
+                 * without a CSRF token.
+                 */
+                if (!csrfToken) {
+                    console.error(
+                        'CSRF token is missing.'
+                    );
+
+
+                    showCartToast(
+                        'Security token is missing. Please refresh the page and try again.',
+                        'error'
+                    );
+
+                    return;
+                }
+
+
+                let quantity =
+                    Number(
+                        quantityInput?.value || 1
+                    );
+
+
+                if (
+                    !Number.isFinite(
+                        quantity
+                    ) ||
+                    quantity < 1
+                ) {
+                    quantity = 1;
+                }
+
+
+                quantity =
+                    Math.floor(
+                        quantity
+                    );
+
+
+                /*
+                 * For variants, never send more
+                 * than the currently available stock.
+                 */
+                if (
+                    variants.length &&
+                    selectedVariant
+                ) {
+                    const stock =
+                        Math.max(
+                            0,
+                            Number(
+                                selectedVariant.stock || 0
+                            )
+                        );
+
+
+                    if (
+                        stock <= 0
+                    ) {
+                        showCartToast(
+                            'This product variant is currently out of stock.',
+                            'error'
+                        );
+
+                        return;
+                    }
+
+
+                    quantity =
+                        Math.min(
+                            quantity,
+                            stock
+                        );
+                }
+
+
+                /*
+                 * Non-variant products intentionally
+                 * send variant_id as null.
+                 */
+                const payload = {
+                    product_id:
+                        Number(
+                            productId
+                        ),
+
+                    variant_id:
+                        selectedVariant
+                            ? Number(
+                                selectedVariant.id
+                            )
+                            : null,
+
+                    quantity,
+                };
+
+
+                setAddToCartLoading(
+                    true
+                );
+
+
+                try {
+                    const response =
+                        await fetch(
+                            @json(route('cart.items.store')),
+                            {
+                                method: 'POST',
+
+                                headers: {
+                                    'Content-Type':
+                                        'application/json',
+
+                                    'Accept':
+                                        'application/json',
+
+                                    'X-Requested-With':
+                                        'XMLHttpRequest',
+
+                                    'X-CSRF-TOKEN':
+                                    csrfToken,
+                                },
+
+                                credentials:
+                                    'same-origin',
+
+                                body:
+                                    JSON.stringify(
+                                        payload
+                                    ),
+                            }
+                        );
+
+
+                    let data = null;
+
+
+                    try {
+                        data =
+                            await response.json();
+                    } catch {
+                        data = null;
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | CSRF / 419
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (
+                        response.status === 419
+                    ) {
+                        throw new Error(
+                            'Your session has expired. Please refresh the page and try again.'
+                        );
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Validation Errors
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (
+                        response.status === 422
+                    ) {
+                        const validationMessage =
+                            data?.errors
+                                ? Object.values(
+                                    data.errors
+                                )
+                                    .flat()
+                                    .find(
+                                        (message) =>
+                                            typeof message ===
+                                            'string'
+                                    )
+                                : null;
+
+
+                        throw new Error(
+                            validationMessage ||
+                            data?.message ||
+                            'Please check your product selection and quantity.'
+                        );
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Unauthorized
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (
+                        response.status === 401
+                    ) {
+                        throw new Error(
+                            'Please sign in to continue.'
+                        );
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Other Backend Errors
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (!response.ok) {
+                        throw new Error(
+                            data?.message ||
+                            'Unable to add this product to your cart.'
+                        );
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Successful Response
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (
+                        data?.cart_count !== undefined
+                    ) {
+                        updateCartCount(
+                            data.cart_count
+                        );
+                    }
+
+
+                    /*
+                     * Send one complete cart event.
+                     */
+                    document.dispatchEvent(
+                        new CustomEvent(
+                            'cart:updated',
+                            {
+                                detail: {
+                                    count:
+                                        Number(
+                                            data?.cart_count ||
+                                            0
+                                        ),
+
+                                    itemId:
+                                        data?.item_id ||
+                                        null,
+
+                                    productId:
+                                        Number(
+                                            productId
+                                        ),
+
+                                    variantId:
+                                        selectedVariant
+                                            ? Number(
+                                                selectedVariant.id
+                                            )
+                                            : null,
+
+                                    quantity,
+                                },
+                            }
+                        )
+                    );
+
+
+                    showCartToast(
+                        data?.message ||
+                        'Product added to cart successfully.',
+                        'success'
+                    );
+
+                } catch (error) {
+                    console.error(
+                        'Add to cart error:',
+                        error
+                    );
+
+
+                    showCartToast(
+                        error?.message ||
+                        'Something went wrong. Please try again.',
+                        'error'
+                    );
+
+                } finally {
+                    setAddToCartLoading(
+                        false
+                    );
+
+                    /*
+                     * Restore correct state.
+                     */
+                    updateAddToCart(
+                        selectedVariant
+                    );
+                }
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
             | Attribute Selection
             |--------------------------------------------------------------------------
             */
@@ -2275,6 +3052,7 @@
                         event.target.closest(
                             '[data-option-value]'
                         );
+
 
                     if (
                         !button ||
@@ -2312,6 +3090,9 @@
                         selectedVariant =
                             exactVariant;
 
+                        hasValidVariantSelection =
+                            true;
+
 
                         /*
                          * Keep ALL variant images
@@ -2321,6 +3102,7 @@
                             getVariantImages(
                                 selectedVariant
                             );
+
 
                         const mainVariantImage =
                             variantImages[0]?.url ||
@@ -2341,15 +3123,29 @@
                          * No exact combination.
                          *
                          * IMPORTANT:
-                         * Do not switch to another variant.
+                         *
+                         * Do NOT clear selectedVariant.
+                         *
+                         * The previous valid variant remains
+                         * visible for price/SKU/stock.
+                         *
+                         * But Add To Cart becomes disabled.
                          */
-                        selectedVariant = null;
+                        hasValidVariantSelection =
+                            false;
 
-                        updatePrice(null);
-                        updateSku(null);
-                        updateStock(null);
-                        updateQuantity(null);
-                        updateAddToCart(null);
+
+                        updateStock(
+                            selectedVariant
+                        );
+
+                        updateQuantity(
+                            selectedVariant
+                        );
+
+                        updateAddToCart(
+                            selectedVariant
+                        );
                     }
 
 
@@ -2373,6 +3169,7 @@
                         event.target.closest(
                             '.product-thumbnail'
                         );
+
 
                     if (
                         !thumbnailElement ||
@@ -2399,9 +3196,8 @@
 
 
                     /*
-                     * If the image belongs to a variant,
-                     * selecting the image also selects
-                     * that variant.
+                     * If this image belongs to a variant,
+                     * select that variant.
                      */
                     const variantId =
                         Number(
@@ -2420,7 +3216,8 @@
                             (variant) =>
                                 Number(
                                     variant.id
-                                ) === variantId
+                                ) ===
+                                variantId
                         );
 
 
@@ -2436,6 +3233,10 @@
                     selectedAttributes = {
                         ...imageVariant.attributes,
                     };
+
+
+                    hasValidVariantSelection =
+                        true;
 
 
                     renderAttributeSelections();
@@ -2464,18 +3265,22 @@
                     }
 
 
-                    const quantity =
+                    let quantity =
                         Number(
                             quantityInput.value
                         ) || 1;
 
 
+                    quantity =
+                        Math.max(
+                            1,
+                            quantity - 1
+                        );
+
+
                     quantityInput.value =
                         String(
-                            Math.max(
-                                1,
-                                quantity - 1
-                            )
+                            quantity
                         );
 
 
@@ -2503,25 +3308,55 @@
                     }
 
 
-                    const quantity =
+                    let quantity =
                         Number(
                             quantityInput.value
                         ) || 1;
 
 
-                    const max =
-                        Number(
-                            quantityInput.max ||
-                            1
+                    /*
+                     * Variant product.
+                     */
+                    if (
+                        variants.length &&
+                        selectedVariant &&
+                        hasValidVariantSelection
+                    ) {
+                        const stock =
+                            Math.max(
+                                0,
+                                Number(
+                                    selectedVariant.stock || 0
+                                )
+                            );
+
+
+                        quantity =
+                            Math.min(
+                                stock,
+                                quantity + 1
+                            );
+
+                    } else {
+                        /*
+                         * Non-variant product.
+                         *
+                         * No artificial stock limit.
+                         */
+                        quantity += 1;
+                    }
+
+
+                    quantity =
+                        Math.max(
+                            1,
+                            quantity
                         );
 
 
                     quantityInput.value =
                         String(
-                            Math.min(
-                                max,
-                                quantity + 1
-                            )
+                            quantity
                         );
 
 
@@ -2545,6 +3380,18 @@
                         selectedVariant
                     );
                 }
+            );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Add To Cart
+            |--------------------------------------------------------------------------
+            */
+
+            addToCartButton?.addEventListener(
+                'click',
+                addProductToCart
             );
 
 
@@ -2679,57 +3526,6 @@
 
             /*
             |--------------------------------------------------------------------------
-            | Add To Cart
-            |--------------------------------------------------------------------------
-            */
-
-            addToCartButton?.addEventListener(
-                'click',
-                () => {
-                    if (
-                        addToCartButton.disabled ||
-                        !selectedVariant
-                    ) {
-                        return;
-                    }
-
-
-                    const quantity =
-                        Number(
-                            quantityInput?.value ||
-                            1
-                        );
-
-
-                    page.dispatchEvent(
-                        new CustomEvent(
-                            'product:add-to-cart',
-                            {
-                                bubbles: true,
-
-                                detail: {
-                                    productId: @json($product->id),
-
-                                    variantId:
-                                        Number(
-                                            selectedVariant.id
-                                        ),
-
-                                    quantity,
-
-                                    sku:
-                                        selectedVariant.sku ||
-                                        null,
-                                },
-                            }
-                        )
-                    );
-                }
-            );
-
-
-            /*
-            |--------------------------------------------------------------------------
             | Lightbox
             |--------------------------------------------------------------------------
             */
@@ -2773,7 +3569,10 @@
                 lightboxImage.alt =
                     productName;
 
-                lightbox.hidden = false;
+
+                lightbox.hidden =
+                    false;
+
 
                 document.body.style.overflow =
                     'hidden';
@@ -2785,7 +3584,10 @@
                     return;
                 }
 
-                lightbox.hidden = true;
+
+                lightbox.hidden =
+                    true;
+
 
                 document.body.style.overflow =
                     '';
@@ -2824,35 +3626,84 @@
 
             /*
             |--------------------------------------------------------------------------
+            | INITIAL VARIANT
+            |--------------------------------------------------------------------------
+            */
+
+            if (variants.length) {
+                const exactInitialVariant =
+                    findExactVariant();
+
+
+                if (exactInitialVariant) {
+                    selectedVariant =
+                        exactInitialVariant;
+
+                    hasValidVariantSelection =
+                        true;
+
+                } else {
+                    /*
+                     * If initial selections do not produce
+                     * an exact variant, use the first variant
+                     * only as the currently displayed variant.
+                     *
+                     * Add To Cart remains disabled until the
+                     * attributes become an exact combination.
+                     */
+                    selectedVariant =
+                        variants[0] || null;
+
+                    hasValidVariantSelection =
+                        false;
+                }
+
+            } else {
+                /*
+                 * Non-variant product.
+                 */
+                selectedVariant =
+                    null;
+
+                hasValidVariantSelection =
+                    true;
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
             | INITIAL GALLERY
             |--------------------------------------------------------------------------
-            |
-            | IMPORTANT:
-            |
-            | Render ALL active variant images.
-            |
             */
 
             const allGalleryImages =
                 getAllVariantImages();
 
 
-            const initialImage =
-                initialSelections &&
-                Object.keys(
-                    initialSelections
-                ).length
-                    ? (
-                        getVariantImages(
-                            selectedVariant
-                        )[0]?.url ||
-                        allGalleryImages[0]?.url ||
-                        ''
-                    )
-                    : (
-                        allGalleryImages[0]?.url ||
-                        ''
+            let initialImage =
+                allGalleryImages[0]?.url ||
+                thumbnail ||
+                '';
+
+
+            /*
+             * If an exact initial variant exists,
+             * prefer its image.
+             */
+            if (
+                selectedVariant &&
+                hasValidVariantSelection
+            ) {
+                const initialVariantImages =
+                    getVariantImages(
+                        selectedVariant
                     );
+
+
+                initialImage =
+                    initialVariantImages[0]?.url ||
+                    initialImage;
+            }
 
 
             renderGallery(
@@ -2863,7 +3714,7 @@
 
             /*
             |--------------------------------------------------------------------------
-            | Initial State
+            | INITIAL UI
             |--------------------------------------------------------------------------
             */
 
@@ -2874,5 +3725,4 @@
             updateProductInformation();
         });
     </script>
-
 @endpush

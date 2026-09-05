@@ -377,3 +377,71 @@
         }
     }
 }
+
+.header-cart {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    color: #fff;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    z-index: 999;
+    background: $theme-color;
+    border: 1px solid $theme-color;
+    border-radius: 10px;
+    visibility: hidden;
+    opacity: 0;
+
+    &.show{
+        visibility: visible;
+        opacity: 1;
+    }
+
+    i {
+        font-size: 22px;
+        line-height: 1;
+    }
+
+    &:hover {
+        background: $theme-color-2;
+        border: 1px solid $theme-color-2;
+
+        .header-cart-count{
+            background: $theme-color;
+        }
+    }
+
+    .header-cart-count {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 20px;
+        height: 20px;
+        padding: 0 5px;
+        border-radius: 20px;
+        background: $theme-color-2;
+        color: $white;
+        font-family: $body-fonts;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1;
+        transition: all 0.3s ease;
+    }
+
+    @include mq('sm') {
+        width: 40px;
+        height: 40px;
+
+        i {
+            font-size: 20px;
+        }
+    }
+}

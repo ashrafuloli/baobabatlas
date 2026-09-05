@@ -27,4 +27,34 @@
         $(".offcanvas-wrapper").removeClass("active");
     });
 
+
+    /*  ============================================
+            Check Cart
+    =============================================== */
+    function checkHeaderCart() {
+        var cartCount =
+            parseInt($('.header-cart-count').html(), 10) || 0;
+
+        if (cartCount > 0) {
+            $('.header-cart').addClass('show');
+        } else {
+            $('.header-cart').removeClass('show');
+        }
+    }
+
+    checkHeaderCart();
+
+    $('.product-add-cart').on('click', function () {
+        setTimeout(function () {
+            checkHeaderCart();
+        }, 500);
+    });
+
+    $('.cart-item-remove').on('click', function () {
+        setTimeout(function () {
+            location.reload();
+        }, 500);
+    });
+
+
 })(jQuery);

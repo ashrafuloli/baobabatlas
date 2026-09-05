@@ -1,15 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\View\View;
 
-class ProfileController extends Controller
+final class ProfileController extends Controller
 {
     /*
     |--------------------------------------------------------------------------
@@ -21,9 +24,17 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
+        $addresses = $user->addresses()
+            ->orderByDesc('is_default')
+            ->latest()
+            ->get();
+
         return view(
             'backend.pages.profile.index',
-            compact('user')
+            compact(
+                'user',
+                'addresses',
+            ),
         );
     }
 
@@ -46,7 +57,6 @@ class ProfileController extends Controller
         */
 
         $validated = $request->validate([
-
             'first_name' => [
                 'required',
                 'string',
@@ -92,7 +102,6 @@ class ProfileController extends Controller
                 'min:8',
                 'confirmed',
             ],
-
         ]);
 
 
@@ -102,68 +111,31 @@ class ProfileController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $user->first_name =
-            $validated['first_name'];
-
-        $user->last_name =
-            $validated['last_name'];
-
-        $user->email =
-            $validated['email'];
-
-        $user->phone =
-            $validated['phone'] ?? null;
-
-        $user->address =
-            $validated['address'] ?? null;
+        $user->first_name = $validated['first_name'];
+        $user->last_name = $validated['last_name'];
+        $user->email = $validated['email'];
+        $user->phone = $validated['phone'] ?? null;
+        $user->address = $validated['address'] ?? null;
 
 
         /*
         |--------------------------------------------------------------------------
         | Profile Image
         |--------------------------------------------------------------------------
-        |
-        | Images are stored directly inside:
-        |
-        | public/uploads/users/
-        |
         */
 
         if ($request->hasFile('profile_image')) {
-
-            /*
-            |--------------------------------------------------------------------------
-            | Store New Image
-            |--------------------------------------------------------------------------
-            */
-
             $newProfileImage = $this->storeProfileImage(
-                $request->file('profile_image')
+                $request->file('profile_image'),
             );
 
-
-            /*
-            |--------------------------------------------------------------------------
-            | Delete Previous Image
-            |--------------------------------------------------------------------------
-            */
-
             if (!empty($user->profile_image)) {
-
                 $this->deleteProfileImage(
-                    $user->profile_image
+                    $user->profile_image,
                 );
             }
 
-
-            /*
-            |--------------------------------------------------------------------------
-            | Save New Image Path
-            |--------------------------------------------------------------------------
-            */
-
-            $user->profile_image =
-                $newProfileImage;
+            $user->profile_image = $newProfileImage;
         }
 
 
@@ -171,19 +143,10 @@ class ProfileController extends Controller
         |--------------------------------------------------------------------------
         | Update Password
         |--------------------------------------------------------------------------
-        |
-        | User model uses:
-        |
-        | 'password' => 'hashed'
-        |
-        | Therefore Hash::make() is not required here.
-        |
         */
 
         if (!empty($validated['new_password'])) {
-
-            $user->password =
-                $validated['new_password'];
+            $user->password = $validated['new_password'];
         }
 
 
@@ -204,7 +167,7 @@ class ProfileController extends Controller
 
         return back()->with(
             'success',
-            'Your profile has been updated successfully.'
+            'Your profile has been updated successfully.',
         );
     }
 
@@ -213,73 +176,34 @@ class ProfileController extends Controller
     |--------------------------------------------------------------------------
     | Store Profile Image
     |--------------------------------------------------------------------------
-    |
-    | Store directly inside:
-    |
-    | public/uploads/users/
-    |
     */
 
-    private function storeProfileImage($file): string
-    {
-        /*
-        |--------------------------------------------------------------------------
-        | Upload Directory
-        |--------------------------------------------------------------------------
-        */
-
+    private function storeProfileImage(
+        UploadedFile $file,
+    ): string {
         $uploadPath = public_path(
-            'uploads/users'
+            'uploads/users',
         );
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Create Directory
-        |--------------------------------------------------------------------------
-        */
-
         if (!File::exists($uploadPath)) {
-
             File::makeDirectory(
                 $uploadPath,
                 0755,
-                true
+                true,
             );
         }
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Generate Unique File Name
-        |--------------------------------------------------------------------------
-        */
-
         $fileName = uniqid(
                 'user_',
-                true
+                true,
             )
             . '.'
             . $file->getClientOriginalExtension();
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Move File
-        |--------------------------------------------------------------------------
-        */
-
         $file->move(
             $uploadPath,
-            $fileName
+            $fileName,
         );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Return Database Path
-        |--------------------------------------------------------------------------
-        */
 
         return 'uploads/users/' . $fileName;
     }
@@ -292,61 +216,27 @@ class ProfileController extends Controller
     */
 
     private function deleteProfileImage(
-        string $profileImage
+        string $profileImage,
     ): void {
-
-        /*
-        |--------------------------------------------------------------------------
-        | Clean Path
-        |--------------------------------------------------------------------------
-        */
-
         $profileImage = ltrim(
             $profileImage,
-            '/\\'
+            '/\\',
         );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Security Check
-        |--------------------------------------------------------------------------
-        |
-        | Only allow deletion from:
-        |
-        | uploads/users/
-        |
-        */
 
         if (
             !str_starts_with(
                 $profileImage,
-                'uploads/users/'
+                'uploads/users/',
             )
         ) {
             return;
         }
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Full File Path
-        |--------------------------------------------------------------------------
-        */
-
         $filePath = public_path(
-            $profileImage
+            $profileImage,
         );
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Delete File
-        |--------------------------------------------------------------------------
-        */
-
         if (File::exists($filePath)) {
-
             File::delete($filePath);
         }
     }

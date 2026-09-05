@@ -14,12 +14,14 @@ use App\Http\Controllers\Backend\SmartBuyPaymentController;
 use App\Http\Controllers\Backend\SmartBuyQuoteController;
 use App\Http\Controllers\Backend\SmartBuyShipmentController;
 use App\Http\Controllers\Backend\TrackingController;
+use App\Http\Controllers\Backend\UserAddressController;
 use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\Customer\MySmartBuyController;
 use App\Http\Controllers\Customer\MySmartBuyPaymentController;
 use App\Http\Controllers\Customer\MySmartBuyQuoteController;
 use App\Http\Controllers\Customer\MySmartBuyTrackingController;
 use App\Http\Controllers\Frontend\CartController;
+use App\Http\Controllers\Frontend\CheckoutController;
 use App\Http\Controllers\Frontend\FrontendTrackingController;
 use App\Http\Controllers\Frontend\MarketplaceController;
 use Illuminate\Support\Facades\Route;
@@ -98,17 +100,11 @@ Route::middleware('auth')->group(function () {
         'frontend.pages.shop.my-wishlist',
     )->name('my-wishlist');
 
-    Route::view(
-        '/my-profile',
-        'frontend.pages.shop.my-profile',
-    )->name('my-profile');
+    Route::get('/checkout', [CheckoutController::class, 'index'])
+        ->name('checkout');
 
-    Route::get(
-        '/checkout',
-        function () {
-            return view('frontend.pages.shop.checkout');
-        },
-    )->name('my-checkout');
+    Route::post('/checkout', [CheckoutController::class, 'store'])
+        ->name('checkout.store');
 });
 
 /*
@@ -404,6 +400,33 @@ Route::middleware('auth')
                     '/',
                     [ProfileController::class, 'update']
                 )->name('profile.update');
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | User Addresses
+                |--------------------------------------------------------------------------
+                */
+
+                Route::post(
+                    '/addresses',
+                    [UserAddressController::class, 'store']
+                )->name('profile.addresses.store');
+
+                Route::put(
+                    '/addresses/{address}',
+                    [UserAddressController::class, 'update']
+                )->name('profile.addresses.update');
+
+                Route::delete(
+                    '/addresses/{address}',
+                    [UserAddressController::class, 'destroy']
+                )->name('profile.addresses.destroy');
+
+                Route::patch(
+                    '/addresses/{address}/default',
+                    [UserAddressController::class, 'setDefault']
+                )->name('profile.addresses.default');
 
             });
 

@@ -7199,7 +7199,6 @@ input[type=radio]:focus-visible + .add-user-role-option__check {
   background: #fff;
   box-shadow: 0 5px 20px rgba(16, 26, 35, 0.035);
   overflow: hidden;
-  /* Header */
 }
 .profile-settings .profile-card__header {
   padding: 20px;
@@ -7227,9 +7226,6 @@ input[type=radio]:focus-visible + .add-user-role-option__check {
     padding: 16px;
     align-items: flex-start;
   }
-}
-.profile-settings .profile-card {
-  /* Body */
 }
 .profile-settings .profile-card__body {
   padding: 20px;
@@ -7517,6 +7513,48 @@ input[type=radio]:focus-visible + .add-user-role-option__check {
 .profile-settings .input-wrapper--password input {
   padding-right: 48px;
 }
+.profile-settings .input-wrapper--select {
+  position: relative;
+}
+.profile-settings .input-wrapper--select select {
+  width: 100%;
+  min-width: 0;
+  height: 52px;
+  padding: 0 42px 0 46px;
+  border: 1px solid #eaecf0;
+  border-radius: 10px;
+  outline: none;
+  background: #fff;
+  color: #555555;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.4;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.profile-settings .input-wrapper--select select:focus {
+  border-color: #177245;
+  box-shadow: 0 0 0 3px rgba(24, 126, 76, 0.08);
+}
+.profile-settings .input-wrapper--select .select-arrow {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  z-index: 2;
+  margin: 0;
+  color: #ddd;
+  font-size: 18px;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+.profile-settings .input-wrapper--select > i:first-child {
+  z-index: 2;
+  pointer-events: none;
+}
 .profile-settings {
   /*================================*
   * Password Toggle
@@ -7563,6 +7601,277 @@ input[type=radio]:focus-visible + .add-user-role-option__check {
   margin-top: 6px;
   color: #555555;
   display: block;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.profile-settings {
+  /*================================*
+  * Shipping Addresses
+  *=================================*/
+}
+.profile-settings .profile-addresses {
+  margin-top: 20px;
+}
+.profile-settings .address-add {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 18px;
+}
+.profile-settings .address-form-wrapper[hidden],
+.profile-settings .address-edit-wrapper[hidden] {
+  display: none;
+}
+.profile-settings .address-form-wrapper {
+  margin-bottom: 20px;
+  padding: 20px;
+  border: 1px solid rgba(16, 26, 35, 0.08);
+  border-radius: 10px;
+  background: #F2F4F7;
+}
+.profile-settings .address-edit-wrapper {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(16, 26, 35, 0.08);
+}
+.profile-settings .address-form {
+  width: 100%;
+}
+.profile-settings .address-form__header {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+}
+.profile-settings .address-form__header h3 {
+  margin: 0 0 4px;
+  color: #0D2B5A;
+  font-family: "Poppins", sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.profile-settings .address-form__header p {
+  margin: 0;
+  color: #555555;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.profile-settings .address-form__close {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid #ddd;
+  border-radius: 7px;
+  background: #fff;
+  color: #555555;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex: 0 0 34px;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+.profile-settings .address-form__close i {
+  font-size: 18px;
+  line-height: 1;
+}
+.profile-settings .address-form__close:hover {
+  border-color: rgba(13, 43, 90, 0.25);
+  background: #fff;
+  color: #0D2B5A;
+}
+.profile-settings .address-default-check {
+  margin-top: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #0D2B5A;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.profile-settings .address-default-check input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: #177245;
+  cursor: pointer;
+}
+.profile-settings .address-form__actions {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(16, 26, 35, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.profile-settings {
+  /*================================*
+  * Address List
+  *=================================*/
+}
+.profile-settings .address-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.profile-settings .address-item {
+  padding: 18px;
+  border: 1px solid rgba(16, 26, 35, 0.08);
+  border-radius: 10px;
+  background: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.profile-settings .address-item:hover {
+  border-color: rgba(23, 114, 69, 0.25);
+  box-shadow: 0 4px 15px rgba(16, 26, 35, 0.035);
+}
+.profile-settings .address-item.is-default {
+  border-color: rgba(23, 114, 69, 0.35);
+}
+.profile-settings .address-item__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+.profile-settings .address-item__title {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.profile-settings .address-item__title > i {
+  color: #177245;
+  font-size: 17px;
+  line-height: 1;
+}
+.profile-settings .address-item__title h3 {
+  margin: 0;
+  color: #0D2B5A;
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.profile-settings .address-badge {
+  padding: 4px 8px;
+  border-radius: 20px;
+  background: rgba(23, 114, 69, 0.09);
+  color: #177245;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.profile-settings .address-item__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.profile-settings .address-item__actions form {
+  margin: 0;
+}
+.profile-settings .address-action {
+  min-height: 34px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.profile-settings .address-action i {
+  font-size: 15px;
+  line-height: 1;
+}
+.profile-settings .address-action--default {
+  color: #177245;
+}
+.profile-settings .address-action--default:hover {
+  background: rgba(23, 114, 69, 0.08);
+}
+.profile-settings .address-action--edit {
+  color: #0D2B5A;
+}
+.profile-settings .address-action--edit:hover {
+  background: rgba(16, 26, 35, 0.05);
+  color: #177245;
+}
+.profile-settings .address-action--delete {
+  color: #dc3545;
+}
+.profile-settings .address-action--delete:hover {
+  background: rgba(220, 53, 69, 0.07);
+}
+.profile-settings .address-item__details {
+  margin-top: 12px;
+  padding-left: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.profile-settings .address-item__details strong {
+  color: #0D2B5A;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.profile-settings .address-item__details span {
+  color: #555555;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.profile-settings {
+  /*================================*
+  * Empty Address
+  *=================================*/
+}
+.profile-settings .address-empty {
+  padding: 30px 20px;
+  border: 1px dashed rgba(16, 26, 35, 0.15);
+  border-radius: 10px;
+  text-align: center;
+}
+.profile-settings .address-empty__icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 12px;
+  border-radius: 10px;
+  background: rgba(23, 114, 69, 0.08);
+  color: #177245;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.profile-settings .address-empty__icon i {
+  font-size: 22px;
+  line-height: 1;
+}
+.profile-settings .address-empty h3 {
+  margin: 0 0 5px;
+  color: #0D2B5A;
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.profile-settings .address-empty p {
+  margin: 0;
+  color: #555555;
   font-size: 14px;
   line-height: 1.5;
 }
@@ -7642,6 +7951,57 @@ input[type=radio]:focus-visible + .add-user-role-option__check {
   }
   .profile-settings__actions .btn {
     width: 100%;
+  }
+}
+.profile-settings {
+  /*================================*
+  * Responsive Addresses
+  *=================================*/
+}
+@media (min-width: 480px) and (max-width: 767px) {
+  .profile-settings .address-item__top {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .profile-settings .address-item__actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .profile-settings .address-add {
+    justify-content: flex-start;
+  }
+  .profile-settings .address-add .btn {
+    width: 100%;
+  }
+  .profile-settings .address-form-wrapper {
+    padding: 16px;
+  }
+  .profile-settings .address-form__actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .profile-settings .address-form__actions .btn {
+    width: 100%;
+  }
+}
+@media (max-width: 767px) {
+  .profile-settings .address-item {
+    padding: 15px;
+  }
+  .profile-settings .address-item__details {
+    padding-left: 0;
+  }
+  .profile-settings .address-action span {
+    display: none;
+  }
+  .profile-settings .address-action--default span {
+    display: inline;
+  }
+  .profile-settings .address-form__header h3 {
+    font-size: 16px;
+  }
+  .profile-settings .address-default-check {
+    align-items: flex-start;
   }
 }
 

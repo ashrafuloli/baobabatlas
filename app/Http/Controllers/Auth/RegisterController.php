@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Auth;
 
 use App\Actions\Cart\MergeGuestCart;
@@ -23,8 +25,10 @@ final class RegisterController extends Controller
         return view('backend.pages.auth.register');
     }
 
-    public function register(Request $request): RedirectResponse
-    {
+    public function register(
+        Request $request,
+        MergeGuestCart $mergeGuestCart,
+    ): RedirectResponse {
         $validated = $request->validate([
             'first_name' => [
                 'required',
@@ -66,9 +70,17 @@ final class RegisterController extends Controller
             ],
         ]);
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | Client Role
+        |--------------------------------------------------------------------------
+        */
+
         $clientRole = Role::query()
             ->where('slug', 'client')
             ->first();
+
 
         if ($clientRole === null) {
             return back()
@@ -79,74 +91,175 @@ final class RegisterController extends Controller
                 ->withInput();
         }
 
+
         /*
-         * Capture the guest cart session ID before authentication
-         * regenerates the session ID.
-         */
-        $guestSessionId = $request->session()->getId();
+        |--------------------------------------------------------------------------
+        | Guest Cart Session
+        |--------------------------------------------------------------------------
+        |
+        | IMPORTANT:
+        |
+        | Capture the guest session ID before authentication.
+        | The cart in the database is connected to this session ID.
+        |
+        */
 
-        $user = DB::transaction(function () use (
-            $request,
-            $validated,
-            $clientRole,
-        ): User {
-            $profileImage = null;
+        $guestSessionId =
+            $request->session()->getId();
 
-            if ($request->hasFile('profile_image')) {
-                $uploadPath = public_path('uploads/users');
 
-                if (!File::exists($uploadPath)) {
-                    File::makeDirectory(
+        /*
+        |--------------------------------------------------------------------------
+        | Create User
+        |--------------------------------------------------------------------------
+        */
+
+        $user = DB::transaction(
+            function () use (
+                $request,
+                $validated,
+                $clientRole,
+            ): User {
+                $profileImage = null;
+
+
+                /*
+                 * Profile image upload.
+                 */
+                if ($request->hasFile('profile_image')) {
+                    $uploadPath =
+                        public_path('uploads/users');
+
+
+                    if (!File::exists($uploadPath)) {
+                        File::makeDirectory(
+                            $uploadPath,
+                            0755,
+                            true,
+                        );
+                    }
+
+
+                    $file =
+                        $request->file('profile_image');
+
+
+                    $fileName =
+                        uniqid(
+                            'user_',
+                            true,
+                        )
+                        . '.'
+                        . $file->getClientOriginalExtension();
+
+
+                    $file->move(
                         $uploadPath,
-                        0755,
-                        true,
+                        $fileName,
                     );
+
+
+                    $profileImage =
+                        'uploads/users/' . $fileName;
                 }
 
-                $file = $request->file('profile_image');
 
-                $fileName = uniqid('user_', true)
-                    . '.'
-                    . $file->getClientOriginalExtension();
+                /*
+                 * Create user.
+                 */
+                $user = User::create([
+                    'first_name' =>
+                        $validated['first_name'],
 
-                $file->move(
-                    $uploadPath,
-                    $fileName,
+                    'last_name' =>
+                        $validated['last_name'] ?? null,
+
+                    'email' =>
+                        $validated['email'],
+
+                    'phone' =>
+                        $validated['phone'] ?? null,
+
+                    'password' =>
+                        $validated['password'],
+
+                    'status' =>
+                        'active',
+
+                    'profile_image' =>
+                        $profileImage,
+                ]);
+
+
+                /*
+                 * Assign client role.
+                 */
+                $user->assignRole(
+                    $clientRole
                 );
 
-                $profileImage = 'uploads/users/' . $fileName;
+
+                return $user;
             }
+        );
 
-            $user = User::create([
-                'first_name' => $validated['first_name'],
-                'last_name' => $validated['last_name'] ?? null,
-                'email' => $validated['email'],
-                'phone' => $validated['phone'] ?? null,
-                'password' => $validated['password'],
-                'status' => 'active',
-                'profile_image' => $profileImage,
-            ]);
 
-            $user->assignRole($clientRole);
+        /*
+        |--------------------------------------------------------------------------
+        | Registered Event
+        |--------------------------------------------------------------------------
+        */
 
-            return $user;
-        });
+        event(
+            new Registered($user)
+        );
 
-        event(new Registered($user));
+
+        /*
+        |--------------------------------------------------------------------------
+        | Authenticate User
+        |--------------------------------------------------------------------------
+        */
 
         Auth::login($user);
 
+
         /*
-         * Merge the guest session cart into the newly created
-         * authenticated user's cart before regenerating the
-         * session ID.
-         */
-        app(MergeGuestCart::class)->execute(
+        |--------------------------------------------------------------------------
+        | Merge Guest Cart
+        |--------------------------------------------------------------------------
+        |
+        | The original guest session ID is intentionally used here.
+        | This allows the guest cart to be transferred to the new
+        | authenticated user's cart.
+        |
+        */
+
+        $mergeGuestCart->execute(
             $user,
             $guestSessionId,
         );
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | Regenerate Session
+        |--------------------------------------------------------------------------
+        |
+        | Regenerate after authentication and cart merge.
+        | The guest session ID has already been captured above,
+        | so the cart merge is not affected by this regeneration.
+        |
+        */
+
         $request->session()->regenerate();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Email Verification
+        |--------------------------------------------------------------------------
+        */
 
         return redirect()
             ->route('verification.notice')
@@ -160,9 +273,15 @@ final class RegisterController extends Controller
     {
         $user = Auth::user();
 
-        if ($user === null || $user->hasVerifiedEmail()) {
-            return redirect()->route('dashboard');
+
+        if (
+            $user === null ||
+            $user->hasVerifiedEmail()
+        ) {
+            return redirect()
+                ->route('dashboard');
         }
+
 
         return view(
             'backend.pages.auth.verify-email',
@@ -173,7 +292,9 @@ final class RegisterController extends Controller
     public function verifyEmail(
         EmailVerificationRequest $request,
     ): RedirectResponse {
-        if ($request->user()->hasVerifiedEmail()) {
+        if (
+            $request->user()->hasVerifiedEmail()
+        ) {
             return redirect()
                 ->route('dashboard')
                 ->with(
@@ -182,9 +303,15 @@ final class RegisterController extends Controller
                 );
         }
 
+
         if ($request->fulfill()) {
-            event(new Verified($request->user()));
+            event(
+                new Verified(
+                    $request->user()
+                )
+            );
         }
+
 
         return redirect()
             ->route('dashboard')
@@ -199,12 +326,15 @@ final class RegisterController extends Controller
     ): RedirectResponse {
         $user = $request->user();
 
+
         if ($user->hasVerifiedEmail()) {
             return redirect()
                 ->route('dashboard');
         }
 
+
         $user->sendEmailVerificationNotification();
+
 
         return back()->with(
             'success',

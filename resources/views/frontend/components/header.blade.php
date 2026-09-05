@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <title>{{ config('app.name', 'Laravel') }}</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="{{asset('favicon.png')}}">
@@ -19,6 +20,7 @@
     <link rel="stylesheet" href="{{asset('assets/vendor/swiper/swiper-bundle.min.css')}}">
     <link rel="stylesheet" href="{{asset('assets/vendor/aos/aos.css')}}">
     <link rel="stylesheet" href="{{asset('assets/vendor/fancybox/fancybox.css')}}">
+    <link rel="stylesheet" href="{{asset('assets/vendor/sweetalert2/sweetalert2.min.css')}}">
 
     <!-- Main CSS -->
     <link rel="stylesheet" href="{{asset('assets/css/spacing.css')}}">
@@ -54,9 +56,6 @@
                         <div class="sub-menu">
                             @if(auth()->check())
                                 <a href="{{route('my-account')}}">My Account</a>
-                                <a href="{{route('my-profile')}}">My Profile</a>
-                                <a href="{{route('my-orders')}}">My Orders</a>
-                                <a href="{{route('my-wishlist')}}">My Wishlist</a>
                                 <a href="{{route('dashboard')}}">My Dashboard</a>
                                 <form action="{{ route('logout') }}" method="POST">
                                     @csrf
@@ -98,9 +97,6 @@
             <a href="{{route('contact')}}" class="quote">Get a Quote</a>
             @if(auth()->check())
                 <a href="{{route('my-account')}}">My Account</a>
-                <a href="{{route('my-profile')}}">My Profile</a>
-                <a href="{{route('my-orders')}}">My Orders</a>
-                <a href="{{route('my-wishlist')}}">My Wishlist</a>
                 <a href="{{route('dashboard')}}">My Dashboard</a>
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
@@ -117,3 +113,20 @@
     </div>
     <div class="offcanvas-overlay"></div>
 </div>
+
+@php
+    $headerCart = auth()->check()
+        ? auth()->user()->cart
+        : \App\Models\Cart::query()
+            ->where('session_id', session()->getId())
+            ->first();
+
+    $headerCartCount =
+        $headerCart?->totalQuantity() ?? 0;
+@endphp
+
+<a href="{{ route('my-cart') }}" class="header-cart" aria-label="Shopping cart">
+    <i class="ri-shopping-bag-3-line"></i>
+
+    <span class="header-cart-count" data-cart-count>{{ $headerCartCount }}</span>
+</a>

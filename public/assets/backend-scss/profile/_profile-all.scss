@@ -78,8 +78,6 @@
         overflow: hidden;
 
 
-        /* Header */
-
         &__header {
             padding: 20px;
             border-bottom: 1px solid argb($dark, .07);
@@ -112,8 +110,6 @@
             }
         }
 
-
-        /* Body */
 
         &__body {
             padding: 20px;
@@ -276,9 +272,11 @@
                 align-items: stretch;
                 flex-direction: column;
 
+
                 .btn {
                     width: 100%;
                 }
+
 
                 small {
                     text-align: center;
@@ -485,6 +483,54 @@
                 padding-right: 48px;
             }
         }
+
+        &--select {
+            position: relative;
+
+            select {
+                width: 100%;
+                min-width: 0;
+                height: 52px;
+                padding: 0 42px 0 46px;
+                border: 1px solid $hr-color;
+                border-radius: 10px;
+                outline: none;
+                background: $white;
+                color: $body-color;
+                font-family: $body-fonts;
+                font-size: 14px;
+                font-weight: 400;
+                line-height: 1.4;
+                cursor: pointer;
+                appearance: none;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                transition: border-color 0.3s ease,
+                box-shadow 0.3s ease;
+
+                &:focus {
+                    border-color: $theme-color;
+                    box-shadow: 0 0 0 3px rgba(24, 126, 76, 0.08);
+                }
+            }
+
+            .select-arrow {
+                position: absolute;
+                top: 50%;
+                right: 16px;
+                z-index: 2;
+                margin: 0;
+                color: $gray;
+                font-size: 18px;
+                pointer-events: none;
+                transform: translateY(-50%);
+            }
+
+            > i:first-child {
+                z-index: 2;
+                pointer-events: none;
+            }
+        }
     }
 
 
@@ -544,6 +590,371 @@
         display: block;
         font-size: 14px;
         line-height: 1.5;
+    }
+
+
+    /*================================*
+    * Shipping Addresses
+    *=================================*/
+
+    .profile-addresses {
+        margin-top: 20px;
+    }
+
+
+    .address-add {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        margin-bottom: 18px;
+    }
+
+
+    .address-form-wrapper,
+    .address-edit-wrapper {
+
+        &[hidden] {
+            display: none;
+        }
+    }
+
+
+    .address-form-wrapper {
+        margin-bottom: 20px;
+        padding: 20px;
+        border: 1px solid argb($dark, .08);
+        border-radius: 10px;
+        background: $light;
+    }
+
+
+    .address-edit-wrapper {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid argb($dark, .08);
+    }
+
+
+    .address-form {
+        width: 100%;
+    }
+
+
+    .address-form__header {
+        margin-bottom: 20px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 15px;
+
+
+        h3 {
+            margin: 0 0 4px;
+            color: $heading-color;
+            font-family: $header-fonts;
+            font-size: 18px;
+            font-weight: $head-fw;
+            line-height: 1.35;
+        }
+
+
+        p {
+            margin: 0;
+            color: $body-color;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+    }
+
+
+    .address-form__close {
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        border: 1px solid $gray;
+        border-radius: 7px;
+        background: #fff;
+        color: $body-color;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        flex: 0 0 34px;
+        transition:
+            background-color .2s ease,
+            border-color .2s ease,
+            color .2s ease;
+
+
+        i {
+            font-size: 18px;
+            line-height: 1;
+        }
+
+
+        &:hover {
+            border-color: argb($heading-color, .25);
+            background: $white;
+            color: $heading-color;
+        }
+    }
+
+
+    .address-default-check {
+        margin-top: 18px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: $heading-color;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+
+
+        input {
+            width: 16px;
+            height: 16px;
+            margin: 0;
+            accent-color: $theme-color;
+            cursor: pointer;
+        }
+    }
+
+
+    .address-form__actions {
+        margin-top: 20px;
+        padding-top: 18px;
+        border-top: 1px solid argb($dark, .08);
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+
+    /*================================*
+    * Address List
+    *=================================*/
+
+    .address-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+
+    .address-item {
+        padding: 18px;
+        border: 1px solid argb($dark, .08);
+        border-radius: 10px;
+        background: #fff;
+        transition:
+            border-color .2s ease,
+            box-shadow .2s ease;
+
+
+        &:hover {
+            border-color: argb($theme-color, .25);
+            box-shadow: 0 4px 15px argb($dark, .035);
+        }
+
+
+        &.is-default {
+            border-color: argb($theme-color, .35);
+        }
+    }
+
+
+    .address-item__top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+    }
+
+
+    .address-item__title {
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+
+
+        > i {
+            color: $theme-color;
+            font-size: 17px;
+            line-height: 1;
+        }
+
+
+        h3 {
+            margin: 0;
+            color: $heading-color;
+            font-family: $header-fonts;
+            font-size: 16px;
+            font-weight: $head-fw;
+            line-height: 1.4;
+        }
+    }
+
+
+    .address-badge {
+        padding: 4px 8px;
+        border-radius: 20px;
+        background: argb($theme-color, .09);
+        color: $theme-color;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.3;
+    }
+
+
+    .address-item__actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 6px;
+
+
+        form {
+            margin: 0;
+        }
+    }
+
+
+    .address-action {
+        min-height: 34px;
+        padding: 0 9px;
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        font-family: $body-fonts;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1;
+        cursor: pointer;
+        transition:
+            background-color .2s ease,
+            color .2s ease;
+
+
+        i {
+            font-size: 15px;
+            line-height: 1;
+        }
+
+
+        &--default {
+            color: $theme-color;
+
+
+            &:hover {
+                background: argb($theme-color, .08);
+            }
+        }
+
+
+        &--edit {
+            color: $heading-color;
+
+
+            &:hover {
+                background: argb($dark, .05);
+                color: $theme-color;
+            }
+        }
+
+
+        &--delete {
+            color: $danger;
+
+
+            &:hover {
+                background: argb($danger, .07);
+            }
+        }
+    }
+
+
+    .address-item__details {
+        margin-top: 12px;
+        padding-left: 25px;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+
+
+        strong {
+            color: $heading-color;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+
+        span {
+            color: $body-color;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+    }
+
+
+    /*================================*
+    * Empty Address
+    *=================================*/
+
+    .address-empty {
+        padding: 30px 20px;
+        border: 1px dashed argb($dark, .15);
+        border-radius: 10px;
+        text-align: center;
+    }
+
+
+    .address-empty__icon {
+        width: 48px;
+        height: 48px;
+        margin: 0 auto 12px;
+        border-radius: 10px;
+        background: argb($theme-color, .08);
+        color: $theme-color;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+
+        i {
+            font-size: 22px;
+            line-height: 1;
+        }
+    }
+
+
+    .address-empty {
+
+        h3 {
+            margin: 0 0 5px;
+            color: $heading-color;
+            font-family: $header-fonts;
+            font-size: 16px;
+            font-weight: $head-fw;
+            line-height: 1.4;
+        }
+
+
+        p {
+            margin: 0;
+            color: $body-color;
+            font-size: 14px;
+            line-height: 1.5;
+        }
     }
 
 
@@ -646,6 +1057,93 @@
             .btn {
                 width: 100%;
             }
+        }
+    }
+
+
+    /*================================*
+    * Responsive Addresses
+    *=================================*/
+
+    @include mq(sm) {
+
+        .address-item__top {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+
+        .address-item__actions {
+            width: 100%;
+            justify-content: flex-start;
+        }
+
+
+        .address-add {
+            justify-content: flex-start;
+
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+
+        .address-form-wrapper {
+            padding: 16px;
+        }
+
+
+        .address-form__actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+
+
+            .btn {
+                width: 100%;
+            }
+        }
+    }
+
+
+    @include mq(xs) {
+
+        .address-item {
+            padding: 15px;
+        }
+
+
+        .address-item__details {
+            padding-left: 0;
+        }
+
+
+        .address-action {
+
+            span {
+                display: none;
+            }
+        }
+
+
+        .address-action--default {
+
+            span {
+                display: inline;
+            }
+        }
+
+
+        .address-form__header {
+
+            h3 {
+                font-size: 16px;
+            }
+        }
+
+
+        .address-default-check {
+            align-items: flex-start;
         }
     }
 
