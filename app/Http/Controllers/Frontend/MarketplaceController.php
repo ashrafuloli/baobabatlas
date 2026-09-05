@@ -82,7 +82,7 @@ class MarketplaceController extends Controller
             [],
         );
 
-        if (! is_array($selectedCategorySlugs)) {
+        if (!is_array($selectedCategorySlugs)) {
             $selectedCategorySlugs = [
                 $selectedCategorySlugs,
             ];
@@ -91,7 +91,7 @@ class MarketplaceController extends Controller
         $selectedCategorySlugs = array_values(
             array_filter(
                 $selectedCategorySlugs,
-                static fn ($slug): bool => is_string($slug)
+                static fn($slug): bool => is_string($slug)
                     && $slug !== ''
                     && $slug !== 'all',
             ),
@@ -152,7 +152,7 @@ class MarketplaceController extends Controller
             [],
         );
 
-        if (! is_array($selectedBrandIds)) {
+        if (!is_array($selectedBrandIds)) {
             $selectedBrandIds = [
                 $selectedBrandIds,
             ];
@@ -161,7 +161,7 @@ class MarketplaceController extends Controller
         $selectedBrandIds = array_values(
             array_filter(
                 $selectedBrandIds,
-                static fn ($id): bool => is_numeric($id),
+                static fn($id): bool => is_numeric($id),
             ),
         );
 
@@ -184,7 +184,7 @@ class MarketplaceController extends Controller
             [],
         );
 
-        if (! is_array($selectedAttributes)) {
+        if (!is_array($selectedAttributes)) {
             $selectedAttributes = [];
         }
 
@@ -201,7 +201,6 @@ class MarketplaceController extends Controller
                 'variants',
             ])
             ->where('status', true)
-
             /*
             |--------------------------------------------------------------------------
             | Search
@@ -255,7 +254,6 @@ class MarketplaceController extends Controller
                     });
                 },
             )
-
             /*
             |--------------------------------------------------------------------------
             | Category Filter
@@ -276,7 +274,6 @@ class MarketplaceController extends Controller
                     );
                 },
             )
-
             /*
             |--------------------------------------------------------------------------
             | Brand Filter
@@ -292,7 +289,6 @@ class MarketplaceController extends Controller
                     );
                 },
             )
-
             /*
             |--------------------------------------------------------------------------
             | Minimum Price
@@ -302,7 +298,7 @@ class MarketplaceController extends Controller
             ->when(
                 $request->filled('min_price'),
                 function ($query) use ($request): void {
-                    $minPrice = (float) $request->input(
+                    $minPrice = (float)$request->input(
                         'min_price',
                     );
 
@@ -315,7 +311,6 @@ class MarketplaceController extends Controller
                     }
                 },
             )
-
             /*
             |--------------------------------------------------------------------------
             | Maximum Price
@@ -325,7 +320,7 @@ class MarketplaceController extends Controller
             ->when(
                 $request->filled('max_price'),
                 function ($query) use ($request): void {
-                    $maxPrice = (float) $request->input(
+                    $maxPrice = (float)$request->input(
                         'max_price',
                     );
 
@@ -338,7 +333,6 @@ class MarketplaceController extends Controller
                     }
                 },
             )
-
             /*
             |--------------------------------------------------------------------------
             | Attribute Filters
@@ -358,7 +352,7 @@ class MarketplaceController extends Controller
                     foreach (
                         $selectedAttributes as $attributeSlug => $valueSlugs
                     ) {
-                        if (! is_array($valueSlugs)) {
+                        if (!is_array($valueSlugs)) {
                             $valueSlugs = [
                                 $valueSlugs,
                             ];
@@ -367,13 +361,13 @@ class MarketplaceController extends Controller
                         $valueSlugs = array_values(
                             array_filter(
                                 $valueSlugs,
-                                static fn ($slug): bool => is_string($slug)
+                                static fn($slug): bool => is_string($slug)
                                     && $slug !== '',
                             ),
                         );
 
                         if (
-                            ! is_string($attributeSlug)
+                            !is_string($attributeSlug)
                             || $attributeSlug === ''
                             || $valueSlugs === []
                         ) {
@@ -414,7 +408,6 @@ class MarketplaceController extends Controller
                     }
                 },
             )
-
             /*
             |--------------------------------------------------------------------------
             | Sorting
@@ -448,7 +441,6 @@ class MarketplaceController extends Controller
                         ->orderBy('name');
                 },
             )
-
             /*
             |--------------------------------------------------------------------------
             | Pagination
@@ -464,11 +456,11 @@ class MarketplaceController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $maximumProductPrice = (float) Product::query()
+        $maximumProductPrice = (float)Product::query()
             ->where('status', true)
             ->max('price');
 
-        $priceMax = (int) ceil(
+        $priceMax = (int)ceil(
                 $maximumProductPrice / 1000,
             ) * 1000;
 
@@ -498,5 +490,81 @@ class MarketplaceController extends Controller
         );
     }
 
+    public function show(Product $product): View
+    {
+        abort_unless($product->isActive(), 404);
 
+        $product->load([
+            'brand',
+            'categories',
+            'images' => function ($query): void {
+                $query
+                    ->orderByDesc('is_primary')
+                    ->orderBy('sort_order');
+            },
+            'variants' => function ($query): void {
+                $query
+                    ->where('status', true)
+                    ->with([
+                        'values.attribute',
+                        'values.attributeValue',
+                        'images' => function ($query): void {
+                            $query
+                                ->orderByDesc('is_primary')
+                                ->orderBy('sort_order');
+                        },
+                    ])
+                    ->orderBy('id');
+            },
+        ]);
+
+        $categoryIds = $product->categories
+            ->pluck('id')
+            ->values();
+
+        $relatedProducts = Product::query()
+            ->active()
+            ->whereKeyNot($product->id)
+            ->with([
+                'brand',
+                'categories',
+                'images' => function ($query): void {
+                    $query
+                        ->whereNull('variant_id')
+                        ->orderByDesc('is_primary')
+                        ->orderBy('sort_order');
+                },
+                'variants' => function ($query): void {
+                    $query
+                        ->where('status', true)
+                        ->orderBy('id');
+                },
+            ])
+            ->when(
+                $categoryIds->isNotEmpty(),
+                function ($query) use ($categoryIds): void {
+                    $query->whereHas(
+                        'categories',
+                        function ($query) use ($categoryIds): void {
+                            $query->whereIn(
+                                'categories.id',
+                                $categoryIds
+                            );
+                        },
+                    );
+                },
+            )
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->limit(4)
+            ->get();
+
+        return view(
+            'frontend.pages.shop.details',
+            compact(
+                'product',
+                'relatedProducts',
+            ),
+        );
+    }
 }
