@@ -106,6 +106,10 @@
 @use "ecommerce/admin/attribute-edit";
 @use "ecommerce/admin/attribute-details";
 
+@use "ecommerce/admin/coupons-index";
+@use "ecommerce/admin/coupons-create";
+@use "ecommerce/admin/coupons-edit";
+
 @use "ecommerce/admin/inventory-index";
 @use "ecommerce/admin/inventory-low-stock";
 @use "ecommerce/admin/inventory-out-of-stock";

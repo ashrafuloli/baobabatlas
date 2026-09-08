@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Backend\AttributeController;
 use App\Http\Controllers\Backend\BrandController;
 use App\Http\Controllers\Backend\CategoryController;
+use App\Http\Controllers\Backend\CouponController;
 use App\Http\Controllers\Backend\PermissionController;
 use App\Http\Controllers\Backend\ProductController;
 use App\Http\Controllers\Backend\ProfileController;
@@ -82,6 +83,16 @@ Route::delete(
     '/cart',
     [CartController::class, 'clear'],
 )->name('cart.clear');
+
+Route::post(
+    '/cart/coupon',
+    [CartController::class, 'applyCoupon']
+)->name('cart.coupon.apply');
+
+Route::delete(
+    '/cart/coupon',
+    [CartController::class, 'removeCoupon']
+)->name('cart.coupon.remove');
 
 
 Route::middleware('auth')->group(function () {
@@ -1063,6 +1074,29 @@ Route::middleware('auth')
                                 'edit' => 'admin-attributes.edit',
                                 'update' => 'admin-attributes.update',
                                 'destroy' => 'admin-attributes.destroy',
+                            ]);
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Coupons / Promo Codes
+                        |--------------------------------------------------------------------------
+                        */
+
+                        Route::resource(
+                            'admin-coupons',
+                            CouponController::class,
+                        )
+                            ->parameters([
+                                'admin-coupons' => 'coupon',
+                            ])
+                            ->names([
+                                'index' => 'admin-coupons',
+                                'create' => 'admin-coupons.create',
+                                'store' => 'admin-coupons.store',
+                                'show' => 'admin-coupons.show',
+                                'edit' => 'admin-coupons.edit',
+                                'update' => 'admin-coupons.update',
+                                'destroy' => 'admin-coupons.destroy',
                             ]);
 
 

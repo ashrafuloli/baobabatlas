@@ -15,17 +15,25 @@
             return (float) $unitPrice * $cartItem->quantity;
         });
 
-        $discount = 0;
-        $shipping = 0;
-        $tax = 0;
-        $total = $subtotal + $shipping + $tax - $discount;
+        $discount = (float) ($discount ?? 0);
+        $shipping = (float) ($shipping ?? 0);
+        $tax = (float) ($tax ?? 0);
+
+        $total = max(
+            0,
+            $subtotal + $shipping + $tax - $discount
+        );
+
+        $appliedCoupon = $appliedCoupon ?? null;
     @endphp
 
     <section class="shopping-cart-page section-padding">
+
         <div class="container">
 
             {{-- Breadcrumb --}}
             <div class="cart-breadcrumb">
+
                 <a href="{{ route('shop') }}">
                     Shop
                 </a>
@@ -37,6 +45,7 @@
                 <span>
                     Cart
                 </span>
+
             </div>
 
 
@@ -44,6 +53,7 @@
             <div class="cart-page-header">
 
                 <div class="cart-page-header__content">
+
                     <span class="section-subtitle">
                         SHOPPING CART
                     </span>
@@ -55,16 +65,19 @@
                     <p>
                         Review your items before proceeding to checkout.
                     </p>
+
                 </div>
 
 
                 <a href="{{ route('shop') }}"
                    class="cart-continue-btn">
+
                     <i class="ri-arrow-left-line"></i>
 
                     <span>
                         Continue Shopping
                     </span>
+
                 </a>
 
             </div>
@@ -82,6 +95,7 @@
                             <div class="cart-items-card__header">
 
                                 <div>
+
                                     <span class="section-subtitle">
                                         CART ITEMS
                                     </span>
@@ -90,16 +104,19 @@
                                         {{ $cartQuantity }}
                                         {{ $cartQuantity === 1 ? 'Product' : 'Products' }}
                                     </h2>
+
                                 </div>
 
 
                                 <button type="button"
                                         class="clear-cart-btn">
+
                                     <i class="ri-delete-bin-line"></i>
 
                                     <span>
                                         Clear Cart
                                     </span>
+
                                 </button>
 
                             </div>
@@ -117,53 +134,69 @@
                                             ? (float) $variant->price
                                             : (float) $product->price;
 
-                                        $itemTotal = $unitPrice * $cartItem->quantity;
+                                        $itemTotal =
+                                            $unitPrice *
+                                            $cartItem->quantity;
 
                                         $productImage = null;
 
                                         if ($variant) {
-                                            $productImage = $variant->image;
+                                            $productImage =
+                                                $variant->image;
 
                                             if (!$productImage) {
-                                                $variantImage = $variant->images->first();
+                                                $variantImage =
+                                                    $variant->images->first();
 
                                                 if ($variantImage) {
-                                                    $productImage = $variantImage->image;
+                                                    $productImage =
+                                                        $variantImage->image;
                                                 }
                                             }
                                         }
 
                                         if (!$productImage) {
-                                            $productImage = $product->images
-                                                ->whereNull('variant_id')
-                                                ->first()?->image;
+                                            $productImage =
+                                                $product->images
+                                                    ->whereNull('variant_id')
+                                                    ->first()?->image;
                                         }
 
                                         if (!$productImage) {
-                                            $productImage = $product->thumbnail;
+                                            $productImage =
+                                                $product->thumbnail;
                                         }
 
                                         $productImageUrl = $productImage
                                             ? asset($productImage)
-                                            : asset('assets/img/products/placeholder.png');
+                                            : asset(
+                                                'assets/img/products/placeholder.png'
+                                            );
 
                                         $productUrl = route(
                                             'shop.details',
                                             $product->slug
                                         );
 
-                                        $category = $product->categories->first();
+                                        $category =
+                                            $product->categories->first();
 
-                                        $isProductAvailable = $product->isActive();
+                                        $isProductAvailable =
+                                            $product->isActive();
 
-                                        $isVariantAvailable = !$variant || $variant->isActive();
+                                        $isVariantAvailable =
+                                            !$variant ||
+                                            $variant->isActive();
 
-                                        $hasStock = !$variant || $variant->stock >= $cartItem->quantity;
+                                        $hasStock =
+                                            !$variant ||
+                                            $variant->stock >=
+                                            $cartItem->quantity;
 
                                         $isAvailable =
-                                            $isProductAvailable
-                                            && $isVariantAvailable
-                                            && $hasStock;
+                                            $isProductAvailable &&
+                                            $isVariantAvailable &&
+                                            $hasStock;
                                     @endphp
 
 
@@ -173,46 +206,60 @@
                                          data-update-url="{{ route('cart.items.update', $cartItem->id) }}"
                                          data-remove-url="{{ route('cart.items.destroy', $cartItem->id) }}">
 
+                                        {{-- Product Image --}}
                                         <div class="cart-item__image">
 
                                             <a href="{{ $productUrl }}">
+
                                                 <img src="{{ $productImageUrl }}"
                                                      alt="{{ $product->name }}">
+
                                             </a>
 
                                         </div>
 
 
+                                        {{-- Product Content --}}
                                         <div class="cart-item__content">
 
                                             @if ($category)
+
                                                 <span class="cart-item__category">
                                                     {{ $category->name }}
                                                 </span>
+
                                             @endif
 
 
                                             <h3>
+
                                                 <a href="{{ $productUrl }}">
                                                     {{ $product->name }}
                                                 </a>
+
                                             </h3>
 
 
+                                            {{-- Variant / SKU --}}
                                             @if ($variant)
 
                                                 <div class="cart-item__meta">
 
                                                     @foreach ($variant->values as $variantValue)
 
-                                                        @if ($variantValue->attribute && $variantValue->attributeValue)
+                                                        @if (
+                                                            $variantValue->attribute &&
+                                                            $variantValue->attributeValue
+                                                        )
 
                                                             <span>
+
                                                                 <strong>
                                                                     {{ $variantValue->attribute->name }}:
                                                                 </strong>
 
                                                                 {{ $variantValue->attributeValue->label }}
+
                                                             </span>
 
                                                         @endif
@@ -221,10 +268,17 @@
 
 
                                                     @if ($variant->sku)
+
                                                         <span>
-                                                            <strong>SKU:</strong>
+
+                                                            <strong>
+                                                                SKU:
+                                                            </strong>
+
                                                             {{ $variant->sku }}
+
                                                         </span>
+
                                                     @endif
 
                                                 </div>
@@ -234,8 +288,13 @@
                                                 <div class="cart-item__meta">
 
                                                     <span>
-                                                        <strong>SKU:</strong>
+
+                                                        <strong>
+                                                            SKU:
+                                                        </strong>
+
                                                         {{ $product->sku }}
+
                                                     </span>
 
                                                 </div>
@@ -243,25 +302,34 @@
                                             @endif
 
 
+                                            {{-- Availability --}}
                                             @if (!$isAvailable)
 
                                                 <div class="cart-item__availability">
 
                                                     @if (!$isProductAvailable)
+
                                                         <span>
                                                             This product is no longer available.
                                                         </span>
+
                                                     @elseif (!$isVariantAvailable)
+
                                                         <span>
                                                             This variant is no longer available.
                                                         </span>
+
                                                     @elseif (!$hasStock)
+
                                                         <span>
+
                                                             Only
                                                             {{ $variant->stock }}
                                                             {{ $variant->stock === 1 ? 'item' : 'items' }}
                                                             available.
+
                                                         </span>
+
                                                     @endif
 
                                                 </div>
@@ -269,6 +337,7 @@
                                             @endif
 
 
+                                            {{-- Quantity + Price --}}
                                             <div class="cart-item__bottom">
 
                                                 <div class="quantity-control">
@@ -276,8 +345,10 @@
                                                     <button type="button"
                                                             class="quantity-btn quantity-minus"
                                                             aria-label="Decrease quantity"
-                                                        {{ $cartItem->quantity <= 1 || !$isAvailable ? 'disabled' : '' }}>
+                                                        {{ !$isAvailable ? 'disabled' : '' }}>
+
                                                         <i class="ri-subtract-line"></i>
+
                                                     </button>
 
 
@@ -294,7 +365,9 @@
                                                             class="quantity-btn quantity-plus"
                                                             aria-label="Increase quantity"
                                                         {{ !$isAvailable || ($variant && $cartItem->quantity >= $variant->stock) ? 'disabled' : '' }}>
+
                                                         <i class="ri-add-line"></i>
+
                                                     </button>
 
                                                 </div>
@@ -303,11 +376,16 @@
                                                 <div class="cart-item__price">
 
                                                     <span class="unit-price">
-                                                        ${{ number_format($unitPrice, 2) }} each
+
+                                                        ${{ number_format($unitPrice, 2) }}
+                                                        each
+
                                                     </span>
 
                                                     <strong class="item-total">
+
                                                         ${{ number_format($itemTotal, 2) }}
+
                                                     </strong>
 
                                                 </div>
@@ -317,11 +395,14 @@
                                         </div>
 
 
+                                        {{-- Remove Item --}}
                                         <button type="button"
                                                 class="cart-item-remove"
                                                 aria-label="Remove {{ $product->name }}"
                                                 data-remove-url="{{ route('cart.items.destroy', $cartItem->id) }}">
+
                                             <i class="ri-delete-bin-line"></i>
+
                                         </button>
 
                                     </div>
@@ -331,22 +412,27 @@
                             </div>
 
 
+                            {{-- Cart Footer --}}
                             <div class="cart-items-card__footer">
 
                                 <a href="{{ route('shop') }}"
                                    class="cart-footer-continue">
+
                                     <i class="ri-arrow-left-line"></i>
 
                                     Continue Shopping
+
                                 </a>
 
 
                                 <div class="cart-secure-note">
+
                                     <span>
                                         Secure checkout available
                                     </span>
 
                                     <i class="ri-lock-line"></i>
+
                                 </div>
 
                             </div>
@@ -382,23 +468,58 @@
                                     Have a promo code?
                                 </label>
 
-                                <div class="promo-code__field">
 
-                                    <input type="text"
-                                           id="promo-code"
-                                           placeholder="Enter code"
-                                           autocomplete="off">
+                                @if ($appliedCoupon)
 
-                                    <button type="button"
-                                            class="apply-promo-btn">
-                                        Apply
-                                    </button>
+                                    <div class="promo-code__applied">
 
-                                </div>
+                                        <div class="promo-code__applied-info">
+
+                                            <i class="ri-coupon-3-line"></i>
+
+                                            <span>
+                                                {{ $appliedCoupon->code }}
+                                            </span>
+
+                                        </div>
+
+
+                                        <button type="button"
+                                                class="remove-promo-btn"
+                                                aria-label="Remove promo code"
+                                                title="Remove promo code">
+
+                                            <i class="ri-close-line"></i>
+
+                                        </button>
+
+                                    </div>
+
+                                @else
+
+                                    <div class="promo-code__field">
+
+                                        <input type="text"
+                                               id="promo-code"
+                                               placeholder="Enter code"
+                                               autocomplete="off"
+                                               maxlength="50">
+
+                                        <button type="button"
+                                                class="apply-promo-btn">
+
+                                            Apply
+
+                                        </button>
+
+                                    </div>
+
+                                @endif
 
                             </div>
 
 
+                            {{-- Summary --}}
                             <div class="cart-summary-list">
 
                                 <div class="summary-row">
@@ -455,6 +576,7 @@
                             </div>
 
 
+                            {{-- Total --}}
                             <div class="cart-summary-total">
 
                                 <span>
@@ -472,11 +594,13 @@
 
                                 <a href="{{ route('checkout') }}"
                                    class="checkout-btn">
+
                                     <span>
                                         Proceed to Checkout
                                     </span>
 
                                     <i class="ri-arrow-right-line"></i>
+
                                 </a>
 
                             @endif
@@ -505,6 +629,7 @@
                                 </div>
 
                                 <div>
+
                                     <h4>
                                         Free Shipping
                                     </h4>
@@ -512,6 +637,7 @@
                                     <p>
                                         On orders over $50
                                     </p>
+
                                 </div>
 
                             </div>
@@ -524,6 +650,7 @@
                                 </div>
 
                                 <div>
+
                                     <h4>
                                         Easy Returns
                                     </h4>
@@ -531,6 +658,7 @@
                                     <p>
                                         30-day return policy
                                     </p>
+
                                 </div>
 
                             </div>
@@ -543,6 +671,7 @@
                                 </div>
 
                                 <div>
+
                                     <h4>
                                         Secure Shopping
                                     </h4>
@@ -550,6 +679,7 @@
                                     <p>
                                         Your data is protected
                                     </p>
+
                                 </div>
 
                             </div>
@@ -567,31 +697,41 @@
             <div class="cart-empty-state {{ $cartItems->isEmpty() ? 'is-visible' : '' }}">
 
                 <div class="cart-empty-state__icon">
+
                     <i class="ri-shopping-bag-line"></i>
+
                 </div>
+
 
                 <h2>
                     Your cart is empty
                 </h2>
 
+
                 <p>
                     Looks like you haven't added anything to your cart yet.
                 </p>
 
+
                 <a href="{{ route('shop') }}"
                    class="cart-continue-btn">
+
                     Continue Shopping
 
                     <i class="ri-arrow-right-line"></i>
+
                 </a>
 
             </div>
 
         </div>
+
     </section>
+
 @endsection
 
 @push('scripts')
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
 
@@ -605,42 +745,104 @@
 
 
             const csrfToken =
-                document.querySelector('meta[name="csrf-token"]')?.getAttribute(
-                    'content'
+                document.querySelector(
+                    'meta[name="csrf-token"]'
+                )?.getAttribute('content');
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Elements
+            |--------------------------------------------------------------------------
+            */
+
+            const cartProductCount =
+                cartPage.querySelector(
+                    '.cart-product-count'
                 );
 
 
-            const cartItemsList =
-                cartPage.querySelector('.cart-items-list');
-
-
-            const cartProductCount =
-                cartPage.querySelector('.cart-product-count');
-
-
             const subtotalElement =
-                cartPage.querySelector('.summary-subtotal');
+                cartPage.querySelector(
+                    '.summary-subtotal'
+                );
+
+
+            const discountElement =
+                cartPage.querySelector(
+                    '.summary-discount-value'
+                );
+
+
+            const shippingElement =
+                cartPage.querySelector(
+                    '.summary-shipping'
+                );
+
+
+            const taxElement =
+                cartPage.querySelector(
+                    '.summary-tax'
+                );
 
 
             const totalElement =
-                cartPage.querySelector('.summary-total');
+                cartPage.querySelector(
+                    '.summary-total'
+                );
 
 
             const clearCartButton =
-                cartPage.querySelector('.clear-cart-btn');
+                cartPage.querySelector(
+                    '.clear-cart-btn'
+                );
 
 
             const cartGrid =
-                cartPage.querySelector('.cart-page-grid');
+                cartPage.querySelector(
+                    '.cart-page-grid'
+                );
 
 
             const emptyState =
-                cartPage.querySelector('.cart-empty-state');
+                cartPage.querySelector(
+                    '.cart-empty-state'
+                );
 
 
             const checkoutButton =
-                cartPage.querySelector('.checkout-btn');
+                cartPage.querySelector(
+                    '.checkout-btn'
+                );
 
+
+            const applyPromoButton =
+                cartPage.querySelector(
+                    '.apply-promo-btn'
+                );
+
+
+            const promoInput =
+                cartPage.querySelector(
+                    '#promo-code'
+                );
+
+
+            const removePromoButton =
+                cartPage.querySelector(
+                    '.remove-promo-btn'
+                );
+
+
+            const hasAppliedCoupon =
+                @json($appliedCoupon !== null);
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Price Formatter
+            |--------------------------------------------------------------------------
+            */
 
             const formatPrice = function (price) {
 
@@ -665,6 +867,16 @@
             };
 
 
+            /*
+            |--------------------------------------------------------------------------
+            | Generic Button Loading
+            |--------------------------------------------------------------------------
+            |
+            | Important:
+            | disabled property AND disabled attribute are both handled.
+            |
+            */
+
             const setButtonLoading = function (
                 button,
                 loading
@@ -677,32 +889,277 @@
 
                 if (loading) {
 
-                    button.dataset.originalHtml =
-                        button.innerHTML;
+                    button.dataset.loading =
+                        'true';
 
-                    button.disabled = true;
+                    button.disabled =
+                        true;
+
+                    button.setAttribute(
+                        'disabled',
+                        ''
+                    );
 
                     button.classList.add(
                         'is-loading'
                     );
 
-                    button.innerHTML =
-                        '<i class="ri-loader-4-line ri-spin"></i>';
+                    button.setAttribute(
+                        'aria-busy',
+                        'true'
+                    );
 
-                } else {
+                    return;
 
-                    button.disabled = false;
+                }
 
-                    button.classList.remove(
+
+                button.dataset.loading =
+                    'false';
+
+                button.disabled =
+                    false;
+
+                button.removeAttribute(
+                    'disabled'
+                );
+
+                button.classList.remove(
+                    'is-loading'
+                );
+
+                button.removeAttribute(
+                    'aria-busy'
+                );
+
+            };
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Quantity Button Loading
+            |--------------------------------------------------------------------------
+            */
+
+            const setQuantityButtonLoading = function (
+                button,
+                loading
+            ) {
+
+                if (!button) {
+                    return;
+                }
+
+
+                if (loading) {
+
+                    button.dataset.loading =
+                        'true';
+
+                    button.disabled =
+                        true;
+
+                    button.setAttribute(
+                        'disabled',
+                        ''
+                    );
+
+                    button.classList.add(
                         'is-loading'
                     );
 
-                    if (button.dataset.originalHtml) {
+                    button.setAttribute(
+                        'aria-busy',
+                        'true'
+                    );
 
-                        button.innerHTML =
-                            button.dataset.originalHtml;
+                    return;
 
-                    }
+                }
+
+
+                button.dataset.loading =
+                    'false';
+
+                button.disabled =
+                    false;
+
+                button.removeAttribute(
+                    'disabled'
+                );
+
+                button.classList.remove(
+                    'is-loading'
+                );
+
+                button.removeAttribute(
+                    'aria-busy'
+                );
+
+            };
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Quantity Button State
+            |--------------------------------------------------------------------------
+            */
+
+            const updateQuantityButtons = function (
+                item
+            ) {
+
+                if (!item) {
+                    return;
+                }
+
+
+                if (
+                    item.dataset.quantityLoading ===
+                    'true'
+                ) {
+                    return;
+                }
+
+
+                const input =
+                    item.querySelector(
+                        '.quantity-input'
+                    );
+
+
+                const decreaseButton =
+                    item.querySelector(
+                        '.quantity-minus'
+                    );
+
+
+                const increaseButton =
+                    item.querySelector(
+                        '.quantity-plus'
+                    );
+
+
+                if (
+                    !input ||
+                    !decreaseButton ||
+                    !increaseButton
+                ) {
+                    return;
+                }
+
+
+                const quantity =
+                    parseInt(
+                        input.value,
+                        10
+                    ) || 1;
+
+
+                const maxQuantity =
+                    parseInt(
+                        input.max,
+                        10
+                    ) || 999;
+
+
+                const isUnavailable =
+                    item.classList.contains(
+                        'is-unavailable'
+                    );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Minus
+                |--------------------------------------------------------------------------
+                |
+                | Quantity 1 remains enabled.
+                | Clicking it removes the item.
+                |
+                */
+
+                decreaseButton.disabled =
+                    isUnavailable;
+
+
+                if (isUnavailable) {
+
+                    decreaseButton.setAttribute(
+                        'disabled',
+                        ''
+                    );
+
+                } else {
+
+                    decreaseButton.removeAttribute(
+                        'disabled'
+                    );
+
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Plus
+                |--------------------------------------------------------------------------
+                */
+
+                const shouldDisableIncrease =
+                    isUnavailable ||
+                    quantity >= maxQuantity;
+
+
+                increaseButton.disabled =
+                    shouldDisableIncrease;
+
+
+                if (shouldDisableIncrease) {
+
+                    increaseButton.setAttribute(
+                        'disabled',
+                        ''
+                    );
+
+                } else {
+
+                    increaseButton.removeAttribute(
+                        'disabled'
+                    );
+
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Restore Exact Icons
+                |--------------------------------------------------------------------------
+                */
+
+                const minusIcon =
+                    decreaseButton.querySelector(
+                        'i'
+                    );
+
+
+                const plusIcon =
+                    increaseButton.querySelector(
+                        'i'
+                    );
+
+
+                if (minusIcon) {
+
+                    minusIcon.className =
+                        'ri-subtract-line';
+
+                }
+
+
+                if (plusIcon) {
+
+                    plusIcon.className =
+                        'ri-add-line';
 
                 }
 
@@ -711,7 +1168,7 @@
 
             /*
             |--------------------------------------------------------------------------
-            | Global Toast Message
+            | Toast
             |--------------------------------------------------------------------------
             */
 
@@ -731,38 +1188,50 @@
                     });
 
                     return;
+
                 }
 
 
-                console[type === 'error'
-                    ? 'error'
-                    : 'log'
+                console[
+                    type === 'error'
+                        ? 'error'
+                        : 'log'
                     ](message);
 
             };
 
 
+            /*
+            |--------------------------------------------------------------------------
+            | Header Cart Count
+            |--------------------------------------------------------------------------
+            */
+
             const updateHeaderCartCount = function (
                 count
             ) {
 
-                const cartCountElements =
-                    document.querySelectorAll(
+                document
+                    .querySelectorAll(
                         '[data-cart-count]'
+                    )
+                    .forEach(
+                        function (element) {
+
+                            element.textContent =
+                                count;
+
+                        }
                     );
-
-
-                cartCountElements.forEach(
-                    function (element) {
-
-                        element.textContent =
-                            count;
-
-                    }
-                );
 
             };
 
+
+            /*
+            |--------------------------------------------------------------------------
+            | Empty State
+            |--------------------------------------------------------------------------
+            */
 
             const updateEmptyState = function () {
 
@@ -776,33 +1245,33 @@
                     items.length;
 
 
-                if (cartProductCount) {
-
-                    let totalQuantity = 0;
+                let totalQuantity = 0;
 
 
-                    items.forEach(
-                        function (item) {
+                items.forEach(
+                    function (item) {
 
-                            const input =
-                                item.querySelector(
-                                    '.quantity-input'
-                                );
+                        const input =
+                            item.querySelector(
+                                '.quantity-input'
+                            );
 
 
-                            if (input) {
+                        if (input) {
 
-                                totalQuantity +=
-                                    parseInt(
-                                        input.value,
-                                        10
-                                    ) || 0;
-
-                            }
+                            totalQuantity +=
+                                parseInt(
+                                    input.value,
+                                    10
+                                ) || 0;
 
                         }
-                    );
 
+                    }
+                );
+
+
+                if (cartProductCount) {
 
                     cartProductCount.textContent =
                         totalQuantity +
@@ -856,6 +1325,12 @@
             };
 
 
+            /*
+            |--------------------------------------------------------------------------
+            | Update Totals
+            |--------------------------------------------------------------------------
+            */
+
             const updateTotals = function () {
 
                 const items =
@@ -898,93 +1373,110 @@
 
 
                         const itemTotal =
-                            price * quantity;
+                            price *
+                            quantity;
 
 
-                        subtotal += itemTotal;
+                        subtotal +=
+                            itemTotal;
 
-                        totalQuantity += quantity;
+
+                        totalQuantity +=
+                            quantity;
 
 
                         if (itemTotalElement) {
 
                             itemTotalElement.textContent =
-                                formatPrice(itemTotal);
+                                formatPrice(
+                                    itemTotal
+                                );
 
                         }
+
+
+                        updateQuantityButtons(
+                            item
+                        );
 
                     }
                 );
 
 
-                const discount = 0;
-
-                const shipping = 0;
-
-                const tax = 0;
-
-                const total =
-                    subtotal +
-                    shipping +
-                    tax -
-                    discount;
-
-
                 if (subtotalElement) {
 
                     subtotalElement.textContent =
-                        formatPrice(subtotal);
+                        formatPrice(
+                            subtotal
+                        );
 
                 }
 
 
-                const discountElement =
-                    cartPage.querySelector(
-                        '.summary-discount-value'
-                    );
+                /*
+                |--------------------------------------------------------------------------
+                | No Coupon
+                |--------------------------------------------------------------------------
+                */
+
+                if (!hasAppliedCoupon) {
+
+                    const shipping = 0;
+
+                    const tax = 0;
+
+                    const discount = 0;
 
 
-                if (discountElement) {
-
-                    discountElement.textContent =
-                        '-' +
-                        formatPrice(discount);
-
-                }
-
-
-                const shippingElement =
-                    cartPage.querySelector(
-                        '.summary-shipping'
-                    );
+                    const total =
+                        Math.max(
+                            0,
+                            subtotal +
+                            shipping +
+                            tax -
+                            discount
+                        );
 
 
-                if (shippingElement) {
+                    if (discountElement) {
 
-                    shippingElement.textContent =
-                        formatPrice(shipping);
+                        discountElement.textContent =
+                            '-' +
+                            formatPrice(
+                                discount
+                            );
 
-                }
-
-
-                const taxElement =
-                    cartPage.querySelector(
-                        '.summary-tax'
-                    );
+                    }
 
 
-                if (taxElement) {
+                    if (shippingElement) {
 
-                    taxElement.textContent =
-                        formatPrice(tax);
+                        shippingElement.textContent =
+                            formatPrice(
+                                shipping
+                            );
 
-                }
+                    }
 
 
-                if (totalElement) {
+                    if (taxElement) {
 
-                    totalElement.textContent =
-                        formatPrice(total);
+                        taxElement.textContent =
+                            formatPrice(
+                                tax
+                            );
+
+                    }
+
+
+                    if (totalElement) {
+
+                        totalElement.textContent =
+                            formatPrice(
+                                total
+                            );
+
+                    }
 
                 }
 
@@ -1007,38 +1499,62 @@
             };
 
 
+            /*
+            |--------------------------------------------------------------------------
+            | API Request
+            |--------------------------------------------------------------------------
+            */
+
             const sendRequest = async function (
                 url,
                 method,
                 body = null
             ) {
 
-                const options = {
-                    method: method,
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                };
+                if (!csrfToken) {
 
-
-                if (csrfToken) {
-
-                    options.headers[
-                        'X-CSRF-TOKEN'
-                        ] = csrfToken;
+                    throw new Error(
+                        'CSRF token is missing.'
+                    );
 
                 }
+
+
+                const options = {
+
+                    method: method,
+
+                    credentials:
+                        'same-origin',
+
+                    headers: {
+
+                        'Accept':
+                            'application/json',
+
+                        'X-CSRF-TOKEN':
+                        csrfToken,
+
+                        'X-Requested-With':
+                            'XMLHttpRequest'
+
+                    }
+
+                };
 
 
                 if (body !== null) {
 
                     options.headers[
                         'Content-Type'
-                        ] = 'application/json';
+                        ] =
+                        'application/json';
+
 
                     options.body =
-                        JSON.stringify(body);
+                        JSON.stringify(
+                            body
+                        );
 
                 }
 
@@ -1069,11 +1585,15 @@
 
                     const message =
                         data?.message ||
+                        data?.errors?.code?.[0] ||
                         data?.errors?.quantity?.[0] ||
                         data?.errors?.product_id?.[0] ||
                         'Unable to update your cart.';
 
-                    throw new Error(message);
+
+                    throw new Error(
+                        message
+                    );
 
                 }
 
@@ -1082,6 +1602,403 @@
 
             };
 
+
+            /*
+            |--------------------------------------------------------------------------
+            | Reload Cart
+            |--------------------------------------------------------------------------
+            */
+
+            const reloadCart = function () {
+
+                window.location.reload();
+
+            };
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Apply Coupon
+            |--------------------------------------------------------------------------
+            */
+
+            const applyCoupon = async function () {
+
+                if (!promoInput) {
+                    return;
+                }
+
+
+                if (!applyPromoButton) {
+                    return;
+                }
+
+
+                if (
+                    applyPromoButton.dataset.loading ===
+                    'true'
+                ) {
+                    return;
+                }
+
+
+                const code =
+                    promoInput.value
+                        .trim()
+                        .toUpperCase();
+
+
+                if (!code) {
+
+                    showMessage(
+                        'Please enter a promo code.'
+                    );
+
+                    promoInput.focus();
+
+                    return;
+
+                }
+
+
+                setButtonLoading(
+                    applyPromoButton,
+                    true
+                );
+
+
+                try {
+
+                    await sendRequest(
+                        '{{ route('cart.coupon.apply') }}',
+                        'POST',
+                        {
+                            code: code
+                        }
+                    );
+
+
+                    reloadCart();
+
+                } catch (error) {
+
+                    showMessage(
+                        error.message ||
+                        'Unable to apply promo code.'
+                    );
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | IMPORTANT:
+                    | Re-enable Apply button after error.
+                    |--------------------------------------------------------------------------
+                    */
+
+                    setButtonLoading(
+                        applyPromoButton,
+                        false
+                    );
+
+                }
+
+            };
+
+
+            if (applyPromoButton) {
+
+                applyPromoButton.addEventListener(
+                    'click',
+                    applyCoupon
+                );
+
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Promo Input Enter
+            |--------------------------------------------------------------------------
+            */
+
+            if (promoInput) {
+
+                promoInput.addEventListener(
+                    'keydown',
+                    function (event) {
+
+                        if (
+                            event.key === 'Enter'
+                        ) {
+
+                            event.preventDefault();
+
+                            applyCoupon();
+
+                        }
+
+                    }
+                );
+
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Remove Coupon
+            |--------------------------------------------------------------------------
+            */
+
+            if (removePromoButton) {
+
+                removePromoButton.addEventListener(
+                    'click',
+                    async function () {
+
+                        if (
+                            removePromoButton.dataset.loading ===
+                            'true'
+                        ) {
+                            return;
+                        }
+
+
+                        setButtonLoading(
+                            removePromoButton,
+                            true
+                        );
+
+
+                        try {
+
+                            await sendRequest(
+                                '{{ route('cart.coupon.remove') }}',
+                                'DELETE'
+                            );
+
+
+                            reloadCart();
+
+                        } catch (error) {
+
+                            showMessage(
+                                error.message ||
+                                'Unable to remove promo code.'
+                            );
+
+
+                            setButtonLoading(
+                                removePromoButton,
+                                false
+                            );
+
+                        }
+
+                    }
+                );
+
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Update Cart Item Quantity
+            |--------------------------------------------------------------------------
+            */
+
+            const updateCartQuantity = async function (
+                item,
+                button,
+                newQuantity
+            ) {
+
+                if (!item || !button) {
+                    return;
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Prevent Parallel Requests
+                |--------------------------------------------------------------------------
+                */
+
+                if (
+                    item.dataset.quantityLoading ===
+                    'true'
+                ) {
+                    return;
+                }
+
+
+                item.dataset.quantityLoading =
+                    'true';
+
+
+                const quantityButtons =
+                    item.querySelectorAll(
+                        '.quantity-btn'
+                    );
+
+
+                quantityButtons.forEach(
+                    function (quantityButton) {
+
+                        quantityButton.disabled =
+                            true;
+
+                        quantityButton.setAttribute(
+                            'disabled',
+                            ''
+                        );
+
+                    }
+                );
+
+
+                setQuantityButtonLoading(
+                    button,
+                    true
+                );
+
+
+                try {
+
+                    const data =
+                        await sendRequest(
+                            item.dataset.updateUrl,
+                            'PATCH',
+                            {
+                                quantity:
+                                newQuantity
+                            }
+                        );
+
+
+                    const input =
+                        item.querySelector(
+                            '.quantity-input'
+                        );
+
+
+                    const serverQuantity =
+                        Number(
+                            data.quantity ??
+                            newQuantity
+                        );
+
+
+                    if (input) {
+
+                        input.value =
+                            serverQuantity;
+
+                    }
+
+
+                    updateHeaderCartCount(
+                        data.cart_count ??
+                        0
+                    );
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Coupon Applied
+                    |--------------------------------------------------------------------------
+                    |
+                    | Backend recalculates coupon.
+                    |
+                    */
+
+                    if (hasAppliedCoupon) {
+
+                        reloadCart();
+
+                        return;
+
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Reset Loading
+                    |--------------------------------------------------------------------------
+                    */
+
+                    item.dataset.quantityLoading =
+                        'false';
+
+
+                    quantityButtons.forEach(
+                        function (quantityButton) {
+
+                            setQuantityButtonLoading(
+                                quantityButton,
+                                false
+                            );
+
+                        }
+                    );
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Update Quantity Button Limits
+                    |--------------------------------------------------------------------------
+                    */
+
+                    updateQuantityButtons(
+                        item
+                    );
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Update Totals
+                    |--------------------------------------------------------------------------
+                    */
+
+                    updateTotals();
+
+                } catch (error) {
+
+                    item.dataset.quantityLoading =
+                        'false';
+
+
+                    quantityButtons.forEach(
+                        function (quantityButton) {
+
+                            setQuantityButtonLoading(
+                                quantityButton,
+                                false
+                            );
+
+                        }
+                    );
+
+
+                    showMessage(
+                        error.message ||
+                        'Unable to update quantity.'
+                    );
+
+
+                    updateQuantityButtons(
+                        item
+                    );
+
+                }
+
+            };
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Cart Item Actions
+            |--------------------------------------------------------------------------
+            */
 
             cartPage.addEventListener(
                 'click',
@@ -1106,11 +2023,13 @@
 
 
                     if (
-                        !increaseButton
-                        && !decreaseButton
-                        && !removeButton
+                        !increaseButton &&
+                        !decreaseButton &&
+                        !removeButton
                     ) {
+
                         return;
+
                     }
 
 
@@ -1124,6 +2043,106 @@
                         return;
                     }
 
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Ignore Parallel Requests
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (
+                        item.dataset.quantityLoading ===
+                        'true'
+                    ) {
+                        return;
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Remove Item
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (removeButton) {
+
+                        if (
+                            removeButton.disabled ||
+                            removeButton.dataset.loading ===
+                            'true'
+                        ) {
+                            return;
+                        }
+
+
+                        setButtonLoading(
+                            removeButton,
+                            true
+                        );
+
+
+                        try {
+
+                            const data =
+                                await sendRequest(
+                                    removeButton.dataset.removeUrl,
+                                    'DELETE'
+                                );
+
+
+                            item.remove();
+
+
+                            updateHeaderCartCount(
+                                data.cart_count ??
+                                0
+                            );
+
+
+                            if (hasAppliedCoupon) {
+
+                                reloadCart();
+
+                                return;
+
+                            }
+
+
+                            showMessage(
+                                data.message ||
+                                'Item removed from cart.',
+                                'success'
+                            );
+
+
+                            updateTotals();
+
+                        } catch (error) {
+
+                            showMessage(
+                                error.message ||
+                                'Unable to remove item.'
+                            );
+
+
+                            setButtonLoading(
+                                removeButton,
+                                false
+                            );
+
+                        }
+
+
+                        return;
+
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Quantity Input
+                    |--------------------------------------------------------------------------
+                    */
 
                     const input =
                         item.querySelector(
@@ -1150,13 +2169,22 @@
                         ) || 999;
 
 
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Increase Quantity
+                    |--------------------------------------------------------------------------
+                    */
+
                     if (increaseButton) {
 
                         if (
-                            increaseButton.disabled
-                            || currentQuantity >= maxQuantity
+                            increaseButton.disabled ||
+                            currentQuantity >=
+                            maxQuantity
                         ) {
+
                             return;
+
                         }
 
 
@@ -1164,49 +2192,11 @@
                             currentQuantity + 1;
 
 
-                        setButtonLoading(
+                        await updateCartQuantity(
+                            item,
                             increaseButton,
-                            true
+                            newQuantity
                         );
-
-
-                        try {
-
-                            const data =
-                                await sendRequest(
-                                    item.dataset.updateUrl,
-                                    'PATCH',
-                                    {
-                                        quantity: newQuantity
-                                    }
-                                );
-
-
-                            input.value =
-                                data.quantity ??
-                                newQuantity;
-
-
-                            updateTotals();
-
-                            updateHeaderCartCount(
-                                data.cart_count ?? 0
-                            );
-
-                        } catch (error) {
-
-                            showMessage(
-                                error.message
-                            );
-
-                        } finally {
-
-                            setButtonLoading(
-                                increaseButton,
-                                false
-                            );
-
-                        }
 
 
                         return;
@@ -1214,13 +2204,106 @@
                     }
 
 
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Decrease Quantity
+                    |--------------------------------------------------------------------------
+                    */
+
                     if (decreaseButton) {
 
                         if (
                             decreaseButton.disabled
-                            || currentQuantity <= 1
                         ) {
+
                             return;
+
+                        }
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Quantity 1 -> Remove
+                        |--------------------------------------------------------------------------
+                        */
+
+                        if (
+                            currentQuantity <= 1
+                        ) {
+
+                            item.dataset.quantityLoading =
+                                'true';
+
+
+                            setQuantityButtonLoading(
+                                decreaseButton,
+                                true
+                            );
+
+
+                            try {
+
+                                const data =
+                                    await sendRequest(
+                                        item.dataset.removeUrl,
+                                        'DELETE'
+                                    );
+
+
+                                item.remove();
+
+
+                                updateHeaderCartCount(
+                                    data.cart_count ??
+                                    0
+                                );
+
+
+                                if (hasAppliedCoupon) {
+
+                                    reloadCart();
+
+                                    return;
+
+                                }
+
+
+                                showMessage(
+                                    data.message ||
+                                    'Item removed from cart.',
+                                    'success'
+                                );
+
+
+                                updateTotals();
+
+                            } catch (error) {
+
+                                item.dataset.quantityLoading =
+                                    'false';
+
+
+                                setQuantityButtonLoading(
+                                    decreaseButton,
+                                    false
+                                );
+
+
+                                showMessage(
+                                    error.message ||
+                                    'Unable to remove item.'
+                                );
+
+
+                                updateQuantityButtons(
+                                    item
+                                );
+
+                            }
+
+
+                            return;
+
                         }
 
 
@@ -1228,113 +2311,23 @@
                             currentQuantity - 1;
 
 
-                        setButtonLoading(
+                        await updateCartQuantity(
+                            item,
                             decreaseButton,
-                            true
+                            newQuantity
                         );
-
-
-                        try {
-
-                            const data =
-                                await sendRequest(
-                                    item.dataset.updateUrl,
-                                    'PATCH',
-                                    {
-                                        quantity: newQuantity
-                                    }
-                                );
-
-
-                            input.value =
-                                data.quantity ??
-                                newQuantity;
-
-
-                            updateTotals();
-
-                            updateHeaderCartCount(
-                                data.cart_count ?? 0
-                            );
-
-                        } catch (error) {
-
-                            showMessage(
-                                error.message
-                            );
-
-                        } finally {
-
-                            setButtonLoading(
-                                decreaseButton,
-                                false
-                            );
-
-                        }
-
-
-                        return;
-
-                    }
-
-
-                    if (removeButton) {
-
-                        if (
-                            removeButton.disabled
-                        ) {
-                            return;
-                        }
-
-
-                        setButtonLoading(
-                            removeButton,
-                            true
-                        );
-
-
-                        try {
-
-                            const data =
-                                await sendRequest(
-                                    removeButton.dataset.removeUrl,
-                                    'DELETE'
-                                );
-
-
-                            item.remove();
-
-                            updateTotals();
-
-                            updateHeaderCartCount(
-                                data.cart_count ?? 0
-                            );
-
-
-                            showMessage(
-                                data.message ||
-                                'Item removed from cart.',
-                                'success'
-                            );
-
-                        } catch (error) {
-
-                            showMessage(
-                                error.message
-                            );
-
-                            setButtonLoading(
-                                removeButton,
-                                false
-                            );
-
-                        }
 
                     }
 
                 }
             );
 
+
+            /*
+            |--------------------------------------------------------------------------
+            | Clear Cart
+            |--------------------------------------------------------------------------
+            */
 
             if (clearCartButton) {
 
@@ -1348,7 +2341,11 @@
                             );
 
 
-                        if (items.length === 0) {
+                        if (
+                            items.length === 0 ||
+                            clearCartButton.dataset.loading ===
+                            'true'
+                        ) {
                             return;
                         }
 
@@ -1377,26 +2374,21 @@
                             );
 
 
-                            updateTotals();
-
                             updateHeaderCartCount(
-                                data.cart_count ?? 0
+                                data.cart_count ??
+                                0
                             );
 
 
-                            showMessage(
-                                data.message ||
-                                'Cart cleared successfully.',
-                                'success'
-                            );
+                            reloadCart();
 
                         } catch (error) {
 
                             showMessage(
-                                error.message
+                                error.message ||
+                                'Unable to clear cart.'
                             );
 
-                        } finally {
 
                             setButtonLoading(
                                 clearCartButton,
@@ -1410,6 +2402,12 @@
 
             }
 
+
+            /*
+            |--------------------------------------------------------------------------
+            | Checkout Validation
+            |--------------------------------------------------------------------------
+            */
 
             if (checkoutButton) {
 
@@ -1458,8 +2456,36 @@
             }
 
 
+            /*
+            |--------------------------------------------------------------------------
+            | Initial Quantity Button State
+            |--------------------------------------------------------------------------
+            */
+
+            cartPage
+                .querySelectorAll(
+                    '.cart-item'
+                )
+                .forEach(
+                    function (item) {
+
+                        updateQuantityButtons(
+                            item
+                        );
+
+                    }
+                );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Initial Calculation
+            |--------------------------------------------------------------------------
+            */
+
             updateTotals();
 
         });
     </script>
+
 @endpush

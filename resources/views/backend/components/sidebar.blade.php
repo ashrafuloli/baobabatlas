@@ -411,6 +411,7 @@
                         'admin-brands*',
                         'admin-inventory*',
                         'admin-attributes*',
+                        'admin-coupons*',
                         'admin-orders',
                         'admin-order-details',
                         'admin-ecommerce-payments',
@@ -495,6 +496,23 @@
 
                                         <span>
                                             Attributes
+                                        </span>
+
+                                    </a>
+
+                                </li>
+
+                            @endif
+
+                            {{-- Attributes --}}
+                            @if(auth()->user()->hasPermission('view-coupons'))
+
+                                <li class="{{ request()->routeIs('admin-coupons*') ? 'active' : '' }}">
+
+                                    <a href="{{ route('admin-coupons') }}">
+
+                                        <span>
+                                            Coupons
                                         </span>
 
                                     </a>
