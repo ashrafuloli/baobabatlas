@@ -4,6 +4,61 @@
 
 @section('content')
 
+    @php
+        $customerName = trim(
+            $order->first_name . ' ' . $order->last_name
+        );
+
+        $customerInitials = collect(
+            preg_split('/\s+/', $customerName)
+        )
+            ->filter()
+            ->take(2)
+            ->map(
+                fn ($name) => strtoupper(
+                    mb_substr($name, 0, 1)
+                )
+            )
+            ->implode('');
+
+        $statusClass = match ($order->status) {
+            \App\Models\Order::STATUS_PENDING => 'pending',
+            \App\Models\Order::STATUS_PAID => 'paid',
+            \App\Models\Order::STATUS_PROCESSING => 'processing',
+            \App\Models\Order::STATUS_COMPLETED => 'completed',
+            \App\Models\Order::STATUS_CANCELLED => 'cancelled',
+            \App\Models\Order::STATUS_FAILED => 'failed',
+            default => 'pending',
+        };
+
+        $paymentClass = match ($order->payment_status) {
+            \App\Models\Order::PAYMENT_STATUS_PAID => 'paid',
+            \App\Models\Order::PAYMENT_STATUS_PENDING => 'pending',
+            \App\Models\Order::PAYMENT_STATUS_FAILED => 'failed',
+            \App\Models\Order::PAYMENT_STATUS_REFUNDED => 'refunded',
+            default => 'pending',
+        };
+
+        $shipmentStatus = match ($order->status) {
+            \App\Models\Order::STATUS_COMPLETED => 'Completed',
+            \App\Models\Order::STATUS_CANCELLED => 'Cancelled',
+            \App\Models\Order::STATUS_FAILED => 'Not Available',
+            \App\Models\Order::STATUS_PROCESSING => 'Processing',
+            \App\Models\Order::STATUS_PAID => 'Not Shipped',
+            default => 'Not Shipped',
+        };
+
+        $currency = strtoupper((string) $order->currency);
+
+        $currencySymbol = match ($currency) {
+            'EUR' => '€',
+            'GBP' => '£',
+            'CAD' => 'CA$',
+            'AUD' => 'A$',
+            default => '$',
+        };
+    @endphp
+
     <div class="order-details-page">
 
         {{-- ================================================================ --}}
@@ -18,69 +73,62 @@
                     href="{{ route('admin-orders') }}"
                     class="order-details-back"
                 >
-
                     <i class="ri-arrow-left-line"></i>
 
                     Back to Orders
-
                 </a>
-
 
                 <div class="order-details-title">
 
                     <div>
 
-                    <span class="order-details-page__eyebrow">
-                        Ecommerce / Orders
-                    </span>
+                        <span class="order-details-page__eyebrow">
+                            Ecommerce / Orders
+                        </span>
 
                         <h1>
-                            Order #BA-1001
+                            Order #{{ $order->order_number }}
                         </h1>
 
                         <p>
-                            Placed on August 15, 2026 at 10:42 AM
+                            Placed on
+                            {{ $order->created_at?->format('F d, Y \a\t h:i A') }}
                         </p>
 
                     </div>
 
+                    <span
+                        class="order-details-main-status order-details-main-status--{{ $statusClass }}"
+                    >
+                        <i></i>
 
-                    <span class="order-details-main-status order-details-main-status--processing">
-
-                    <i></i>
-
-                    Processing
-
-                </span>
+                        {{ ucfirst($order->status) }}
+                    </span>
 
                 </div>
 
             </div>
-
 
             <div class="order-details-page__actions">
 
                 <button
                     type="button"
                     class="order-details-action-btn"
+                    data-print-order
                 >
-
                     <i class="ri-printer-line"></i>
 
                     Print
-
                 </button>
-
 
                 <button
                     type="button"
                     class="order-details-action-btn order-details-action-btn--primary"
+                    data-open-status-modal
                 >
-
                     <i class="ri-edit-line"></i>
 
                     Update Order
-
                 </button>
 
             </div>
@@ -94,54 +142,50 @@
 
         <div class="order-details-summary">
 
-
             <div class="order-details-summary__item">
 
-            <span>
-                Order Total
-            </span>
+                <span>
+                    Order Total
+                </span>
 
                 <strong>
-                    $149.97
+                    {{ $currencySymbol }}{{ number_format((float) $order->total, 2) }}
                 </strong>
 
             </div>
 
-
             <div class="order-details-summary__item">
 
-            <span>
-                Items
-            </span>
+                <span>
+                    Items
+                </span>
 
                 <strong>
-                    3
+                    {{ number_format($order->items->sum('quantity')) }}
                 </strong>
 
             </div>
 
-
             <div class="order-details-summary__item">
 
-            <span>
-                Payment
-            </span>
+                <span>
+                    Payment
+                </span>
 
                 <strong class="order-details-summary__paid">
-                    Paid
+                    {{ ucfirst($order->payment_status) }}
                 </strong>
 
             </div>
 
-
             <div class="order-details-summary__item">
 
-            <span>
-                Shipment
-            </span>
+                <span>
+                    Shipment
+                </span>
 
                 <strong>
-                    Not Shipped
+                    {{ $shipmentStatus }}
                 </strong>
 
             </div>
@@ -155,13 +199,11 @@
 
         <div class="order-details-grid">
 
-
             {{-- ============================================================ --}}
             {{-- LEFT COLUMN --}}
             {{-- ============================================================ --}}
 
             <div class="order-details-main">
-
 
                 {{-- ======================================================== --}}
                 {{-- ORDER ITEMS --}}
@@ -178,13 +220,14 @@
                             </h2>
 
                             <span>
-                            3 products in this order
-                        </span>
+                                {{ $order->items->sum('quantity') }}
+                                {{ $order->items->sum('quantity') === 1 ? 'product' : 'products' }}
+                                in this order
+                            </span>
 
                         </div>
 
                     </div>
-
 
                     <div class="order-items-table-wrapper">
 
@@ -214,213 +257,95 @@
 
                             </thead>
 
-
                             <tbody>
 
+                            @forelse ($order->items as $item)
 
-                            {{-- Product 1 --}}
+                                <tr>
 
-                            <tr>
+                                    <td>
 
-                                <td>
+                                        <div class="order-product">
 
-                                    <div class="order-product">
+                                            <div class="order-product__image">
 
-                                        <div class="order-product__image">
+                                                @if ($item->image)
 
-                                            <img
-                                                src="https://placehold.co/100x100"
-                                                alt="Premium Cotton T-Shirt"
-                                            >
+                                                    <img
+                                                        src="{{ asset($item->image) }}"
+                                                        alt="{{ $item->product_name }}"
+                                                    >
 
-                                        </div>
+                                                @else
 
+                                                    <div class="order-product__placeholder">
+                                                        <i class="ri-image-line"></i>
+                                                    </div>
 
-                                        <div class="order-product__content">
+                                                @endif
 
-                                            <strong>
-                                                Premium Cotton T-Shirt
-                                            </strong>
+                                            </div>
 
-                                            <span>
-                                                SKU: BA-TS-001
-                                            </span>
+                                            <div class="order-product__content">
 
-                                            <small>
-                                                Size: M · Color: Black
-                                            </small>
+                                                <strong>
+                                                    {{ $item->product_name }}
+                                                </strong>
 
-                                        </div>
+                                                @if ($item->sku)
 
-                                    </div>
+                                                    <span>
+                                                        SKU: {{ $item->sku }}
+                                                    </span>
 
-                                </td>
+                                                @endif
 
-
-                                <td>
-
-                                    <strong>
-                                        $39.99
-                                    </strong>
-
-                                </td>
-
-
-                                <td>
-
-                                    <span class="order-item-quantity">
-                                        2
-                                    </span>
-
-                                </td>
-
-
-                                <td>
-
-                                    <strong>
-                                        $79.98
-                                    </strong>
-
-                                </td>
-
-                            </tr>
-
-
-                            {{-- Product 2 --}}
-
-                            <tr>
-
-                                <td>
-
-                                    <div class="order-product">
-
-                                        <div class="order-product__image">
-
-                                            <img
-                                                src="https://placehold.co/100x100"
-                                                alt="Leather Wallet"
-                                            >
+                                            </div>
 
                                         </div>
 
+                                    </td>
 
-                                        <div class="order-product__content">
+                                    <td>
 
-                                            <strong>
-                                                Leather Wallet
-                                            </strong>
+                                        <strong>
+                                            {{ $currencySymbol }}{{ number_format((float) $item->unit_price, 2) }}
+                                        </strong>
 
-                                            <span>
-                                                SKU: BA-LW-006
-                                            </span>
+                                    </td>
 
-                                            <small>
-                                                Color: Brown
-                                            </small>
+                                    <td>
 
-                                        </div>
+                                        <span class="order-item-quantity">
+                                            {{ $item->quantity }}
+                                        </span>
 
-                                    </div>
+                                    </td>
 
-                                </td>
+                                    <td>
 
+                                        <strong>
+                                            {{ $currencySymbol }}{{ number_format((float) $item->line_total, 2) }}
+                                        </strong>
 
-                                <td>
+                                    </td>
 
-                                    <strong>
-                                        $29.99
-                                    </strong>
+                                </tr>
 
-                                </td>
+                            @empty
 
+                                <tr>
 
-                                <td>
+                                    <td
+                                        colspan="4"
+                                        class="order-items-empty"
+                                    >
+                                        No items found for this order.
+                                    </td>
 
-                                    <span class="order-item-quantity">
-                                        1
-                                    </span>
+                                </tr>
 
-                                </td>
-
-
-                                <td>
-
-                                    <strong>
-                                        $29.99
-                                    </strong>
-
-                                </td>
-
-                            </tr>
-
-
-                            {{-- Product 3 --}}
-
-                            <tr>
-
-                                <td>
-
-                                    <div class="order-product">
-
-                                        <div class="order-product__image">
-
-                                            <img
-                                                src="https://placehold.co/100x100"
-                                                alt="Ceramic Coffee Mug"
-                                            >
-
-                                        </div>
-
-
-                                        <div class="order-product__content">
-
-                                            <strong>
-                                                Ceramic Coffee Mug
-                                            </strong>
-
-                                            <span>
-                                                SKU: BA-CM-005
-                                            </span>
-
-                                            <small>
-                                                Color: White
-                                            </small>
-
-                                        </div>
-
-                                    </div>
-
-                                </td>
-
-
-                                <td>
-
-                                    <strong>
-                                        $19.99
-                                    </strong>
-
-                                </td>
-
-
-                                <td>
-
-                                    <span class="order-item-quantity">
-                                        2
-                                    </span>
-
-                                </td>
-
-
-                                <td>
-
-                                    <strong>
-                                        $39.98
-                                    </strong>
-
-                                </td>
-
-                            </tr>
-
+                            @endforelse
 
                             </tbody>
 
@@ -432,7 +357,7 @@
 
 
                 {{-- ======================================================== --}}
-                {{-- ORDER TOTAL --}}
+                {{-- ORDER SUMMARY --}}
                 {{-- ======================================================== --}}
 
                 <div class="order-details-card">
@@ -449,61 +374,71 @@
 
                     </div>
 
-
                     <div class="order-total-list">
 
-
                         <div class="order-total-row">
 
-                        <span>
-                            Subtotal
-                        </span>
+                            <span>
+                                Subtotal
+                            </span>
 
                             <strong>
-                                $149.95
+                                {{ $currencySymbol }}{{ number_format((float) $order->subtotal, 2) }}
                             </strong>
 
                         </div>
 
+                        @if ((float) $order->discount > 0)
+
+                            <div class="order-total-row">
+
+                                <span>
+                                    Discount
+                                </span>
+
+                                <strong class="order-total-discount">
+                                    -{{ $currencySymbol }}{{ number_format((float) $order->discount, 2) }}
+                                </strong>
+
+                            </div>
+
+                        @endif
 
                         <div class="order-total-row">
 
-                        <span>
-                            Shipping
-                        </span>
+                            <span>
+                                Shipping
+                            </span>
 
                             <strong>
-                                $0.00
+                                {{ $currencySymbol }}{{ number_format((float) $order->shipping, 2) }}
                             </strong>
 
                         </div>
 
-
                         <div class="order-total-row">
 
-                        <span>
-                            Tax
-                        </span>
+                            <span>
+                                Tax
+                            </span>
 
                             <strong>
-                                $0.02
+                                {{ $currencySymbol }}{{ number_format((float) $order->tax, 2) }}
                             </strong>
 
                         </div>
-
 
                         <div class="order-total-row order-total-row--grand">
 
-                        <span>
-                            Total
-                        </span>
+                            <span>
+                                Total
+                            </span>
 
                             <strong>
-                                $149.97
+                                {{ $currencySymbol }}{{ number_format((float) $order->total, 2) }}
                             </strong>
 
                         </div>
-
 
                     </div>
 
@@ -525,31 +460,28 @@
                             </h2>
 
                             <span>
-                            Shipment information for this order
-                        </span>
+                                Shipment information for this order
+                            </span>
 
                         </div>
-
 
                         <span class="order-shipment-status order-shipment-status--pending">
 
-                        <i></i>
+                            <i></i>
 
-                        Not Shipped
+                            {{ $shipmentStatus }}
 
-                    </span>
+                        </span>
 
                     </div>
-
 
                     <div class="order-shipment-box">
 
-
                         <div class="order-shipment-info">
 
-                        <span>
-                            Carrier
-                        </span>
+                            <span>
+                                Carrier
+                            </span>
 
                             <strong>
                                 —
@@ -557,12 +489,11 @@
 
                         </div>
 
-
                         <div class="order-shipment-info">
 
-                        <span>
-                            Tracking Number
-                        </span>
+                            <span>
+                                Tracking Number
+                            </span>
 
                             <strong>
                                 —
@@ -570,35 +501,31 @@
 
                         </div>
 
-
                         <div class="order-shipment-info">
 
-                        <span>
-                            Shipment Status
-                        </span>
+                            <span>
+                                Shipment Status
+                            </span>
 
                             <strong>
-                                Not Shipped
+                                {{ $shipmentStatus }}
                             </strong>
 
                         </div>
 
-
                         <div class="order-shipment-info">
 
-                        <span>
-                            Delivery Status
-                        </span>
+                            <span>
+                                Delivery Status
+                            </span>
 
                             <strong>
                                 —
                             </strong>
 
                         </div>
-
 
                     </div>
-
 
                     <div class="order-shipment-action">
 
@@ -606,17 +533,14 @@
                             href="{{ route('ecommerce-shipments') }}"
                             class="order-details-secondary-btn"
                         >
-
                             <i class="ri-truck-line"></i>
 
                             Manage Shipment
-
                         </a>
 
                     </div>
 
                 </div>
-
 
             </div>
 
@@ -626,7 +550,6 @@
             {{-- ============================================================ --}}
 
             <div class="order-details-sidebar">
-
 
                 {{-- ======================================================== --}}
                 {{-- CUSTOMER --}}
@@ -642,50 +565,45 @@
 
                     </div>
 
-
                     <div class="order-customer-profile">
 
                         <div class="order-customer-profile__avatar">
-                            JD
+                            {{ $customerInitials ?: '?' }}
                         </div>
-
 
                         <div>
 
                             <strong>
-                                John Doe
+                                {{ $customerName ?: 'Customer' }}
                             </strong>
 
                             <span>
-                            Customer
-                        </span>
+                                Customer
+                            </span>
 
                         </div>
 
                     </div>
 
-
                     <div class="order-customer-contact">
-
 
                         <div>
 
                             <i class="ri-mail-line"></i>
 
                             <span>
-                            john@example.com
-                        </span>
+                                {{ $order->email }}
+                            </span>
 
                         </div>
-
 
                         <div>
 
                             <i class="ri-phone-line"></i>
 
                             <span>
-                            +1 202 555 0147
-                        </span>
+                                {{ $order->phone }}
+                            </span>
 
                         </div>
 
@@ -708,28 +626,35 @@
 
                     </div>
 
-
                     <div class="order-address">
 
                         <strong>
-                            John Doe
+                            {{ $customerName }}
                         </strong>
 
                         <span>
-                        123 Main Street
-                    </span>
+                            {{ $order->address }}
+                        </span>
+
+                        @if ($order->apartment)
+
+                            <span>
+                                {{ $order->apartment }}
+                            </span>
+
+                        @endif
 
                         <span>
-                        Apt 4B
-                    </span>
+                            {{ $order->city }}
+                            @if ($order->state)
+                                , {{ $order->state }}
+                            @endif
+                            {{ $order->postal_code }}
+                        </span>
 
                         <span>
-                        New York, NY 10001
-                    </span>
-
-                        <span>
-                        United States
-                    </span>
+                            {{ $order->country }}
+                        </span>
 
                     </div>
 
@@ -750,28 +675,35 @@
 
                     </div>
 
-
                     <div class="order-address">
 
                         <strong>
-                            John Doe
+                            {{ $customerName }}
                         </strong>
 
                         <span>
-                        123 Main Street
-                    </span>
+                            {{ $order->address }}
+                        </span>
+
+                        @if ($order->apartment)
+
+                            <span>
+                                {{ $order->apartment }}
+                            </span>
+
+                        @endif
 
                         <span>
-                        Apt 4B
-                    </span>
+                            {{ $order->city }}
+                            @if ($order->state)
+                                , {{ $order->state }}
+                            @endif
+                            {{ $order->postal_code }}
+                        </span>
 
                         <span>
-                        New York, NY 10001
-                    </span>
-
-                        <span>
-                        United States
-                    </span>
+                            {{ $order->country }}
+                        </span>
 
                     </div>
 
@@ -792,64 +724,75 @@
 
                     </div>
 
-
                     <div class="order-payment-details">
 
-
                         <div>
 
-                        <span>
-                            Payment Status
-                        </span>
+                            <span>
+                                Payment Status
+                            </span>
 
-                            <span class="order-payment-status order-payment-status--paid">
+                            <span class="order-payment-status order-payment-status--{{ $paymentClass }}">
 
-                            <i></i>
+                                <i></i>
 
-                            Paid
+                                {{ ucfirst($order->payment_status) }}
 
-                        </span>
+                            </span>
 
                         </div>
 
-
                         <div>
 
-                        <span>
-                            Method
-                        </span>
+                            <span>
+                                Method
+                            </span>
 
                             <strong>
-                                Credit Card
+                                {{ ucfirst($order->payment_gateway ?: '—') }}
                             </strong>
 
                         </div>
 
-
                         <div>
 
-                        <span>
-                            Transaction
-                        </span>
+                            <span>
+                                Transaction
+                            </span>
 
                             <strong>
-                                TXN-BA-893421
+                                {{ $order->stripe_payment_intent_id ?: '—' }}
                             </strong>
 
                         </div>
 
-
                         <div>
 
-                        <span>
-                            Amount
-                        </span>
+                            <span>
+                                Amount
+                            </span>
 
                             <strong>
-                                $149.97
+                                {{ $currencySymbol }}{{ number_format((float) $order->total, 2) }}
                             </strong>
 
                         </div>
+
+                        @if ($order->paid_at)
+
+                            <div>
+
+                                <span>
+                                    Paid At
+                                </span>
+
+                                <strong>
+                                    {{ $order->paid_at->format('M d, Y h:i A') }}
+                                </strong>
+
+                            </div>
+
+                        @endif
 
                     </div>
 
@@ -860,29 +803,177 @@
                 {{-- ORDER NOTES --}}
                 {{-- ======================================================== --}}
 
-                <div class="order-details-card">
+                @if ($order->notes)
 
-                    <div class="order-details-card__header">
+                    <div class="order-details-card">
 
-                        <h2>
-                            Order Notes
+                        <div class="order-details-card__header">
+
+                            <h2>
+                                Order Notes
+                            </h2>
+
+                        </div>
+
+                        <div class="order-note">
+
+                            <i class="ri-information-line"></i>
+
+                            <p>
+                                {{ $order->notes }}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                @endif
+
+            </div>
+
+        </div>
+
+
+        {{-- ================================================================ --}}
+        {{-- UPDATE ORDER MODAL --}}
+        {{-- ================================================================ --}}
+
+        <div
+            class="order-status-modal"
+            data-status-modal
+            aria-hidden="true"
+        >
+
+            <div
+                class="order-status-modal__overlay"
+                data-close-status-modal
+            ></div>
+
+            <div
+                class="order-status-modal__dialog"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="order-status-modal-title"
+            >
+
+                <div class="order-status-modal__header">
+
+                    <div>
+
+                        <span class="order-status-modal__eyebrow">
+                            Order #{{ $order->order_number }}
+                        </span>
+
+                        <h2 id="order-status-modal-title">
+                            Update Order Status
                         </h2>
 
                     </div>
 
-
-                    <div class="order-note">
-
-                        <i class="ri-information-line"></i>
-
-                        <p>
-                            Please deliver the order between 9 AM and 5 PM.
-                        </p>
-
-                    </div>
+                    <button
+                        type="button"
+                        class="order-status-modal__close"
+                        data-close-status-modal
+                        aria-label="Close"
+                    >
+                        <i class="ri-close-line"></i>
+                    </button>
 
                 </div>
 
+                <form
+                    action="{{ route('admin-order-status', ['order' => $order]) }}"
+                    method="POST"
+                    data-status-form
+                >
+
+                    @csrf
+
+                    @method('PATCH')
+
+                    <div class="order-status-modal__body">
+
+                        <label for="order-status">
+                            Order Status
+                        </label>
+
+                        <select
+                            id="order-status"
+                            name="status"
+                            data-status-select
+                        >
+
+                            @foreach ([
+                                \App\Models\Order::STATUS_PENDING,
+                                \App\Models\Order::STATUS_PAID,
+                                \App\Models\Order::STATUS_PROCESSING,
+                                \App\Models\Order::STATUS_COMPLETED,
+                                \App\Models\Order::STATUS_CANCELLED,
+                                \App\Models\Order::STATUS_FAILED,
+                            ] as $orderStatus)
+
+                                <option
+                                    value="{{ $orderStatus }}"
+                                    @selected($order->status === $orderStatus)
+                                >
+                                    {{ ucfirst($orderStatus) }}
+                                </option>
+
+                            @endforeach
+
+                        </select>
+
+                        <div class="order-status-modal__current">
+
+                            <span>
+                                Current Status
+                            </span>
+
+                            <strong>
+                                {{ ucfirst($order->status) }}
+                            </strong>
+
+                        </div>
+
+                        <div
+                            class="order-status-modal__warning"
+                            data-status-warning
+                            hidden
+                        >
+                            <i class="ri-error-warning-line"></i>
+
+                            <span>
+                                Changing the order to Cancelled should only be
+                                done when the order has not already been
+                                fulfilled.
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <div class="order-status-modal__footer">
+
+                        <button
+                            type="button"
+                            class="order-status-modal__cancel"
+                            data-close-status-modal
+                        >
+                            Cancel
+                        </button>
+
+                        <button
+                            type="submit"
+                            class="order-status-modal__submit"
+                            data-status-submit
+                        >
+                            <i class="ri-check-line"></i>
+
+                            Update Status
+                        </button>
+
+                    </div>
+
+                </form>
 
             </div>
 
@@ -891,3 +982,141 @@
     </div>
 
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const orderPage = document.querySelector(".order-details-page");
+
+            if (!orderPage) {
+                return;
+            }
+
+            const printButton = orderPage.querySelector(
+                "[data-print-order]",
+            );
+
+            const openStatusButton = orderPage.querySelector(
+                "[data-open-status-modal]",
+            );
+
+            const statusModal = orderPage.querySelector(
+                "[data-status-modal]",
+            );
+
+            const closeStatusButtons = orderPage.querySelectorAll(
+                "[data-close-status-modal]",
+            );
+
+            const statusForm = orderPage.querySelector(
+                "[data-status-form]",
+            );
+
+            const statusSelect = orderPage.querySelector(
+                "[data-status-select]",
+            );
+
+            const statusSubmit = orderPage.querySelector(
+                "[data-status-submit]",
+            );
+
+            const statusWarning = orderPage.querySelector(
+                "[data-status-warning]",
+            );
+
+            const currentStatus = statusSelect?.value || "";
+
+            const openModal = function () {
+                if (!statusModal) {
+                    return;
+                }
+
+                statusModal.removeAttribute("aria-hidden");
+                statusModal.classList.add("is-open");
+
+                document.body.classList.add("order-status-modal-open");
+
+                window.setTimeout(function () {
+                    statusSelect?.focus();
+                }, 50);
+            };
+
+            const closeModal = function () {
+                if (!statusModal) {
+                    return;
+                }
+
+                statusModal.setAttribute("aria-hidden", "true");
+                statusModal.classList.remove("is-open");
+
+                document.body.classList.remove(
+                    "order-status-modal-open",
+                );
+            };
+
+            const updateWarning = function () {
+                if (!statusWarning || !statusSelect) {
+                    return;
+                }
+
+                statusWarning.hidden =
+                    statusSelect.value !== "cancelled";
+            };
+
+            printButton?.addEventListener("click", function () {
+                window.print();
+            });
+
+            openStatusButton?.addEventListener(
+                "click",
+                openModal,
+            );
+
+            closeStatusButtons.forEach(function (button) {
+                button.addEventListener("click", closeModal);
+            });
+
+            statusSelect?.addEventListener(
+                "change",
+                updateWarning,
+            );
+
+            statusForm?.addEventListener("submit", function () {
+                if (!statusSubmit) {
+                    return;
+                }
+
+                statusSubmit.disabled = true;
+
+                statusSubmit.innerHTML =
+                    '<i class="ri-loader-4-line"></i> Updating...';
+            });
+
+            document.addEventListener("keydown", function (event) {
+                if (
+                    event.key === "Escape" &&
+                    statusModal?.classList.contains("is-open")
+                ) {
+                    closeModal();
+                }
+            });
+
+            updateWarning();
+
+            /*
+             * Prevent unnecessary status update when the current
+             * status has not changed.
+             */
+            statusForm?.addEventListener("submit", function (event) {
+                if (
+                    statusSelect &&
+                    statusSelect.value === currentStatus
+                ) {
+                    event.preventDefault();
+
+                    closeModal();
+                }
+            });
+        });
+    </script>
+@endpush

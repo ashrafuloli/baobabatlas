@@ -6,6 +6,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 final class CheckoutRequest extends FormRequest
 {
@@ -27,7 +28,24 @@ final class CheckoutRequest extends FormRequest
         return [
             /*
             |--------------------------------------------------------------------------
-            | Shipping Address
+            | Saved Address
+            |--------------------------------------------------------------------------
+            */
+
+            'address_id' => [
+                'nullable',
+                'integer',
+                'min:1',
+                Rule::exists('user_addresses', 'id')
+                    ->where(
+                        'user_id',
+                        $this->user()?->id
+                    ),
+            ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | Customer Contact
             |--------------------------------------------------------------------------
             */
 
@@ -43,21 +61,66 @@ final class CheckoutRequest extends FormRequest
                 'max:100',
             ],
 
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+            ],
+
             'phone' => [
                 'required',
                 'string',
                 'max:30',
             ],
 
+            /*
+            |--------------------------------------------------------------------------
+            | New Shipping Contact
+            |--------------------------------------------------------------------------
+            */
+
+            'shipping_first_name' => [
+                'required_without:address_id',
+                'nullable',
+                'string',
+                'max:100',
+            ],
+
+            'shipping_last_name' => [
+                'required_without:address_id',
+                'nullable',
+                'string',
+                'max:100',
+            ],
+
+            'shipping_phone' => [
+                'required_without:address_id',
+                'nullable',
+                'string',
+                'max:30',
+            ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | Shipping Address
+            |--------------------------------------------------------------------------
+            */
+
             'country' => [
-                'required',
+                'required_without:address_id',
+                'nullable',
                 'string',
                 'size:2',
-                'in:US,CA,GB,AU,BD',
+                Rule::in(
+                    array_keys(
+                        config('countries', [])
+                    )
+                ),
             ],
 
             'address' => [
-                'required',
+                'required_without:address_id',
+                'nullable',
                 'string',
                 'max:255',
             ],
@@ -69,26 +132,29 @@ final class CheckoutRequest extends FormRequest
             ],
 
             'city' => [
-                'required',
+                'required_without:address_id',
+                'nullable',
                 'string',
                 'max:100',
             ],
 
             'state' => [
-                'required',
+                'required_without:address_id',
+                'nullable',
                 'string',
                 'max:100',
             ],
 
             'postal_code' => [
-                'required',
+                'required_without:address_id',
+                'nullable',
                 'string',
                 'max:20',
             ],
 
             /*
             |--------------------------------------------------------------------------
-            | Saved Address
+            | Save Address
             |--------------------------------------------------------------------------
             */
 
@@ -122,8 +188,60 @@ final class CheckoutRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        $this->merge([
+        $addressId = $this->integer('address_id');
+
+        $addressId = $addressId > 0
+            ? $addressId
+            : null;
+
+        $shippingFirstName = trim(
+            (string) $this->input('shipping_first_name')
+        );
+
+        $shippingLastName = trim(
+            (string) $this->input('shipping_last_name')
+        );
+
+        $shippingPhone = trim(
+            (string) $this->input('shipping_phone')
+        );
+
+        $country = strtoupper(
+            trim((string) $this->input('country'))
+        );
+
+        $data = [
+            'address_id' => $addressId,
             'save_address' => $this->boolean('save_address'),
-        ]);
+        ];
+
+        /*
+        |--------------------------------------------------------------------------
+        | New Address Contact
+        |--------------------------------------------------------------------------
+        |
+        | CreateOrder expects first_name, last_name and phone.
+        | When no saved address is selected, normalize shipping_* fields
+        | into those canonical fields.
+        |
+        */
+
+        if ($addressId === null) {
+            $data['first_name'] = $shippingFirstName;
+            $data['last_name'] = $shippingLastName;
+            $data['phone'] = $shippingPhone;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Country
+        |--------------------------------------------------------------------------
+        */
+
+        if ($country !== '') {
+            $data['country'] = $country;
+        }
+
+        $this->merge($data);
     }
 }

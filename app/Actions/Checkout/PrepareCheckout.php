@@ -21,6 +21,7 @@ final class PrepareCheckout
      *     cart: Cart,
      *     items: Collection<int, CartItem>,
      *     default_address: ?UserAddress,
+     *     currency: string,
      *     subtotal: float,
      *     discount: float,
      *     shipping: float,
@@ -59,6 +60,22 @@ final class PrepareCheckout
                 'cart' => 'Your cart is empty.',
             ]);
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Currency
+        |--------------------------------------------------------------------------
+        */
+
+        $currency = strtolower(
+            (string) config('app.currency', 'usd'),
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Validate Cart & Calculate Subtotal
+        |--------------------------------------------------------------------------
+        */
 
         $subtotal = 0.0;
         $totalQuantity = 0;
@@ -113,7 +130,10 @@ final class PrepareCheckout
                 ? (float) $variant->price
                 : (float) $product->price;
 
-            $itemTotal = $unitPrice * $item->quantity;
+            $itemTotal = round(
+                $unitPrice * $item->quantity,
+                2,
+            );
 
             $item->setAttribute(
                 'checkout_unit_price',
@@ -128,6 +148,8 @@ final class PrepareCheckout
             $subtotal += $itemTotal;
             $totalQuantity += $item->quantity;
         }
+
+        $subtotal = round($subtotal, 2);
 
         /*
         |--------------------------------------------------------------------------
@@ -145,7 +167,7 @@ final class PrepareCheckout
 
         /*
         |--------------------------------------------------------------------------
-        | Coupon
+        | Coupon / Discount
         |--------------------------------------------------------------------------
         */
 
@@ -200,10 +222,6 @@ final class PrepareCheckout
                         |--------------------------------------------------------------------------
                         | Maximum Discount
                         |--------------------------------------------------------------------------
-                        |
-                        | A maximum discount of 0 means no maximum
-                        | discount limit.
-                        |
                         */
 
                         if (
@@ -234,6 +252,8 @@ final class PrepareCheckout
             }
         }
 
+        $discount = round($discount, 2);
+
         /*
         |--------------------------------------------------------------------------
         | Shipping & Tax
@@ -249,20 +269,33 @@ final class PrepareCheckout
         |--------------------------------------------------------------------------
         */
 
-        $total = max(
-            0.0,
-            $subtotal + $shipping + $tax - $discount,
+        $total = round(
+            max(
+                0.0,
+                $subtotal
+                + $shipping
+                + $tax
+                - $discount,
+            ),
+            2,
         );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Return Checkout Data
+        |--------------------------------------------------------------------------
+        */
 
         return [
             'cart' => $cart,
             'items' => $cart->items,
             'default_address' => $defaultAddress,
-            'subtotal' => round($subtotal, 2),
-            'discount' => round($discount, 2),
-            'shipping' => round($shipping, 2),
-            'tax' => round($tax, 2),
-            'total' => round($total, 2),
+            'currency' => $currency,
+            'subtotal' => $subtotal,
+            'discount' => $discount,
+            'shipping' => $shipping,
+            'tax' => $tax,
+            'total' => $total,
             'item_count' => $cart->items->count(),
             'quantity' => $totalQuantity,
         ];

@@ -1,5 +1,7 @@
 @extends('frontend.layouts.frontend')
 
+@section('title', 'My Orders')
+
 @section('contents')
 
     <div class="my-orders-page">
@@ -8,9 +10,15 @@
 
             {{-- Breadcrumb --}}
             <div class="my-orders-page__breadcrumb">
-                <a href="{{ url('/') }}">Shop</a>
+                <a href="{{ url('/') }}">
+                    Shop
+                </a>
+
                 <i class="ri-arrow-right-s-line"></i>
-                <span>My Orders</span>
+
+                <span>
+                    My Orders
+                </span>
             </div>
 
 
@@ -18,6 +26,7 @@
             <div class="my-orders-page__header">
 
                 <div class="my-orders-page__header-content">
+
                     <span class="my-orders-page__eyebrow">
                         ORDER HISTORY
                     </span>
@@ -29,10 +38,16 @@
                     <p class="my-orders-page__subtitle">
                         Track and manage your recent orders.
                     </p>
+
                 </div>
 
-                <a href="{{ url('/shop') }}" class="my-orders-page__shop-btn">
+
+                <a
+                    href="{{ route('shop') }}"
+                    class="my-orders-page__shop-btn"
+                >
                     <i class="ri-arrow-left-line"></i>
+
                     Continue Shopping
                 </a>
 
@@ -51,6 +66,7 @@
                         class="my-orders-page__search-input"
                         placeholder="Search orders..."
                         aria-label="Search orders"
+                        autocomplete="off"
                     >
 
                 </div>
@@ -66,21 +82,33 @@
                                 type="button"
                                 class="status-select-trigger"
                                 aria-expanded="false"
+                                aria-haspopup="listbox"
                             >
-            <span class="status-select-value">
-                <span class="status-label">Status:</span>
-                <strong>All Orders</strong>
-            </span>
+                                <span class="status-select-value">
+                                    <span class="status-label">
+                                        Status:
+                                    </span>
+
+                                    <strong>
+                                        All Orders
+                                    </strong>
+                                </span>
 
                                 <i class="ri-arrow-down-s-line"></i>
                             </button>
 
-                            <div class="status-select-options">
+
+                            <div
+                                class="status-select-options"
+                                role="listbox"
+                            >
 
                                 <button
                                     type="button"
                                     class="status-option is-selected"
                                     data-value="all"
+                                    role="option"
+                                    aria-selected="true"
                                 >
                                     All Orders
                                 </button>
@@ -89,6 +117,8 @@
                                     type="button"
                                     class="status-option"
                                     data-value="pending"
+                                    role="option"
+                                    aria-selected="false"
                                 >
                                     Pending
                                 </button>
@@ -97,6 +127,8 @@
                                     type="button"
                                     class="status-option"
                                     data-value="processing"
+                                    role="option"
+                                    aria-selected="false"
                                 >
                                     Processing
                                 </button>
@@ -104,15 +136,9 @@
                                 <button
                                     type="button"
                                     class="status-option"
-                                    data-value="shipped"
-                                >
-                                    Shipped
-                                </button>
-
-                                <button
-                                    type="button"
-                                    class="status-option"
-                                    data-value="delivered"
+                                    data-value="completed"
+                                    role="option"
+                                    aria-selected="false"
                                 >
                                     Delivered
                                 </button>
@@ -121,17 +147,19 @@
                                     type="button"
                                     class="status-option"
                                     data-value="cancelled"
+                                    role="option"
+                                    aria-selected="false"
                                 >
                                     Cancelled
                                 </button>
 
                             </div>
 
+
                             <input
                                 type="hidden"
                                 name="status"
                                 value="all"
-                                id="order-status-filter"
                                 class="status-input"
                             >
 
@@ -144,12 +172,13 @@
             </div>
 
 
-            {{-- Orders --}}
+            {{-- Orders Content --}}
             <div class="my-orders-page__content">
 
                 <div class="my-orders-page__orders-header">
 
                     <div>
+
                         <span class="my-orders-page__section-label">
                             YOUR ORDERS
                         </span>
@@ -157,10 +186,13 @@
                         <h2>
                             Recent Orders
                         </h2>
+
                     </div>
 
+
                     <span class="my-orders-page__order-count">
-                        4 Orders
+                        {{ $orders->total() }}
+                        {{ $orders->total() === 1 ? 'Order' : 'Orders' }}
                     </span>
 
                 </div>
@@ -168,98 +200,189 @@
 
                 <div class="my-orders-page__order-list">
 
+                    @forelse($orders as $order)
 
-                    {{-- Order 1 --}}
-                    <article
-                        class="my-orders-page__order-card"
-                        data-status="delivered"
-                        data-order="ORD-1001"
-                    >
+                        @php
+                            $status = match ($order->status) {
+                                \App\Models\Order::STATUS_COMPLETED => 'completed',
+                                \App\Models\Order::STATUS_CANCELLED,
+                                \App\Models\Order::STATUS_FAILED => 'cancelled',
+                                \App\Models\Order::STATUS_PROCESSING,
+                                \App\Models\Order::STATUS_PAID => 'processing',
+                                default => 'pending',
+                            };
 
-                        <div class="my-orders-page__order-top">
+                            $statusLabel = match ($status) {
+                                'completed' => 'Delivered',
+                                'processing' => 'Processing',
+                                'cancelled' => 'Cancelled',
+                                default => 'Pending',
+                            };
 
-                            <div class="my-orders-page__order-info">
+                            $statusIcon = match ($status) {
+                                'completed' => 'ri-checkbox-circle-fill',
+                                'processing' => 'ri-loader-4-line',
+                                'cancelled' => 'ri-close-circle-line',
+                                default => 'ri-time-line',
+                            };
 
-                                <div class="my-orders-page__order-number">
-                                    <span>Order</span>
-                                    <strong>#ORD-1001</strong>
+                            $deliveryIcon = match ($status) {
+                                'completed' => 'ri-map-pin-line',
+                                'processing' => 'ri-time-line',
+                                'cancelled' => 'ri-close-circle-line',
+                                default => 'ri-time-line',
+                            };
+
+                            $deliveryText = match ($status) {
+                                'completed' => 'Order completed',
+                                'processing' => 'Preparing your order',
+                                'cancelled' => 'Order cancelled',
+                                default => 'Order is being processed',
+                            };
+                        @endphp
+
+
+                        <article
+                            class="my-orders-page__order-card"
+                            data-status="{{ $status }}"
+                            data-order="{{ $order->order_number }}"
+                        >
+
+                            {{-- Order Top --}}
+                            <div class="my-orders-page__order-top">
+
+                                <div class="my-orders-page__order-info">
+
+                                    <div class="my-orders-page__order-number">
+
+                                        <span>
+                                            Order
+                                        </span>
+
+                                        <strong>
+                                            #{{ $order->order_number }}
+                                        </strong>
+
+                                    </div>
+
+
+                                    <span class="my-orders-page__order-date">
+                                        {{ $order->created_at->format('F j, Y') }}
+                                    </span>
+
                                 </div>
 
-                                <span class="my-orders-page__order-date">
-                                    September 2, 2026
+
+                                <span
+                                    class="my-orders-page__status my-orders-page__status--{{ $status }}"
+                                >
+                                    <i class="{{ $statusIcon }}"></i>
+
+                                    {{ $statusLabel }}
                                 </span>
 
                             </div>
 
-                            <span class="my-orders-page__status my-orders-page__status--delivered">
-                                <i class="ri-checkbox-circle-fill"></i>
-                                Delivered
-                            </span>
 
-                        </div>
+                            {{-- Order Body --}}
+                            <div class="my-orders-page__order-body">
+
+                                <div class="my-orders-page__product-list">
+
+                                    @foreach($order->items as $item)
+
+                                        @php
+                                            $product = $item->product;
+
+                                            $category = $product?->categories?->first()?->name;
+
+                                            $image = $item->image;
+
+                                            $attributes = [];
+
+                                            if ($item->variant?->values) {
+                                                foreach ($item->variant->values as $value) {
+                                                    $attributeName = $value->attribute?->name;
+                                                    $valueName = $value->value ?? null;
+
+                                                    if ($attributeName && $valueName) {
+                                                        $attributes[] = $attributeName . ': ' . $valueName;
+                                                    }
+                                                }
+                                            }
+                                        @endphp
 
 
-                        <div class="my-orders-page__order-body">
+                                        <div class="my-orders-page__product">
 
-                            <div class="my-orders-page__product-list">
+                                            <div class="my-orders-page__product-image">
 
-                                <div class="my-orders-page__product">
+                                                @if($image)
+                                                    <img
+                                                        src="{{ asset($image) }}"
+                                                        alt="{{ $item->product_name }}"
+                                                        loading="lazy"
+                                                    >
+                                                @else
+                                                    <span>
+                                                        No Image
+                                                    </span>
+                                                @endif
 
-                                    <div class="my-orders-page__product-image">
-                                        <span>120 × 140</span>
-                                    </div>
+                                            </div>
 
-                                    <div class="my-orders-page__product-info">
 
-                                        <span class="my-orders-page__product-category">
-                                            Clothing
-                                        </span>
+                                            <div class="my-orders-page__product-info">
 
-                                        <h3>
-                                            Premium Cotton T-Shirt
-                                        </h3>
+                                                @if($category)
+                                                    <span class="my-orders-page__product-category">
+                                                        {{ $category }}
+                                                    </span>
+                                                @endif
 
-                                        <div class="my-orders-page__product-meta">
-                                            <span>Size: M</span>
-                                            <span>Color: Black</span>
-                                            <span>Qty: 1</span>
+                                                <h3>
+                                                    {{ $item->product_name }}
+                                                </h3>
+
+
+                                                <div class="my-orders-page__product-meta">
+
+                                                    @foreach($attributes as $attribute)
+                                                        <span>
+                                                            {{ $attribute }}
+                                                        </span>
+                                                    @endforeach
+
+                                                    <span>
+                                                        Qty: {{ $item->quantity }}
+                                                    </span>
+
+                                                </div>
+
+                                            </div>
+
+
+                                            <strong class="my-orders-page__product-price">
+                                                ${{ number_format((float) $item->line_total, 2) }}
+                                            </strong>
+
                                         </div>
 
-                                    </div>
-
-                                    <strong class="my-orders-page__product-price">
-                                        $29.99
-                                    </strong>
+                                    @endforeach
 
                                 </div>
 
 
-                                <div class="my-orders-page__product">
+                                {{-- Order Summary --}}
+                                <div class="my-orders-page__order-summary">
 
-                                    <div class="my-orders-page__product-image">
-                                        <span>120 × 140</span>
-                                    </div>
+                                    <span>
+                                        {{ $order->items_count }}
+                                        {{ $order->items_count === 1 ? 'Item' : 'Items' }}
+                                    </span>
 
-                                    <div class="my-orders-page__product-info">
-
-                                        <span class="my-orders-page__product-category">
-                                            Bags
-                                        </span>
-
-                                        <h3>
-                                            Everyday Backpack
-                                        </h3>
-
-                                        <div class="my-orders-page__product-meta">
-                                            <span>Color: Black</span>
-                                            <span>Material: Canvas</span>
-                                            <span>Qty: 1</span>
-                                        </div>
-
-                                    </div>
-
-                                    <strong class="my-orders-page__product-price">
-                                        $54.99
+                                    <strong>
+                                        ${{ number_format((float) $order->total, 2) }}
                                     </strong>
 
                                 </div>
@@ -267,339 +390,68 @@
                             </div>
 
 
-                            <div class="my-orders-page__order-summary">
+                            {{-- Order Footer --}}
+                            <div class="my-orders-page__order-footer">
 
-                                <span>
-                                    2 Items
+                                <span class="my-orders-page__delivery">
+
+                                    <i class="{{ $deliveryIcon }}"></i>
+
+                                    {{ $deliveryText }}
+
                                 </span>
 
-                                <strong>
-                                    $84.98
-                                </strong>
+
+                                <a
+                                    href="{{ route('my-orders.show', $order->order_number) }}"
+                                    class="my-orders-page__details-btn"
+                                    data-order-number="{{ $order->order_number }}"
+                                >
+                                    View Details
+
+                                    <i class="ri-arrow-right-line"></i>
+                                </a>
 
                             </div>
 
-                        </div>
+                        </article>
 
+                    @empty
 
-                        <div class="my-orders-page__order-footer">
+                        <div class="my-orders-page__empty my-orders-page__empty--initial">
 
-                            <span class="my-orders-page__delivery">
-                                <i class="ri-map-pin-line"></i>
-                                Delivered on Sep 4, 2026
-                            </span>
+                            <div class="my-orders-page__empty-icon">
+                                <i class="ri-file-list-3-line"></i>
+                            </div>
 
-                            <a href="#" class="my-orders-page__details-btn">
-                                View Details
-                                <i class="ri-arrow-right-line"></i>
+                            <h3>
+                                No orders yet
+                            </h3>
+
+                            <p>
+                                You haven't placed any orders yet.
+                            </p>
+
+                            <a
+                                href="{{ route('shop') }}"
+                                class="my-orders-page__reset-btn"
+                            >
+                                Browse Products
                             </a>
 
                         </div>
 
-                    </article>
+                    @endforelse
 
 
-                    {{-- Order 2 --}}
-                    <article
-                        class="my-orders-page__order-card"
-                        data-status="shipped"
-                        data-order="ORD-1002"
+                    {{-- Filter Empty State --}}
+                    <div
+                        class="my-orders-page__empty my-orders-page__empty--filter"
+                        hidden
                     >
-
-                        <div class="my-orders-page__order-top">
-
-                            <div class="my-orders-page__order-info">
-
-                                <div class="my-orders-page__order-number">
-                                    <span>Order</span>
-                                    <strong>#ORD-1002</strong>
-                                </div>
-
-                                <span class="my-orders-page__order-date">
-                                    August 30, 2026
-                                </span>
-
-                            </div>
-
-                            <span class="my-orders-page__status my-orders-page__status--shipped">
-                                <i class="ri-truck-line"></i>
-                                Shipped
-                            </span>
-
-                        </div>
-
-
-                        <div class="my-orders-page__order-body">
-
-                            <div class="my-orders-page__product-list">
-
-                                <div class="my-orders-page__product">
-
-                                    <div class="my-orders-page__product-image">
-                                        <span>120 × 140</span>
-                                    </div>
-
-                                    <div class="my-orders-page__product-info">
-
-                                        <span class="my-orders-page__product-category">
-                                            Accessories
-                                        </span>
-
-                                        <h3>
-                                            Classic Leather Wallet
-                                        </h3>
-
-                                        <div class="my-orders-page__product-meta">
-                                            <span>Color: Brown</span>
-                                            <span>Material: Leather</span>
-                                            <span>Qty: 1</span>
-                                        </div>
-
-                                    </div>
-
-                                    <strong class="my-orders-page__product-price">
-                                        $49.99
-                                    </strong>
-
-                                </div>
-
-                            </div>
-
-
-                            <div class="my-orders-page__order-summary">
-
-                                <span>
-                                    1 Item
-                                </span>
-
-                                <strong>
-                                    $49.99
-                                </strong>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="my-orders-page__order-footer">
-
-                            <span class="my-orders-page__delivery">
-                                <i class="ri-truck-line"></i>
-                                Expected delivery Sep 5–7
-                            </span>
-
-                            <a href="#" class="my-orders-page__details-btn">
-                                View Details
-                                <i class="ri-arrow-right-line"></i>
-                            </a>
-
-                        </div>
-
-                    </article>
-
-
-                    {{-- Order 3 --}}
-                    <article
-                        class="my-orders-page__order-card"
-                        data-status="processing"
-                        data-order="ORD-1003"
-                    >
-
-                        <div class="my-orders-page__order-top">
-
-                            <div class="my-orders-page__order-info">
-
-                                <div class="my-orders-page__order-number">
-                                    <span>Order</span>
-                                    <strong>#ORD-1003</strong>
-                                </div>
-
-                                <span class="my-orders-page__order-date">
-                                    August 28, 2026
-                                </span>
-
-                            </div>
-
-                            <span class="my-orders-page__status my-orders-page__status--processing">
-                                <i class="ri-loader-4-line"></i>
-                                Processing
-                            </span>
-
-                        </div>
-
-
-                        <div class="my-orders-page__order-body">
-
-                            <div class="my-orders-page__product-list">
-
-                                <div class="my-orders-page__product">
-
-                                    <div class="my-orders-page__product-image">
-                                        <span>120 × 140</span>
-                                    </div>
-
-                                    <div class="my-orders-page__product-info">
-
-                                        <span class="my-orders-page__product-category">
-                                            Home & Living
-                                        </span>
-
-                                        <h3>
-                                            Classic Ceramic Mug
-                                        </h3>
-
-                                        <div class="my-orders-page__product-meta">
-                                            <span>Color: White</span>
-                                            <span>Capacity: 350ml</span>
-                                            <span>Qty: 2</span>
-                                        </div>
-
-                                    </div>
-
-                                    <strong class="my-orders-page__product-price">
-                                        $39.98
-                                    </strong>
-
-                                </div>
-
-                            </div>
-
-
-                            <div class="my-orders-page__order-summary">
-
-                                <span>
-                                    2 Items
-                                </span>
-
-                                <strong>
-                                    $39.98
-                                </strong>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="my-orders-page__order-footer">
-
-                            <span class="my-orders-page__delivery">
-                                <i class="ri-time-line"></i>
-                                Preparing your order
-                            </span>
-
-                            <a href="#" class="my-orders-page__details-btn">
-                                View Details
-                                <i class="ri-arrow-right-line"></i>
-                            </a>
-
-                        </div>
-
-                    </article>
-
-
-                    {{-- Order 4 --}}
-                    <article
-                        class="my-orders-page__order-card"
-                        data-status="cancelled"
-                        data-order="ORD-1004"
-                    >
-
-                        <div class="my-orders-page__order-top">
-
-                            <div class="my-orders-page__order-info">
-
-                                <div class="my-orders-page__order-number">
-                                    <span>Order</span>
-                                    <strong>#ORD-1004</strong>
-                                </div>
-
-                                <span class="my-orders-page__order-date">
-                                    August 20, 2026
-                                </span>
-
-                            </div>
-
-                            <span class="my-orders-page__status my-orders-page__status--cancelled">
-                                <i class="ri-close-circle-line"></i>
-                                Cancelled
-                            </span>
-
-                        </div>
-
-
-                        <div class="my-orders-page__order-body">
-
-                            <div class="my-orders-page__product-list">
-
-                                <div class="my-orders-page__product">
-
-                                    <div class="my-orders-page__product-image">
-                                        <span>120 × 140</span>
-                                    </div>
-
-                                    <div class="my-orders-page__product-info">
-
-                                        <span class="my-orders-page__product-category">
-                                            Electronics
-                                        </span>
-
-                                        <h3>
-                                            Wireless Bluetooth Speaker
-                                        </h3>
-
-                                        <div class="my-orders-page__product-meta">
-                                            <span>Color: Black</span>
-                                            <span>Qty: 1</span>
-                                        </div>
-
-                                    </div>
-
-                                    <strong class="my-orders-page__product-price">
-                                        $64.99
-                                    </strong>
-
-                                </div>
-
-                            </div>
-
-
-                            <div class="my-orders-page__order-summary">
-
-                                <span>
-                                    1 Item
-                                </span>
-
-                                <strong>
-                                    $64.99
-                                </strong>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="my-orders-page__order-footer">
-
-                            <span class="my-orders-page__delivery">
-                                <i class="ri-close-circle-line"></i>
-                                Order cancelled
-                            </span>
-
-                            <a href="#" class="my-orders-page__details-btn">
-                                View Details
-                                <i class="ri-arrow-right-line"></i>
-                            </a>
-
-                        </div>
-
-                    </article>
-
-
-                    {{-- Empty Search / Filter State --}}
-                    <div class="my-orders-page__empty" hidden>
 
                         <div class="my-orders-page__empty-icon">
-                            <i class="ri-file-list-3-line"></i>
+                            <i class="ri-search-line"></i>
                         </div>
 
                         <h3>
@@ -610,7 +462,10 @@
                             Try changing your search or order status filter.
                         </p>
 
-                        <button type="button" class="my-orders-page__reset-btn">
+                        <button
+                            type="button"
+                            class="my-orders-page__reset-btn"
+                        >
                             Clear Filters
                         </button>
 
@@ -618,13 +473,26 @@
 
                 </div>
 
+
+                {{-- Pagination --}}
+                @if($orders->hasPages())
+
+                    <div class="my-orders-page__pagination">
+
+                        {{ $orders->links() }}
+
+                    </div>
+
+                @endif
+
             </div>
 
 
-            {{-- Bottom Shopping CTA --}}
+            {{-- Bottom CTA --}}
             <div class="my-orders-page__bottom-cta">
 
                 <div>
+
                     <span>
                         Looking for something new?
                     </span>
@@ -632,10 +500,13 @@
                     <strong>
                         Explore our latest products.
                     </strong>
+
                 </div>
 
-                <a href="{{ url('/shop') }}">
+
+                <a href="{{ route('shop') }}">
                     Browse Products
+
                     <i class="ri-arrow-right-line"></i>
                 </a>
 
@@ -645,491 +516,246 @@
 
     </div>
 
+@endsection
+
+
+@push('scripts')
+
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-
-            const ordersPage =
-                document.querySelector('.my-orders-page');
-
+        document.addEventListener("DOMContentLoaded", function () {
+            const ordersPage = document.querySelector(".my-orders-page");
 
             if (!ordersPage) {
                 return;
             }
 
+            const searchInput = ordersPage.querySelector(
+                ".my-orders-page__search-input",
+            );
 
-            /*
-            =====================================
-                Elements
-            =====================================
-            */
+            const statusSelect = ordersPage.querySelector(".status-select");
 
-            const searchInput =
-                ordersPage.querySelector(
-                    '.my-orders-page__search-input'
-                );
+            const statusTrigger = statusSelect?.querySelector(
+                ".status-select-trigger",
+            );
 
+            const statusOptions = statusSelect
+                ? Array.from(statusSelect.querySelectorAll(".status-option"))
+                : [];
 
-            const statusSelect =
-                ordersPage.querySelector(
-                    '.status-select'
-                );
+            const statusValue = statusSelect?.querySelector(
+                ".status-select-value strong",
+            );
 
+            const statusInput = statusSelect?.querySelector(".status-input");
 
-            const statusTrigger =
-                statusSelect
-                    ? statusSelect.querySelector(
-                        '.status-select-trigger'
-                    )
-                    : null;
+            const orderCards = Array.from(
+                ordersPage.querySelectorAll(".my-orders-page__order-card"),
+            );
 
+            const filterEmpty = ordersPage.querySelector(
+                ".my-orders-page__empty--filter",
+            );
 
-            const statusOptions =
-                statusSelect
-                    ? statusSelect.querySelectorAll(
-                        '.status-option'
-                    )
-                    : [];
-
-
-            const statusValue =
-                statusSelect
-                    ? statusSelect.querySelector(
-                        '.status-select-value strong'
-                    )
-                    : null;
-
-
-            const statusInput =
-                statusSelect
-                    ? statusSelect.querySelector(
-                        '.status-input'
-                    )
-                    : null;
-
-
-            const orderCards =
-                Array.from(
-                    ordersPage.querySelectorAll(
-                        '.my-orders-page__order-card'
-                    )
-                );
-
-
-            const emptyState =
-                ordersPage.querySelector(
-                    '.my-orders-page__empty'
-                );
-
-
-            const resetButton =
-                ordersPage.querySelector(
-                    '.my-orders-page__reset-btn'
-                );
-
-
-            /*
-            =====================================
-                Filter Orders
-            =====================================
-            */
+            const resetButton = ordersPage.querySelector(
+                ".my-orders-page__empty--filter .my-orders-page__reset-btn",
+            );
 
             const filterOrders = function () {
+                const searchValue = searchInput
+                    ? searchInput.value.trim().toLowerCase()
+                    : "";
 
-                const searchValue =
-                    searchInput
-                        ? searchInput.value
-                            .trim()
-                            .toLowerCase()
-                        : '';
-
-
-                const selectedStatus =
-                    statusInput
-                        ? statusInput.value
-                        : 'all';
-
+                const selectedStatus = statusInput
+                    ? statusInput.value
+                    : "all";
 
                 let visibleOrders = 0;
 
-
                 orderCards.forEach(function (orderCard) {
+                    const orderNumber = (
+                        orderCard.dataset.order || ""
+                    ).toLowerCase();
 
-                    const orderNumber =
-                        (
-                            orderCard.dataset.order || ''
-                        ).toLowerCase();
+                    const orderText = orderCard.textContent.toLowerCase();
 
-
-                    const orderText =
-                        orderCard.textContent
-                            .toLowerCase();
-
-
-                    const orderStatus =
-                        (
-                            orderCard.dataset.status || ''
-                        ).toLowerCase();
-
+                    const orderStatus = (
+                        orderCard.dataset.status || ""
+                    ).toLowerCase();
 
                     const matchesSearch =
-                        !searchValue ||
+                        searchValue === "" ||
                         orderNumber.includes(searchValue) ||
                         orderText.includes(searchValue);
 
-
                     const matchesStatus =
-                        selectedStatus === 'all' ||
+                        selectedStatus === "all" ||
                         orderStatus === selectedStatus;
 
-
                     const shouldShow =
-                        matchesSearch &&
-                        matchesStatus;
+                        matchesSearch && matchesStatus;
 
-
-                    orderCard.hidden =
-                        !shouldShow;
-
+                    orderCard.hidden = !shouldShow;
 
                     if (shouldShow) {
                         visibleOrders++;
                     }
-
                 });
 
-
-                /*
-                =====================================
-                    Empty State
-                =====================================
-                */
-
-                if (emptyState) {
-
-                    emptyState.hidden =
-                        visibleOrders !== 0;
-
+                if (filterEmpty) {
+                    filterEmpty.hidden = visibleOrders !== 0;
                 }
-
             };
 
+            const closeStatusDropdown = function () {
+                if (!statusSelect) {
+                    return;
+                }
 
-            /*
-            =====================================
-                Search
-            =====================================
-            */
+                statusSelect.classList.remove("is-open");
+
+                if (statusTrigger) {
+                    statusTrigger.setAttribute(
+                        "aria-expanded",
+                        "false",
+                    );
+                }
+            };
+
+            const resetFilters = function () {
+                if (searchInput) {
+                    searchInput.value = "";
+                }
+
+                if (statusInput) {
+                    statusInput.value = "all";
+                }
+
+                if (statusValue) {
+                    statusValue.textContent = "All Orders";
+                }
+
+                statusOptions.forEach(function (option) {
+                    const isSelected =
+                        option.dataset.value === "all";
+
+                    option.classList.toggle(
+                        "is-selected",
+                        isSelected,
+                    );
+
+                    option.setAttribute(
+                        "aria-selected",
+                        isSelected ? "true" : "false",
+                    );
+                });
+
+                closeStatusDropdown();
+
+                filterOrders();
+            };
 
             if (searchInput) {
-
                 searchInput.addEventListener(
-                    'input',
-                    filterOrders
+                    "input",
+                    filterOrders,
                 );
-
             }
 
-
-            /*
-            =====================================
-                Custom Status Dropdown
-            =====================================
-            */
-
-            if (
-                statusSelect &&
-                statusTrigger
-            ) {
-
-                /*
-                Open / Close
-                */
-
+            if (statusTrigger && statusSelect) {
                 statusTrigger.addEventListener(
-                    'click',
+                    "click",
                     function (event) {
-
                         event.stopPropagation();
-
 
                         const isOpen =
                             statusSelect.classList.contains(
-                                'is-open'
+                                "is-open",
                             );
 
+                        if (isOpen) {
+                            closeStatusDropdown();
 
-                        statusSelect.classList.toggle(
-                            'is-open',
-                            !isOpen
-                        );
+                            return;
+                        }
 
+                        statusSelect.classList.add("is-open");
 
                         statusTrigger.setAttribute(
-                            'aria-expanded',
-                            !isOpen
-                                ? 'true'
-                                : 'false'
+                            "aria-expanded",
+                            "true",
                         );
-
-                    }
+                    },
                 );
-
-
-                /*
-                Select Status
-                */
-
-                statusOptions.forEach(
-                    function (option) {
-
-                        option.addEventListener(
-                            'click',
-                            function (event) {
-
-                                event.stopPropagation();
-
-
-                                const value =
-                                    option.dataset.value || 'all';
-
-
-                                const text =
-                                    option.textContent.trim();
-
-
-                                /*
-                                Update visible value
-                                */
-
-                                if (statusValue) {
-
-                                    statusValue.textContent =
-                                        text;
-
-                                }
-
-
-                                /*
-                                Update hidden input
-                                */
-
-                                if (statusInput) {
-
-                                    statusInput.value =
-                                        value;
-
-                                }
-
-
-                                /*
-                                Update selected state
-                                */
-
-                                statusOptions.forEach(
-                                    function (item) {
-
-                                        item.classList.remove(
-                                            'is-selected'
-                                        );
-
-                                    }
-                                );
-
-
-                                option.classList.add(
-                                    'is-selected'
-                                );
-
-
-                                /*
-                                Close dropdown
-                                */
-
-                                statusSelect.classList.remove(
-                                    'is-open'
-                                );
-
-
-                                statusTrigger.setAttribute(
-                                    'aria-expanded',
-                                    'false'
-                                );
-
-
-                                /*
-                                Filter orders
-                                */
-
-                                filterOrders();
-
-                            }
-                        );
-
-                    }
-                );
-
             }
 
+            statusOptions.forEach(function (option) {
+                option.addEventListener(
+                    "click",
+                    function (event) {
+                        event.stopPropagation();
 
-            /*
-            =====================================
-                Close Dropdown Outside
-            =====================================
-            */
+                        const value =
+                            option.dataset.value || "all";
 
-            document.addEventListener(
-                'click',
-                function (event) {
-
-                    if (
-                        statusSelect &&
-                        !statusSelect.contains(
-                            event.target
-                        )
-                    ) {
-
-                        statusSelect.classList.remove(
-                            'is-open'
-                        );
-
-
-                        if (statusTrigger) {
-
-                            statusTrigger.setAttribute(
-                                'aria-expanded',
-                                'false'
-                            );
-
-                        }
-
-                    }
-
-                }
-            );
-
-
-            /*
-            =====================================
-                Reset Filters
-            =====================================
-            */
-
-            if (resetButton) {
-
-                resetButton.addEventListener(
-                    'click',
-                    function () {
-
-                        /*
-                        Reset Search
-                        */
-
-                        if (searchInput) {
-
-                            searchInput.value = '';
-
-                        }
-
-
-                        /*
-                        Reset Status
-                        */
+                        const text =
+                            option.textContent.trim();
 
                         if (statusInput) {
-
-                            statusInput.value = 'all';
-
+                            statusInput.value = value;
                         }
-
-
-                        /*
-                        Reset visible status text
-                        */
 
                         if (statusValue) {
-
-                            statusValue.textContent =
-                                'All Orders';
-
+                            statusValue.textContent = text;
                         }
-
-
-                        /*
-                        Reset selected option
-                        */
 
                         statusOptions.forEach(
-                            function (option) {
+                            function (item) {
+                                const isSelected =
+                                    item === option;
 
-                                option.classList.remove(
-                                    'is-selected'
+                                item.classList.toggle(
+                                    "is-selected",
+                                    isSelected,
                                 );
 
-                            }
+                                item.setAttribute(
+                                    "aria-selected",
+                                    isSelected
+                                        ? "true"
+                                        : "false",
+                                );
+                            },
                         );
 
-
-                        const allOrdersOption =
-                            statusSelect
-                                ? statusSelect.querySelector(
-                                    '.status-option[data-value="all"]'
-                                )
-                                : null;
-
-
-                        if (allOrdersOption) {
-
-                            allOrdersOption.classList.add(
-                                'is-selected'
-                            );
-
-                        }
-
-
-                        /*
-                        Close dropdown
-                        */
-
-                        if (statusSelect) {
-
-                            statusSelect.classList.remove(
-                                'is-open'
-                            );
-
-                        }
-
-
-                        if (statusTrigger) {
-
-                            statusTrigger.setAttribute(
-                                'aria-expanded',
-                                'false'
-                            );
-
-                        }
-
-
-                        /*
-                        Apply reset
-                        */
+                        closeStatusDropdown();
 
                         filterOrders();
-
-                    }
+                    },
                 );
+            });
 
+            document.addEventListener(
+                "click",
+                function (event) {
+                    if (
+                        statusSelect &&
+                        !statusSelect.contains(event.target)
+                    ) {
+                        closeStatusDropdown();
+                    }
+                },
+            );
+
+            if (resetButton) {
+                resetButton.addEventListener(
+                    "click",
+                    resetFilters,
+                );
             }
 
-
-            /*
-            =====================================
-                Initial Filter
-            =====================================
-            */
-
             filterOrders();
-
         });
     </script>
 
-@endsection
+@endpush

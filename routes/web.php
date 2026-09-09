@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Backend\AdminOrderController;
 use App\Http\Controllers\Backend\AttributeController;
 use App\Http\Controllers\Backend\BrandController;
 use App\Http\Controllers\Backend\CategoryController;
@@ -25,6 +26,8 @@ use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\CheckoutController;
 use App\Http\Controllers\Frontend\FrontendTrackingController;
 use App\Http\Controllers\Frontend\MarketplaceController;
+use App\Http\Controllers\Frontend\OrderController;
+use App\Http\Controllers\StripeWebhookController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -94,6 +97,17 @@ Route::delete(
     [CartController::class, 'removeCoupon']
 )->name('cart.coupon.remove');
 
+/*
+|--------------------------------------------------------------------------
+| Stripe Webhook
+|--------------------------------------------------------------------------
+*/
+
+Route::post(
+    '/stripe/webhook',
+    [StripeWebhookController::class, 'handle'],
+)->name('stripe.webhook');
+
 
 Route::middleware('auth')->group(function () {
     Route::view(
@@ -101,21 +115,42 @@ Route::middleware('auth')->group(function () {
         'frontend.pages.shop.my-account',
     )->name('my-account');
 
-    Route::view(
+    Route::get(
         '/my-orders',
-        'frontend.pages.shop.my-orders',
+        [OrderController::class, 'index'],
     )->name('my-orders');
+
+    Route::get(
+        '/my-orders/{order:order_number}',
+        [OrderController::class, 'show'],
+    )->name('my-orders.show');
 
     Route::view(
         '/my-wishlist',
         'frontend.pages.shop.my-wishlist',
     )->name('my-wishlist');
 
-    Route::get('/checkout', [CheckoutController::class, 'index'])
-        ->name('checkout');
+    /*
+    |--------------------------------------------------------------------------
+    | Frontend Checkout
+    |--------------------------------------------------------------------------
+    */
 
-    Route::post('/checkout', [CheckoutController::class, 'store'])
-        ->name('checkout.store');
+    Route::get(
+        '/checkout',
+        [CheckoutController::class, 'index'],
+    )->name('checkout');
+
+    Route::post(
+        '/checkout/payment',
+        [CheckoutController::class, 'payment'],
+    )->name('checkout.payment');
+
+    Route::get(
+        '/checkout/success',
+        [CheckoutController::class, 'success'],
+    )->name('checkout.success');
+
 });
 
 /*
@@ -440,128 +475,6 @@ Route::middleware('auth')
                 )->name('profile.addresses.default');
 
             });
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | ECOMMERCE - CUSTOMER
-        |--------------------------------------------------------------------------
-        */
-
-        Route::view(
-            '/shop',
-            'backend.pages.ecommerce.customer.shop'
-        )
-            ->middleware('permission:view-products')
-            ->name('customer-shop');
-
-
-        Route::get(
-            '/shop/{product}',
-            function ($product) {
-
-                return view(
-                    'backend.pages.ecommerce.customer.product-details',
-                    compact('product')
-                );
-
-            }
-        )
-            ->middleware('permission:view-products')
-            ->name('customer-product-details');
-
-
-        Route::view(
-            '/cart',
-            'backend.pages.ecommerce.customer.cart'
-        )
-            ->middleware('permission:view-cart')
-            ->name('cart');
-
-
-        Route::view(
-            '/checkout',
-            'backend.pages.ecommerce.customer.checkout'
-        )
-            ->middleware('permission:create-order')
-            ->name('checkout');
-
-
-        Route::view(
-            '/checkout/payment',
-            'backend.pages.ecommerce.customer.payment'
-        )
-            ->middleware('permission:view-payments')
-            ->name('ecommerce-payment');
-
-
-        Route::view(
-            '/checkout/payment/success',
-            'backend.pages.ecommerce.customer.payment-success'
-        )
-            ->middleware('permission:view-payments')
-            ->name('ecommerce-payment-success');
-
-
-        Route::view(
-            '/checkout/payment/failed',
-            'backend.pages.ecommerce.customer.payment-failed'
-        )
-            ->middleware('permission:view-payments')
-            ->name('ecommerce-payment-failed');
-
-
-        Route::view(
-            '/orders',
-            'backend.pages.ecommerce.customer.orders'
-        )
-            ->middleware('permission:view-orders')
-            ->name('orders');
-
-
-        Route::get(
-            '/orders/{order}',
-            function ($order) {
-
-                return view(
-                    'backend.pages.ecommerce.customer.order-details',
-                    compact('order')
-                );
-
-            }
-        )
-            ->middleware('permission:view-order-details')
-            ->name('order-details');
-
-
-        Route::get(
-            '/orders/{order}/shipment',
-            function ($order) {
-
-                return view(
-                    'backend.pages.ecommerce.customer.shipment',
-                    compact('order')
-                );
-
-            }
-        )
-            ->middleware('permission:view-ecommerce-shipments')
-            ->name('ecommerce-shipment');
-
-
-        Route::get(
-            '/orders/{order}/tracking',
-            function ($order) {
-
-                return view(
-                    'backend.pages.ecommerce.customer.tracking',
-                    compact('order')
-                );
-
-            }
-        )
-            ->middleware('permission:view-ecommerce-tracking')
-            ->name('ecommerce-tracking');
 
 
         /*
@@ -1135,21 +1048,40 @@ Route::middleware('auth')
                         |--------------------------------------------------------------------------
                         */
 
-                        Route::view(
-                            '/orders',
-                            'backend.pages.ecommerce.admin.orders.index'
-                        )->name('admin-orders');
-
+                        Route::get(
+                            '/admin-orders',
+                            [AdminOrderController::class, 'index'],
+                        )
+                            ->middleware('permission:view-orders')
+                            ->name('admin-orders');
 
                         Route::get(
-                            '/orders/{order}',
-                            function ($order) {
-                                return view(
-                                    'backend.pages.ecommerce.admin.orders.details',
-                                    compact('order')
-                                );
-                            }
-                        )->name('admin-order-details');
+                            '/admin-orders/{order}',
+                            [AdminOrderController::class, 'show'],
+                        )
+                            ->middleware('permission:view-order-details')
+                            ->name('admin-order-details');
+
+                        Route::patch(
+                            '/admin-orders/{order}/status',
+                            [AdminOrderController::class, 'updateStatus'],
+                        )
+                            ->middleware('permission:update-orders')
+                            ->name('admin-order-status');
+
+                        Route::post(
+                            '/admin-orders/{order}/cancel',
+                            [AdminOrderController::class, 'cancel'],
+                        )
+                            ->middleware('permission:cancel-orders')
+                            ->name('admin-order-cancel');
+
+                        Route::post(
+                            '/admin-orders/{order}/refund',
+                            [AdminOrderController::class, 'refund'],
+                        )
+                            ->middleware('permission:refund-orders')
+                            ->name('admin-order-refund');
 
 
                         /*

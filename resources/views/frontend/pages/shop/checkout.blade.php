@@ -146,9 +146,11 @@
                 : $userPhone
         );
 
-        $checkoutCountry = old(
-            'country',
-            $savedCountry
+        $checkoutCountry = strtoupper(
+            trim((string) old(
+                'country',
+                $savedCountry
+            ))
         );
 
         $checkoutAddress = old(
@@ -287,366 +289,446 @@
 
 
             {{-- =====================================================
-                MAIN CHECKOUT LAYOUT
+                CHECKOUT FORM
             ====================================================== --}}
-            <div class="checkout-layout">
+            <form
+                action="{{ route('checkout.payment') }}"
+                method="POST"
+                class="checkout-payment-form"
+                data-checkout-form
+            >
+
+                @csrf
 
                 {{-- =================================================
-                    LEFT COLUMN
+                    MAIN CHECKOUT LAYOUT
                 ================================================== --}}
-                <div class="checkout-main">
-
+                <div class="checkout-layout">
 
                     {{-- =================================================
-                        CONTACT INFORMATION
+                        LEFT COLUMN
                     ================================================== --}}
-                    <section class="checkout-card">
+                    <div class="checkout-main">
 
-                        <div class="checkout-card__header">
 
-                            <span class="checkout-card__eyebrow">
-                                Contact Information
-                            </span>
+                        {{-- =================================================
+                            CONTACT INFORMATION
+                        ================================================== --}}
+                        <section class="checkout-card">
 
-                            <h2>
-                                Your Details
-                            </h2>
-
-                            <p>
-                                These details are taken from your profile.
-                            </p>
-
-                        </div>
-
-                        <div class="checkout-card__body">
-
-                            <div class="checkout-form">
-
-                                {{-- Email --}}
-                                <div class="form-group form-group--full">
-
-                                    <label for="checkout-email">
-
-                                        Email Address
-
-                                        @if($userEmail === '')
-                                            <span class="field-add-label">
-                                                Add in profile
-                                            </span>
-                                        @endif
-
-                                    </label>
-
-                                    <div class="input-with-icon">
-
-                                        <i class="ri-mail-line"></i>
-
-                                        <input
-                                            type="email"
-                                            id="checkout-email"
-                                            name="email"
-                                            placeholder="you@example.com"
-                                            value="{{ $userEmail }}"
-                                            autocomplete="email"
-                                            readonly
-                                        >
-
-                                        @if($userEmail !== '')
-
-                                            <span class="field-locked">
-                                                <i class="ri-lock-line"></i>
-                                            </span>
-
-                                        @else
-
-                                            <a
-                                                href="{{ route('profile') }}"
-                                                class="field-action"
-                                                title="Add email in profile"
-                                            >
-                                                Add
-                                            </a>
-
-                                        @endif
-
-                                    </div>
-
-                                </div>
-
-
-                                {{-- First Name --}}
-                                <div class="form-group">
-
-                                    <label for="checkout-first-name">
-
-                                        First Name
-
-                                        @if($userFirstName === '')
-                                            <span class="field-add-label">
-                                                Add in profile
-                                            </span>
-                                        @endif
-
-                                    </label>
-
-                                    <div class="input-with-icon">
-
-                                        <input
-                                            type="text"
-                                            id="checkout-first-name"
-                                            name="first_name"
-                                            placeholder="John"
-                                            value="{{ $userFirstName }}"
-                                            autocomplete="given-name"
-                                            readonly
-                                        >
-
-                                        @if($userFirstName !== '')
-
-                                            <span class="field-locked">
-                                                <i class="ri-lock-line"></i>
-                                            </span>
-
-                                        @else
-
-                                            <a
-                                                href="{{ route('profile') }}"
-                                                class="field-action"
-                                                title="Add first name in profile"
-                                            >
-                                                Add
-                                            </a>
-
-                                        @endif
-
-                                    </div>
-
-                                </div>
-
-
-                                {{-- Last Name --}}
-                                <div class="form-group">
-
-                                    <label for="checkout-last-name">
-
-                                        Last Name
-
-                                        @if($userLastName === '')
-                                            <span class="field-add-label">
-                                                Add in profile
-                                            </span>
-                                        @endif
-
-                                    </label>
-
-                                    <div class="input-with-icon">
-
-                                        <input
-                                            type="text"
-                                            id="checkout-last-name"
-                                            name="last_name"
-                                            placeholder="Doe"
-                                            value="{{ $userLastName }}"
-                                            autocomplete="family-name"
-                                            readonly
-                                        >
-
-                                        @if($userLastName !== '')
-
-                                            <span class="field-locked">
-                                                <i class="ri-lock-line"></i>
-                                            </span>
-
-                                        @else
-
-                                            <a
-                                                href="{{ route('profile') }}"
-                                                class="field-action"
-                                                title="Add last name in profile"
-                                            >
-                                                Add
-                                            </a>
-
-                                        @endif
-
-                                    </div>
-
-                                </div>
-
-
-                                {{-- Phone --}}
-                                <div class="form-group form-group--full">
-
-                                    <label for="checkout-phone">
-
-                                        Phone Number
-
-                                        @if($userPhone === '')
-                                            <span class="field-add-label">
-                                                Add in profile
-                                            </span>
-                                        @endif
-
-                                    </label>
-
-                                    <div class="input-with-icon">
-
-                                        <i class="ri-phone-line"></i>
-
-                                        <input
-                                            type="tel"
-                                            id="checkout-phone"
-                                            name="phone"
-                                            placeholder="+1 555 123 4567"
-                                            value="{{ $userPhone }}"
-                                            autocomplete="tel"
-                                            readonly
-                                        >
-
-                                        @if($userPhone !== '')
-
-                                            <span class="field-locked">
-                                                <i class="ri-lock-line"></i>
-                                            </span>
-
-                                        @else
-
-                                            <a
-                                                href="{{ route('profile') }}"
-                                                class="field-action"
-                                                title="Add phone number in profile"
-                                            >
-                                                Add
-                                            </a>
-
-                                        @endif
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </section>
-
-
-                    {{-- =================================================
-                        SHIPPING ADDRESS
-                    ================================================== --}}
-                    <section class="checkout-card">
-
-                        <div class="checkout-card__header">
-
-                            <div class="checkout-card__header-main">
+                            <div class="checkout-card__header">
 
                                 <span class="checkout-card__eyebrow">
-                                    Delivery Information
+                                    Contact Information
                                 </span>
 
                                 <h2>
-                                    Shipping Address
+                                    Your Details
                                 </h2>
 
                                 <p>
-                                    Choose a saved address or add a new delivery address.
+                                    These details are taken from your profile.
                                 </p>
 
                             </div>
 
-                        </div>
+                            <div class="checkout-card__body">
 
+                                <div class="checkout-form">
 
-                        <div class="checkout-card__body">
+                                    {{-- Email --}}
+                                    <div class="form-group form-group--full">
 
-                            {{-- =========================================
-                                SAVED ADDRESS OPTIONS
-                            ========================================== --}}
-                            @if($addresses->isNotEmpty())
+                                        <label for="checkout-email">
 
-                                <div class="checkout-address-options">
+                                            Email Address
 
-                                    <div class="checkout-address-options__header">
+                                            @if($userEmail === '')
+                                                <span class="field-add-label">
+                                                    Add in profile
+                                                </span>
+                                            @endif
 
-                                        <strong>
-                                            Saved Addresses
-                                        </strong>
+                                        </label>
 
-                                        <span>
-                                            {{ $addresses->count() }}
-                                            {{ $addresses->count() === 1 ? 'address' : 'addresses' }}
-                                        </span>
+                                        <div class="input-with-icon">
+
+                                            <i class="ri-mail-line"></i>
+
+                                            <input
+                                                type="email"
+                                                id="checkout-email"
+                                                name="email"
+                                                placeholder="you@example.com"
+                                                value="{{ $userEmail }}"
+                                                autocomplete="email"
+                                                readonly
+                                            >
+
+                                            @if($userEmail !== '')
+
+                                                <span class="field-locked">
+                                                    <i class="ri-lock-line"></i>
+                                                </span>
+
+                                            @else
+
+                                                <a
+                                                    href="{{ route('profile') }}"
+                                                    class="field-action"
+                                                    title="Add email in profile"
+                                                >
+                                                    Add
+                                                </a>
+
+                                            @endif
+
+                                        </div>
 
                                     </div>
 
 
-                                    <div class="checkout-address-list">
+                                    {{-- First Name --}}
+                                    <div class="form-group">
 
-                                        @foreach($addresses as $address)
+                                        <label for="checkout-first-name">
 
-                                            @php
-                                                $addressCountry = strtoupper(
-                                                    trim((string) $address->country)
-                                                );
+                                            First Name
 
-                                                $addressCountryName = config(
-                                                    'countries.' . $addressCountry,
-                                                    $addressCountry
-                                                );
+                                            @if($userFirstName === '')
+                                                <span class="field-add-label">
+                                                    Add in profile
+                                                </span>
+                                            @endif
 
-                                                $addressFullName = trim(
-                                                    $address->first_name . ' ' . $address->last_name
-                                                );
+                                        </label>
 
-                                                $addressLine = trim(
-                                                    $address->address .
-                                                    (
-                                                        $address->apartment
-                                                            ? ', ' . $address->apartment
-                                                            : ''
-                                                    )
-                                                );
+                                        <div class="input-with-icon">
 
-                                                $addressLocation = trim(
-                                                    $address->city .
-                                                    (
-                                                        $address->state
-                                                            ? ', ' . $address->state
-                                                            : ''
-                                                    ) .
-                                                    (
-                                                        $address->postal_code
-                                                            ? ' ' . $address->postal_code
-                                                            : ''
-                                                    )
-                                                );
-                                            @endphp
+                                            <input
+                                                type="text"
+                                                id="checkout-first-name"
+                                                name="first_name"
+                                                placeholder="John"
+                                                value="{{ $userFirstName }}"
+                                                autocomplete="given-name"
+                                                readonly
+                                            >
 
+                                            @if($userFirstName !== '')
+
+                                                <span class="field-locked">
+                                                    <i class="ri-lock-line"></i>
+                                                </span>
+
+                                            @else
+
+                                                <a
+                                                    href="{{ route('profile') }}"
+                                                    class="field-action"
+                                                    title="Add first name in profile"
+                                                >
+                                                    Add
+                                                </a>
+
+                                            @endif
+
+                                        </div>
+
+                                    </div>
+
+
+                                    {{-- Last Name --}}
+                                    <div class="form-group">
+
+                                        <label for="checkout-last-name">
+
+                                            Last Name
+
+                                            @if($userLastName === '')
+                                                <span class="field-add-label">
+                                                    Add in profile
+                                                </span>
+                                            @endif
+
+                                        </label>
+
+                                        <div class="input-with-icon">
+
+                                            <input
+                                                type="text"
+                                                id="checkout-last-name"
+                                                name="last_name"
+                                                placeholder="Doe"
+                                                value="{{ $userLastName }}"
+                                                autocomplete="family-name"
+                                                readonly
+                                            >
+
+                                            @if($userLastName !== '')
+
+                                                <span class="field-locked">
+                                                    <i class="ri-lock-line"></i>
+                                                </span>
+
+                                            @else
+
+                                                <a
+                                                    href="{{ route('profile') }}"
+                                                    class="field-action"
+                                                    title="Add last name in profile"
+                                                >
+                                                    Add
+                                                </a>
+
+                                            @endif
+
+                                        </div>
+
+                                    </div>
+
+
+                                    {{-- Phone --}}
+                                    <div class="form-group form-group--full">
+
+                                        <label for="checkout-phone">
+
+                                            Phone Number
+
+                                            @if($userPhone === '')
+                                                <span class="field-add-label">
+                                                    Add in profile
+                                                </span>
+                                            @endif
+
+                                        </label>
+
+                                        <div class="input-with-icon">
+
+                                            <i class="ri-phone-line"></i>
+
+                                            <input
+                                                type="tel"
+                                                id="checkout-phone"
+                                                name="phone"
+                                                placeholder="+1 555 123 4567"
+                                                value="{{ $userPhone }}"
+                                                autocomplete="tel"
+                                                readonly
+                                            >
+
+                                            @if($userPhone !== '')
+
+                                                <span class="field-locked">
+                                                    <i class="ri-lock-line"></i>
+                                                </span>
+
+                                            @else
+
+                                                <a
+                                                    href="{{ route('profile') }}"
+                                                    class="field-action"
+                                                    title="Add phone number in profile"
+                                                >
+                                                    Add
+                                                </a>
+
+                                            @endif
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+
+                        {{-- =================================================
+                            SHIPPING ADDRESS
+                        ================================================== --}}
+                        <section class="checkout-card">
+
+                            <div class="checkout-card__header">
+
+                                <div class="checkout-card__header-main">
+
+                                    <span class="checkout-card__eyebrow">
+                                        Delivery Information
+                                    </span>
+
+                                    <h2>
+                                        Shipping Address
+                                    </h2>
+
+                                    <p>
+                                        Choose a saved address or add a new delivery address.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="checkout-card__body">
+
+                                {{-- =========================================
+                                    SAVED ADDRESS OPTIONS
+                                ========================================== --}}
+                                @if($addresses->isNotEmpty())
+
+                                    <div class="checkout-address-options">
+
+                                        <div class="checkout-address-options__header">
+
+                                            <strong>
+                                                Saved Addresses
+                                            </strong>
+
+                                            <span>
+                                                {{ $addresses->count() }}
+                                                {{ $addresses->count() === 1 ? 'address' : 'addresses' }}
+                                            </span>
+
+                                        </div>
+
+
+                                        <div class="checkout-address-list">
+
+                                            @foreach($addresses as $address)
+
+                                                @php
+                                                    $addressCountry = strtoupper(
+                                                        trim((string) $address->country)
+                                                    );
+
+                                                    $addressCountryName = config(
+                                                        'countries.' . $addressCountry,
+                                                        $addressCountry
+                                                    );
+
+                                                    $addressFullName = trim(
+                                                        $address->first_name . ' ' . $address->last_name
+                                                    );
+
+                                                    $addressLine = trim(
+                                                        $address->address .
+                                                        (
+                                                            $address->apartment
+                                                                ? ', ' . $address->apartment
+                                                                : ''
+                                                        )
+                                                    );
+
+                                                    $addressLocation = trim(
+                                                        $address->city .
+                                                        (
+                                                            $address->state
+                                                                ? ', ' . $address->state
+                                                                : ''
+                                                        ) .
+                                                        (
+                                                            $address->postal_code
+                                                                ? ' ' . $address->postal_code
+                                                                : ''
+                                                        )
+                                                    );
+                                                @endphp
+
+                                                <label
+                                                    class="checkout-address-option {{ (int) $selectedAddressId === (int) $address->id ? 'is-selected' : '' }}"
+                                                    data-address-option
+                                                    data-address-id="{{ $address->id }}"
+                                                    data-first-name="{{ $address->first_name }}"
+                                                    data-last-name="{{ $address->last_name }}"
+                                                    data-phone="{{ $address->phone }}"
+                                                    data-country="{{ $addressCountry }}"
+                                                    data-address="{{ $address->address }}"
+                                                    data-apartment="{{ $address->apartment }}"
+                                                    data-city="{{ $address->city }}"
+                                                    data-state="{{ $address->state }}"
+                                                    data-postal-code="{{ $address->postal_code }}"
+                                                    data-label="{{ $address->label }}"
+                                                >
+
+                                                    <input
+                                                        type="radio"
+                                                        name="address_id"
+                                                        value="{{ $address->id }}"
+                                                        @checked(
+                                                            (int) $selectedAddressId ===
+                                                            (int) $address->id
+                                                        )
+                                                    >
+
+                                                    <span class="checkout-address-option__radio">
+                                                        <span></span>
+                                                    </span>
+
+                                                    <span class="checkout-address-option__icon">
+                                                        <i class="ri-map-pin-2-line"></i>
+                                                    </span>
+
+                                                    <span class="checkout-address-option__content">
+
+                                                        <span class="checkout-address-option__top">
+
+                                                            <strong>
+                                                                {{ $address->label ?: 'Saved Address' }}
+                                                            </strong>
+
+                                                            @if($address->is_default)
+
+                                                                <small>
+                                                                    Default
+                                                                </small>
+
+                                                            @endif
+
+                                                        </span>
+
+                                                        <span>
+                                                            {{ $addressFullName }}
+                                                        </span>
+
+                                                        <span>
+                                                            {{ $addressLine }}
+                                                        </span>
+
+                                                        <span>
+                                                            {{ $addressLocation }}
+                                                        </span>
+
+                                                        <span>
+                                                            {{ $addressCountryName }}
+                                                        </span>
+
+                                                    </span>
+
+                                                    <span class="checkout-address-option__check">
+                                                        <i class="ri-check-line"></i>
+                                                    </span>
+
+                                                </label>
+
+                                            @endforeach
+
+
+                                            {{-- =================================
+                                                ADD NEW ADDRESS
+                                            ================================== --}}
                                             <label
-                                                class="checkout-address-option {{ (int) $selectedAddressId === (int) $address->id ? 'is-selected' : '' }}"
-                                                data-address-option
-                                                data-address-id="{{ $address->id }}"
-                                                data-first-name="{{ $address->first_name }}"
-                                                data-last-name="{{ $address->last_name }}"
-                                                data-phone="{{ $address->phone }}"
-                                                data-country="{{ $addressCountry }}"
-                                                data-address="{{ $address->address }}"
-                                                data-apartment="{{ $address->apartment }}"
-                                                data-city="{{ $address->city }}"
-                                                data-state="{{ $address->state }}"
-                                                data-postal-code="{{ $address->postal_code }}"
-                                                data-label="{{ $address->label }}"
+                                                class="checkout-address-option checkout-address-option--new {{ $selectedAddressId === null ? 'is-selected' : '' }}"
+                                                data-new-address-option
                                             >
 
                                                 <input
                                                     type="radio"
                                                     name="address_id"
-                                                    value="{{ $address->id }}"
-                                                    @checked(
-                                                        (int) $selectedAddressId ===
-                                                        (int) $address->id
-                                                    )
+                                                    value=""
+                                                    @checked($selectedAddressId === null)
                                                 >
 
                                                 <span class="checkout-address-option__radio">
@@ -654,7 +736,7 @@
                                                 </span>
 
                                                 <span class="checkout-address-option__icon">
-                                                    <i class="ri-map-pin-2-line"></i>
+                                                    <i class="ri-add-line"></i>
                                                 </span>
 
                                                 <span class="checkout-address-option__content">
@@ -662,33 +744,13 @@
                                                     <span class="checkout-address-option__top">
 
                                                         <strong>
-                                                            {{ $address->label ?: 'Saved Address' }}
+                                                            Add New Address
                                                         </strong>
 
-                                                        @if($address->is_default)
-
-                                                            <small>
-                                                                Default
-                                                            </small>
-
-                                                        @endif
-
                                                     </span>
 
                                                     <span>
-                                                        {{ $addressFullName }}
-                                                    </span>
-
-                                                    <span>
-                                                        {{ $addressLine }}
-                                                    </span>
-
-                                                    <span>
-                                                        {{ $addressLocation }}
-                                                    </span>
-
-                                                    <span>
-                                                        {{ $addressCountryName }}
+                                                        Use a different shipping address for this order.
                                                     </span>
 
                                                 </span>
@@ -699,916 +761,881 @@
 
                                             </label>
 
-                                        @endforeach
-
-
-                                        {{-- =================================
-                                            ADD NEW ADDRESS
-                                        ================================== --}}
-                                        <label
-                                            class="checkout-address-option checkout-address-option--new {{ $selectedAddressId === null ? 'is-selected' : '' }}"
-                                            data-new-address-option
-                                        >
-
-                                            <input
-                                                type="radio"
-                                                name="address_id"
-                                                value=""
-                                                @checked($selectedAddressId === null)
-                                            >
-
-                                            <span class="checkout-address-option__radio">
-                                                <span></span>
-                                            </span>
-
-                                            <span class="checkout-address-option__icon">
-                                                <i class="ri-add-line"></i>
-                                            </span>
-
-                                            <span class="checkout-address-option__content">
-
-                                                <span class="checkout-address-option__top">
-
-                                                    <strong>
-                                                        Add New Address
-                                                    </strong>
-
-                                                </span>
-
-                                                <span>
-                                                    Use a different shipping address for this order.
-                                                </span>
-
-                                            </span>
-
-                                            <span class="checkout-address-option__check">
-                                                <i class="ri-check-line"></i>
-                                            </span>
-
-                                        </label>
+                                        </div>
 
                                     </div>
 
-                                </div>
+                                @else
 
-                            @else
+                                    {{-- No Saved Address --}}
+                                    <div class="checkout-no-address">
 
-                                {{-- No Saved Address --}}
-                                <div class="checkout-no-address">
+                                        <div class="checkout-no-address__icon">
+                                            <i class="ri-map-pin-add-line"></i>
+                                        </div>
 
-                                    <div class="checkout-no-address__icon">
-                                        <i class="ri-map-pin-add-line"></i>
-                                    </div>
+                                        <div class="checkout-no-address__content">
 
-                                    <div class="checkout-no-address__content">
-
-                                        <strong>
-                                            No saved address
-                                        </strong>
-
-                                        <span>
-                                            Add your shipping address below to continue.
-                                        </span>
-
-                                    </div>
-
-                                </div>
-
-                            @endif
-
-
-                            {{-- =========================================
-                                SELECTED ADDRESS PREVIEW
-                            ========================================== --}}
-                            @if($defaultAddress !== null)
-
-                                <div
-                                    class="checkout-saved-address {{ $selectedAddressId === null ? 'is-hidden' : '' }}"
-                                    data-saved-address
-                                >
-
-                                    <div class="checkout-saved-address__icon">
-
-                                        <i class="ri-map-pin-2-line"></i>
-
-                                    </div>
-
-                                    <div class="checkout-saved-address__content">
-
-                                        <div class="checkout-saved-address__top">
-
-                                            <strong data-selected-address-label>
-                                                {{ $savedAddressLabel !== ''
-                                                    ? $savedAddressLabel
-                                                    : 'Saved Address' }}
+                                            <strong>
+                                                No saved address
                                             </strong>
 
-                                            <span
-                                                class="checkout-saved-address__default"
-                                                data-selected-address-default
-                                            >
-                                                Default
+                                            <span>
+                                                Add your shipping address below to continue.
                                             </span>
 
                                         </div>
 
-                                        <span data-selected-address-name>
-                                            {{ trim($checkoutFirstName . ' ' . $checkoutLastName) }}
-                                        </span>
-
-                                        <span data-selected-address-line>
-                                            {{ $checkoutAddress }}
-
-                                            @if($checkoutApartment !== '')
-                                                , {{ $checkoutApartment }}
-                                            @endif
-                                        </span>
-
-                                        <span data-selected-address-location>
-                                            {{ $checkoutCity }}
-
-                                            @if($checkoutState !== '')
-                                                , {{ $checkoutState }}
-                                            @endif
-
-                                            {{ $checkoutPostalCode }}
-                                        </span>
-
-                                        <span data-selected-address-country>
-                                            {{ $savedCountryName }}
-                                        </span>
-
                                     </div>
 
-                                </div>
+                                    {{-- Hidden address id for new address mode --}}
+                                    <input
+                                        type="hidden"
+                                        name="address_id"
+                                        value=""
+                                    >
 
-                            @endif
-
-
-                            {{-- =========================================
-                                NEW ADDRESS FORM
-                            ========================================== --}}
-                            <div
-                                class="checkout-address-form {{ $selectedAddressId !== null && $addresses->isNotEmpty() ? 'is-hidden' : '' }}"
-                                data-address-form
-                            >
-
-                                <div class="checkout-address-form__header">
-
-                                    <div>
-
-                                        <strong>
-                                            New Shipping Address
-                                        </strong>
-
-                                        <span>
-                                            Enter the delivery address for this order.
-                                        </span>
-
-                                    </div>
-
-                                </div>
+                                @endif
 
 
-                                <div class="checkout-form">
+                                {{-- =========================================
+                                    SELECTED ADDRESS PREVIEW
+                                ========================================== --}}
+                                @if($defaultAddress !== null)
 
-                                    {{-- Address Label --}}
-                                    <div class="form-group form-group--full">
+                                    <div
+                                        class="checkout-saved-address {{ $selectedAddressId === null ? 'is-hidden' : '' }}"
+                                        data-saved-address
+                                    >
 
-                                        <label for="checkout-address-label">
+                                        <div class="checkout-saved-address__icon">
 
-                                            Address Label
+                                            <i class="ri-map-pin-2-line"></i>
 
-                                            <span>
-                                                Optional
+                                        </div>
+
+                                        <div class="checkout-saved-address__content">
+
+                                            <div class="checkout-saved-address__top">
+
+                                                <strong data-selected-address-label>
+                                                    {{ $savedAddressLabel !== ''
+                                                        ? $savedAddressLabel
+                                                        : 'Saved Address' }}
+                                                </strong>
+
+                                                <span
+                                                    class="checkout-saved-address__default"
+                                                    data-selected-address-default
+                                                >
+                                                    Default
+                                                </span>
+
+                                            </div>
+
+                                            <span data-selected-address-name>
+                                                {{ trim($checkoutFirstName . ' ' . $checkoutLastName) }}
                                             </span>
 
-                                        </label>
+                                            <span data-selected-address-line>
+                                                {{ $checkoutAddress }}
 
-                                        <div class="input-with-icon">
+                                                @if($checkoutApartment !== '')
+                                                    , {{ $checkoutApartment }}
+                                                @endif
+                                            </span>
 
-                                            <i class="ri-bookmark-line"></i>
+                                            <span data-selected-address-location>
+                                                {{ $checkoutCity }}
+
+                                                @if($checkoutState !== '')
+                                                    , {{ $checkoutState }}
+                                                @endif
+
+                                                {{ $checkoutPostalCode }}
+                                            </span>
+
+                                            <span data-selected-address-country>
+                                                {{ $savedCountryName }}
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                @endif
+
+
+                                {{-- =========================================
+                                    NEW ADDRESS FORM
+                                ========================================== --}}
+                                <div
+                                    class="checkout-address-form {{ $selectedAddressId !== null && $addresses->isNotEmpty() ? 'is-hidden' : '' }}"
+                                    data-address-form
+                                >
+
+                                    <div class="checkout-address-form__header">
+
+                                        <div>
+
+                                            <strong>
+                                                New Shipping Address
+                                            </strong>
+
+                                            <span>
+                                                Enter the delivery address for this order.
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="checkout-form">
+
+                                        {{-- Address Label --}}
+                                        <div class="form-group form-group--full">
+
+                                            <label for="checkout-address-label">
+
+                                                Address Label
+
+                                                <span>
+                                                    Optional
+                                                </span>
+
+                                            </label>
+
+                                            <div class="input-with-icon">
+
+                                                <i class="ri-bookmark-line"></i>
+
+                                                <input
+                                                    type="text"
+                                                    id="checkout-address-label"
+                                                    name="address_label"
+                                                    placeholder="Home, Office..."
+                                                    value="{{ $checkoutAddressLabel }}"
+                                                    maxlength="50"
+                                                >
+
+                                            </div>
+
+                                        </div>
+
+
+                                        {{-- First Name --}}
+                                        <div class="form-group">
+
+                                            <label for="checkout-address-first-name">
+                                                First Name
+                                            </label>
 
                                             <input
                                                 type="text"
-                                                id="checkout-address-label"
-                                                name="address_label"
-                                                placeholder="Home, Office..."
-                                                value="{{ $checkoutAddressLabel }}"
-                                                maxlength="50"
+                                                id="checkout-address-first-name"
+                                                name="shipping_first_name"
+                                                placeholder="John"
+                                                value="{{ $checkoutFirstName }}"
+                                                autocomplete="given-name"
+                                                data-shipping-first-name
                                             >
 
                                         </div>
 
-                                    </div>
 
+                                        {{-- Last Name --}}
+                                        <div class="form-group">
 
-                                    {{-- First Name --}}
-                                    <div class="form-group">
-
-                                        <label for="checkout-address-first-name">
-                                            First Name
-                                        </label>
-
-                                        <input
-                                            type="text"
-                                            id="checkout-address-first-name"
-                                            name="shipping_first_name"
-                                            placeholder="John"
-                                            value="{{ $checkoutFirstName }}"
-                                            autocomplete="given-name"
-                                        >
-
-                                    </div>
-
-
-                                    {{-- Last Name --}}
-                                    <div class="form-group">
-
-                                        <label for="checkout-address-last-name">
-                                            Last Name
-                                        </label>
-
-                                        <input
-                                            type="text"
-                                            id="checkout-address-last-name"
-                                            name="shipping_last_name"
-                                            placeholder="Doe"
-                                            value="{{ $checkoutLastName }}"
-                                            autocomplete="family-name"
-                                        >
-
-                                    </div>
-
-
-                                    {{-- Phone --}}
-                                    <div class="form-group form-group--full">
-
-                                        <label for="checkout-address-phone">
-                                            Phone Number
-                                        </label>
-
-                                        <div class="input-with-icon">
-
-                                            <i class="ri-phone-line"></i>
+                                            <label for="checkout-address-last-name">
+                                                Last Name
+                                            </label>
 
                                             <input
-                                                type="tel"
-                                                id="checkout-address-phone"
-                                                name="shipping_phone"
-                                                placeholder="+1 555 123 4567"
-                                                value="{{ $checkoutPhone }}"
-                                                autocomplete="tel"
+                                                type="text"
+                                                id="checkout-address-last-name"
+                                                name="shipping_last_name"
+                                                placeholder="Doe"
+                                                value="{{ $checkoutLastName }}"
+                                                autocomplete="family-name"
+                                                data-shipping-last-name
                                             >
 
                                         </div>
 
-                                    </div>
+
+                                        {{-- Phone --}}
+                                        <div class="form-group form-group--full">
+
+                                            <label for="checkout-address-phone">
+                                                Phone Number
+                                            </label>
+
+                                            <div class="input-with-icon">
+
+                                                <i class="ri-phone-line"></i>
+
+                                                <input
+                                                    type="tel"
+                                                    id="checkout-address-phone"
+                                                    name="shipping_phone"
+                                                    placeholder="+1 555 123 4567"
+                                                    value="{{ $checkoutPhone }}"
+                                                    autocomplete="tel"
+                                                    data-shipping-phone
+                                                >
+
+                                            </div>
+
+                                        </div>
 
 
-                                    {{-- Country --}}
-                                    <div class="form-group form-group--full">
+                                        {{-- Country --}}
+                                        <div class="form-group form-group--full">
 
-                                        <label for="checkout-country">
-                                            Country
-                                        </label>
+                                            <label for="checkout-country">
+                                                Country
+                                            </label>
 
-                                        <div class="select-wrapper">
+                                            <div class="select-wrapper">
 
-                                            <select
-                                                id="checkout-country"
-                                                name="country"
-                                                autocomplete="country"
-                                            >
+                                                <select
+                                                    id="checkout-country"
+                                                    name="country"
+                                                    autocomplete="country"
+                                                >
 
-                                                <option value="">
-                                                    Select Country
-                                                </option>
-
-                                                @foreach(config('countries', []) as $code => $country)
-
-                                                    <option
-                                                        value="{{ $code }}"
-                                                        @selected($checkoutCountry === $code)
-                                                    >
-                                                        {{ $country }}
+                                                    <option value="">
+                                                        Select Country
                                                     </option>
 
-                                                @endforeach
+                                                    @foreach(config('countries', []) as $code => $country)
 
-                                            </select>
+                                                        <option
+                                                            value="{{ $code }}"
+                                                            @selected($checkoutCountry === strtoupper((string) $code))
+                                                        >
+                                                            {{ $country }}
+                                                        </option>
 
-                                            <i class="ri-arrow-down-s-line"></i>
+                                                    @endforeach
+
+                                                </select>
+
+                                                <i class="ri-arrow-down-s-line"></i>
+
+                                            </div>
 
                                         </div>
 
-                                    </div>
+
+                                        {{-- Street Address --}}
+                                        <div class="form-group form-group--full">
+
+                                            <label for="checkout-address">
+                                                Street Address
+                                            </label>
+
+                                            <div class="input-with-icon">
+
+                                                <i class="ri-map-pin-line"></i>
+
+                                                <input
+                                                    type="text"
+                                                    id="checkout-address"
+                                                    name="address"
+                                                    placeholder="123 Main Street"
+                                                    value="{{ $checkoutAddress }}"
+                                                    autocomplete="street-address"
+                                                >
+
+                                            </div>
+
+                                        </div>
 
 
-                                    {{-- Street Address --}}
-                                    <div class="form-group form-group--full">
+                                        {{-- Apartment --}}
+                                        <div class="form-group">
 
-                                        <label for="checkout-address">
-                                            Street Address
-                                        </label>
+                                            <label for="checkout-apartment">
 
-                                        <div class="input-with-icon">
+                                                Apartment / Suite
 
-                                            <i class="ri-map-pin-line"></i>
+                                                <span>
+                                                    Optional
+                                                </span>
+
+                                            </label>
 
                                             <input
                                                 type="text"
-                                                id="checkout-address"
-                                                name="address"
-                                                placeholder="123 Main Street"
-                                                value="{{ $checkoutAddress }}"
-                                                autocomplete="street-address"
+                                                id="checkout-apartment"
+                                                name="apartment"
+                                                placeholder="Apartment 4B"
+                                                value="{{ $checkoutApartment }}"
+                                                autocomplete="address-line2"
                                             >
+
+                                        </div>
+
+
+                                        {{-- City --}}
+                                        <div class="form-group">
+
+                                            <label for="checkout-city">
+                                                City
+                                            </label>
+
+                                            <input
+                                                type="text"
+                                                id="checkout-city"
+                                                name="city"
+                                                placeholder="New York"
+                                                value="{{ $checkoutCity }}"
+                                                autocomplete="address-level2"
+                                            >
+
+                                        </div>
+
+
+                                        {{-- State --}}
+                                        <div class="form-group">
+
+                                            <label for="checkout-state">
+                                                State / Province
+                                            </label>
+
+                                            <input
+                                                type="text"
+                                                id="checkout-state"
+                                                name="state"
+                                                placeholder="New York"
+                                                value="{{ $checkoutState }}"
+                                                autocomplete="address-level1"
+                                            >
+
+                                        </div>
+
+
+                                        {{-- Postal Code --}}
+                                        <div class="form-group">
+
+                                            <label for="checkout-postal-code">
+                                                ZIP / Postal Code
+                                            </label>
+
+                                            <input
+                                                type="text"
+                                                id="checkout-postal-code"
+                                                name="postal_code"
+                                                placeholder="10001"
+                                                value="{{ $checkoutPostalCode }}"
+                                                autocomplete="postal-code"
+                                            >
+
+                                        </div>
+
+
+                                        {{-- Save Address --}}
+                                        <div class="form-group form-group--full">
+
+                                            <label class="checkout-checkbox">
+
+                                                <input
+                                                    type="checkbox"
+                                                    name="save_address"
+                                                    value="1"
+                                                    @checked($saveAddress)
+                                                >
+
+                                                <span class="checkout-checkbox__mark"></span>
+
+                                                <span class="checkout-checkbox__text">
+                                                    Save this address for future orders
+                                                </span>
+
+                                            </label>
 
                                         </div>
 
                                     </div>
 
-
-                                    {{-- Apartment --}}
-                                    <div class="form-group">
-
-                                        <label for="checkout-apartment">
-
-                                            Apartment / Suite
-
-                                            <span>
-                                                Optional
-                                            </span>
-
-                                        </label>
-
-                                        <input
-                                            type="text"
-                                            id="checkout-apartment"
-                                            name="apartment"
-                                            placeholder="Apartment 4B"
-                                            value="{{ $checkoutApartment }}"
-                                            autocomplete="address-line2"
-                                        >
-
-                                    </div>
-
-
-                                    {{-- City --}}
-                                    <div class="form-group">
-
-                                        <label for="checkout-city">
-                                            City
-                                        </label>
-
-                                        <input
-                                            type="text"
-                                            id="checkout-city"
-                                            name="city"
-                                            placeholder="New York"
-                                            value="{{ $checkoutCity }}"
-                                            autocomplete="address-level2"
-                                        >
-
-                                    </div>
-
-
-                                    {{-- State --}}
-                                    <div class="form-group">
-
-                                        <label for="checkout-state">
-                                            State / Province
-                                        </label>
-
-                                        <input
-                                            type="text"
-                                            id="checkout-state"
-                                            name="state"
-                                            placeholder="New York"
-                                            value="{{ $checkoutState }}"
-                                            autocomplete="address-level1"
-                                        >
-
-                                    </div>
-
-
-                                    {{-- Postal Code --}}
-                                    <div class="form-group">
-
-                                        <label for="checkout-postal-code">
-                                            ZIP / Postal Code
-                                        </label>
-
-                                        <input
-                                            type="text"
-                                            id="checkout-postal-code"
-                                            name="postal_code"
-                                            placeholder="10001"
-                                            value="{{ $checkoutPostalCode }}"
-                                            autocomplete="postal-code"
-                                        >
-
-                                    </div>
-
-
-                                    {{-- Save Address --}}
-                                    <div class="form-group form-group--full">
-
-                                        <label class="checkout-checkbox">
-
-                                            <input
-                                                type="checkbox"
-                                                name="save_address"
-                                                value="1"
-                                                @checked($saveAddress)
-                                            >
-
-                                            <span class="checkout-checkbox__mark"></span>
-
-                                            <span class="checkout-checkbox__text">
-                                                Save this address for future orders
-                                            </span>
-
-                                        </label>
-
-                                    </div>
-
                                 </div>
 
                             </div>
 
-                        </div>
+                        </section>
 
-                    </section>
 
+                        {{-- =================================================
+                            SHIPPING METHOD
+                        ================================================== --}}
+                        <section class="checkout-card d-none">
 
-                    {{-- =================================================
-                        SHIPPING METHOD
-                    ================================================== --}}
-                    <section class="checkout-card d-none">
+                            <div class="checkout-card__header">
 
-                        <div class="checkout-card__header">
-
-                            <span class="checkout-card__eyebrow">
-                                Delivery Options
-                            </span>
-
-                            <h2>
-                                Shipping Method
-                            </h2>
-
-                        </div>
-
-                        <div class="checkout-card__body">
-
-                            <div class="shipping-methods">
-
-                                <label class="shipping-method is-selected">
-
-                                    <input
-                                        type="radio"
-                                        name="shipping_method"
-                                        value="standard"
-                                        checked
-                                    >
-
-                                    <span class="shipping-method__radio"></span>
-
-                                    <span class="shipping-method__icon">
-                                        <i class="ri-truck-line"></i>
-                                    </span>
-
-                                    <span class="shipping-method__content">
-
-                                        <strong>
-                                            Standard Shipping
-                                        </strong>
-
-                                        <small>
-                                            Standard delivery
-                                        </small>
-
-                                    </span>
-
-                                    <span class="shipping-method__price">
-                                        Free
-                                    </span>
-
-                                </label>
-
-
-                                <label class="shipping-method">
-
-                                    <input
-                                        type="radio"
-                                        name="shipping_method"
-                                        value="express"
-                                    >
-
-                                    <span class="shipping-method__radio"></span>
-
-                                    <span class="shipping-method__icon">
-                                        <i class="ri-flashlight-line"></i>
-                                    </span>
-
-                                    <span class="shipping-method__content">
-
-                                        <strong>
-                                            Express Shipping
-                                        </strong>
-
-                                        <small>
-                                            Faster delivery
-                                        </small>
-
-                                    </span>
-
-                                    <span class="shipping-method__price">
-                                        $12.99
-                                    </span>
-
-                                </label>
-
-                            </div>
-
-                        </div>
-
-                    </section>
-
-
-                    {{-- =================================================
-                        ORDER NOTES
-                    ================================================== --}}
-                    <section class="checkout-card">
-
-                        <div class="checkout-card__header">
-
-                            <span class="checkout-card__eyebrow">
-                                Additional Information
-                            </span>
-
-                            <h2>
-                                Order Notes
-                            </h2>
-
-                        </div>
-
-                        <div class="checkout-card__body">
-
-                            <div class="checkout-form">
-
-                                <div class="form-group form-group--full">
-
-                                    <label for="checkout-notes">
-
-                                        Special Instructions
-
-                                        <span>
-                                            Optional
-                                        </span>
-
-                                    </label>
-
-                                    <textarea
-                                        id="checkout-notes"
-                                        name="notes"
-                                        placeholder="Add any special instructions for your order..."
-                                    >{{ old('notes') }}</textarea>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </section>
-
-
-                    {{-- =================================================
-                        SECURITY NOTICE
-                    ================================================== --}}
-                    <div class="checkout-security">
-
-                        <div class="checkout-security__icon">
-                            <i class="ri-shield-check-line"></i>
-                        </div>
-
-                        <div class="checkout-security__content">
-
-                            <strong>
-                                Secure Checkout
-                            </strong>
-
-                            <span>
-                                Your personal information is protected and securely transmitted.
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                {{-- =====================================================
-                    RIGHT COLUMN
-                ====================================================== --}}
-                <aside class="checkout-sidebar">
-
-
-                    {{-- =================================================
-                        ORDER SUMMARY
-                    ================================================== --}}
-                    <section class="order-summary">
-
-                        <div class="order-summary__header">
-
-                            <div>
-
-                                <span class="order-summary__eyebrow">
-                                    Your Order
+                                <span class="checkout-card__eyebrow">
+                                    Delivery Options
                                 </span>
 
                                 <h2>
-                                    Order Summary
+                                    Shipping Method
                                 </h2>
 
                             </div>
 
-                            <a href="{{ route('my-cart') }}">
-                                Edit
-                            </a>
+                            <div class="checkout-card__body">
 
-                        </div>
+                                <div class="shipping-methods">
 
+                                    <label class="shipping-method is-selected">
 
-                        {{-- Products --}}
-                        <div class="order-summary__products">
+                                        <input
+                                            type="radio"
+                                            name="shipping_method"
+                                            value="standard"
+                                            checked
+                                        >
 
-                            @foreach($items as $item)
+                                        <span class="shipping-method__radio"></span>
 
-                                @php
-                                    $variant = $item->variant;
-                                    $product = $item->product;
+                                        <span class="shipping-method__icon">
+                                            <i class="ri-truck-line"></i>
+                                        </span>
 
-                                    $image = null;
+                                        <span class="shipping-method__content">
 
-                                    if (
-                                        $variant !== null &&
-                                        $variant->image
-                                    ) {
-                                        $image = $variant->image;
-                                    }
+                                            <strong>
+                                                Standard Shipping
+                                            </strong>
 
-                                    if (
-                                        $image === null &&
-                                        $variant !== null
-                                    ) {
-                                        $variantImage =
-                                            $variant->images->first();
+                                            <small>
+                                                Standard delivery
+                                            </small>
 
-                                        if ($variantImage?->image) {
-                                            $image =
-                                                $variantImage->image;
-                                        }
-                                    }
+                                        </span>
 
-                                    if ($image === null) {
-                                        $productImage =
-                                            $product->images->first();
+                                        <span class="shipping-method__price">
+                                            Free
+                                        </span>
 
-                                        if ($productImage?->image) {
-                                            $image =
-                                                $productImage->image;
-                                        }
-                                    }
-
-                                    $variantLabel = '';
-
-                                    if ($variant !== null) {
-                                        $variantLabel =
-                                            $variant->values
-                                                ->map(
-                                                    function ($value) {
-                                                        return $value
-                                                            ->attributeValue
-                                                            ?->name;
-                                                    }
-                                                )
-                                                ->filter()
-                                                ->implode(' / ');
-                                    }
-
-                                    $checkoutUnitPrice =
-                                        (float)
-                                        $item->checkout_unit_price;
-
-                                    $checkoutTotal =
-                                        (float)
-                                        $item->checkout_total;
-                                @endphp
-
-                                <div
-                                    class="summary-product"
-                                    data-item-id="{{ $item->id }}"
-                                    data-unit-price="{{ $checkoutUnitPrice }}"
-                                >
-
-                                    <div class="summary-product__image">
-
-                                        @if($image)
-
-                                            <img
-                                                src="{{ $image }}"
-                                                alt="{{ $product->name }}"
-                                            >
-
-                                        @else
-
-                                            <span>
-                                                No Image
-                                            </span>
-
-                                        @endif
-
-                                        <b>
-                                            {{ $item->quantity }}
-                                        </b>
-
-                                    </div>
+                                    </label>
 
 
-                                    <div class="summary-product__content">
+                                    <label class="shipping-method">
 
-                                        <strong>
-                                            {{ $product->name }}
-                                        </strong>
+                                        <input
+                                            type="radio"
+                                            name="shipping_method"
+                                            value="express"
+                                        >
 
-                                        @if($variantLabel !== '')
+                                        <span class="shipping-method__radio"></span>
+
+                                        <span class="shipping-method__icon">
+                                            <i class="ri-flashlight-line"></i>
+                                        </span>
+
+                                        <span class="shipping-method__content">
+
+                                            <strong>
+                                                Express Shipping
+                                            </strong>
+
+                                            <small>
+                                                Faster delivery
+                                            </small>
+
+                                        </span>
+
+                                        <span class="shipping-method__price">
+                                            $12.99
+                                        </span>
+
+                                    </label>
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+
+                        {{-- =================================================
+                            ORDER NOTES
+                        ================================================== --}}
+                        <section class="checkout-card">
+
+                            <div class="checkout-card__header">
+
+                                <span class="checkout-card__eyebrow">
+                                    Additional Information
+                                </span>
+
+                                <h2>
+                                    Order Notes
+                                </h2>
+
+                            </div>
+
+                            <div class="checkout-card__body">
+
+                                <div class="checkout-form">
+
+                                    <div class="form-group form-group--full">
+
+                                        <label for="checkout-notes">
+
+                                            Special Instructions
 
                                             <span>
-                                                {{ $variantLabel }}
+                                                Optional
                                             </span>
 
-                                        @endif
+                                        </label>
 
-                                    </div>
-
-
-                                    <div class="summary-product__price">
-
-                                        ${{ number_format($checkoutTotal, 2) }}
+                                        <textarea
+                                            id="checkout-notes"
+                                            name="notes"
+                                            placeholder="Add any special instructions for your order..."
+                                        >{{ old('notes') }}</textarea>
 
                                     </div>
 
                                 </div>
 
-                            @endforeach
-
-                        </div>
-
-
-                        {{-- Totals --}}
-                        <div class="order-summary__totals">
-
-                            <div class="summary-row">
-
-                                <span>
-                                    Subtotal
-                                </span>
-
-                                <strong class="summary-subtotal">
-                                    ${{ number_format($subtotal, 2) }}
-                                </strong>
-
                             </div>
 
+                        </section>
 
-                            <div class="summary-row">
 
-                                <span>
-                                    Shipping
-                                </span>
+                        {{-- =================================================
+                            SECURITY NOTICE
+                        ================================================== --}}
+                        <div class="checkout-security">
 
-                                <strong class="summary-shipping">
-
-                                    @if($shipping > 0)
-                                        ${{ number_format($shipping, 2) }}
-                                    @else
-                                        Free
-                                    @endif
-
-                                </strong>
-
+                            <div class="checkout-security__icon">
+                                <i class="ri-shield-check-line"></i>
                             </div>
 
+                            <div class="checkout-security__content">
 
-                            <div class="summary-row">
-
-                                <span>
-                                    Discount
-                                </span>
-
-                                <strong class="summary-discount-value is-discount">
-                                    -${{ number_format($discount, 2) }}
+                                <strong>
+                                    Secure Checkout
                                 </strong>
 
-                            </div>
-
-
-                            <div class="summary-row">
-
                                 <span>
-                                    Tax
+                                    Your personal information is protected and securely transmitted.
                                 </span>
 
-                                <strong class="summary-tax">
-                                    ${{ number_format($tax, 2) }}
-                                </strong>
-
                             </div>
-
-                        </div>
-
-
-                        {{-- Total --}}
-                        <div class="order-summary__total">
-
-                            <strong>
-                                Total
-                            </strong>
-
-                            <strong class="summary-total">
-                                ${{ number_format($total, 2) }}
-                            </strong>
-
-                        </div>
-
-
-                        {{-- Continue --}}
-                        <button
-                            type="button"
-                            class="checkout-submit"
-                            @disabled(!$profileComplete)
-                        >
-
-                            <span>
-                                Continue to Payment
-                            </span>
-
-                            <i class="ri-arrow-right-line"></i>
-
-                        </button>
-
-
-                        {{-- Terms --}}
-                        <div class="checkout-terms">
-
-                            <p>
-                                By continuing, you agree to our
-
-                                <a href="#">
-                                    Terms &amp; Conditions
-                                </a>
-
-                                and
-
-                                <a href="#">
-                                    Privacy Policy
-                                </a>.
-
-                            </p>
-
-                        </div>
-
-                    </section>
-
-
-                    {{-- Sidebar Security --}}
-                    <div class="checkout-sidebar-security">
-
-                        <div class="checkout-sidebar-security__icon">
-                            <i class="ri-shield-check-line"></i>
-                        </div>
-
-                        <div class="checkout-sidebar-security__content">
-
-                            <strong>
-                                Safe &amp; Secure
-                            </strong>
-
-                            <span>
-                                Your data is encrypted and protected.
-                            </span>
 
                         </div>
 
                     </div>
 
-                </aside>
 
-            </div>
+                    {{-- =====================================================
+                        RIGHT COLUMN
+                    ====================================================== --}}
+                    <aside class="checkout-sidebar">
+
+
+                        {{-- =================================================
+                            ORDER SUMMARY
+                        ================================================== --}}
+                        <section class="order-summary">
+
+                            <div class="order-summary__header">
+
+                                <div>
+
+                                    <span class="order-summary__eyebrow">
+                                        Your Order
+                                    </span>
+
+                                    <h2>
+                                        Order Summary
+                                    </h2>
+
+                                </div>
+
+                                <a href="{{ route('my-cart') }}">
+                                    Edit
+                                </a>
+
+                            </div>
+
+
+                            {{-- Products --}}
+                            <div class="order-summary__products">
+
+                                @foreach($items as $item)
+
+                                    @php
+                                        $variant = $item->variant;
+                                        $product = $item->product;
+
+                                        $image = null;
+
+                                        if (
+                                            $variant !== null &&
+                                            $variant->image
+                                        ) {
+                                            $image = $variant->image;
+                                        }
+
+                                        if (
+                                            $image === null &&
+                                            $variant !== null
+                                        ) {
+                                            $variantImage =
+                                                $variant->images->first();
+
+                                            if ($variantImage?->image) {
+                                                $image =
+                                                    $variantImage->image;
+                                            }
+                                        }
+
+                                        if ($image === null) {
+                                            $productImage =
+                                                $product->images->first();
+
+                                            if ($productImage?->image) {
+                                                $image =
+                                                    $productImage->image;
+                                            }
+                                        }
+
+                                        $variantLabel = '';
+
+                                        if ($variant !== null) {
+                                            $variantLabel =
+                                                $variant->values
+                                                    ->map(
+                                                        function ($value) {
+                                                            return $value
+                                                                ->attributeValue
+                                                                ?->name;
+                                                        }
+                                                    )
+                                                    ->filter()
+                                                    ->implode(' / ');
+                                        }
+
+                                        $checkoutUnitPrice =
+                                            (float)
+                                            $item->checkout_unit_price;
+
+                                        $checkoutTotal =
+                                            (float)
+                                            $item->checkout_total;
+                                    @endphp
+
+                                    <div
+                                        class="summary-product"
+                                        data-item-id="{{ $item->id }}"
+                                        data-unit-price="{{ $checkoutUnitPrice }}"
+                                    >
+
+                                        <div class="summary-product__image">
+
+                                            @if($image)
+
+                                                <img
+                                                    src="{{ $image }}"
+                                                    alt="{{ $product->name }}"
+                                                >
+
+                                            @else
+
+                                                <span>
+                                                    No Image
+                                                </span>
+
+                                            @endif
+
+                                            <b>
+                                                {{ $item->quantity }}
+                                            </b>
+
+                                        </div>
+
+
+                                        <div class="summary-product__content">
+
+                                            <strong>
+                                                {{ $product->name }}
+                                            </strong>
+
+                                            @if($variantLabel !== '')
+
+                                                <span>
+                                                    {{ $variantLabel }}
+                                                </span>
+
+                                            @endif
+
+                                        </div>
+
+
+                                        <div class="summary-product__price">
+
+                                            ${{ number_format($checkoutTotal, 2) }}
+
+                                        </div>
+
+                                    </div>
+
+                                @endforeach
+
+                            </div>
+
+
+                            {{-- Totals --}}
+                            <div class="order-summary__totals">
+
+                                <div class="summary-row">
+
+                                    <span>
+                                        Subtotal
+                                    </span>
+
+                                    <strong class="summary-subtotal">
+                                        ${{ number_format($subtotal, 2) }}
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="summary-row">
+
+                                    <span>
+                                        Shipping
+                                    </span>
+
+                                    <strong class="summary-shipping">
+
+                                        @if($shipping > 0)
+                                            ${{ number_format($shipping, 2) }}
+                                        @else
+                                            Free
+                                        @endif
+
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="summary-row">
+
+                                    <span>
+                                        Discount
+                                    </span>
+
+                                    <strong class="summary-discount-value is-discount">
+                                        -${{ number_format($discount, 2) }}
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="summary-row">
+
+                                    <span>
+                                        Tax
+                                    </span>
+
+                                    <strong class="summary-tax">
+                                        ${{ number_format($tax, 2) }}
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+
+                            {{-- Total --}}
+                            <div class="order-summary__total">
+
+                                <strong>
+                                    Total
+                                </strong>
+
+                                <strong class="summary-total">
+                                    ${{ number_format($total, 2) }}
+                                </strong>
+
+                            </div>
+
+
+                            {{-- Continue --}}
+                            <button
+                                type="submit"
+                                class="checkout-submit"
+                                data-checkout-submit
+                                @disabled(!$profileComplete)
+                            >
+
+                                <span>
+                                    Continue to Payment
+                                </span>
+
+                                <i class="ri-arrow-right-line"></i>
+
+                            </button>
+
+
+                            {{-- Terms --}}
+                            <div class="checkout-terms">
+
+                                <p>
+                                    By continuing, you agree to our
+
+                                    <a href="#">
+                                        Terms &amp; Conditions
+                                    </a>
+
+                                    and
+
+                                    <a href="#">
+                                        Privacy Policy
+                                    </a>.
+
+                                </p>
+
+                            </div>
+
+                        </section>
+
+
+                        {{-- Sidebar Security --}}
+                        <div class="checkout-sidebar-security">
+
+                            <div class="checkout-sidebar-security__icon">
+                                <i class="ri-shield-check-line"></i>
+                            </div>
+
+                            <div class="checkout-sidebar-security__content">
+
+                                <strong>
+                                    Safe &amp; Secure
+                                </strong>
+
+                                <span>
+                                    Your data is encrypted and protected.
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </aside>
+
+                </div>
+
+            </form>
 
         </div>
 
@@ -2552,7 +2579,7 @@
                         */
 
                         const newAddressSelected =
-                            newAddressOption &&
+                            !newAddressOption ||
                             newAddressOption.classList.contains(
                                 'is-selected'
                             );
@@ -2643,6 +2670,79 @@
                         }
 
 
+                        /*
+                        |--------------------------------------------------------------------------
+                        | New Address Contact Validation
+                        |--------------------------------------------------------------------------
+                        */
+
+                        const shippingFirstName =
+                            checkoutPage.querySelector(
+                                '[data-shipping-first-name]'
+                            );
+
+                        const shippingLastName =
+                            checkoutPage.querySelector(
+                                '[data-shipping-last-name]'
+                            );
+
+                        const shippingPhone =
+                            checkoutPage.querySelector(
+                                '[data-shipping-phone]'
+                            );
+
+
+                        if (
+                            shippingFirstName &&
+                            shippingFirstName.value.trim() === ''
+                        ) {
+
+                            shippingFirstName.focus();
+
+                            showMessage(
+                                'Please enter the shipping first name.',
+                                'error'
+                            );
+
+                            return false;
+
+                        }
+
+
+                        if (
+                            shippingLastName &&
+                            shippingLastName.value.trim() === ''
+                        ) {
+
+                            shippingLastName.focus();
+
+                            showMessage(
+                                'Please enter the shipping last name.',
+                                'error'
+                            );
+
+                            return false;
+
+                        }
+
+
+                        if (
+                            shippingPhone &&
+                            shippingPhone.value.trim() === ''
+                        ) {
+
+                            shippingPhone.focus();
+
+                            showMessage(
+                                'Please enter the shipping phone number.',
+                                'error'
+                            );
+
+                            return false;
+
+                        }
+
+
                         return true;
 
                     };
@@ -2650,68 +2750,182 @@
 
                 /*
                 |--------------------------------------------------------------------------
-                | Checkout Button
+                | Copy Shipping Contact to Checkout Contact
+                |--------------------------------------------------------------------------
+                |
+                | CheckoutRequest/CreateOrder currently use:
+                | first_name, last_name, phone.
+                |
+                | When a new address is selected, copy the shipping contact
+                | values into those backend fields before submission.
+                |
+                */
+
+                const syncShippingContact =
+                    function () {
+
+                        const newAddressSelected =
+                            !newAddressOption ||
+                            newAddressOption.classList.contains(
+                                'is-selected'
+                            );
+
+
+                        if (!newAddressSelected) {
+                            return;
+                        }
+
+
+                        const shippingFirstName =
+                            checkoutPage.querySelector(
+                                '[data-shipping-first-name]'
+                            );
+
+                        const shippingLastName =
+                            checkoutPage.querySelector(
+                                '[data-shipping-last-name]'
+                            );
+
+                        const shippingPhone =
+                            checkoutPage.querySelector(
+                                '[data-shipping-phone]'
+                            );
+
+                        const contactFirstName =
+                            checkoutPage.querySelector(
+                                '#checkout-first-name'
+                            );
+
+                        const contactLastName =
+                            checkoutPage.querySelector(
+                                '#checkout-last-name'
+                            );
+
+                        const contactPhone =
+                            checkoutPage.querySelector(
+                                '#checkout-phone'
+                            );
+
+
+                        if (
+                            shippingFirstName &&
+                            contactFirstName
+                        ) {
+
+                            contactFirstName.value =
+                                shippingFirstName.value.trim();
+
+                        }
+
+
+                        if (
+                            shippingLastName &&
+                            contactLastName
+                        ) {
+
+                            contactLastName.value =
+                                shippingLastName.value.trim();
+
+                        }
+
+
+                        if (
+                            shippingPhone &&
+                            contactPhone
+                        ) {
+
+                            contactPhone.value =
+                                shippingPhone.value.trim();
+
+                        }
+
+                    };
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Keep New Address Contact Synchronized
                 |--------------------------------------------------------------------------
                 */
 
-                const checkoutButton =
-                    checkoutPage.querySelector(
-                        '.checkout-submit'
+                const shippingContactFields =
+                    checkoutPage.querySelectorAll(
+                        '[data-shipping-first-name], ' +
+                        '[data-shipping-last-name], ' +
+                        '[data-shipping-phone]'
                     );
 
 
-                if (checkoutButton) {
+                shippingContactFields.forEach(
+                    function (field) {
 
-                    checkoutButton.addEventListener(
-                        'click',
-                        function () {
+                        field.addEventListener(
+                            'input',
+                            function () {
+
+                                syncShippingContact();
+
+                            }
+                        );
+
+                    }
+                );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Checkout Form Submission
+                |--------------------------------------------------------------------------
+                */
+
+                const checkoutForm =
+                    checkoutPage.querySelector(
+                        '[data-checkout-form]'
+                    );
+
+                const checkoutButton =
+                    checkoutPage.querySelector(
+                        '[data-checkout-submit]'
+                    );
+
+
+                if (
+                    checkoutForm &&
+                    checkoutButton
+                ) {
+
+                    checkoutForm.addEventListener(
+                        'submit',
+                        function (event) {
 
                             if (
                                 checkoutButton.disabled
                             ) {
+
+                                event.preventDefault();
+
                                 return;
+
                             }
 
 
                             if (
                                 !validateCheckout()
                             ) {
+
+                                event.preventDefault();
+
                                 return;
+
                             }
+
+
+                            syncShippingContact();
 
 
                             setButtonLoading(
                                 checkoutButton,
                                 true
-                            );
-
-
-                            /*
-                            |--------------------------------------------------------------------------
-                            | Payment Integration
-                            |--------------------------------------------------------------------------
-                            |
-                            | Actual checkout/order/payment backend
-                            | will be connected here.
-                            |
-                            */
-
-                            window.setTimeout(
-                                function () {
-
-                                    setButtonLoading(
-                                        checkoutButton,
-                                        false
-                                    );
-
-
-                                    showMessage(
-                                        'Checkout details are valid. Payment step is ready to be connected.',
-                                        'success'
-                                    );
-
-                                },
-                                500
                             );
 
                         }

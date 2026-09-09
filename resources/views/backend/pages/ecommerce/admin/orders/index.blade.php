@@ -14,9 +14,9 @@
 
             <div>
 
-            <span class="orders-page__eyebrow">
-                Ecommerce
-            </span>
+                <span class="orders-page__eyebrow">
+                    Ecommerce
+                </span>
 
                 <h1>
                     Orders
@@ -28,18 +28,16 @@
 
             </div>
 
-
             <div class="orders-page__header-actions">
 
                 <button
                     type="button"
                     class="orders-export-btn"
+                    data-export-orders
                 >
-
                     <i class="ri-download-2-line"></i>
 
                     Export
-
                 </button>
 
             </div>
@@ -53,24 +51,21 @@
 
         <div class="orders-stats">
 
-
             {{-- Total Orders --}}
             <div class="orders-stat-card">
 
                 <div class="orders-stat-card__icon">
-
                     <i class="ri-shopping-bag-3-line"></i>
-
                 </div>
 
                 <div>
 
-                <span>
-                    Total Orders
-                </span>
+                    <span>
+                        Total Orders
+                    </span>
 
                     <strong>
-                        248
+                        {{ number_format($totalOrders) }}
                     </strong>
 
                 </div>
@@ -82,19 +77,17 @@
             <div class="orders-stat-card">
 
                 <div class="orders-stat-card__icon orders-stat-card__icon--warning">
-
                     <i class="ri-time-line"></i>
-
                 </div>
 
                 <div>
 
-                <span>
-                    Pending
-                </span>
+                    <span>
+                        Pending
+                    </span>
 
                     <strong>
-                        18
+                        {{ number_format($pendingOrders) }}
                     </strong>
 
                 </div>
@@ -106,19 +99,17 @@
             <div class="orders-stat-card">
 
                 <div class="orders-stat-card__icon orders-stat-card__icon--info">
-
                     <i class="ri-loader-4-line"></i>
-
                 </div>
 
                 <div>
 
-                <span>
-                    Processing
-                </span>
+                    <span>
+                        Processing
+                    </span>
 
                     <strong>
-                        32
+                        {{ number_format($processingOrders) }}
                     </strong>
 
                 </div>
@@ -130,25 +121,22 @@
             <div class="orders-stat-card">
 
                 <div class="orders-stat-card__icon orders-stat-card__icon--success">
-
                     <i class="ri-checkbox-circle-line"></i>
-
                 </div>
 
                 <div>
 
-                <span>
-                    Completed
-                </span>
+                    <span>
+                        Completed
+                    </span>
 
                     <strong>
-                        181
+                        {{ number_format($completedOrders) }}
                     </strong>
 
                 </div>
 
             </div>
-
 
         </div>
 
@@ -159,13 +147,16 @@
 
         <div class="orders-card">
 
-
             {{-- ============================================================ --}}
             {{-- TOOLBAR --}}
             {{-- ============================================================ --}}
 
-            <div class="orders-toolbar">
-
+            <form
+                action="{{ route('admin-orders') }}"
+                method="GET"
+                class="orders-toolbar"
+                data-orders-filter-form
+            >
 
                 {{-- Search --}}
                 <div class="orders-search">
@@ -175,6 +166,7 @@
                     <input
                         type="search"
                         name="search"
+                        value="{{ $search }}"
                         placeholder="Search order ID, customer or email..."
                     >
 
@@ -183,44 +175,27 @@
 
                 <div class="orders-toolbar__filters">
 
-
                     {{-- Status --}}
                     <select
                         name="status"
                         class="orders-filter"
+                        data-orders-filter
                     >
 
                         <option value="">
                             All Status
                         </option>
 
-                        <option value="pending">
-                            Pending
-                        </option>
+                        @foreach ($orderStatuses as $orderStatus)
 
-                        <option value="processing">
-                            Processing
-                        </option>
+                            <option
+                                value="{{ $orderStatus }}"
+                                @selected($status === $orderStatus)
+                            >
+                                {{ ucfirst($orderStatus) }}
+                            </option>
 
-                        <option value="shipped">
-                            Shipped
-                        </option>
-
-                        <option value="delivered">
-                            Delivered
-                        </option>
-
-                        <option value="completed">
-                            Completed
-                        </option>
-
-                        <option value="cancelled">
-                            Cancelled
-                        </option>
-
-                        <option value="refunded">
-                            Refunded
-                        </option>
+                        @endforeach
 
                     </select>
 
@@ -229,27 +204,23 @@
                     <select
                         name="payment_status"
                         class="orders-filter"
+                        data-orders-filter
                     >
 
                         <option value="">
                             Payment Status
                         </option>
 
-                        <option value="paid">
-                            Paid
-                        </option>
+                        @foreach ($paymentStatuses as $paymentStatusOption)
 
-                        <option value="pending">
-                            Pending
-                        </option>
+                            <option
+                                value="{{ $paymentStatusOption }}"
+                                @selected($paymentStatus === $paymentStatusOption)
+                            >
+                                {{ ucfirst($paymentStatusOption) }}
+                            </option>
 
-                        <option value="failed">
-                            Failed
-                        </option>
-
-                        <option value="refunded">
-                            Refunded
-                        </option>
+                        @endforeach
 
                     </select>
 
@@ -258,25 +229,38 @@
                     <select
                         name="date"
                         class="orders-filter"
+                        data-orders-filter
                     >
 
                         <option value="">
                             All Dates
                         </option>
 
-                        <option value="today">
+                        <option
+                            value="today"
+                            @selected($date === 'today')
+                        >
                             Today
                         </option>
 
-                        <option value="week">
+                        <option
+                            value="week"
+                            @selected($date === 'week')
+                        >
                             This Week
                         </option>
 
-                        <option value="month">
+                        <option
+                            value="month"
+                            @selected($date === 'month')
+                        >
                             This Month
                         </option>
 
-                        <option value="year">
+                        <option
+                            value="year"
+                            @selected($date === 'year')
+                        >
                             This Year
                         </option>
 
@@ -284,7 +268,7 @@
 
                 </div>
 
-            </div>
+            </form>
 
 
             {{-- ============================================================ --}}
@@ -338,690 +322,196 @@
 
                     <tbody>
 
+                    @forelse ($orders as $order)
 
-                    {{-- ================================================= --}}
-                    {{-- ORDER 1 --}}
-                    {{-- ================================================= --}}
+                        @php
+                            $customerName = trim(
+                                $order->first_name . ' ' . $order->last_name
+                            );
 
-                    <tr>
+                            $customerInitials = collect(
+                                preg_split('/\s+/', $customerName)
+                            )
+                                ->filter()
+                                ->take(2)
+                                ->map(
+                                    fn ($name) => strtoupper(
+                                        mb_substr($name, 0, 1)
+                                    )
+                                )
+                                ->implode('');
 
-                        <td>
+                            $statusClass = match ($order->status) {
+                                \App\Models\Order::STATUS_PENDING => 'pending',
+                                \App\Models\Order::STATUS_PAID => 'paid',
+                                \App\Models\Order::STATUS_PROCESSING => 'processing',
+                                \App\Models\Order::STATUS_COMPLETED => 'completed',
+                                \App\Models\Order::STATUS_CANCELLED => 'cancelled',
+                                \App\Models\Order::STATUS_FAILED => 'failed',
+                                default => 'pending',
+                            };
 
-                            <a
-                                href="{{ route('admin-order-details', ['order' => 1001]) }}"
-                                class="orders-number"
-                            >
-                                #BA-1001
-                            </a>
+                            $paymentClass = match ($order->payment_status) {
+                                \App\Models\Order::PAYMENT_STATUS_PAID => 'paid',
+                                \App\Models\Order::PAYMENT_STATUS_PENDING => 'pending',
+                                \App\Models\Order::PAYMENT_STATUS_FAILED => 'failed',
+                                \App\Models\Order::PAYMENT_STATUS_REFUNDED => 'refunded',
+                                default => 'pending',
+                            };
+                        @endphp
 
-                        </td>
+                        <tr>
 
+                            {{-- Order --}}
+                            <td>
 
-                        <td>
+                                <a
+                                    href="{{ route('admin-order-details', ['order' => $order]) }}"
+                                    class="orders-number"
+                                >
+                                    #{{ $order->order_number }}
+                                </a>
 
-                            <div class="orders-customer">
-
-                                <div class="orders-customer__avatar">
-                                    JD
-                                </div>
-
-                                <div>
-
-                                    <strong>
-                                        John Doe
-                                    </strong>
-
-                                    <span>
-                                        john@example.com
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="orders-products">
-                                3 Items
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <strong class="orders-total">
-                                $149.97
-                            </strong>
-
-                        </td>
+                            </td>
 
 
-                        <td>
+                            {{-- Customer --}}
+                            <td>
 
-                            <span class="orders-payment orders-payment--paid">
+                                <div class="orders-customer">
 
-                                <i></i>
+                                    <div class="orders-customer__avatar">
+                                        {{ $customerInitials ?: '?' }}
+                                    </div>
 
-                                Paid
+                                    <div>
 
-                            </span>
+                                        <strong>
+                                            {{ $customerName ?: 'Guest Customer' }}
+                                        </strong>
 
-                        </td>
+                                        <span>
+                                            {{ $order->email }}
+                                        </span>
 
-
-                        <td>
-
-                            <span class="orders-status orders-status--processing">
-
-                                <i></i>
-
-                                Processing
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="orders-date">
-                                Aug 15, 2026
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <a
-                                href="{{ route('admin-order-details', ['order' => 1001]) }}"
-                                class="orders-view-btn"
-                            >
-
-                                <i class="ri-eye-line"></i>
-
-                                View
-
-                            </a>
-
-                        </td>
-
-                    </tr>
-
-
-                    {{-- ================================================= --}}
-                    {{-- ORDER 2 --}}
-                    {{-- ================================================= --}}
-
-                    <tr>
-
-                        <td>
-
-                            <a
-                                href="{{ route('admin-order-details', ['order' => 1002]) }}"
-                                class="orders-number"
-                            >
-                                #BA-1002
-                            </a>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="orders-customer">
-
-                                <div class="orders-customer__avatar">
-                                    SM
-                                </div>
-
-                                <div>
-
-                                    <strong>
-                                        Sarah Miller
-                                    </strong>
-
-                                    <span>
-                                        sarah@example.com
-                                    </span>
+                                    </div>
 
                                 </div>
 
-                            </div>
-
-                        </td>
+                            </td>
 
 
-                        <td>
+                            {{-- Products --}}
+                            <td>
 
-                            <span class="orders-products">
-                                2 Items
-                            </span>
+                                <span class="orders-products">
+                                    {{ $order->items_count }}
+                                    {{ $order->items_count === 1 ? 'Item' : 'Items' }}
+                                </span>
 
-                        </td>
-
-
-                        <td>
-
-                            <strong class="orders-total">
-                                $89.98
-                            </strong>
-
-                        </td>
+                            </td>
 
 
-                        <td>
+                            {{-- Total --}}
+                            <td>
 
-                            <span class="orders-payment orders-payment--paid">
+                                <strong class="orders-total">
+                                    ${{ number_format((float) $order->total, 2) }}
+                                </strong>
 
-                                <i></i>
-
-                                Paid
-
-                            </span>
-
-                        </td>
+                            </td>
 
 
-                        <td>
+                            {{-- Payment --}}
+                            <td>
 
-                            <span class="orders-status orders-status--shipped">
+                                <span
+                                    class="orders-payment orders-payment--{{ $paymentClass }}"
+                                >
 
-                                <i></i>
+                                    <i></i>
 
-                                Shipped
+                                    {{ ucfirst($order->payment_status) }}
 
-                            </span>
+                                </span>
 
-                        </td>
-
-
-                        <td>
-
-                            <span class="orders-date">
-                                Aug 14, 2026
-                            </span>
-
-                        </td>
+                            </td>
 
 
-                        <td>
+                            {{-- Status --}}
+                            <td>
 
-                            <a
-                                href="{{ route('admin-order-details', ['order' => 1002]) }}"
-                                class="orders-view-btn"
+                                <span
+                                    class="orders-status orders-status--{{ $statusClass }}"
+                                >
+
+                                    <i></i>
+
+                                    {{ ucfirst($order->status) }}
+
+                                </span>
+
+                            </td>
+
+
+                            {{-- Date --}}
+                            <td>
+
+                                <span class="orders-date">
+                                    {{ $order->created_at?->format('M d, Y') }}
+                                </span>
+
+                            </td>
+
+
+                            {{-- Action --}}
+                            <td>
+
+                                <a
+                                    href="{{ route('admin-order-details', ['order' => $order]) }}"
+                                    class="orders-view-btn"
+                                >
+
+                                    <i class="ri-eye-line"></i>
+
+                                    View
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    @empty
+
+                        <tr>
+
+                            <td
+                                colspan="8"
+                                class="orders-empty"
                             >
 
-                                <i class="ri-eye-line"></i>
+                                <div class="orders-empty__content">
 
-                                View
+                                    <div class="orders-empty__icon">
+                                        <i class="ri-shopping-bag-3-line"></i>
+                                    </div>
 
-                            </a>
+                                    <h3>
+                                        No orders found
+                                    </h3>
 
-                        </td>
-
-                    </tr>
-
-
-                    {{-- ================================================= --}}
-                    {{-- ORDER 3 --}}
-                    {{-- ================================================= --}}
-
-                    <tr>
-
-                        <td>
-
-                            <a
-                                href="{{ route('admin-order-details', ['order' => 1003]) }}"
-                                class="orders-number"
-                            >
-                                #BA-1003
-                            </a>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="orders-customer">
-
-                                <div class="orders-customer__avatar">
-                                    MA
-                                </div>
-
-                                <div>
-
-                                    <strong>
-                                        Michael Adams
-                                    </strong>
-
-                                    <span>
-                                        michael@example.com
-                                    </span>
+                                    <p>
+                                        Try adjusting your search or filters.
+                                    </p>
 
                                 </div>
 
-                            </div>
+                            </td>
 
-                        </td>
+                        </tr>
 
-
-                        <td>
-
-                            <span class="orders-products">
-                                5 Items
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <strong class="orders-total">
-                                $279.95
-                            </strong>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="orders-payment orders-payment--paid">
-
-                                <i></i>
-
-                                Paid
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="orders-status orders-status--completed">
-
-                                <i></i>
-
-                                Completed
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="orders-date">
-                                Aug 13, 2026
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <a
-                                href="{{ route('admin-order-details', ['order' => 1003]) }}"
-                                class="orders-view-btn"
-                            >
-
-                                <i class="ri-eye-line"></i>
-
-                                View
-
-                            </a>
-
-                        </td>
-
-                    </tr>
-
-
-                    {{-- ================================================= --}}
-                    {{-- ORDER 4 --}}
-                    {{-- ================================================= --}}
-
-                    <tr>
-
-                        <td>
-
-                            <a
-                                href="{{ route('admin-order-details', ['order' => 1004]) }}"
-                                class="orders-number"
-                            >
-                                #BA-1004
-                            </a>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="orders-customer">
-
-                                <div class="orders-customer__avatar">
-                                    EW
-                                </div>
-
-                                <div>
-
-                                    <strong>
-                                        Emma Wilson
-                                    </strong>
-
-                                    <span>
-                                        emma@example.com
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="orders-products">
-                                1 Item
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <strong class="orders-total">
-                                $59.99
-                            </strong>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="orders-payment orders-payment--pending">
-
-                                <i></i>
-
-                                Pending
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="orders-status orders-status--pending">
-
-                                <i></i>
-
-                                Pending
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="orders-date">
-                                Aug 12, 2026
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <a
-                                href="{{ route('admin-order-details', ['order' => 1004]) }}"
-                                class="orders-view-btn"
-                            >
-
-                                <i class="ri-eye-line"></i>
-
-                                View
-
-                            </a>
-
-                        </td>
-
-                    </tr>
-
-
-                    {{-- ================================================= --}}
-                    {{-- ORDER 5 --}}
-                    {{-- ================================================= --}}
-
-                    <tr>
-
-                        <td>
-
-                            <a
-                                href="{{ route('admin-order-details', ['order' => 1005]) }}"
-                                class="orders-number"
-                            >
-                                #BA-1005
-                            </a>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="orders-customer">
-
-                                <div class="orders-customer__avatar">
-                                    DW
-                                </div>
-
-                                <div>
-
-                                    <strong>
-                                        David Williams
-                                    </strong>
-
-                                    <span>
-                                        david@example.com
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="orders-products">
-                                4 Items
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <strong class="orders-total">
-                                $199.96
-                            </strong>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="orders-payment orders-payment--paid">
-
-                                <i></i>
-
-                                Paid
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="orders-status orders-status--delivered">
-
-                                <i></i>
-
-                                Delivered
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="orders-date">
-                                Aug 11, 2026
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <a
-                                href="{{ route('admin-order-details', ['order' => 1005]) }}"
-                                class="orders-view-btn"
-                            >
-
-                                <i class="ri-eye-line"></i>
-
-                                View
-
-                            </a>
-
-                        </td>
-
-                    </tr>
-
-
-                    {{-- ================================================= --}}
-                    {{-- ORDER 6 --}}
-                    {{-- ================================================= --}}
-
-                    <tr>
-
-                        <td>
-
-                            <a
-                                href="{{ route('admin-order-details', ['order' => 1006]) }}"
-                                class="orders-number"
-                            >
-                                #BA-1006
-                            </a>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="orders-customer">
-
-                                <div class="orders-customer__avatar">
-                                    OL
-                                </div>
-
-                                <div>
-
-                                    <strong>
-                                        Olivia Lee
-                                    </strong>
-
-                                    <span>
-                                        olivia@example.com
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="orders-products">
-                                2 Items
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <strong class="orders-total">
-                                $74.98
-                            </strong>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="orders-payment orders-payment--failed">
-
-                                <i></i>
-
-                                Failed
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="orders-status orders-status--cancelled">
-
-                                <i></i>
-
-                                Cancelled
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="orders-date">
-                                Aug 10, 2026
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <a
-                                href="{{ route('admin-order-details', ['order' => 1006]) }}"
-                                class="orders-view-btn"
-                            >
-
-                                <i class="ri-eye-line"></i>
-
-                                View
-
-                            </a>
-
-                        </td>
-
-                    </tr>
-
+                    @endforelse
 
                     </tbody>
 
@@ -1034,73 +524,169 @@
             {{-- PAGINATION --}}
             {{-- ============================================================ --}}
 
-            <div class="orders-pagination">
+            @if ($orders->total() > 0)
 
-                <div class="orders-pagination__info">
+                <div class="orders-pagination">
 
-                    Showing
-                    <strong>1</strong>
-                    to
-                    <strong>6</strong>
-                    of
-                    <strong>248</strong>
-                    orders
+                    <div class="orders-pagination__info">
+
+                        Showing
+                        <strong>
+                            {{ $orders->firstItem() }}
+                        </strong>
+
+                        to
+
+                        <strong>
+                            {{ $orders->lastItem() }}
+                        </strong>
+
+                        of
+
+                        <strong>
+                            {{ $orders->total() }}
+                        </strong>
+
+                        orders
+
+                    </div>
+
+
+                    <div class="orders-pagination__buttons">
+
+                        @if ($orders->onFirstPage())
+
+                            <button
+                                type="button"
+                                disabled
+                            >
+                                <i class="ri-arrow-left-s-line"></i>
+                            </button>
+
+                        @else
+
+                            <a href="{{ $orders->previousPageUrl() }}">
+                                <i class="ri-arrow-left-s-line"></i>
+                            </a>
+
+                        @endif
+
+
+                        @foreach ($orders->getUrlRange(
+                            max(1, $orders->currentPage() - 2),
+                            min($orders->lastPage(), $orders->currentPage() + 2)
+                        ) as $page => $url)
+
+                            @if ($page === $orders->currentPage())
+
+                                <button
+                                    type="button"
+                                    class="active"
+                                >
+                                    {{ $page }}
+                                </button>
+
+                            @else
+
+                                <a href="{{ $url }}">
+                                    {{ $page }}
+                                </a>
+
+                            @endif
+
+                        @endforeach
+
+
+                        @if ($orders->hasMorePages())
+
+                            <a href="{{ $orders->nextPageUrl() }}">
+                                <i class="ri-arrow-right-s-line"></i>
+                            </a>
+
+                        @else
+
+                            <button
+                                type="button"
+                                disabled
+                            >
+                                <i class="ri-arrow-right-s-line"></i>
+                            </button>
+
+                        @endif
+
+                    </div>
 
                 </div>
 
-
-                <div class="orders-pagination__buttons">
-
-                    <button
-                        type="button"
-                        disabled
-                    >
-
-                        <i class="ri-arrow-left-s-line"></i>
-
-                    </button>
-
-
-                    <button
-                        type="button"
-                        class="active"
-                    >
-                        1
-                    </button>
-
-
-                    <button type="button">
-                        2
-                    </button>
-
-
-                    <button type="button">
-                        3
-                    </button>
-
-
-                    <button type="button">
-                        4
-                    </button>
-
-
-                    <button type="button">
-                        5
-                    </button>
-
-
-                    <button type="button">
-
-                        <i class="ri-arrow-right-s-line"></i>
-
-                    </button>
-
-                </div>
-
-            </div>
+            @endif
 
         </div>
 
     </div>
 
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const ordersPage = document.querySelector(".orders-page");
+
+            if (!ordersPage) {
+                return;
+            }
+
+            const filterForm = ordersPage.querySelector(
+                "[data-orders-filter-form]",
+            );
+
+            const filterFields = ordersPage.querySelectorAll(
+                "[data-orders-filter]",
+            );
+
+            const searchInput = filterForm?.querySelector(
+                'input[name="search"]',
+            );
+
+            const exportButton = ordersPage.querySelector(
+                "[data-export-orders]",
+            );
+
+            filterFields.forEach(function (field) {
+                field.addEventListener("change", function () {
+                    if (!filterForm) {
+                        return;
+                    }
+
+                    filterForm.submit();
+                });
+            });
+
+            if (filterForm) {
+                filterForm.addEventListener("submit", function () {
+                    if (searchInput && searchInput.value.trim() === "") {
+                        searchInput.disabled = true;
+                    }
+                });
+            }
+
+            if (exportButton) {
+                exportButton.addEventListener("click", function () {
+                    if (!filterForm) {
+                        return;
+                    }
+
+                    const params = new URLSearchParams(
+                        new FormData(filterForm),
+                    );
+
+                    params.delete("_token");
+
+                    const exportUrl =
+                        `${filterForm.action}/export?${params.toString()}`;
+
+                    window.location.href = exportUrl;
+                });
+            }
+        });
+    </script>
+@endpush

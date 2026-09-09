@@ -74,51 +74,40 @@
 
 
 //Ecommerce
-@use "ecommerce/customer/customer-shop";
-@use "ecommerce/customer/customer-product-details";
-@use "ecommerce/customer/customer-cart";
-@use "ecommerce/customer/customer-checkout";
-@use "ecommerce/customer/customer-payment";
-@use "ecommerce/customer/customer-payment-success";
-@use "ecommerce/customer/customer-payment-failed";
-@use "ecommerce/customer/customer-orders";
-@use "ecommerce/customer/customer-order-details";
-@use "ecommerce/customer/customer-shipment";
-@use "ecommerce/customer/customer-tracking";
 
-@use "ecommerce/admin/products-index";
-@use "ecommerce/admin/products-create";
-@use "ecommerce/admin/products-details";
-@use "ecommerce/admin/products-edit";
+@use "ecommerce/products-index";
+@use "ecommerce/products-create";
+@use "ecommerce/products-details";
+@use "ecommerce/products-edit";
 
-@use "ecommerce/admin/categories-index";
-@use "ecommerce/admin/categories-create";
-@use "ecommerce/admin/categories-details";
-@use "ecommerce/admin/categories-edit";
+@use "ecommerce/categories-index";
+@use "ecommerce/categories-create";
+@use "ecommerce/categories-details";
+@use "ecommerce/categories-edit";
 
-@use "ecommerce/admin/brands-index";
-@use "ecommerce/admin/brands-create";
-@use "ecommerce/admin/brands-details";
-@use "ecommerce/admin/brands-edit";
+@use "ecommerce/brands-index";
+@use "ecommerce/brands-create";
+@use "ecommerce/brands-details";
+@use "ecommerce/brands-edit";
 
-@use "ecommerce/admin/attribute-index";
-@use "ecommerce/admin/attribute-create";
-@use "ecommerce/admin/attribute-edit";
-@use "ecommerce/admin/attribute-details";
+@use "ecommerce/attribute-index";
+@use "ecommerce/attribute-create";
+@use "ecommerce/attribute-edit";
+@use "ecommerce/attribute-details";
 
-@use "ecommerce/admin/coupons-index";
-@use "ecommerce/admin/coupons-create";
-@use "ecommerce/admin/coupons-edit";
+@use "ecommerce/coupons-index";
+@use "ecommerce/coupons-create";
+@use "ecommerce/coupons-edit";
 
-@use "ecommerce/admin/inventory-index";
-@use "ecommerce/admin/inventory-low-stock";
-@use "ecommerce/admin/inventory-out-of-stock";
+@use "ecommerce/inventory-index";
+@use "ecommerce/inventory-low-stock";
+@use "ecommerce/inventory-out-of-stock";
 
-@use "ecommerce/admin/orders-index";
-@use "ecommerce/admin/orders-details";
+@use "ecommerce/orders-index";
+@use "ecommerce/orders-details";
 
-@use "ecommerce/admin/payments-index";
+@use "ecommerce/payments-index";
 
-@use "ecommerce/admin/shipments-index";
-@use "ecommerce/admin/shipments-create";
-@use "ecommerce/admin/shipments-details";
+@use "ecommerce/shipments-index";
+@use "ecommerce/shipments-create";
+@use "ecommerce/shipments-details";

@@ -82,134 +82,22 @@
             </p>
 
             <ul>
-
-
                 {{-- SHOP --}}
-                @if(
-                    auth()->user()->hasPermission('view-products') ||
-                    auth()->user()->hasPermission('view-cart') ||
-                    auth()->user()->hasPermission('create-order')
-                )
-
-                    <li class="has-submenu {{ request()->routeIs(
-                        'customer-shop',
-                        'customer-product-details',
-                        'cart',
-                        'checkout',
-                        'ecommerce-payment',
-                        'ecommerce-payment-success',
-                        'ecommerce-payment-failed'
-                    ) ? 'active open' : '' }}">
-
-                        <a href="javascript:void(0);">
-
-                            <i class="ri-shopping-bag-3-line"></i>
-
-                            <span>
-                                Shop
-                            </span>
-
-                            <i class="ri-arrow-down-s-line submenu-arrow"></i>
-
-                        </a>
-
-                        <ul class="submenu">
-
-
-                            {{-- SHOP --}}
-                            @if(auth()->user()->hasPermission('view-products'))
-
-                                <li class="{{ request()->routeIs(
-                                    'customer-shop',
-                                    'customer-product-details'
-                                ) ? 'active' : '' }}">
-
-                                    <a href="{{ route('customer-shop') }}">
-
-                                        <span>
-                                            Shop
-                                        </span>
-
-                                    </a>
-
-                                </li>
-
-                            @endif
-
-
-                            {{-- CART --}}
-                            @if(auth()->user()->hasPermission('view-cart'))
-
-                                <li class="{{ request()->routeIs('cart')
-                                    ? 'active'
-                                    : '' }}">
-
-                                    <a href="{{ route('cart') }}">
-
-                                        <span>
-                                            Cart
-                                        </span>
-
-                                    </a>
-
-                                </li>
-
-                            @endif
-
-
-                            {{-- CHECKOUT --}}
-                            @if(auth()->user()->hasPermission('create-order'))
-
-                                <li class="{{ request()->routeIs(
-                                    'checkout',
-                                    'ecommerce-payment',
-                                    'ecommerce-payment-success',
-                                    'ecommerce-payment-failed'
-                                ) ? 'active' : '' }}">
-
-                                    <a href="{{ route('checkout') }}">
-
-                                        <span>
-                                            Checkout
-                                        </span>
-
-                                    </a>
-
-                                </li>
-
-                            @endif
-
-                        </ul>
-
-                    </li>
-
-                @endif
-
-
-                {{-- MY ORDERS --}}
                 @if(auth()->user()->hasPermission('view-orders'))
+                    <li class="{{ request()->routeIs('customer-orders') ? 'active' : '' }}">
 
-                    <li class="{{ request()->routeIs(
-                        'orders',
-                        'order-details',
-                        'ecommerce-shipment',
-                        'ecommerce-tracking'
-                    ) ? 'active' : '' }}">
-
-                        <a href="{{ route('orders') }}">
+                        <a href="{{ route('customer-orders') }}">
 
                             <i class="ri-shopping-cart-2-line"></i>
 
                             <span>
-                                My Orders
-                            </span>
+                                            My Orders
+                                        </span>
 
                         </a>
 
                     </li>
-
                 @endif
-
             </ul>
 
         @endif
