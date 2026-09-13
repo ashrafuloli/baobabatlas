@@ -83,7 +83,6 @@
                     ========================================== --}}
                     <div class="category-layout">
 
-                        {{-- All Categories --}}
                         <a
                             href="{{ route('shop') }}"
                             class="category-card"
@@ -94,168 +93,9 @@
                             </div>
 
                             <span>
-                        All Categories
-                    </span>
-
-                        </a>
-
-
-                        @foreach ($categories as $category)
-
-                            @php
-                                $categoryIcon = match ($category->slug) {
-                                    'electronics' => 'ri-macbook-line',
-                                    'fashion' => 'ri-t-shirt-line',
-                                    'home-living' => 'ri-home-4-line',
-                                    'computers' => 'ri-computer-line',
-                                    default => 'ri-apps-line',
-                                };
-
-                                $categoryImage = $category->image ?? null;
-
-                                $categoryImageUrl = $categoryImage
-                                    ? (
-                                        filter_var(
-                                            $categoryImage,
-                                            FILTER_VALIDATE_URL
-                                        )
-                                            ? $categoryImage
-                                            : asset($categoryImage)
-                                    )
-                                    : null;
-                            @endphp
-
-                            {{-- =========================================
-                                Parent Category
-                            ========================================== --}}
-                            <a
-                                href="{{ route('shop', [
-                            'category[]' => $category->slug,
-                        ]) }}"
-                                class="category-card"
-                            >
-
-                                <div class="category-icon">
-
-                                    @if ($categoryImageUrl)
-
-                                        <img
-                                            src="{{ $categoryImageUrl }}"
-                                            alt="{{ $category->name }}"
-                                            loading="lazy"
-                                        >
-
-                                    @else
-
-                                        <i class="{{ $categoryIcon }}"></i>
-
-                                    @endif
-
-                                </div>
-
-                                <span>
-                            {{ $category->name }}
-                        </span>
-
-                            </a>
-
-
-                            {{-- =========================================
-                                Child Categories
-                            ========================================== --}}
-                            @foreach ($category->children as $child)
-
-                                @php
-                                    $childIcon = match ($child->slug) {
-                                        'smartphones' => 'ri-smartphone-line',
-                                        'laptops' => 'ri-macbook-line',
-                                        'audio' => 'ri-headphone-line',
-                                        'accessories' => 'ri-usb-line',
-                                        'mens-clothing' => 'ri-shirt-line',
-                                        'womens-clothing' => 'ri-shirt-line',
-                                        'shoes' => 'ri-footprint-line',
-                                        'sportswear' => 'ri-run-line',
-                                        'kitchen' => 'ri-restaurant-line',
-                                        'home-accessories' => 'ri-home-gear-line',
-                                        'lighting' => 'ri-lightbulb-line',
-                                        'keyboards' => 'ri-keyboard-line',
-                                        'mice' => 'ri-mouse-line',
-                                        'webcams' => 'ri-camera-line',
-                                        'computer-accessories' => 'ri-tools-line',
-                                        default => 'ri-apps-line',
-                                    };
-
-                                    $childImage = $child->image ?? null;
-
-                                    $childImageUrl = $childImage
-                                        ? (
-                                            filter_var(
-                                                $childImage,
-                                                FILTER_VALIDATE_URL
-                                            )
-                                                ? $childImage
-                                                : asset($childImage)
-                                        )
-                                        : null;
-                                @endphp
-
-                                <a
-                                    href="{{ route('shop', [
-                                'category[]' => $child->slug,
-                            ]) }}"
-                                    class="category-card"
-                                >
-
-                                    <div class="category-icon">
-
-                                        @if ($childImageUrl)
-
-                                            <img
-                                                src="{{ $childImageUrl }}"
-                                                alt="{{ $child->name }}"
-                                                loading="lazy"
-                                            >
-
-                                        @else
-
-                                            <i class="{{ $childIcon }}"></i>
-
-                                        @endif
-
-                                    </div>
-
-                                    <span>
-                                {{ $child->name }}
+                                All Categories
                             </span>
 
-                                </a>
-
-                            @endforeach
-
-                        @endforeach
-
-                    </div>
-
-
-                    {{-- =========================================
-                        Second Marquee
-                    ========================================== --}}
-                    <div class="category-layout">
-
-                        {{-- All Categories --}}
-                        <a
-                            href="{{ route('shop') }}"
-                            class="category-card"
-                        >
-
-                            <div class="category-icon">
-                                <i class="ri-apps-line"></i>
-                            </div>
-
-                            <span>
-                        All Categories
-                    </span>
-
                         </a>
 
 
@@ -283,12 +123,13 @@
                                     )
                                     : null;
                             @endphp
+
 
                             {{-- Parent Category --}}
                             <a
                                 href="{{ route('shop', [
-                            'category[]' => $category->slug,
-                        ]) }}"
+                                    'category[]' => $category->slug,
+                                ]) }}"
                                 class="category-card"
                             >
 
@@ -311,8 +152,8 @@
                                 </div>
 
                                 <span>
-                            {{ $category->name }}
-                        </span>
+                                    {{ $category->name }}
+                                </span>
 
                             </a>
 
@@ -354,10 +195,11 @@
                                         : null;
                                 @endphp
 
+
                                 <a
                                     href="{{ route('shop', [
-                                'category[]' => $child->slug,
-                            ]) }}"
+                                        'category[]' => $child->slug,
+                                    ]) }}"
                                     class="category-card"
                                 >
 
@@ -380,8 +222,164 @@
                                     </div>
 
                                     <span>
-                                {{ $child->name }}
+                                        {{ $child->name }}
+                                    </span>
+
+                                </a>
+
+                            @endforeach
+
+                        @endforeach
+
+                    </div>
+
+
+                    {{-- =========================================
+                        Second Marquee
+                    ========================================== --}}
+                    <div class="category-layout">
+
+                        <a
+                            href="{{ route('shop') }}"
+                            class="category-card"
+                        >
+
+                            <div class="category-icon">
+                                <i class="ri-apps-line"></i>
+                            </div>
+
+                            <span>
+                                All Categories
                             </span>
+
+                        </a>
+
+
+                        @foreach ($categories as $category)
+
+                            @php
+                                $categoryIcon = match ($category->slug) {
+                                    'electronics' => 'ri-macbook-line',
+                                    'fashion' => 'ri-t-shirt-line',
+                                    'home-living' => 'ri-home-4-line',
+                                    'computers' => 'ri-computer-line',
+                                    default => 'ri-apps-line',
+                                };
+
+                                $categoryImage = $category->image ?? null;
+
+                                $categoryImageUrl = $categoryImage
+                                    ? (
+                                        filter_var(
+                                            $categoryImage,
+                                            FILTER_VALIDATE_URL
+                                        )
+                                            ? $categoryImage
+                                            : asset($categoryImage)
+                                    )
+                                    : null;
+                            @endphp
+
+
+                            {{-- Parent Category --}}
+                            <a
+                                href="{{ route('shop', [
+                                    'category[]' => $category->slug,
+                                ]) }}"
+                                class="category-card"
+                            >
+
+                                <div class="category-icon">
+
+                                    @if ($categoryImageUrl)
+
+                                        <img
+                                            src="{{ $categoryImageUrl }}"
+                                            alt="{{ $category->name }}"
+                                            loading="lazy"
+                                        >
+
+                                    @else
+
+                                        <i class="{{ $categoryIcon }}"></i>
+
+                                    @endif
+
+                                </div>
+
+                                <span>
+                                    {{ $category->name }}
+                                </span>
+
+                            </a>
+
+
+                            {{-- Child Categories --}}
+                            @foreach ($category->children as $child)
+
+                                @php
+                                    $childIcon = match ($child->slug) {
+                                        'smartphones' => 'ri-smartphone-line',
+                                        'laptops' => 'ri-macbook-line',
+                                        'audio' => 'ri-headphone-line',
+                                        'accessories' => 'ri-usb-line',
+                                        'mens-clothing' => 'ri-shirt-line',
+                                        'womens-clothing' => 'ri-shirt-line',
+                                        'shoes' => 'ri-footprint-line',
+                                        'sportswear' => 'ri-run-line',
+                                        'kitchen' => 'ri-restaurant-line',
+                                        'home-accessories' => 'ri-home-gear-line',
+                                        'lighting' => 'ri-lightbulb-line',
+                                        'keyboards' => 'ri-keyboard-line',
+                                        'mice' => 'ri-mouse-line',
+                                        'webcams' => 'ri-camera-line',
+                                        'computer-accessories' => 'ri-tools-line',
+                                        default => 'ri-apps-line',
+                                    };
+
+                                    $childImage = $child->image ?? null;
+
+                                    $childImageUrl = $childImage
+                                        ? (
+                                            filter_var(
+                                                $childImage,
+                                                FILTER_VALIDATE_URL
+                                            )
+                                                ? $childImage
+                                                : asset($childImage)
+                                        )
+                                        : null;
+                                @endphp
+
+
+                                <a
+                                    href="{{ route('shop', [
+                                        'category[]' => $child->slug,
+                                    ]) }}"
+                                    class="category-card"
+                                >
+
+                                    <div class="category-icon">
+
+                                        @if ($childImageUrl)
+
+                                            <img
+                                                src="{{ $childImageUrl }}"
+                                                alt="{{ $child->name }}"
+                                                loading="lazy"
+                                            >
+
+                                        @else
+
+                                            <i class="{{ $childIcon }}"></i>
+
+                                        @endif
+
+                                    </div>
+
+                                    <span>
+                                        {{ $child->name }}
+                                    </span>
 
                                 </a>
 
@@ -396,6 +394,7 @@
             </div>
 
         </section>
+
 
         {{-- =========================================
             Products
@@ -434,9 +433,7 @@
                             </div>
 
 
-                            {{-- =================================
-                                Category Filter
-                            ================================== --}}
+                            {{-- Category --}}
                             <div class="filter-group is-open">
 
                                 <button
@@ -458,8 +455,6 @@
 
                                     <div class="filter-group-content-inner">
 
-
-                                        {{-- All Categories --}}
                                         <label class="filter-checkbox">
 
                                             <input
@@ -478,7 +473,6 @@
                                         </label>
 
 
-                                        {{-- Main Categories --}}
                                         @foreach ($categories as $category)
 
                                             @php
@@ -579,9 +573,7 @@
                             </div>
 
 
-                            {{-- =================================
-                                Price Range
-                            ================================== --}}
+                            {{-- Price --}}
                             <div class="filter-group is-open">
 
                                 <button
@@ -673,9 +665,7 @@
                             </div>
 
 
-                            {{-- =================================
-                                Brands
-                            ================================== --}}
+                            {{-- Brands --}}
                             <div class="filter-group is-open">
 
                                 <button
@@ -697,8 +687,6 @@
 
                                     <div class="filter-group-content-inner">
 
-
-                                        {{-- All Brands --}}
                                         <label class="filter-checkbox">
 
                                             <input
@@ -745,9 +733,7 @@
                             </div>
 
 
-                            {{-- =================================
-                                Attributes
-                            ================================== --}}
+                            {{-- Attributes --}}
                             @foreach ($attributes as $attribute)
 
                                 @php
@@ -824,12 +810,9 @@
                         ====================================== --}}
                         <div class="marketplace-product-area">
 
-
                             {{-- Toolbar --}}
                             <div class="product-toolbar">
 
-
-                                {{-- Search --}}
                                 <div class="marketplace-search">
 
                                     <div class="search-input">
@@ -855,7 +838,6 @@
                                 </div>
 
 
-                                {{-- Sort --}}
                                 <div class="sort-select">
 
                                     @php
@@ -952,17 +934,23 @@
                                 <div class="result-count">
 
                                     Showing
+
                                     <strong>
                                         {{ $products->firstItem() ?? 0 }}
                                     </strong>
+
                                     to
+
                                     <strong>
                                         {{ $products->lastItem() ?? 0 }}
                                     </strong>
+
                                     of
+
                                     <strong>
                                         {{ $products->total() }}
                                     </strong>
+
                                     products
 
                                 </div>
@@ -1021,6 +1009,12 @@
                                             );
 
                                         $stock = $product->variants->sum('stock');
+
+                                        $isWishlisted = in_array(
+                                            $product->id,
+                                            $wishlistProductIds ?? [],
+                                            true
+                                        );
                                     @endphp
 
 
@@ -1052,12 +1046,16 @@
                                             {{-- Wishlist --}}
                                             <button
                                                 type="button"
-                                                class="wishlist"
+                                                class="wishlist {{ $isWishlisted ? 'is-active' : '' }}"
                                                 data-product-id="{{ $product->id }}"
-                                                aria-label="Add {{ $product->name }} to wishlist"
+                                                data-wishlist-url="{{ route('wishlist.toggle', $product) }}"
+                                                aria-label="{{ $isWishlisted ? 'Remove' : 'Add' }} {{ $product->name }} {{ $isWishlisted ? 'from' : 'to' }} wishlist"
+                                                aria-pressed="{{ $isWishlisted ? 'true' : 'false' }}"
                                             >
 
-                                                <i class="ri-heart-line"></i>
+                                                <i
+                                                    class="{{ $isWishlisted ? 'ri-heart-fill' : 'ri-heart-line' }}"
+                                                ></i>
 
                                             </button>
 
@@ -1356,7 +1354,6 @@
                     filterGroup.querySelector(
                         '.filter-group-title'
                     );
-
 
                 if (!title) {
                     return;
@@ -1769,15 +1766,8 @@
                             );
 
 
-                            /*
-                             * Submit GET request.
-                             */
                             if (productsForm) {
 
-                                /*
-                                 * Remove current page so
-                                 * sorting starts from page 1.
-                                 */
                                 const pageInput =
                                     productsForm.querySelector(
                                         'input[name="page"]'
@@ -1785,9 +1775,7 @@
 
 
                                 if (pageInput) {
-
                                     pageInput.remove();
-
                                 }
 
 
@@ -1846,10 +1834,6 @@
                     'change',
                     function () {
 
-                        /*
-                         * If a subcategory is selected,
-                         * open its parent category.
-                         */
                         const categoryItem =
                             input.closest(
                                 '.category-filter-item'
@@ -1907,65 +1891,517 @@
 
             /*
             =====================================
-                Wishlist UI
+                Wishlist
             =====================================
             */
-            const wishlistButtons =
-                marketplacePage.querySelectorAll(
-                    '.wishlist'
-                );
+
+            /**
+             * Update a wishlist button UI.
+             */
+            const updateWishlistButton =
+                function (
+                    button,
+                    wishlisted
+                ) {
+
+                    if (!button) {
+                        return;
+                    }
 
 
-            wishlistButtons.forEach(
-                function (button) {
+                    const icon =
+                        button.querySelector('i');
 
-                    button.addEventListener(
-                        'click',
-                        function () {
 
-                            button.classList.toggle(
-                                'is-active'
+                    button.classList.toggle(
+                        'is-active',
+                        wishlisted
+                    );
+
+
+                    button.setAttribute(
+                        'aria-pressed',
+                        wishlisted
+                            ? 'true'
+                            : 'false'
+                    );
+
+
+                    const productName =
+                        button.dataset.productName ||
+                        'product';
+
+
+                    button.setAttribute(
+                        'aria-label',
+                        wishlisted
+                            ? `Remove ${productName} from wishlist`
+                            : `Add ${productName} to wishlist`
+                    );
+
+
+                    if (!icon) {
+                        return;
+                    }
+
+
+                    icon.classList.remove(
+                        'ri-heart-line',
+                        'ri-heart-fill',
+                        'ri-loader-4-line',
+                        'ri-spin'
+                    );
+
+
+                    icon.classList.add(
+                        wishlisted
+                            ? 'ri-heart-fill'
+                            : 'ri-heart-line'
+                    );
+
+                };
+
+
+            /**
+             * Sync all wishlist buttons for
+             * the same product.
+             */
+            const syncWishlistButtons =
+                function (
+                    productId,
+                    wishlisted
+                ) {
+
+                    const buttons =
+                        marketplacePage.querySelectorAll(
+                            '[data-wishlist-url]'
+                        );
+
+
+                    buttons.forEach(function (button) {
+
+                        if (
+                            Number(
+                                button.dataset.productId
+                            ) !== Number(productId)
+                        ) {
+                            return;
+                        }
+
+
+                        updateWishlistButton(
+                            button,
+                            wishlisted
+                        );
+
+                    });
+
+                };
+
+
+            /**
+             * Toggle wishlist.
+             */
+            const toggleWishlist =
+                async function (button) {
+
+                    if (
+                        !button ||
+                        button.disabled
+                    ) {
+                        return;
+                    }
+
+
+                    const wishlistUrl =
+                        button.dataset.wishlistUrl;
+
+
+                    const productId =
+                        Number(
+                            button.dataset.productId
+                        );
+
+
+                    if (
+                        !wishlistUrl ||
+                        !productId
+                    ) {
+                        return;
+                    }
+
+
+                    const icon =
+                        button.querySelector('i');
+
+
+                    if (!icon) {
+                        return;
+                    }
+
+
+                    const wasWishlisted =
+                        button.classList.contains(
+                            'is-active'
+                        );
+
+
+                    /*
+                    Prevent duplicate requests.
+                    */
+                    button.disabled = true;
+
+                    button.classList.add(
+                        'is-loading'
+                    );
+
+
+                    /*
+                    Save current icon state.
+                    */
+                    const previousIcon =
+                        wasWishlisted
+                            ? 'ri-heart-fill'
+                            : 'ri-heart-line';
+
+
+                    /*
+                    Loading icon.
+                    */
+                    icon.classList.remove(
+                        'ri-heart-line',
+                        'ri-heart-fill'
+                    );
+
+
+                    icon.classList.add(
+                        'ri-loader-4-line',
+                        'ri-spin'
+                    );
+
+
+                    try {
+
+                        const csrfToken =
+                            document
+                                .querySelector(
+                                    'meta[name="csrf-token"]'
+                                )
+                                ?.getAttribute(
+                                    'content'
+                                ) || '';
+
+
+                        const response =
+                            await fetch(
+                                wishlistUrl,
+                                {
+                                    method: 'POST',
+
+                                    headers: {
+                                        'Accept':
+                                            'application/json',
+
+                                        'X-Requested-With':
+                                            'XMLHttpRequest',
+
+                                        'Content-Type':
+                                            'application/json',
+
+                                        'X-CSRF-TOKEN':
+                                        csrfToken,
+                                    },
+
+                                    credentials: 'same-origin',
+                                }
                             );
 
 
-                            const icon =
-                                button.querySelector('i');
+                        /*
+                        =================================
+                            Authentication
+                        =================================
+                        */
+
+                        if (
+                            response.status === 401 ||
+                            response.status === 419
+                        ) {
+
+                            window.location.href =
+                                '{{ route('login') }}';
+
+                            return;
+                        }
 
 
-                            if (!icon) {
+                        /*
+                        =================================
+                            Validate Response
+                        =================================
+                        */
+
+                        const contentType =
+                            response.headers.get(
+                                'content-type'
+                            ) || '';
+
+
+                        if (
+                            !contentType.includes(
+                                'application/json'
+                            )
+                        ) {
+
+                            if (
+                                response.redirected
+                            ) {
+
+                                window.location.href =
+                                    '{{ route('login') }}';
+
                                 return;
                             }
 
 
-                            if (
-                                button.classList.contains(
-                                    'is-active'
-                                )
-                            ) {
-
-                                icon.classList.remove(
-                                    'ri-heart-line'
-                                );
-
-
-                                icon.classList.add(
-                                    'ri-heart-fill'
-                                );
-
-                            } else {
-
-                                icon.classList.remove(
-                                    'ri-heart-fill'
-                                );
-
-
-                                icon.classList.add(
-                                    'ri-heart-line'
-                                );
-
-                            }
+                            throw new Error(
+                                'Unable to update your wishlist.'
+                            );
 
                         }
+
+
+                        const data =
+                            await response.json();
+
+
+                        if (!response.ok) {
+
+                            throw new Error(
+                                data?.message ||
+                                'Unable to update your wishlist.'
+                            );
+
+                        }
+
+
+                        /*
+                        =================================
+                            Backend State
+                        =================================
+                        */
+
+                        const wishlisted =
+                            data.wishlisted === true;
+
+
+                        /*
+                        =================================
+                            Sync All Buttons
+                        =================================
+                        */
+
+                        syncWishlistButtons(
+                            productId,
+                            wishlisted
+                        );
+
+
+                        /*
+                        =================================
+                            Success Toast
+                        =================================
+                        */
+
+                        if (
+                            window.AppToast &&
+                            typeof window.AppToast.fire ===
+                            'function'
+                        ) {
+
+                            window.AppToast.fire({
+                                icon: 'success',
+
+                                title:
+                                    data.message ||
+                                    (
+                                        wishlisted
+                                            ? 'Product added to your wishlist.'
+                                            : 'Product removed from your wishlist.'
+                                    ),
+                            });
+
+                        }
+
+
+                        /*
+                        =================================
+                            Wishlist Event
+                        =================================
+                        */
+
+                        document.dispatchEvent(
+                            new CustomEvent(
+                                'wishlist:updated',
+                                {
+                                    detail: {
+                                        productId:
+                                        productId,
+
+                                        wishlisted:
+                                        wishlisted,
+                                    },
+                                }
+                            )
+                        );
+
+                    } catch (error) {
+
+                        /*
+                        =================================
+                            Restore Previous State
+                        =================================
+                        */
+
+                        syncWishlistButtons(
+                            productId,
+                            wasWishlisted
+                        );
+
+
+                        /*
+                        Restore icon explicitly.
+                        */
+                        icon.classList.remove(
+                            'ri-loader-4-line',
+                            'ri-spin',
+                            'ri-heart-line',
+                            'ri-heart-fill'
+                        );
+
+
+                        icon.classList.add(
+                            previousIcon
+                        );
+
+
+                        /*
+                        =================================
+                            Error Toast
+                        =================================
+                        */
+
+                        if (
+                            window.AppToast &&
+                            typeof window.AppToast.fire ===
+                            'function'
+                        ) {
+
+                            window.AppToast.fire({
+                                icon: 'error',
+
+                                title:
+                                    error.message ||
+                                    'Unable to update your wishlist.',
+                            });
+
+                        }
+
+                    } finally {
+
+                        /*
+                        Re-enable every button that
+                        belongs to this product.
+                        */
+                        const buttons =
+                            marketplacePage.querySelectorAll(
+                                '[data-wishlist-url]'
+                            );
+
+
+                        buttons.forEach(
+                            function (item) {
+
+                                if (
+                                    Number(
+                                        item.dataset.productId
+                                    ) === productId
+                                ) {
+
+                                    item.disabled = false;
+
+                                    item.classList.remove(
+                                        'is-loading'
+                                    );
+
+                                }
+
+                            }
+                        );
+
+                    }
+
+                };
+
+
+            /*
+            =====================================
+                Wishlist Click Handler
+            =====================================
+            */
+
+            marketplacePage.addEventListener(
+                'click',
+                function (event) {
+
+                    const button =
+                        event.target.closest(
+                            '[data-wishlist-url]'
+                        );
+
+
+                    if (
+                        !button ||
+                        !marketplacePage.contains(button)
+                    ) {
+                        return;
+                    }
+
+
+                    event.preventDefault();
+                    event.stopPropagation();
+
+
+                    toggleWishlist(button);
+
+                }
+            );
+
+
+            /*
+            =====================================
+                Initial Wishlist State
+            =====================================
+            */
+
+            const initialWishlistButtons =
+                marketplacePage.querySelectorAll(
+                    '[data-wishlist-url]'
+                );
+
+
+            initialWishlistButtons.forEach(
+                function (button) {
+
+                    const isWishlisted =
+                        button.classList.contains(
+                            'is-active'
+                        );
+
+
+                    updateWishlistButton(
+                        button,
+                        isWishlisted
                     );
 
                 }

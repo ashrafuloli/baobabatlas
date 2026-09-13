@@ -75,6 +75,16 @@ final class Product extends Model
         return $this->hasMany(InventoryTransaction::class);
     }
 
+    public function wishlists(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Wishlist::class,
+            'wishlist_items',
+            'product_id',
+            'wishlist_id',
+        )->withTimestamps();
+    }
+
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('status', true);

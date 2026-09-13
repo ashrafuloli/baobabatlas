@@ -9,13 +9,40 @@ use App\Models\Attribute;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\WishlistItem;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
-class MarketplaceController extends Controller
+final class MarketplaceController extends Controller
 {
     public function index(Request $request): View
     {
+        /*
+        |--------------------------------------------------------------------------
+        | Wishlist
+        |--------------------------------------------------------------------------
+        */
+
+        $wishlistProductIds = [];
+
+        if (auth()->check()) {
+            $wishlistProductIds = WishlistItem::query()
+                ->whereHas(
+                    'wishlist',
+                    function ($query): void {
+                        $query->where(
+                            'user_id',
+                            auth()->id(),
+                        );
+                    },
+                )
+                ->pluck('product_id')
+                ->map(
+                    static fn ($productId): int => (int) $productId,
+                )
+                ->all();
+        }
+
         /*
         |--------------------------------------------------------------------------
         | Categories
@@ -101,10 +128,6 @@ class MarketplaceController extends Controller
         |--------------------------------------------------------------------------
         | Resolve Category IDs
         |--------------------------------------------------------------------------
-        |
-        | If a parent category is selected, its direct children
-        | will also be included.
-        |
         */
 
         $categoryIds = collect();
@@ -169,14 +192,6 @@ class MarketplaceController extends Controller
         |--------------------------------------------------------------------------
         | Selected Attribute Filters
         |--------------------------------------------------------------------------
-        |
-        | Expected URL:
-        |
-        | attribute[color][]=black
-        | attribute[color][]=white
-        | attribute[size][]=m
-        | attribute[storage][]=256gb
-        |
         */
 
         $selectedAttributes = $request->input(
@@ -192,14 +207,6 @@ class MarketplaceController extends Controller
         |--------------------------------------------------------------------------
         | Products
         |--------------------------------------------------------------------------
-        |
-        | shipping_cost is already included automatically because the
-        | Product query loads all product columns.
-        |
-        | Frontend views can use:
-        |
-        | $product->shipping_cost
-        |
         */
 
         $products = Product::query()
@@ -351,13 +358,6 @@ class MarketplaceController extends Controller
             |--------------------------------------------------------------------------
             | Attribute Filters
             |--------------------------------------------------------------------------
-            |
-            | Product
-            |   -> variants
-            |       -> values
-            |           -> attribute
-            |           -> attributeValue
-            |
             */
 
             ->when(
@@ -502,13 +502,23 @@ class MarketplaceController extends Controller
                 'selectedCategorySlugs',
                 'selectedBrandIds',
                 'selectedAttributes',
+                'wishlistProductIds',
             ),
         );
     }
 
     public function show(Product $product): View
     {
-        abort_unless($product->isActive(), 404);
+        abort_unless(
+            $product->isActive(),
+            404,
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Product
+        |--------------------------------------------------------------------------
+        */
 
         $product->load([
             'brand',
@@ -539,15 +549,8 @@ class MarketplaceController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Product Shipping Cost
+        | Product Category IDs
         |--------------------------------------------------------------------------
-        |
-        | The product itself already contains shipping_cost.
-        |
-        | Available in details view as:
-        |
-        | $product->shipping_cost
-        |
         */
 
         $categoryIds = $product->categories
@@ -601,6 +604,47 @@ class MarketplaceController extends Controller
 
         /*
         |--------------------------------------------------------------------------
+        | Wishlist State
+        |--------------------------------------------------------------------------
+        */
+
+        $isWishlisted = false;
+
+        $wishlistProductIds = [];
+
+        if (auth()->check()) {
+            $wishlistProductIds = WishlistItem::query()
+                ->whereHas(
+                    'wishlist',
+                    function ($query): void {
+                        $query->where(
+                            'user_id',
+                            auth()->id(),
+                        );
+                    },
+                )
+                ->whereIn(
+                    'product_id',
+                    collect([
+                        $product->id,
+                        ...$relatedProducts->pluck('id')->all(),
+                    ])->unique()->values(),
+                )
+                ->pluck('product_id')
+                ->map(
+                    static fn ($productId): int => (int) $productId,
+                )
+                ->all();
+
+            $isWishlisted = in_array(
+                (int) $product->id,
+                $wishlistProductIds,
+                true,
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
         | View
         |--------------------------------------------------------------------------
         */
@@ -610,6 +654,8 @@ class MarketplaceController extends Controller
             compact(
                 'product',
                 'relatedProducts',
+                'isWishlisted',
+                'wishlistProductIds',
             ),
         );
     }

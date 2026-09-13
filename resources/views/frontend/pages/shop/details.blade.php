@@ -43,6 +43,19 @@
 
         /*
         |--------------------------------------------------------------------------
+        | Wishlist
+        |--------------------------------------------------------------------------
+        */
+
+        $isWishlisted = (bool) ($isWishlisted ?? false);
+
+        $wishlistProductIds = array_map(
+            'intval',
+            $wishlistProductIds ?? [],
+        );
+
+        /*
+        |--------------------------------------------------------------------------
         | Product Shipping Cost
         |--------------------------------------------------------------------------
         */
@@ -60,7 +73,10 @@
                 static fn ($image): bool => empty($image->variant_id)
             )
             ->map(
-                static function ($image) use ($resolveImage, $productName): array {
+                static function ($image) use (
+                    $resolveImage,
+                    $productName,
+                ): array {
                     return [
                         'url' => $resolveImage($image->image),
                         'alt' => $image->alt_text ?: $productName,
@@ -172,7 +188,10 @@
 
         $variants = $activeVariants
             ->map(
-                static function ($variant) use ($resolveImage, $productName): array {
+                static function ($variant) use (
+                    $resolveImage,
+                    $productName,
+                ): array {
                     $images = collect();
 
                     /*
@@ -281,13 +300,19 @@
 
         $initialGallery = collect();
 
-        if ($initialVariant && !empty($initialVariant['images'])) {
+        if (
+            $initialVariant &&
+            !empty($initialVariant['images'])
+        ) {
             $initialGallery = collect(
                 $initialVariant['images']
             );
         }
 
-        if ($initialGallery->isEmpty() && $productGallery->isNotEmpty()) {
+        if (
+            $initialGallery->isEmpty() &&
+            $productGallery->isNotEmpty()
+        ) {
             $initialGallery = $productGallery;
         }
 
@@ -315,17 +340,30 @@
         |--------------------------------------------------------------------------
         */
 
-        $getRelatedImage = static function ($relatedProduct) use ($resolveImage): string {
+        $getRelatedImage = static function (
+            $relatedProduct
+        ) use (
+            $resolveImage
+        ): string {
             $image = $relatedProduct->images
                 ->first(
                     static fn ($image): bool => empty($image->variant_id)
                 );
 
-            if ($image && filled($image->image)) {
-                return $resolveImage($image->image);
+            if (
+                $image &&
+                filled($image->image)
+            ) {
+                return $resolveImage(
+                    $image->image
+                );
             }
 
-            if (filled($relatedProduct->thumbnail)) {
+            if (
+                filled(
+                    $relatedProduct->thumbnail
+                )
+            ) {
                 return $resolveImage(
                     $relatedProduct->thumbnail
                 );
@@ -342,6 +380,7 @@
         ================================================================== --}}
 
         <div class="product-details-breadcrumb">
+
             <div class="container">
 
                 <div class="product-breadcrumb-list">
@@ -364,7 +403,9 @@
 
                         <i class="ri-arrow-right-s-line"></i>
 
-                        <a href="{{ route('shop', ['category' => $category->slug]) }}">
+                        <a
+                            href="{{ route('shop', ['category' => $category->slug]) }}"
+                        >
                             {{ $category->name }}
                         </a>
 
@@ -379,6 +420,7 @@
                 </div>
 
             </div>
+
         </div>
 
 
@@ -402,7 +444,7 @@
                             class="product-gallery-thumbnails"
                             data-gallery-thumbnails
                         >
-                            {{-- JavaScript renders ALL variant images here --}}
+                            {{-- JavaScript renders variant images here --}}
                         </div>
 
 
@@ -500,7 +542,8 @@
                             @if($product->sku)
 
                                 <span class="product-sku">
-                                    SKU: {{ $initialVariant['sku'] ?? $product->sku }}
+                                    SKU:
+                                    {{ $initialVariant['sku'] ?? $product->sku }}
                                 </span>
 
                             @endif
@@ -662,7 +705,8 @@
                                                 class="product-option-selected"
                                                 data-option-selected
                                             >
-                                                Select {{ $attribute['name'] }}
+                                                Select
+                                                {{ $attribute['name'] }}
                                             </span>
 
                                         </div>
@@ -779,7 +823,10 @@
                                 type="button"
                                 class="product-add-cart"
                                 data-add-to-cart
-                                @if($initialVariant && $initialVariant['stock'] <= 0)
+                                @if(
+                                    $initialVariant &&
+                                    $initialVariant['stock'] <= 0
+                                )
                                     disabled
                                 @endif
                             >
@@ -793,14 +840,22 @@
                             </button>
 
 
+                            {{-- =================================================
+                                Wishlist
+                            ================================================== --}}
+
                             <button
                                 type="button"
-                                class="product-wishlist"
+                                class="product-wishlist {{ $isWishlisted ? 'is-active' : '' }}"
                                 data-wishlist
-                                aria-label="Add to wishlist"
-                                aria-pressed="false"
+                                data-product-id="{{ $product->id }}"
+                                data-wishlist-url="{{ route('wishlist.toggle', ['product' => $product]) }}"
+                                aria-label="{{ $isWishlisted ? 'Remove from wishlist' : 'Add to wishlist' }}"
+                                aria-pressed="{{ $isWishlisted ? 'true' : 'false' }}"
                             >
-                                <i class="ri-heart-line"></i>
+                                <i
+                                    class="{{ $isWishlisted ? 'ri-heart-fill' : 'ri-heart-line' }}"
+                                ></i>
                             </button>
 
                         </div>
@@ -1000,10 +1055,6 @@
                                 @endif
 
 
-                                {{-- =================================================
-                                    Shipping
-                                ================================================== --}}
-
                                 <div class="product-specification-row">
 
                                     <span>
@@ -1011,11 +1062,20 @@
                                     </span>
 
                                     <strong>
+
                                         @if($shippingCost > 0)
-                                            ${{ number_format($shippingCost, 2) }}
+
+                                            ${{ number_format(
+                                                $shippingCost,
+                                                2
+                                            ) }}
+
                                         @else
+
                                             Free Shipping
+
                                         @endif
+
                                     </strong>
 
                                 </div>
@@ -1089,6 +1149,12 @@
                                 $relatedSale =
                                     $relatedComparePrice &&
                                     $relatedPrice < $relatedComparePrice;
+
+                                $relatedWishlisted = in_array(
+                                    (int) $relatedProduct->id,
+                                    $wishlistProductIds,
+                                    true,
+                                );
                             @endphp
 
                             <article class="related-product-card">
@@ -1115,11 +1181,16 @@
 
                                     <button
                                         type="button"
-                                        class="related-product-wishlist"
+                                        class="related-product-wishlist {{ $relatedWishlisted ? 'is-active' : '' }}"
                                         data-related-wishlist
-                                        aria-label="Add to wishlist"
+                                        data-product-id="{{ $relatedProduct->id }}"
+                                        data-wishlist-url="{{ route('wishlist.toggle', ['product' => $relatedProduct]) }}"
+                                        aria-label="{{ $relatedWishlisted ? 'Remove from wishlist' : 'Add to wishlist' }}"
+                                        aria-pressed="{{ $relatedWishlisted ? 'true' : 'false' }}"
                                     >
-                                        <i class="ri-heart-line"></i>
+                                        <i
+                                            class="{{ $relatedWishlisted ? 'ri-heart-fill' : 'ri-heart-line' }}"
+                                        ></i>
                                     </button>
 
 
@@ -1162,7 +1233,9 @@
 
                                     <h3>
 
-                                        <a href="{{ route('shop.details', $relatedProduct) }}">
+                                        <a
+                                            href="{{ route('shop.details', $relatedProduct) }}"
+                                        >
                                             {{ $relatedProduct->name }}
                                         </a>
 
@@ -1172,13 +1245,19 @@
                                     <div class="related-product-price">
 
                                         <span>
-                                            ${{ number_format($relatedPrice, 2) }}
+                                            ${{ number_format(
+                                                $relatedPrice,
+                                                2
+                                            ) }}
                                         </span>
 
                                         @if($relatedSale)
 
                                             <del>
-                                                ${{ number_format($relatedComparePrice, 2) }}
+                                                ${{ number_format(
+                                                    $relatedComparePrice,
+                                                    2
+                                                ) }}
                                             </del>
 
                                         @endif
@@ -1241,7 +1320,6 @@
     </div>
 
 @endsection
-
 
 @push('scripts')
 
@@ -1519,9 +1597,6 @@
                             );
 
 
-                        /*
-                         * Direct ProductVariant.image
-                         */
                         if (variant.image) {
 
                             const imageUrl =
@@ -1545,10 +1620,6 @@
                         }
 
 
-                        /*
-                         * ProductImage records
-                         * attached to variant.
-                         */
                         if (
                             Array.isArray(
                                 variant.images
@@ -1588,9 +1659,6 @@
                 );
 
 
-                /*
-                 * Product-level images.
-                 */
                 if (
                     Array.isArray(
                         productGallery
@@ -1628,9 +1696,6 @@
                 }
 
 
-                /*
-                 * Thumbnail fallback.
-                 */
                 if (
                     !images.length &&
                     thumbnail
@@ -1670,9 +1735,6 @@
                     );
 
 
-                /*
-                 * Direct ProductVariant.image
-                 */
                 if (variant.image) {
 
                     const imageUrl =
@@ -1693,9 +1755,6 @@
                 }
 
 
-                /*
-                 * Variant ProductImage records.
-                 */
                 if (
                     Array.isArray(
                         variant.images
@@ -2288,10 +2347,6 @@
                 }
 
 
-                /*
-                 * Non-variant products do not have
-                 * product-level stock.
-                 */
                 if (!variants.length) {
 
                     stockElement.innerHTML = `
@@ -2303,9 +2358,6 @@
                 }
 
 
-                /*
-                 * No valid exact combination.
-                 */
                 if (!hasValidVariantSelection) {
 
                     stockElement.innerHTML = `
@@ -2369,9 +2421,6 @@
                 }
 
 
-                /*
-                 * Non-variant product.
-                 */
                 if (!variants.length) {
 
                     quantityInput.disabled =
@@ -2422,10 +2471,6 @@
                 }
 
 
-                /*
-                 * Variant product with invalid
-                 * attribute combination.
-                 */
                 if (!hasValidVariantSelection) {
 
                     quantityInput.disabled =
@@ -2460,9 +2505,6 @@
                 }
 
 
-                /*
-                 * Valid combination but no variant.
-                 */
                 if (!variant) {
 
                     quantityInput.disabled =
@@ -2570,9 +2612,6 @@
                 }
 
 
-                /*
-                 * Non-variant product.
-                 */
                 if (!variants.length) {
 
                     addToCartButton.disabled =
@@ -2582,9 +2621,6 @@
                 }
 
 
-                /*
-                 * Variant product.
-                 */
                 addToCartButton.disabled =
                     !hasValidVariantSelection ||
                     !variant ||
@@ -2826,10 +2862,6 @@
                 }
 
 
-                /*
-                 * Variant product must have
-                 * an exact valid combination.
-                 */
                 if (
                     variants.length &&
                     (
@@ -2890,9 +2922,6 @@
                     );
 
 
-                /*
-                 * Variant stock validation.
-                 */
                 if (
                     variants.length &&
                     selectedVariant
@@ -2926,10 +2955,6 @@
                 }
 
 
-                /*
-                 * Non-variant products intentionally
-                 * send variant_id as null.
-                 */
                 const payload = {
 
                     product_id:
@@ -3001,12 +3026,6 @@
                     }
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | CSRF / 419
-                    |--------------------------------------------------------------------------
-                    */
-
                     if (
                         response.status === 419
                     ) {
@@ -3016,12 +3035,6 @@
                         );
                     }
 
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Validation Errors
-                    |--------------------------------------------------------------------------
-                    */
 
                     if (
                         response.status === 422
@@ -3049,12 +3062,6 @@
                     }
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Unauthorized
-                    |--------------------------------------------------------------------------
-                    */
-
                     if (
                         response.status === 401
                     ) {
@@ -3065,12 +3072,6 @@
                     }
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Other Backend Errors
-                    |--------------------------------------------------------------------------
-                    */
-
                     if (!response.ok) {
 
                         throw new Error(
@@ -3079,12 +3080,6 @@
                         );
                     }
 
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Successful Response
-                    |--------------------------------------------------------------------------
-                    */
 
                     if (
                         data?.cart_count !== undefined
@@ -3096,9 +3091,6 @@
                     }
 
 
-                    /*
-                     * Send complete cart event.
-                     */
                     document.dispatchEvent(
                         new CustomEvent(
                             'cart:updated',
@@ -3170,6 +3162,463 @@
 
             /*
             |--------------------------------------------------------------------------
+            | Wishlist
+            |--------------------------------------------------------------------------
+            */
+
+            function updateWishlistButton(
+                button,
+                wishlisted
+            ) {
+                if (!button) {
+                    return;
+                }
+
+                const active =
+                    Boolean(wishlisted);
+
+                button.classList.toggle(
+                    'is-active',
+                    active
+                );
+
+                button.setAttribute(
+                    'aria-pressed',
+                    active
+                        ? 'true'
+                        : 'false'
+                );
+
+                button.setAttribute(
+                    'aria-label',
+                    active
+                        ? 'Remove from wishlist'
+                        : 'Add to wishlist'
+                );
+
+                const icon =
+                    button.querySelector('i');
+
+                if (icon) {
+                    icon.className =
+                        active
+                            ? 'ri-heart-fill'
+                            : 'ri-heart-line';
+                }
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Sync All Wishlist Buttons
+            |--------------------------------------------------------------------------
+            */
+
+            function syncWishlistButtons(
+                targetProductId,
+                wishlisted
+            ) {
+                const normalizedProductId =
+                    Number(
+                        targetProductId
+                    );
+
+                page
+                    .querySelectorAll(
+                        '[data-wishlist], [data-related-wishlist]'
+                    )
+                    .forEach(
+                        (button) => {
+
+                            const buttonProductId =
+                                Number(
+                                    button.dataset.productId
+                                );
+
+                            if (
+                                buttonProductId !==
+                                normalizedProductId
+                            ) {
+                                return;
+                            }
+
+                            updateWishlistButton(
+                                button,
+                                wishlisted
+                            );
+                        }
+                    );
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Wishlist Loading State
+            |--------------------------------------------------------------------------
+            */
+
+            function setWishlistLoading(
+                productId,
+                loading
+            ) {
+                const normalizedProductId =
+                    Number(productId);
+
+                page
+                    .querySelectorAll(
+                        '[data-wishlist], [data-related-wishlist]'
+                    )
+                    .forEach(
+                        (button) => {
+
+                            const buttonProductId =
+                                Number(
+                                    button.dataset.productId
+                                );
+
+                            if (
+                                buttonProductId !==
+                                normalizedProductId
+                            ) {
+                                return;
+                            }
+
+                            button.disabled =
+                                loading;
+
+                            button.dataset.wishlistLoading =
+                                loading
+                                    ? 'true'
+                                    : 'false';
+
+                            button.classList.toggle(
+                                'is-loading',
+                                loading
+                            );
+
+                            button.setAttribute(
+                                'aria-busy',
+                                loading
+                                    ? 'true'
+                                    : 'false'
+                            );
+                        }
+                    );
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Toggle Wishlist
+            |--------------------------------------------------------------------------
+            */
+
+            async function toggleWishlist(
+                button
+            ) {
+                if (!button) {
+                    return;
+                }
+
+                const targetProductId =
+                    Number(
+                        button.dataset.productId
+                    );
+
+                if (
+                    !Number.isInteger(
+                        targetProductId
+                    ) ||
+                    targetProductId <= 0
+                ) {
+                    return;
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | IMPORTANT:
+                | URL comes directly from the button.
+                | Blade generates:
+                | route('wishlist.toggle', ['product' => $product])
+                |--------------------------------------------------------------------------
+                */
+
+                const wishlistUrl =
+                    button.dataset.wishlistUrl;
+
+                if (!wishlistUrl) {
+
+                    console.error(
+                        'Wishlist URL is missing.'
+                    );
+
+                    showCartToast(
+                        'Unable to update your wishlist.',
+                        'error'
+                    );
+
+                    return;
+                }
+
+
+                const csrfToken =
+                    getCsrfToken();
+
+
+                if (!csrfToken) {
+
+                    showCartToast(
+                        'Security token is missing. Please refresh the page and try again.',
+                        'error'
+                    );
+
+                    return;
+                }
+
+
+                if (
+                    button.dataset.wishlistLoading ===
+                    'true'
+                ) {
+                    return;
+                }
+
+
+                setWishlistLoading(
+                    targetProductId,
+                    true
+                );
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            wishlistUrl,
+                            {
+                                method: 'POST',
+
+                                headers: {
+
+                                    'Accept':
+                                        'application/json',
+
+                                    'X-Requested-With':
+                                        'XMLHttpRequest',
+
+                                    'X-CSRF-TOKEN':
+                                    csrfToken,
+                                },
+
+                                credentials:
+                                    'same-origin',
+                            }
+                        );
+
+
+                    let data = null;
+
+
+                    try {
+
+                        data =
+                            await response.json();
+
+                    } catch {
+
+                        data = null;
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | HTTP Errors
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (
+                        response.status === 419
+                    ) {
+
+                        throw new Error(
+                            'Your session has expired. Please refresh the page and try again.'
+                        );
+                    }
+
+
+                    if (
+                        response.status === 401
+                    ) {
+
+                        throw new Error(
+                            'Please sign in to add products to your wishlist.'
+                        );
+                    }
+
+
+                    if (
+                        response.status === 403
+                    ) {
+
+                        throw new Error(
+                            data?.message ||
+                            'You are not allowed to update your wishlist.'
+                        );
+                    }
+
+
+                    if (
+                        response.status === 404
+                    ) {
+
+                        throw new Error(
+                            data?.message ||
+                            'Product not found.'
+                        );
+                    }
+
+
+                    if (
+                        response.status === 422
+                    ) {
+
+                        const validationMessage =
+                            data?.errors
+                                ? Object.values(
+                                    data.errors
+                                )
+                                    .flat()
+                                    .find(
+                                        (message) =>
+                                            typeof message ===
+                                            'string'
+                                    )
+                                : null;
+
+
+                        throw new Error(
+                            validationMessage ||
+                            data?.message ||
+                            'Invalid product.'
+                        );
+                    }
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            data?.message ||
+                            `Unable to update your wishlist. (${response.status})`
+                        );
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Wishlist Response
+                    |--------------------------------------------------------------------------
+                    |
+                    | Controller returns:
+                    |
+                    | {
+                    |     success: true,
+                    |     wishlisted: true/false,
+                    |     message: "..."
+                    | }
+                    |
+                    */
+
+                    if (
+                        typeof data?.wishlisted !==
+                        'boolean'
+                    ) {
+
+                        throw new Error(
+                            'Invalid wishlist response from the server.'
+                        );
+                    }
+
+
+                    const wishlisted =
+                        data.wishlisted;
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Update Main + Related Buttons
+                    |--------------------------------------------------------------------------
+                    */
+
+                    syncWishlistButtons(
+                        targetProductId,
+                        wishlisted
+                    );
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Toast
+                    |--------------------------------------------------------------------------
+                    */
+
+                    showCartToast(
+                        data.message ||
+                        (
+                            wishlisted
+                                ? 'Product added to wishlist.'
+                                : 'Product removed from wishlist.'
+                        ),
+                        'success'
+                    );
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Global Wishlist Event
+                    |--------------------------------------------------------------------------
+                    */
+
+                    document.dispatchEvent(
+                        new CustomEvent(
+                            'wishlist:updated',
+                            {
+                                detail: {
+
+                                    productId:
+                                    targetProductId,
+
+                                    wishlisted,
+                                },
+                            }
+                        )
+                    );
+
+                } catch (error) {
+
+                    console.error(
+                        'Wishlist error:',
+                        error
+                    );
+
+
+                    showCartToast(
+                        error?.message ||
+                        'Something went wrong. Please try again.',
+                        'error'
+                    );
+
+                } finally {
+
+                    setWishlistLoading(
+                        targetProductId,
+                        false
+                    );
+                }
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
             | Attribute Selection
             |--------------------------------------------------------------------------
             */
@@ -3215,9 +3664,6 @@
 
                     if (exactVariant) {
 
-                        /*
-                         * Exact combination exists.
-                         */
                         selectedVariant =
                             exactVariant;
 
@@ -3225,10 +3671,6 @@
                             true;
 
 
-                        /*
-                         * Keep ALL variant images
-                         * in the thumbnail gallery.
-                         */
                         const variantImages =
                             getVariantImages(
                                 selectedVariant
@@ -3251,12 +3693,9 @@
 
                     } else {
 
-                        /*
-                         * No exact combination.
-                         *
-                         * Keep previous selectedVariant
-                         * visible, but disable cart.
-                         */
+                        selectedVariant =
+                            null;
+
                         hasValidVariantSelection =
                             false;
 
@@ -3322,10 +3761,6 @@
                     );
 
 
-                    /*
-                     * If this image belongs to a variant,
-                     * select that variant.
-                     */
                     const variantId =
                         Number(
                             thumbnailElement.dataset.variantId ||
@@ -3443,9 +3878,6 @@
                         ) || 1;
 
 
-                    /*
-                     * Variant product.
-                     */
                     if (
                         variants.length &&
                         selectedVariant &&
@@ -3469,9 +3901,6 @@
 
                     } else {
 
-                        /*
-                         * Non-variant product.
-                         */
                         quantity += 1;
                     }
 
@@ -3522,6 +3951,48 @@
             addToCartButton?.addEventListener(
                 'click',
                 addProductToCart
+            );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Wishlist Click
+            |--------------------------------------------------------------------------
+            |
+            | Works for:
+            |
+            | [data-wishlist]
+            | [data-related-wishlist]
+            |
+            */
+
+            page.addEventListener(
+                'click',
+                (event) => {
+
+                    const button =
+                        event.target.closest(
+                            '[data-wishlist], [data-related-wishlist]'
+                        );
+
+
+                    if (
+                        !button ||
+                        !page.contains(button)
+                    ) {
+                        return;
+                    }
+
+
+                    event.preventDefault();
+
+                    event.stopPropagation();
+
+
+                    toggleWishlist(
+                        button
+                    );
+                }
             );
 
 
@@ -3578,89 +4049,6 @@
                     );
                 }
             );
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Wishlist
-            |--------------------------------------------------------------------------
-            */
-
-            wishlistButton?.addEventListener(
-                'click',
-                () => {
-
-                    const active =
-                        wishlistButton.classList.toggle(
-                            'is-active'
-                        );
-
-
-                    wishlistButton.setAttribute(
-                        'aria-pressed',
-                        active
-                            ? 'true'
-                            : 'false'
-                    );
-
-
-                    const icon =
-                        wishlistButton.querySelector(
-                            'i'
-                        );
-
-
-                    if (icon) {
-
-                        icon.className =
-                            active
-                                ? 'ri-heart-fill'
-                                : 'ri-heart-line';
-                    }
-                }
-            );
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Related Wishlist
-            |--------------------------------------------------------------------------
-            */
-
-            page
-                .querySelectorAll(
-                    '[data-related-wishlist]'
-                )
-                .forEach(
-                    (button) => {
-
-                        button.addEventListener(
-                            'click',
-                            () => {
-
-                                const active =
-                                    button.classList.toggle(
-                                        'is-active'
-                                    );
-
-
-                                const icon =
-                                    button.querySelector(
-                                        'i'
-                                    );
-
-
-                                if (icon) {
-
-                                    icon.className =
-                                        active
-                                            ? 'ri-heart-fill'
-                                            : 'ri-heart-line';
-                                }
-                            }
-                        );
-                    }
-                );
 
 
             /*
@@ -3790,11 +4178,6 @@
 
                 } else {
 
-                    /*
-                     * Use first variant only for display.
-                     * Cart remains disabled until exact
-                     * combination is selected.
-                     */
                     selectedVariant =
                         variants[0] || null;
 
@@ -3804,9 +4187,6 @@
 
             } else {
 
-                /*
-                 * Non-variant product.
-                 */
                 selectedVariant =
                     null;
 
@@ -3831,10 +4211,6 @@
                 '';
 
 
-            /*
-             * If an exact initial variant exists,
-             * prefer its image.
-             */
             if (
                 selectedVariant &&
                 hasValidVariantSelection
@@ -3869,6 +4245,41 @@
             updateOptionAvailability();
 
             updateProductInformation();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | INITIAL WISHLIST STATE
+            |--------------------------------------------------------------------------
+            |
+            | IMPORTANT:
+            | Blade variable is $isWishlisted.
+            | Previously this was incorrectly:
+            |
+            | @json($isWishlisted)
+            |
+            */
+
+            if (wishlistButton) {
+
+                updateWishlistButton(
+                    wishlistButton,
+                    @json($isWishlisted)
+                );
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | INITIAL RELATED WISHLIST STATE
+            |--------------------------------------------------------------------------
+            |
+            | Related buttons are already rendered by Blade with
+            | their correct active state, so we do not need another
+            | request here.
+            |
+            */
+
 
         });
     </script>

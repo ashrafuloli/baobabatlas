@@ -31,6 +31,7 @@ use App\Http\Controllers\Frontend\FrontendTrackingController;
 use App\Http\Controllers\Frontend\MarketplaceController;
 use App\Http\Controllers\Frontend\OrderController;
 use App\Http\Controllers\Frontend\RefundRequestController;
+use App\Http\Controllers\Frontend\WishlistController;
 use App\Http\Controllers\StripeWebhookController;
 use Illuminate\Support\Facades\Route;
 
@@ -148,10 +149,21 @@ Route::middleware('maintenance')->group(function (): void {
             [RefundRequestController::class, 'store']
         )->name('my-order.refund-request');
 
-        Route::view(
-            '/my-wishlist',
-            'frontend.pages.shop.my-wishlist',
-        )->name('my-wishlist');
+        Route::get('/my-wishlist', [
+            WishlistController::class, 'index',
+        ])->name('my-wishlist');
+
+        Route::post('/my-wishlist/{product}/add', [
+            WishlistController::class, 'add',
+        ])->name('wishlist.add');
+
+        Route::delete('/my-wishlist/{product}', [
+            WishlistController::class, 'remove',
+        ])->name('wishlist.remove');
+
+        Route::post('/my-wishlist/{product}/toggle', [
+            WishlistController::class, 'toggle',
+        ])->name('wishlist.toggle');
 
 
         /*

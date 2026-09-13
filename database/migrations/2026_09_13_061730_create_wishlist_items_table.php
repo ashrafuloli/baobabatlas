@@ -13,15 +13,25 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('wishlists', function (Blueprint $table): void {
+        Schema::create('wishlist_items', function (Blueprint $table): void {
             $table->id();
 
-            $table->foreignId('user_id')
-                ->unique()
+            $table->foreignId('wishlist_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
+            $table->foreignId('product_id')
                 ->constrained()
                 ->cascadeOnDelete();
 
             $table->timestamps();
+
+            $table->unique([
+                'wishlist_id',
+                'product_id',
+            ]);
+
+            $table->index('product_id');
         });
     }
 
@@ -30,6 +40,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('wishlists');
+        Schema::dropIfExists('wishlist_items');
     }
 };

@@ -1,7 +1,6 @@
 @extends('frontend.layouts.frontend')
 
 @section('contents')
-
     <div class="my-wishlist-page">
 
         <!--================================
@@ -51,18 +50,22 @@
                     <div class="my-wishlist-page__topbar">
 
                         <div class="my-wishlist-page__count">
+
                             <strong class="wishlist-count">
-                                4
+                                {{ $items->count() }}
                             </strong>
 
                             <span>
-                                Items in Wishlist
+                                {{ $items->count() === 1 ? 'Item' : 'Items' }}
+                                in Wishlist
                             </span>
+
                         </div>
 
                         <button
                             type="button"
                             class="my-wishlist-page__clear-btn"
+                            @disabled($items->isEmpty())
                         >
                             <i class="ri-delete-bin-line"></i>
                             <span>Clear Wishlist</span>
@@ -75,135 +78,117 @@
                         Wishlist Products
                     =================================-->
 
-                    <div class="product-grid related">
+                    <div
+                        class="product-grid related"
+                        @if ($items->isEmpty()) hidden @endif
+                    >
+
+                        @foreach ($items as $item)
+
+                            @php
+                                $product = $item->product;
+
+                                $primaryImage = $product?->images
+                                    ?->firstWhere('is_primary', true);
+
+                                $productImage = $primaryImage
+                                    ?? $product?->images?->first();
+
+                                $image = $productImage?->image
+                                    ?? $product?->thumbnail
+                                    ?? 'assets/img/products/placeholder.png';
+
+                                $imageUrl = str_starts_with($image, 'http')
+                                    ? $image
+                                    : asset($image);
+
+                                $productUrl = route(
+                                    'shop.details',
+                                    $product->slug,
+                                );
+                            @endphp
+
+                            @if ($product)
+
+                                <article
+                                    class="product-card"
+                                    data-wishlist-item
+                                    data-product-id="{{ $product->id }}"
+                                    data-toggle-url="{{ route('wishlist.toggle', ['product' => $product]) }}"
+                                >
+
+                                    <div class="product-image">
+
+                                        <button
+                                            type="button"
+                                            class="wishlist is-active"
+                                            aria-label="Remove {{ $product->name }} from wishlist"
+                                            title="Remove from wishlist"
+                                            data-wishlist-toggle
+                                            data-product-id="{{ $product->id }}"
+                                            data-product-name="{{ $product->name }}"
+                                            aria-pressed="true"
+                                        >
+                                            <i class="ri-heart-fill"></i>
+                                        </button>
+
+                                        <a
+                                            href="{{ $productUrl }}"
+                                            aria-label="{{ $product->name }}"
+                                        >
+                                            <img
+                                                src="{{ $imageUrl }}"
+                                                alt="{{ $product->name }}"
+                                                loading="lazy"
+                                            >
+                                        </a>
+
+                                    </div>
 
 
-                        <div class="product-card">
+                                    <div class="product-content">
 
-                            <div class="product-image">
+                                        <h4>
+                                            <a href="{{ $productUrl }}">
+                                                {{ $product->name }}
+                                            </a>
+                                        </h4>
 
-                                    <span class="product-badge bestseller">
-                                        BEST SELLER
-                                    </span>
+                                        @if ($product->variants->isNotEmpty())
 
-                                <button type="button" class="wishlist is-active">
-                                    <i class="ri-heart-fill"></i>
-                                </button>
+                                            @php
+                                                $lowestPrice = $product->variants
+                                                    ->where('status', true)
+                                                    ->min('price');
+                                            @endphp
 
-                                <a href="#">
-                                    <img
-                                        src="{{ asset('assets/img/products/thumb-1.jpeg') }}"
-                                        alt="Raw Cashew Nuts"
-                                    >
-                                </a>
+                                            @if ($lowestPrice !== null)
 
-                            </div>
+                                                <strong class="product-price">
+                                                    ${{ number_format((float) $lowestPrice, 2) }}
+                                                </strong>
 
+                                            @endif
 
-                            <div class="product-content">
+                                        @else
 
-                                <h4>
-                                    <a href="#">
-                                        Raw Cashew Nuts
-                                    </a>
-                                </h4>
+                                            @if (isset($product->price))
 
-                                <strong class="product-price">
-                                    $2.45
-                                </strong>
+                                                <strong class="product-price">
+                                                    ${{ number_format((float) $product->price, 2) }}
+                                                </strong>
 
-                                <div class="product-rating">
-                                    <span class="stars">★★★★★</span>
-                                    <span>4.8 (120)</span>
-                                </div>
+                                            @endif
 
-                            </div>
+                                        @endif
 
-                        </div>
+                                    </div>
 
+                                </article>
 
-                        <div class="product-card">
+                            @endif
 
-                            <div class="product-image">
-
-                                    <span class="product-badge premium">
-                                        PREMIUM
-                                    </span>
-
-                                <button type="button" class="wishlist is-active">
-                                    <i class="ri-heart-fill"></i>
-                                </button>
-
-                                <a href="#">
-                                    <img
-                                        src="{{ asset('assets/img/products/thumb-2.jpeg') }}"
-                                        alt="Gold Nuggets"
-                                    >
-                                </a>
-
-                            </div>
-
-
-                            <div class="product-content">
-
-                                <h4>
-                                    <a href="#">
-                                        Gold Nuggets
-                                    </a>
-                                </h4>
-
-                                <strong class="product-price">
-                                    $58,500
-                                </strong>
-
-                                <div class="product-rating">
-                                    <span class="stars">★★★★★</span>
-                                    <span>4.9 (85)</span>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="product-card">
-
-                            <div class="product-image">
-
-                                <button type="button" class="wishlist is-active">
-                                    <i class="ri-heart-fill"></i>
-                                </button>
-
-                                <a href="#">
-                                    <img
-                                        src="{{ asset('assets/img/products/thumb-3.jpeg') }}"
-                                        alt="African Wax Print Fabric"
-                                    >
-                                </a>
-
-                            </div>
-
-
-                            <div class="product-content">
-
-                                <h4>
-                                    <a href="#">
-                                        African Wax Print Fabric
-                                    </a>
-                                </h4>
-
-                                <strong class="product-price">
-                                    $4.75
-                                </strong>
-
-                                <div class="product-rating">
-                                    <span class="stars">★★★★★</span>
-                                    <span>4.7 (60)</span>
-                                </div>
-
-                            </div>
-
-                        </div>
+                        @endforeach
 
                     </div>
 
@@ -214,13 +199,11 @@
 
                     <div
                         class="my-wishlist-page__empty"
-                        hidden
+                        @if ($items->isNotEmpty()) hidden @endif
                     >
 
                         <div class="my-wishlist-page__empty-icon">
-
                             <i class="ri-heart-3-line"></i>
-
                         </div>
 
                         <h2>
@@ -248,17 +231,17 @@
         </section>
 
     </div>
+@endsection
 
+
+@push('scripts')
     <script>
         (function () {
 
             const initWishlist = function () {
 
                 const wishlistPage =
-                    document.querySelector(
-                        '.my-wishlist-page'
-                    );
-
+                    document.querySelector('.my-wishlist-page');
 
                 if (!wishlistPage) {
                     return;
@@ -276,18 +259,18 @@
                         '.product-grid.related'
                     );
 
-
                 const countElement =
                     wishlistPage.querySelector(
                         '.wishlist-count'
                     );
 
+                const countLabel =
+                    countElement?.nextElementSibling;
 
                 const emptyState =
                     wishlistPage.querySelector(
                         '.my-wishlist-page__empty'
                     );
-
 
                 const clearButton =
                     wishlistPage.querySelector(
@@ -297,7 +280,7 @@
 
                 /*
                 =====================================
-                    Get Product Cards
+                    Helpers
                 =====================================
                 */
 
@@ -307,34 +290,95 @@
                         return [];
                     }
 
-
                     return Array.from(
                         productGrid.querySelectorAll(
-                            '.product-card'
+                            '[data-wishlist-item]'
                         )
                     );
 
                 };
 
 
-                /*
-                =====================================
-                    Update Wishlist State
-                =====================================
-                */
+                const getCsrfToken = function () {
+
+                    return document
+                        .querySelector(
+                            'meta[name="csrf-token"]'
+                        )
+                        ?.getAttribute('content') || '';
+
+                };
+
+
+                const updateWishlistButton = function (
+                    button,
+                    wishlisted
+                ) {
+
+                    if (!button) {
+                        return;
+                    }
+
+                    button.classList.toggle(
+                        'is-active',
+                        wishlisted
+                    );
+
+                    button.setAttribute(
+                        'aria-pressed',
+                        wishlisted ? 'true' : 'false'
+                    );
+
+                    const productName =
+                        button.dataset.productName || 'Product';
+
+                    button.setAttribute(
+                        'aria-label',
+                        wishlisted
+                            ? `Remove ${productName} from wishlist`
+                            : `Add ${productName} to wishlist`
+                    );
+
+                    button.setAttribute(
+                        'title',
+                        wishlisted
+                            ? 'Remove from wishlist'
+                            : 'Add to wishlist'
+                    );
+
+                    const icon =
+                        button.querySelector('i');
+
+                    if (icon) {
+
+                        icon.classList.toggle(
+                            'ri-heart-fill',
+                            wishlisted
+                        );
+
+                        icon.classList.toggle(
+                            'ri-heart-line',
+                            !wishlisted
+                        );
+
+                    }
+
+                };
+
 
                 const updateWishlistState = function () {
 
                     const productCards =
                         getProductCards();
 
-
                     const count =
                         productCards.length;
 
 
                     /*
-                    Update Count
+                    =================================
+                        Update Count
+                    =================================
                     */
 
                     if (countElement) {
@@ -346,7 +390,25 @@
 
 
                     /*
-                    Show / Hide Product Grid
+                    =================================
+                        Update Count Label
+                    =================================
+                    */
+
+                    if (countLabel) {
+
+                        countLabel.textContent =
+                            count === 1
+                                ? 'Item in Wishlist'
+                                : 'Items in Wishlist';
+
+                    }
+
+
+                    /*
+                    =================================
+                        Product Grid
+                    =================================
                     */
 
                     if (productGrid) {
@@ -358,7 +420,9 @@
 
 
                     /*
-                    Show / Hide Empty State
+                    =================================
+                        Empty State
+                    =================================
                     */
 
                     if (emptyState) {
@@ -370,13 +434,316 @@
 
 
                     /*
-                    Show / Hide Clear Button
+                    =================================
+                        Clear Button
+                    =================================
                     */
 
                     if (clearButton) {
 
+                        clearButton.disabled =
+                            count === 0;
+
                         clearButton.hidden =
                             count === 0;
+
+                    }
+
+                };
+
+
+                const showMessage = function (
+                    message,
+                    type = 'error'
+                ) {
+
+                    if (
+                        window.AppToast &&
+                        typeof window.AppToast.fire === 'function'
+                    ) {
+
+                        window.AppToast.fire({
+                            icon: type,
+                            title: message,
+                        });
+
+                        return;
+                    }
+
+                    if (
+                        type === 'success'
+                    ) {
+
+                        console.log(message);
+
+                        return;
+                    }
+
+                    console.error(message);
+
+                };
+
+
+                const sendRequest = async function (
+                    url,
+                    options = {}
+                ) {
+
+                    if (!url) {
+
+                        throw new Error(
+                            'Wishlist URL is missing.'
+                        );
+
+                    }
+
+
+                    const response =
+                        await fetch(url, {
+                            ...options,
+                            headers: {
+                                'Accept':
+                                    'application/json',
+                                'X-Requested-With':
+                                    'XMLHttpRequest',
+                                ...(options.headers || {}),
+                            },
+                        });
+
+
+                    /*
+                    =================================
+                        Authentication / Session
+                    =================================
+                    */
+
+                    if (
+                        response.status === 401
+                    ) {
+
+                        window.location.href =
+                            '{{ route('login') }}';
+
+                        throw new Error(
+                            'Please login to manage your wishlist.'
+                        );
+
+                    }
+
+
+                    if (
+                        response.status === 419
+                    ) {
+
+                        throw new Error(
+                            'Your session has expired. Please refresh the page and try again.'
+                        );
+
+                    }
+
+
+                    const contentType =
+                        response.headers.get(
+                            'content-type'
+                        ) || '';
+
+                    let data = null;
+
+
+                    /*
+                    =================================
+                        Parse JSON Safely
+                    =================================
+                    */
+
+                    if (
+                        contentType.includes(
+                            'application/json'
+                        )
+                    ) {
+
+                        try {
+
+                            data =
+                                await response.json();
+
+                        } catch (error) {
+
+                            data = null;
+
+                        }
+
+                    }
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            data?.message ||
+                            'Something went wrong. Please try again.'
+                        );
+
+                    }
+
+
+                    if (!data) {
+
+                        throw new Error(
+                            'Invalid response from the server.'
+                        );
+
+                    }
+
+
+                    return data;
+
+                };
+
+
+                /*
+                =====================================
+                    Remove Product
+                =====================================
+                */
+
+                const removeProduct = async function (
+                    productCard,
+                    button
+                ) {
+
+                    const toggleUrl =
+                        productCard.dataset.toggleUrl;
+
+                    const productId =
+                        Number(
+                            productCard.dataset.productId
+                        );
+
+
+                    if (
+                        !toggleUrl ||
+                        button.disabled
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    button.disabled = true;
+
+                    productCard.classList.add(
+                        'is-removing'
+                    );
+
+
+                    try {
+
+                        const data =
+                            await sendRequest(
+                                toggleUrl,
+                                {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type':
+                                            'application/json',
+                                        'X-CSRF-TOKEN':
+                                            getCsrfToken(),
+                                    },
+                                }
+                            );
+
+
+                        /*
+                        =================================
+                            Updated API Response
+                        =================================
+                        */
+
+                        if (
+                            data.success === true &&
+                            data.wishlisted === false
+                        ) {
+
+                            updateWishlistButton(
+                                button,
+                                false
+                            );
+
+
+                            /*
+                            Remove Card
+                            */
+
+                            productCard.remove();
+
+
+                            /*
+                            Update Page State
+                            */
+
+                            updateWishlistState();
+
+
+                            /*
+                            Notify Other Wishlist UI
+                            */
+
+                            window.dispatchEvent(
+                                new CustomEvent(
+                                    'wishlist:updated',
+                                    {
+                                        detail: {
+                                            productId:
+                                            productId,
+                                            wishlisted:
+                                                false,
+                                        },
+                                    }
+                                )
+                            );
+
+
+                            showMessage(
+                                data.message ||
+                                'Product removed from your wishlist.',
+                                'success'
+                            );
+
+                        } else {
+
+                            productCard.classList.remove(
+                                'is-removing'
+                            );
+
+                            showMessage(
+                                data.message ||
+                                'Unable to remove this product from your wishlist.'
+                            );
+
+                        }
+
+                    } catch (error) {
+
+                        productCard.classList.remove(
+                            'is-removing'
+                        );
+
+                        showMessage(
+                            error.message ||
+                            'Unable to update your wishlist.'
+                        );
+
+                    } finally {
+
+                        if (
+                            document.body.contains(button)
+                        ) {
+
+                            button.disabled =
+                                false;
+
+                        }
 
                     }
 
@@ -389,44 +756,52 @@
                 =====================================
                 */
 
-                wishlistPage
-                    .querySelectorAll(
-                        '.product-card .wishlist'
-                    )
-                    .forEach(function (wishlistButton) {
+                wishlistPage.addEventListener(
+                    'click',
+                    function (event) {
 
-                        wishlistButton.addEventListener(
-                            'click',
-                            function () {
-
-                                const productCard =
-                                    wishlistButton.closest(
-                                        '.product-card'
-                                    );
+                        const wishlistButton =
+                            event.target.closest(
+                                '[data-wishlist-toggle]'
+                            );
 
 
-                                if (!productCard) {
-                                    return;
-                                }
+                        if (
+                            !wishlistButton ||
+                            !wishlistPage.contains(
+                                wishlistButton
+                            )
+                        ) {
+
+                            return;
+
+                        }
 
 
-                                /*
-                                Remove Product
-                                */
+                        const productCard =
+                            wishlistButton.closest(
+                                '[data-wishlist-item]'
+                            );
 
-                                productCard.remove();
+
+                        if (!productCard) {
+
+                            return;
+
+                        }
 
 
-                                /*
-                                Update Wishlist
-                                */
+                        event.preventDefault();
+                        event.stopPropagation();
 
-                                updateWishlistState();
 
-                            }
+                        removeProduct(
+                            productCard,
+                            wishlistButton
                         );
 
-                    });
+                    }
+                );
 
 
                 /*
@@ -439,22 +814,223 @@
 
                     clearButton.addEventListener(
                         'click',
-                        function () {
+                        async function () {
 
                             const productCards =
                                 getProductCards();
 
 
-                            productCards.forEach(
-                                function (productCard) {
+                            if (
+                                productCards.length === 0 ||
+                                clearButton.disabled
+                            ) {
 
-                                    productCard.remove();
+                                return;
+
+                            }
+
+
+                            /*
+                            =================================
+                                Confirmation
+                            =================================
+                            */
+
+                            const confirmed =
+                                window.Swal
+                                    ? await Swal.fire({
+                                        icon: 'warning',
+                                        title: 'Clear Wishlist?',
+                                        text: 'All products will be removed from your wishlist.',
+                                        showCancelButton: true,
+                                        confirmButtonText: 'Yes, clear it',
+                                        cancelButtonText: 'Cancel',
+                                    })
+                                    : {
+                                        isConfirmed:
+                                            window.confirm(
+                                                'Remove all products from your wishlist?'
+                                            ),
+                                    };
+
+
+                            if (
+                                !confirmed.isConfirmed
+                            ) {
+
+                                return;
+
+                            }
+
+
+                            const originalHtml =
+                                clearButton.innerHTML;
+
+
+                            clearButton.disabled =
+                                true;
+
+
+                            clearButton.innerHTML =
+                                '<i class="ri-loader-4-line ri-spin"></i>' +
+                                '<span>Clearing...</span>';
+
+
+                            try {
+
+                                /*
+                                =================================
+                                    Send Remove Requests
+                                =================================
+                                */
+
+                                const requests =
+                                    productCards.map(
+                                        function (
+                                            productCard
+                                        ) {
+
+                                            const url =
+                                                productCard
+                                                    .dataset
+                                                    .toggleUrl;
+
+                                            return sendRequest(
+                                                url,
+                                                {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type':
+                                                            'application/json',
+                                                        'X-CSRF-TOKEN':
+                                                            getCsrfToken(),
+                                                    },
+                                                }
+                                            );
+
+                                        }
+                                    );
+
+
+                                const results =
+                                    await Promise.allSettled(
+                                        requests
+                                    );
+
+
+                                let removedCount = 0;
+
+
+                                /*
+                                =================================
+                                    Process Results
+                                =================================
+                                */
+
+                                results.forEach(
+                                    function (
+                                        result,
+                                        index
+                                    ) {
+
+                                        if (
+                                            result.status !==
+                                            'fulfilled'
+                                        ) {
+
+                                            return;
+
+                                        }
+
+
+                                        const data =
+                                            result.value;
+
+
+                                        if (
+                                            data.success === true &&
+                                            data.wishlisted === false
+                                        ) {
+
+                                            const productCard =
+                                                productCards[index];
+
+
+                                            const productId =
+                                                Number(
+                                                    productCard
+                                                        ?.dataset
+                                                        .productId
+                                                );
+
+
+                                            productCard?.remove();
+
+                                            removedCount++;
+
+
+                                            /*
+                                            Notify Other Wishlist UI
+                                            */
+
+                                            window.dispatchEvent(
+                                                new CustomEvent(
+                                                    'wishlist:updated',
+                                                    {
+                                                        detail: {
+                                                            productId:
+                                                            productId,
+                                                            wishlisted:
+                                                                false,
+                                                        },
+                                                    }
+                                                )
+                                            );
+
+                                        }
+
+                                    }
+                                );
+
+
+                                updateWishlistState();
+
+
+                                if (
+                                    removedCount > 0
+                                ) {
+
+                                    showMessage(
+                                        removedCount ===
+                                        productCards.length
+                                            ? 'Wishlist cleared successfully.'
+                                            : `${removedCount} product(s) removed from your wishlist.`,
+                                        'success'
+                                    );
+
+                                } else {
+
+                                    showMessage(
+                                        'Unable to clear your wishlist.'
+                                    );
 
                                 }
-                            );
 
+                            } catch (error) {
 
-                            updateWishlistState();
+                                showMessage(
+                                    error.message ||
+                                    'Unable to clear your wishlist.'
+                                );
+
+                            } finally {
+
+                                clearButton.innerHTML =
+                                    originalHtml;
+
+                                updateWishlistState();
+
+                            }
 
                         }
                     );
@@ -467,6 +1043,27 @@
                     Initial State
                 =====================================
                 */
+
+                getProductCards().forEach(
+                    function (productCard) {
+
+                        const button =
+                            productCard.querySelector(
+                                '[data-wishlist-toggle]'
+                            );
+
+                        if (!button) {
+                            return;
+                        }
+
+                        updateWishlistButton(
+                            button,
+                            true
+                        );
+
+                    }
+                );
+
 
                 updateWishlistState();
 
@@ -496,5 +1093,4 @@
 
         })();
     </script>
-
-@endsection
+@endpush
