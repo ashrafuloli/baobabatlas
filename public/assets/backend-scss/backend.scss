@@ -98,6 +98,8 @@
 @use "ecommerce/coupons-edit";
 
 @use "ecommerce/inventory-index";
+@use "ecommerce/inventory-product-edit";
+@use "ecommerce/inventory-variant-edit";
 @use "ecommerce/inventory-low-stock";
 @use "ecommerce/inventory-out-of-stock";
 
@@ -107,6 +109,9 @@
 @use "ecommerce/orders-refund-details";
 
 @use "ecommerce/payments-index";
+@use "ecommerce/payments-show";
+@use "ecommerce/payments-refund-requests";
+@use "ecommerce/payments-refund-request-show";
 
 @use "ecommerce/shipments-index";
 @use "ecommerce/shipments-create";

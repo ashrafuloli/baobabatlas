@@ -1,976 +1,341 @@
 @extends('backend.layouts.backend')
 
-@section('title', 'Out of Stock')
+@section('title', 'Out of Stock Inventory')
 
 @section('content')
+    <div class="inventory-out-of-stock-page">
+        <div class="inventory-out-of-stock-page__header">
+            <div class="inventory-out-of-stock-page__heading">
+                <div class="inventory-out-of-stock-page__breadcrumb">
+                    <a href="{{ route('admin-inventory') }}">
+                        Inventory
+                    </a>
 
-    <div class="inventory-page inventory-out-of-stock-page">
+                    <i class="fa-solid fa-chevron-right"></i>
 
-        {{-- ================================================================ --}}
-        {{-- PAGE HEADER --}}
-        {{-- ================================================================ --}}
+                    <span>Out of Stock</span>
+                </div>
 
-        <div class="inventory-page__header">
-
-            <div>
-
-            <span class="inventory-page__eyebrow">
-                Ecommerce / Inventory
-            </span>
-
-                <h1>
-                    Out of Stock
+                <h1 class="inventory-out-of-stock-page__title">
+                    Out of Stock Inventory
                 </h1>
 
-                <p>
-                    Products that are currently unavailable due to zero stock.
+                <p class="inventory-out-of-stock-page__subtitle">
+                    Products with variants that currently have no available stock.
                 </p>
-
             </div>
-
 
             <a
                 href="{{ route('admin-inventory') }}"
-                class="inventory-page__back"
+                class="inventory-out-of-stock-page__back"
             >
-
-                <i class="ri-arrow-left-line"></i>
-
-                All Inventory
-
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>All Inventory</span>
             </a>
-
         </div>
 
-
-        {{-- ================================================================ --}}
-        {{-- STATS --}}
-        {{-- ================================================================ --}}
-
-        <div class="inventory-stats">
-
-
-            {{-- Out of Stock --}}
-            <div class="inventory-stat-card">
-
-                <div class="inventory-stat-card__icon inventory-stat-card__icon--danger">
-
-                    <i class="ri-close-circle-line"></i>
-
+        <div class="inventory-out-of-stock-page__toolbar">
+            <div class="inventory-out-of-stock-page__summary">
+                <div class="inventory-out-of-stock-page__summary-icon">
+                    <i class="fa-solid fa-box-open"></i>
                 </div>
 
                 <div>
-
-                <span>
-                    Out of Stock
-                </span>
-
                     <strong>
-                        5
+                        Out of Stock Items
                     </strong>
 
+                    <span>
+                        These products have at least one variant with zero stock.
+                    </span>
                 </div>
-
             </div>
 
-
-            {{-- Variable Products --}}
-            <div class="inventory-stat-card">
-
-                <div class="inventory-stat-card__icon">
-
-                    <i class="ri-stack-line"></i>
-
-                </div>
-
-                <div>
-
-                <span>
-                    Variable Products
-                </span>
-
-                    <strong>
-                        2
-                    </strong>
-
-                </div>
-
+            <div class="inventory-out-of-stock-page__count">
+                {{ $products->total() }}
+                {{ Str::plural('product', $products->total()) }}
             </div>
-
-
-            {{-- Simple Products --}}
-            <div class="inventory-stat-card">
-
-                <div class="inventory-stat-card__icon inventory-stat-card__icon--stock">
-
-                    <i class="ri-shopping-bag-3-line"></i>
-
-                </div>
-
-                <div>
-
-                <span>
-                    Simple Products
-                </span>
-
-                    <strong>
-                        3
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            {{-- Total Products --}}
-            <div class="inventory-stat-card">
-
-                <div class="inventory-stat-card__icon inventory-stat-card__icon--warning">
-
-                    <i class="ri-error-warning-line"></i>
-
-                </div>
-
-                <div>
-
-                <span>
-                    Affected Products
-                </span>
-
-                    <strong>
-                        5
-                    </strong>
-
-                </div>
-
-            </div>
-
         </div>
 
+        @if ($products->isNotEmpty())
+            <div class="inventory-out-of-stock-page__card">
+                <div class="inventory-out-of-stock-page__table-wrapper">
+                    <table class="inventory-out-of-stock-page__table">
+                        <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>SKU</th>
+                            <th>Variants</th>
+                            <th>Out of Stock</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
 
-        {{-- ================================================================ --}}
-        {{-- INVENTORY CARD --}}
-        {{-- ================================================================ --}}
+                        <tbody>
+                        @foreach ($products as $product)
+                            @php
+                                $outOfStockVariants = $product->variants
+                                    ->filter(
+                                        fn ($variant): bool =>
+                                            $variant->stock === 0
+                                    );
+                            @endphp
 
-        <div class="inventory-card">
+                            <tr>
+                                <td>
+                                    <div class="inventory-out-of-stock-page__product">
+                                        <div class="inventory-out-of-stock-page__product-image">
+                                            @if ($product->thumbnail)
+                                                <img
+                                                    src="{{ asset($product->thumbnail) }}"
+                                                    alt="{{ $product->name }}"
+                                                >
+                                            @else
+                                                <i class="fa-solid fa-box"></i>
+                                            @endif
+                                        </div>
 
+                                        <div class="inventory-out-of-stock-page__product-info">
+                                            <a
+                                                href="{{ route('admin-inventory-product-edit', [
+                                                        'product' => $product,
+                                                    ]) }}"
+                                            >
+                                                {{ $product->name }}
+                                            </a>
 
-            {{-- ============================================================ --}}
-            {{-- TOOLBAR --}}
-            {{-- ============================================================ --}}
+                                            @if ($product->brand)
+                                                <span>
+                                                        {{ $product->brand->name }}
+                                                    </span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </td>
 
-            <div class="inventory-toolbar">
+                                <td>
+                                        <span class="inventory-out-of-stock-page__sku">
+                                            {{ $product->sku ?: '—' }}
+                                        </span>
+                                </td>
 
-                {{-- Search --}}
-                <div class="inventory-search">
+                                <td>
+                                        <span class="inventory-out-of-stock-page__variant-count">
+                                            {{ $product->variants->count() }}
+                                        </span>
+                                </td>
 
-                    <i class="ri-search-line"></i>
+                                <td>
+                                    <div class="inventory-out-of-stock-page__stock-list">
+                                        @foreach ($outOfStockVariants as $variant)
+                                            @php
+                                                $variantLabels = $variant->values
+                                                    ->map(function ($value): string {
+                                                        $attribute = $value->attribute?->name;
 
-                    <input
-                        type="search"
-                        name="search"
-                        placeholder="Search product or SKU..."
-                    >
+                                                        $attributeValue = $value->attributeValue?->value
+                                                            ?? $value->attributeValue?->name;
 
+                                                        if (!$attributeValue) {
+                                                            return '';
+                                                        }
+
+                                                        return $attribute
+                                                            ? "{$attribute}: {$attributeValue}"
+                                                            : $attributeValue;
+                                                    })
+                                                    ->filter()
+                                                    ->implode(' / ');
+                                            @endphp
+
+                                            <div class="inventory-out-of-stock-page__stock-item">
+                                                <div class="inventory-out-of-stock-page__stock-info">
+                                                    <strong>
+                                                        {{ $variantLabels ?: 'Default variant' }}
+                                                    </strong>
+
+                                                    <span>
+                                                            SKU:
+                                                            {{ $variant->sku ?: '—' }}
+                                                        </span>
+                                                </div>
+
+                                                <span class="inventory-out-of-stock-page__stock-badge">
+                                                        Out of Stock
+                                                    </span>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="inventory-out-of-stock-page__actions">
+                                        <a
+                                            href="{{ route('admin-inventory-product-edit', [
+                                                    'product' => $product,
+                                                ]) }}"
+                                            class="inventory-out-of-stock-page__action"
+                                            title="Edit product"
+                                            aria-label="Edit product"
+                                        >
+                                            <i class="fa-solid fa-pen"></i>
+                                        </a>
+
+                                        <button
+                                            type="button"
+                                            class="inventory-out-of-stock-page__action inventory-out-of-stock-page__action--toggle"
+                                            data-variants-toggle
+                                            aria-expanded="false"
+                                            aria-label="Toggle variants"
+                                            title="Toggle variants"
+                                        >
+                                            <i class="fa-solid fa-chevron-down"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr
+                                class="inventory-out-of-stock-page__mobile-details"
+                                data-variants-row
+                            >
+                                <td colspan="5">
+                                    <div class="inventory-out-of-stock-page__details">
+                                        <div class="inventory-out-of-stock-page__details-header">
+                                            <strong>
+                                                Out of Stock Variants
+                                            </strong>
+                                        </div>
+
+                                        <div class="inventory-out-of-stock-page__details-list">
+                                            @foreach ($outOfStockVariants as $variant)
+                                                @php
+                                                    $variantLabels = $variant->values
+                                                        ->map(function ($value): string {
+                                                            $attribute = $value->attribute?->name;
+
+                                                            $attributeValue = $value->attributeValue?->value
+                                                                ?? $value->attributeValue?->name;
+
+                                                            if (!$attributeValue) {
+                                                                return '';
+                                                            }
+
+                                                            return $attribute
+                                                                ? "{$attribute}: {$attributeValue}"
+                                                                : $attributeValue;
+                                                        })
+                                                        ->filter()
+                                                        ->implode(' / ');
+                                                @endphp
+
+                                                <a
+                                                    href="{{ route('admin-inventory-variant-edit', [
+                                                            'variant' => $variant,
+                                                        ]) }}"
+                                                    class="inventory-out-of-stock-page__details-item"
+                                                >
+                                                        <span>
+                                                            {{ $variantLabels ?: 'Default variant' }}
+                                                        </span>
+
+                                                    <span class="inventory-out-of-stock-page__details-status">
+                                                            Out of Stock
+                                                        </span>
+
+                                                    <i class="fa-solid fa-arrow-right"></i>
+                                                </a>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
                 </div>
 
-
-                {{-- Filters --}}
-                <div class="inventory-toolbar__actions">
-
-
-                    <select
-                        name="category"
-                        class="inventory-filter"
-                    >
-
-                        <option value="">
-                            All Categories
-                        </option>
-
-                        <option value="fashion">
-                            Fashion
-                        </option>
-
-                        <option value="electronics">
-                            Electronics
-                        </option>
-
-                        <option value="home-living">
-                            Home & Living
-                        </option>
-
-                        <option value="beauty">
-                            Beauty
-                        </option>
-
-                        <option value="sports">
-                            Sports & Fitness
-                        </option>
-
-                    </select>
-
-
-                    <select
-                        name="product_type"
-                        class="inventory-filter"
-                    >
-
-                        <option value="">
-                            All Types
-                        </option>
-
-                        <option value="simple">
-                            Simple
-                        </option>
-
-                        <option value="variable">
-                            Variable
-                        </option>
-
-                    </select>
-
-
-                    <a
-                        href="{{ route('admin-inventory') }}"
-                        class="inventory-filter-link"
-                    >
-
-                        <i class="ri-stack-line"></i>
-
-                        All Stock
-
-                    </a>
-
-
-                    <a
-                        href="{{ route('admin-inventory-low-stock') }}"
-                        class="inventory-filter-link inventory-filter-link--warning"
-                    >
-
-                        <i class="ri-error-warning-line"></i>
-
-                        Low Stock
-
-                    </a>
-
-                </div>
-
+                @if ($products->hasPages())
+                    <div class="inventory-out-of-stock-page__pagination">
+                        {{ $products->links() }}
+                    </div>
+                @endif
             </div>
-
-
-            {{-- ============================================================ --}}
-            {{-- ALERT --}}
-            {{-- ============================================================ --}}
-
-            <div class="inventory-out-of-stock-alert">
-
-                <div class="inventory-out-of-stock-alert__icon">
-
-                    <i class="ri-close-circle-line"></i>
-
+        @else
+            <div class="inventory-out-of-stock-page__empty">
+                <div class="inventory-out-of-stock-page__empty-icon">
+                    <i class="fa-solid fa-circle-check"></i>
                 </div>
 
+                <h2>
+                    No Out of Stock Products
+                </h2>
 
-                <div>
+                <p>
+                    All product variants currently have available stock.
+                </p>
 
-                    <strong>
-                        Products Currently Unavailable
-                    </strong>
-
-                    <p>
-                        These products have no available stock. Update the stock quantity to make them available again.
-                    </p>
-
-                </div>
-
+                <a
+                    href="{{ route('admin-inventory') }}"
+                    class="inventory-out-of-stock-page__button"
+                >
+                    <i class="fa-solid fa-boxes-stacked"></i>
+                    <span>View Inventory</span>
+                </a>
             </div>
-
-
-            {{-- ============================================================ --}}
-            {{-- TABLE --}}
-            {{-- ============================================================ --}}
-
-            <div class="inventory-table-wrapper">
-
-                <table class="inventory-table inventory-out-of-stock-table">
-
-                    <thead>
-
-                    <tr>
-
-                        <th>
-                            Product
-                        </th>
-
-                        <th>
-                            SKU
-                        </th>
-
-                        <th>
-                            Type
-                        </th>
-
-                        <th>
-                            Price
-                        </th>
-
-                        <th>
-                            Current Stock
-                        </th>
-
-                        <th>
-                            Status
-                        </th>
-
-                        <th>
-                            Update Stock
-                        </th>
-
-                    </tr>
-
-                    </thead>
-
-
-                    <tbody>
-
-
-                    {{-- ================================================= --}}
-                    {{-- PRODUCT 1 --}}
-                    {{-- ================================================= --}}
-
-                    <tr>
-
-                        <td>
-
-                            <div class="inventory-product">
-
-                                <div class="inventory-product__image">
-
-                                    <img
-                                        src="https://placehold.co/100x100"
-                                        alt="Leather Backpack"
-                                    >
-
-                                </div>
-
-
-                                <div class="inventory-product__content">
-
-                                    <strong>
-                                        Leather Backpack
-                                    </strong>
-
-                                    <span>
-                                        Bags & Accessories
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-sku">
-                                BA-BP-003
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-type">
-                                Simple
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <strong class="inventory-price">
-                                $49.99
-                            </strong>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="inventory-stock-input inventory-stock-input--critical">
-
-                                <input
-                                    type="number"
-                                    name="stock"
-                                    value="0"
-                                    min="0"
-                                >
-
-                                <span>
-                                    units
-                                </span>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-status inventory-status--out-of-stock">
-
-                                <i></i>
-
-                                Out of Stock
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <button
-                                type="button"
-                                class="inventory-update-btn"
-                            >
-
-                                <i class="ri-save-line"></i>
-
-                                Update
-
-                            </button>
-
-                        </td>
-
-                    </tr>
-
-
-                    {{-- ================================================= --}}
-                    {{-- PRODUCT 2 --}}
-                    {{-- ================================================= --}}
-
-                    <tr>
-
-                        <td>
-
-                            <div class="inventory-product">
-
-                                <div class="inventory-product__image">
-
-                                    <img
-                                        src="https://placehold.co/100x100"
-                                        alt="Classic Denim Jacket"
-                                    >
-
-                                </div>
-
-
-                                <div class="inventory-product__content">
-
-                                    <strong>
-                                        Classic Denim Jacket
-                                    </strong>
-
-                                    <span>
-                                        Fashion
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-sku">
-                                BA-DJ-009
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-type">
-                                Variable
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <strong class="inventory-price">
-                                $69.99
-                            </strong>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="inventory-stock-input inventory-stock-input--critical">
-
-                                <input
-                                    type="number"
-                                    name="stock"
-                                    value="0"
-                                    min="0"
-                                >
-
-                                <span>
-                                    units
-                                </span>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-status inventory-status--out-of-stock">
-
-                                <i></i>
-
-                                Out of Stock
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <button
-                                type="button"
-                                class="inventory-update-btn"
-                            >
-
-                                <i class="ri-save-line"></i>
-
-                                Update
-
-                            </button>
-
-                        </td>
-
-                    </tr>
-
-
-                    {{-- ================================================= --}}
-                    {{-- PRODUCT 3 --}}
-                    {{-- ================================================= --}}
-
-                    <tr>
-
-                        <td>
-
-                            <div class="inventory-product">
-
-                                <div class="inventory-product__image">
-
-                                    <img
-                                        src="https://placehold.co/100x100"
-                                        alt="Smart Watch"
-                                    >
-
-                                </div>
-
-
-                                <div class="inventory-product__content">
-
-                                    <strong>
-                                        Smart Watch
-                                    </strong>
-
-                                    <span>
-                                        Electronics
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-sku">
-                                BA-SW-010
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-type">
-                                Variable
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <strong class="inventory-price">
-                                $129.99
-                            </strong>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="inventory-stock-input inventory-stock-input--critical">
-
-                                <input
-                                    type="number"
-                                    name="stock"
-                                    value="0"
-                                    min="0"
-                                >
-
-                                <span>
-                                    units
-                                </span>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-status inventory-status--out-of-stock">
-
-                                <i></i>
-
-                                Out of Stock
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <button
-                                type="button"
-                                class="inventory-update-btn"
-                            >
-
-                                <i class="ri-save-line"></i>
-
-                                Update
-
-                            </button>
-
-                        </td>
-
-                    </tr>
-
-
-                    {{-- ================================================= --}}
-                    {{-- PRODUCT 4 --}}
-                    {{-- ================================================= --}}
-
-                    <tr>
-
-                        <td>
-
-                            <div class="inventory-product">
-
-                                <div class="inventory-product__image">
-
-                                    <img
-                                        src="https://placehold.co/100x100"
-                                        alt="Ceramic Vase"
-                                    >
-
-                                </div>
-
-
-                                <div class="inventory-product__content">
-
-                                    <strong>
-                                        Ceramic Vase
-                                    </strong>
-
-                                    <span>
-                                        Home & Living
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-sku">
-                                BA-CV-011
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-type">
-                                Simple
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <strong class="inventory-price">
-                                $34.99
-                            </strong>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="inventory-stock-input inventory-stock-input--critical">
-
-                                <input
-                                    type="number"
-                                    name="stock"
-                                    value="0"
-                                    min="0"
-                                >
-
-                                <span>
-                                    units
-                                </span>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-status inventory-status--out-of-stock">
-
-                                <i></i>
-
-                                Out of Stock
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <button
-                                type="button"
-                                class="inventory-update-btn"
-                            >
-
-                                <i class="ri-save-line"></i>
-
-                                Update
-
-                            </button>
-
-                        </td>
-
-                    </tr>
-
-
-                    {{-- ================================================= --}}
-                    {{-- PRODUCT 5 --}}
-                    {{-- ================================================= --}}
-
-                    <tr>
-
-                        <td>
-
-                            <div class="inventory-product">
-
-                                <div class="inventory-product__image">
-
-                                    <img
-                                        src="https://placehold.co/100x100"
-                                        alt="Travel Duffel Bag"
-                                    >
-
-                                </div>
-
-
-                                <div class="inventory-product__content">
-
-                                    <strong>
-                                        Travel Duffel Bag
-                                    </strong>
-
-                                    <span>
-                                        Bags & Accessories
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-sku">
-                                BA-TD-012
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-type">
-                                Simple
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <strong class="inventory-price">
-                                $59.99
-                            </strong>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="inventory-stock-input inventory-stock-input--critical">
-
-                                <input
-                                    type="number"
-                                    name="stock"
-                                    value="0"
-                                    min="0"
-                                >
-
-                                <span>
-                                    units
-                                </span>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-status inventory-status--out-of-stock">
-
-                                <i></i>
-
-                                Out of Stock
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <button
-                                type="button"
-                                class="inventory-update-btn"
-                            >
-
-                                <i class="ri-save-line"></i>
-
-                                Update
-
-                            </button>
-
-                        </td>
-
-                    </tr>
-
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-
-            {{-- ============================================================ --}}
-            {{-- PAGINATION --}}
-            {{-- ============================================================ --}}
-
-            <div class="inventory-pagination">
-
-                <div class="inventory-pagination__info">
-
-                    Showing
-                    <strong>1</strong>
-                    to
-                    <strong>5</strong>
-                    of
-                    <strong>5</strong>
-                    out-of-stock products
-
-                </div>
-
-
-                <div class="inventory-pagination__buttons">
-
-                    <button
-                        type="button"
-                        disabled
-                    >
-
-                        <i class="ri-arrow-left-s-line"></i>
-
-                    </button>
-
-
-                    <button
-                        type="button"
-                        class="active"
-                    >
-                        1
-                    </button>
-
-
-                    <button
-                        type="button"
-                        disabled
-                    >
-
-                        <i class="ri-arrow-right-s-line"></i>
-
-                    </button>
-
-                </div>
-
-            </div>
-
-        </div>
-
+        @endif
     </div>
-
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const page = document.querySelector(
+                '.inventory-out-of-stock-page'
+            );
+
+            if (!page) {
+                return;
+            }
+
+            const toggleButtons = page.querySelectorAll(
+                '[data-variants-toggle]'
+            );
+
+            toggleButtons.forEach((button) => {
+                button.addEventListener('click', () => {
+                    const currentRow = button.closest('tr');
+
+                    if (!currentRow) {
+                        return;
+                    }
+
+                    const detailsRow = currentRow.nextElementSibling;
+
+                    if (
+                        !detailsRow
+                        || !detailsRow.matches(
+                            '[data-variants-row]'
+                        )
+                    ) {
+                        return;
+                    }
+
+                    const isOpen = detailsRow.classList.toggle(
+                        'is-open'
+                    );
+
+                    button.setAttribute(
+                        'aria-expanded',
+                        String(isOpen)
+                    );
+
+                    button.classList.toggle(
+                        'is-active',
+                        isOpen
+                    );
+                });
+            });
+        });
+    </script>
+@endpush

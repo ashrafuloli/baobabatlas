@@ -21,6 +21,7 @@ final class Refund extends Model
         'order_id',
         'refund_request_id',
         'stripe_refund_id',
+        'stripe_idempotency_key',
         'amount',
         'currency',
         'status',

@@ -43,16 +43,16 @@ final class AdminRefundController extends Controller
             );
 
             $query->where(function (Builder $builder) use (
-                $search
+                $search,
             ): void {
                 $builder
                     ->whereHas(
                         'order',
                         function (
-                            Builder $orderQuery
+                            Builder $orderQuery,
                         ) use ($search): void {
                             $orderQuery->where(function (
-                                Builder $query
+                                Builder $query,
                             ) use ($search): void {
                                 $query
                                     ->where(
@@ -71,7 +71,7 @@ final class AdminRefundController extends Controller
                     ->orWhereHas(
                         'requester',
                         function (
-                            Builder $userQuery
+                            Builder $userQuery,
                         ) use ($search): void {
                             $userQuery->where(
                                 'name',
@@ -247,7 +247,9 @@ final class AdminRefundController extends Controller
                 );
         } catch (ValidationException $exception) {
             throw $exception;
-        } catch (DomainException | RuntimeException $exception) {
+        } catch (
+        DomainException | RuntimeException $exception
+        ) {
             return redirect()
                 ->back()
                 ->with(
@@ -352,23 +354,46 @@ final class AdminRefundController extends Controller
                 refundRequest: $refundRequest,
             );
 
-            if ($refund->status === Refund::STATUS_SUCCEEDED) {
-                return redirect()
+            return match ($refund->status) {
+                Refund::STATUS_SUCCEEDED => redirect()
                     ->back()
                     ->with(
                         'success',
                         'The refund has been processed successfully through Stripe.',
-                    );
-            }
+                    ),
 
-            return redirect()
-                ->back()
-                ->with(
-                    'warning',
-                    'The Stripe refund was created with status: '
-                    . ucfirst($refund->status),
-                );
-        } catch (DomainException | RuntimeException $exception) {
+                Refund::STATUS_PENDING => redirect()
+                    ->back()
+                    ->with(
+                        'warning',
+                        'The Stripe refund is currently pending.',
+                    ),
+
+                Refund::STATUS_FAILED => redirect()
+                    ->back()
+                    ->with(
+                        'error',
+                        'The Stripe refund failed. You can retry the refund.',
+                    ),
+
+                Refund::STATUS_CANCELED => redirect()
+                    ->back()
+                    ->with(
+                        'warning',
+                        'The Stripe refund was canceled.',
+                    ),
+
+                default => redirect()
+                    ->back()
+                    ->with(
+                        'warning',
+                        'The Stripe refund was created with status: '
+                        . ucfirst($refund->status),
+                    ),
+            };
+        } catch (
+        DomainException | RuntimeException $exception
+        ) {
             return redirect()
                 ->back()
                 ->with(

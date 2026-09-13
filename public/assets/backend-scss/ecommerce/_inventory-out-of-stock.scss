@@ -1,242 +1,595 @@
 @use "../common" as *;
 
-
-/*
-|--------------------------------------------------------------------------
-| Out Of Stock Page
-|--------------------------------------------------------------------------
-*/
-
 .inventory-out-of-stock-page {
+    padding: 24px;
 
+    &__header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 24px;
+    }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Back Button
-    |--------------------------------------------------------------------------
-    */
+    &__heading {
+        min-width: 0;
+    }
 
-    .inventory-page__back {
+    &__breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+        color: $gray;
+        font-family: $body-fonts;
+        font-size: 14px;
 
+        a {
+            color: $body-color;
+            text-decoration: none;
+
+            @include transition(0.3s);
+
+            &:hover {
+                color: $theme-color;
+            }
+        }
+
+        i {
+            font-size: 14px;
+        }
+    }
+
+    &__title {
+        margin: 0;
+        color: $heading-color;
+        font-family: $header-fonts;
+        font-size: 24px;
+        font-weight: 600;
+        line-height: 1.3;
+    }
+
+    &__subtitle {
+        margin: 6px 0 0;
+        color: $body-color;
+        font-family: $body-fonts;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    &__back {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 7px;
+        gap: 8px;
         min-height: 42px;
-        padding: 0 14px;
-        border: 1px solid $gray;
+        padding: 0 16px;
+        border: 1px solid $hr-color;
         border-radius: 8px;
-        background: #fff;
+        background: $white;
         color: $body-color;
+        font-family: $body-fonts;
         font-size: 14px;
-        font-weight: 600;
+        font-weight: 500;
         text-decoration: none;
         white-space: nowrap;
-        transition: 0.2s;
 
-
-        i {
-
-            font-size: 17px;
-
-        }
-
+        @include transition(0.3s);
 
         &:hover {
-
-            border-color: argb($theme-color, 0.35);
+            border-color: $theme-color;
             color: $theme-color;
-
         }
-
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Out Of Stock Alert
-    |--------------------------------------------------------------------------
-    */
-
-    .inventory-out-of-stock-alert {
-
+    &__toolbar {
         display: flex;
-        align-items: flex-start;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 20px;
+        padding: 16px 18px;
+        border: 1px solid $hr-color;
+        border-radius: 12px;
+        background: $white;
+    }
+
+    &__summary {
+        display: flex;
+        align-items: center;
         gap: 12px;
-        margin: 18px;
-        padding: 14px 15px;
-        border: 1px solid argb($danger, 0.28);
+        min-width: 0;
+    }
+
+    &__summary-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 40px;
+        width: 40px;
+        height: 40px;
         border-radius: 9px;
-        background: argb($danger, 0.045);
+        background: $light;
+        color: $danger;
+        font-size: 18px;
+    }
 
-
-        &__icon {
-
-            width: 36px;
-            height: 36px;
-            flex: 0 0 36px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-            background: argb($danger, 0.10);
-            color: $danger;
-            font-size: 18px;
-
-        }
-
-
+    &__summary {
         strong {
-
             display: block;
             margin-bottom: 3px;
             color: $heading-color;
-            font-size: 14px;
-            line-height: 1.4;
+            font-family: $header-fonts;
+            font-size: 16px;
             font-weight: 600;
-
         }
 
-
-        p {
-
-            margin: 0;
+        span {
+            display: block;
             color: $body-color;
+            font-family: $body-fonts;
             font-size: 14px;
             line-height: 1.5;
-
         }
-
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Critical Stock Input
-    |--------------------------------------------------------------------------
-    */
-
-    .inventory-stock-input--critical {
-
-        border-color: argb($danger, 0.4);
-        background: argb($danger, 0.025);
-
-
-        input {
-
-            color: $danger;
-
-        }
-
-
-        &:focus-within {
-
-            border-color: $danger;
-            box-shadow: 0 0 0 3px argb($danger, 0.06);
-
-        }
-
+    &__count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 32px;
+        padding: 0 11px;
+        border-radius: 999px;
+        background: $light;
+        color: $heading-color;
+        font-family: $body-fonts;
+        font-size: 14px;
+        font-weight: 500;
+        white-space: nowrap;
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Warning Filter
-    |--------------------------------------------------------------------------
-    */
-
-    .inventory-filter-link--warning {
-
-        border-color: argb($warning, 0.3);
-        background: argb($warning, 0.05);
-        color: #947000;
-
-
-        &:hover {
-
-            border-color: $warning;
-            color: #947000;
-
-        }
-
+    &__card {
+        overflow: hidden;
+        border: 1px solid $hr-color;
+        border-radius: 12px;
+        background: $white;
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Out Of Stock Table
-    |--------------------------------------------------------------------------
-    */
-
-    .inventory-out-of-stock-table {
-
-        min-width: 1050px;
-
+    &__table-wrapper {
+        width: 100%;
+        overflow-x: auto;
     }
 
-}
+    &__table {
+        width: 100%;
+        min-width: 850px;
+        border-collapse: collapse;
 
-
-/*
-|--------------------------------------------------------------------------
-| Responsive
-|--------------------------------------------------------------------------
-*/
-
-@include mq(md) {
-
-    .inventory-out-of-stock-page {
-
-        .inventory-page__header {
-
-            align-items: flex-start;
-            flex-direction: column;
-
+        th {
+            padding: 14px 18px;
+            border-bottom: 1px solid $hr-color;
+            background: $light;
+            color: $body-color;
+            font-family: $body-fonts;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: left;
+            white-space: nowrap;
         }
 
-
-        .inventory-page__back {
-
-            width: fit-content;
-
+        td {
+            padding: 16px 18px;
+            border-bottom: 1px solid $hr-color;
+            vertical-align: middle;
         }
 
-
-        .inventory-out-of-stock-alert {
-
-            margin: 14px;
-
+        tbody tr:last-child:not(
+            .inventory-out-of-stock-page__mobile-details
+        ) td {
+            border-bottom: 0;
         }
-
     }
 
-}
+    &__product {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 220px;
+    }
 
+    &__product-image {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 52px;
+        width: 52px;
+        height: 52px;
+        overflow: hidden;
+        border: 1px solid $hr-color;
+        border-radius: 8px;
+        background: $light;
+        color: $gray;
+        font-size: 18px;
 
-@include mq(xs) {
+        img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
 
-    .inventory-out-of-stock-page {
+    &__product-info {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 0;
 
-        .inventory-page__header h1 {
+        a {
+            overflow: hidden;
+            color: $heading-color;
+            font-family: $body-fonts;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.4;
+            text-decoration: none;
+            text-overflow: ellipsis;
+            white-space: nowrap;
 
-            font-size: 24px;
+            @include transition(0.3s);
 
+            &:hover {
+                color: $theme-color;
+            }
         }
 
+        span {
+            overflow: hidden;
+            color: $body-color;
+            font-family: $body-fonts;
+            font-size: 14px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
 
-        .inventory-out-of-stock-alert {
+    &__sku {
+        color: $body-color;
+        font-family: $body-fonts;
+        font-size: 14px;
+    }
 
-            padding: 12px;
+    &__variant-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 30px;
+        min-height: 30px;
+        padding: 0 8px;
+        border-radius: 6px;
+        background: $light;
+        color: $heading-color;
+        font-family: $body-fonts;
+        font-size: 14px;
+        font-weight: 500;
+    }
 
+    &__stock-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-width: 280px;
+    }
 
-            p {
+    &__stock-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 8px 10px;
+        border: 1px solid $hr-color;
+        border-radius: 7px;
+        background: $white;
+    }
 
-                font-size: 14px;
+    &__stock-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
 
+        strong {
+            overflow: hidden;
+            color: $heading-color;
+            font-family: $body-fonts;
+            font-size: 14px;
+            font-weight: 500;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        span {
+            color: $body-color;
+            font-family: $body-fonts;
+            font-size: 14px;
+        }
+    }
+
+    &__stock-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        min-height: 28px;
+        padding: 0 9px;
+        border-radius: 6px;
+        background: $light;
+        color: $danger;
+        font-family: $body-fonts;
+        font-size: 14px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    &__actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 7px;
+    }
+
+    &__action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border: 1px solid $hr-color;
+        border-radius: 8px;
+        background: $white;
+        color: $body-color;
+        font-size: 14px;
+        text-decoration: none;
+        cursor: pointer;
+
+        @include transition(0.3s);
+
+        &:hover,
+        &.is-active {
+            border-color: $theme-color;
+            color: $theme-color;
+        }
+
+        &--toggle {
+            i {
+                @include transition(0.3s);
             }
 
+            &.is-active {
+                i {
+                    @include transform(rotate(180deg));
+                }
+            }
         }
-
     }
 
+    &__mobile-details {
+        display: none;
+
+        td {
+            padding: 0;
+            border-bottom: 1px solid $hr-color;
+        }
+
+        &.is-open {
+            display: table-row;
+        }
+    }
+
+    &__details {
+        padding: 16px 18px;
+        background: $light;
+    }
+
+    &__details-header {
+        margin-bottom: 10px;
+
+        strong {
+            color: $heading-color;
+            font-family: $header-fonts;
+            font-size: 16px;
+            font-weight: 600;
+        }
+    }
+
+    &__details-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    &__details-item {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto 20px;
+        align-items: center;
+        gap: 12px;
+        padding: 11px 12px;
+        border: 1px solid $hr-color;
+        border-radius: 8px;
+        background: $white;
+        color: $body-color;
+        font-family: $body-fonts;
+        font-size: 14px;
+        text-decoration: none;
+
+        @include transition(0.3s);
+
+        span:first-child {
+            overflow: hidden;
+            color: $heading-color;
+            font-weight: 500;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        i {
+            color: $gray;
+            font-size: 14px;
+        }
+
+        &:hover {
+            border-color: $theme-color;
+
+            i {
+                color: $theme-color;
+            }
+        }
+    }
+
+    &__details-status {
+        color: $danger;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    &__pagination {
+        display: flex;
+        justify-content: flex-end;
+        padding: 16px 18px;
+        border-top: 1px solid $hr-color;
+
+        nav {
+            display: flex;
+            align-items: center;
+        }
+
+        a,
+        span {
+            font-family: $body-fonts;
+            font-size: 14px;
+        }
+    }
+
+    &__empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 360px;
+        padding: 40px 24px;
+        border: 1px solid $hr-color;
+        border-radius: 12px;
+        background: $white;
+        text-align: center;
+    }
+
+    &__empty-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 58px;
+        height: 58px;
+        margin-bottom: 16px;
+        border-radius: 50%;
+        background: $light;
+        color: $success;
+        font-size: 24px;
+    }
+
+    &__empty {
+        h2 {
+            margin: 0 0 7px;
+            color: $heading-color;
+            font-family: $header-fonts;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        p {
+            max-width: 480px;
+            margin: 0 0 20px;
+            color: $body-color;
+            font-family: $body-fonts;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+    }
+
+    &__button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 42px;
+        padding: 0 16px;
+        border: 1px solid $theme-color;
+        border-radius: 8px;
+        background: $theme-color;
+        color: $white;
+        font-family: $body-fonts;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+
+        @include transition(0.3s);
+
+        &:hover {
+            border-color: $theme-color-2;
+            background: $theme-color-2;
+        }
+    }
+
+    @include mq('lg') {
+        &__header {
+            align-items: flex-start;
+        }
+
+        &__toolbar {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+
+    @include mq('md') {
+        padding: 20px;
+
+        &__header {
+            flex-direction: column;
+        }
+
+        &__back {
+            width: 100%;
+        }
+    }
+
+    @include mq('xs') {
+        padding: 16px;
+
+        &__title {
+            font-size: 22px;
+        }
+
+        &__summary {
+            align-items: flex-start;
+        }
+
+        &__summary-icon {
+            flex-basis: 36px;
+            width: 36px;
+            height: 36px;
+        }
+
+        &__empty {
+            min-height: 320px;
+            padding: 32px 18px;
+        }
+
+        &__details-item {
+            grid-template-columns: minmax(0, 1fr) auto;
+        }
+
+        &__details-item i {
+            display: none;
+        }
+    }
 }

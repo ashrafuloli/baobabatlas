@@ -47,7 +47,6 @@
                 </div>
             </div>
 
-
             {{-- Main Grid --}}
             <div class="admin-refund-details-grid">
 
@@ -56,11 +55,9 @@
 
                     {{-- Request Summary --}}
                     <section class="admin-refund-details-card">
-
                         <div class="admin-refund-details-card-header">
 
                             <div class="admin-refund-details-card-heading">
-
                                 <span class="admin-refund-details-card-icon">
                                     <i class="ri-refund-2-line"></i>
                                 </span>
@@ -72,9 +69,7 @@
                                         Request information and refund details.
                                     </p>
                                 </div>
-
                             </div>
-
 
                             @php
                                 $statusClass = match ($refundRequest->status) {
@@ -84,7 +79,6 @@
                                     default => 'is-default',
                                 };
                             @endphp
-
 
                             <span
                                 class="admin-refund-details-status {{ $statusClass }}"
@@ -113,17 +107,14 @@
 
                         </div>
 
-
                         <div class="admin-refund-details-card-body">
 
                             <div class="admin-refund-details-amount-box">
-
                                 <div class="admin-refund-details-amount-icon">
                                     <i class="ri-money-dollar-circle-line"></i>
                                 </div>
 
                                 <div>
-
                                     <span>
                                         Original Refundable Amount
                                     </span>
@@ -138,11 +129,8 @@
                                     <small>
                                         Shipping cost is non-refundable.
                                     </small>
-
                                 </div>
-
                             </div>
-
 
                             <div class="admin-refund-details-info-grid">
 
@@ -156,9 +144,7 @@
                                     </strong>
                                 </div>
 
-
                                 <div class="admin-refund-details-info-item">
-
                                     <span class="label">
                                         Order Number
                                     </span>
@@ -173,12 +159,9 @@
                                             {{ $refundRequest->order->order_number }}
                                         </a>
                                     </strong>
-
                                 </div>
 
-
                                 <div class="admin-refund-details-info-item">
-
                                     <span class="label">
                                         Reason
                                     </span>
@@ -186,12 +169,9 @@
                                     <strong>
                                         {{ $refundRequest->reason }}
                                     </strong>
-
                                 </div>
 
-
                                 <div class="admin-refund-details-info-item">
-
                                     <span class="label">
                                         Submitted
                                     </span>
@@ -201,14 +181,11 @@
                                             'M d, Y h:i A',
                                         ) }}
                                     </strong>
-
                                 </div>
 
                             </div>
 
-
                             @if ($refundRequest->message)
-
                                 <div class="admin-refund-details-message">
 
                                     <div class="admin-refund-details-message-heading">
@@ -221,13 +198,10 @@
                                     </div>
 
                                 </div>
-
                             @endif
 
                         </div>
-
                     </section>
-
 
                     {{-- Order Information --}}
                     <section class="admin-refund-details-card">
@@ -250,7 +224,6 @@
 
                             </div>
 
-
                             <a
                                 href="{{ route(
                                     'admin-order-details',
@@ -264,26 +237,19 @@
 
                         </div>
 
-
                         <div class="admin-refund-details-card-body">
 
                             <div class="admin-refund-details-order-summary">
 
                                 <div class="admin-refund-details-order-number">
-
-                                    <span>
-                                        Order
-                                    </span>
+                                    <span>Order</span>
 
                                     <strong>
                                         {{ $refundRequest->order->order_number }}
                                     </strong>
-
                                 </div>
 
-
                                 <div class="admin-refund-details-order-status">
-
                                     <span class="label">
                                         Order Status
                                     </span>
@@ -291,12 +257,9 @@
                                     <strong>
                                         {{ ucfirst($refundRequest->order->status) }}
                                     </strong>
-
                                 </div>
 
-
                                 <div class="admin-refund-details-order-status">
-
                                     <span class="label">
                                         Payment Status
                                     </span>
@@ -306,12 +269,9 @@
                                             $refundRequest->order->payment_status,
                                         ) }}
                                     </strong>
-
                                 </div>
 
-
                                 <div class="admin-refund-details-order-total">
-
                                     <span class="label">
                                         Order Total
                                     </span>
@@ -322,19 +282,14 @@
                                             2,
                                         ) }}
                                     </strong>
-
                                 </div>
 
                             </div>
 
-
                             <div class="admin-refund-details-breakdown">
 
                                 <div>
-
-                                    <span>
-                                        Subtotal
-                                    </span>
+                                    <span>Subtotal</span>
 
                                     <strong>
                                         ${{ number_format(
@@ -342,18 +297,13 @@
                                             2,
                                         ) }}
                                     </strong>
-
                                 </div>
-
 
                                 @if (
                                     (float) $refundRequest->order->discount > 0
                                 )
                                     <div>
-
-                                        <span>
-                                            Discount
-                                        </span>
+                                        <span>Discount</span>
 
                                         <strong class="is-discount">
                                             -${{ number_format(
@@ -361,16 +311,11 @@
                                                 2,
                                             ) }}
                                         </strong>
-
                                     </div>
                                 @endif
 
-
                                 <div>
-
-                                    <span>
-                                        Shipping
-                                    </span>
+                                    <span>Shipping</span>
 
                                     <strong>
                                         ${{ number_format(
@@ -378,18 +323,13 @@
                                             2,
                                         ) }}
                                     </strong>
-
                                 </div>
-
 
                                 @if (
                                     (float) $refundRequest->order->tax > 0
                                 )
                                     <div>
-
-                                        <span>
-                                            Tax
-                                        </span>
+                                        <span>Tax</span>
 
                                         <strong>
                                             ${{ number_format(
@@ -397,16 +337,11 @@
                                                 2,
                                             ) }}
                                         </strong>
-
                                     </div>
                                 @endif
 
-
                                 <div class="is-total">
-
-                                    <span>
-                                        Order Total
-                                    </span>
+                                    <span>Order Total</span>
 
                                     <strong>
                                         ${{ number_format(
@@ -414,15 +349,10 @@
                                             2,
                                         ) }}
                                     </strong>
-
                                 </div>
 
-
                                 <div class="is-refundable">
-
-                                    <span>
-                                        Refundable Amount
-                                    </span>
+                                    <span>Refundable Amount</span>
 
                                     <strong>
                                         ${{ number_format(
@@ -430,11 +360,9 @@
                                             2,
                                         ) }}
                                     </strong>
-
                                 </div>
 
                             </div>
-
 
                             {{-- Order Items --}}
                             @if ($refundRequest->order->items->isNotEmpty())
@@ -444,7 +372,6 @@
                                     <div class="admin-refund-details-section-label">
                                         <span>Order Items</span>
                                     </div>
-
 
                                     <div class="admin-refund-details-items-list">
 
@@ -457,22 +384,17 @@
                                                 <div class="admin-refund-details-item-image">
 
                                                     @if ($item->image)
-
                                                         <img
                                                             src="{{ asset($item->image) }}"
                                                             alt="{{ $item->product_name }}"
                                                         >
-
                                                     @else
-
                                                         <span>
                                                             <i class="ri-image-line"></i>
                                                         </span>
-
                                                     @endif
 
                                                 </div>
-
 
                                                 <div class="admin-refund-details-item-content">
 
@@ -480,15 +402,11 @@
                                                         {{ $item->product_name }}
                                                     </h3>
 
-
                                                     @if ($item->sku)
-
                                                         <span class="sku">
                                                             SKU: {{ $item->sku }}
                                                         </span>
-
                                                     @endif
-
 
                                                     <div class="admin-refund-details-item-meta">
 
@@ -509,7 +427,6 @@
 
                                                 </div>
 
-
                                                 <strong class="admin-refund-details-item-total">
                                                     ${{ number_format(
                                                         (float) $item->line_total,
@@ -528,9 +445,7 @@
                             @endif
 
                         </div>
-
                     </section>
-
 
                     {{-- Customer Information --}}
                     <section class="admin-refund-details-card">
@@ -555,7 +470,6 @@
 
                         </div>
 
-
                         <div class="admin-refund-details-card-body">
 
                             <div class="admin-refund-details-customer">
@@ -565,7 +479,10 @@
                                         strtoupper(
                                             substr(
                                                 $refundRequest->requester?->name
-                                                    ?? $refundRequest->order->first_name,
+                                                    ?? (
+                                                        $refundRequest->order->first_name
+                                                        ?? 'U'
+                                                    ),
                                                 0,
                                                 1,
                                             ),
@@ -573,18 +490,18 @@
                                     }}
                                 </div>
 
-
                                 <div class="admin-refund-details-customer-content">
 
                                     <h3>
                                         {{
                                             $refundRequest->requester?->name
-                                                ?? $refundRequest->order->first_name
+                                                ?? trim(
+                                                    ($refundRequest->order->first_name ?? '')
                                                     . ' '
-                                                    . $refundRequest->order->last_name
+                                                    . ($refundRequest->order->last_name ?? ''),
+                                                )
                                         }}
                                     </h3>
-
 
                                     <div class="admin-refund-details-customer-meta">
 
@@ -593,14 +510,11 @@
                                             {{ $refundRequest->order->email }}
                                         </span>
 
-
                                         @if ($refundRequest->order->phone)
-
                                             <span>
                                                 <i class="ri-phone-line"></i>
                                                 {{ $refundRequest->order->phone }}
                                             </span>
-
                                         @endif
 
                                     </div>
@@ -609,19 +523,15 @@
 
                             </div>
 
-
                             <div class="admin-refund-details-address">
 
                                 <div class="admin-refund-details-address-heading">
-
                                     <i class="ri-map-pin-line"></i>
 
                                     <span>
                                         Billing / Shipping Address
                                     </span>
-
                                 </div>
-
 
                                 <address>
 
@@ -647,12 +557,22 @@
                             </div>
 
                         </div>
-
                     </section>
 
-
-                    {{-- Existing Stripe Refund --}}
+                    {{-- Stripe Refund --}}
                     @if ($refundRequest->refund)
+
+                        @php
+                            $refund = $refundRequest->refund;
+
+                            $refundStatusClass = match ($refund->status) {
+                                \App\Models\Refund::STATUS_SUCCEEDED => 'is-refunded',
+                                \App\Models\Refund::STATUS_FAILED => 'is-rejected',
+                                \App\Models\Refund::STATUS_PENDING => 'is-pending',
+                                \App\Models\Refund::STATUS_CANCELED => 'is-rejected',
+                                default => 'is-default',
+                            };
+                        @endphp
 
                         <section class="admin-refund-details-card">
 
@@ -674,84 +594,100 @@
 
                                 </div>
 
+                                <span
+                                    class="admin-refund-details-status {{ $refundStatusClass }}"
+                                >
+                                    @if (
+                                        $refund->status
+                                        === \App\Models\Refund::STATUS_SUCCEEDED
+                                    )
+                                        <i class="ri-checkbox-circle-line"></i>
+                                    @elseif (
+                                        $refund->status
+                                        === \App\Models\Refund::STATUS_FAILED
+                                    )
+                                        <i class="ri-error-warning-line"></i>
+                                    @elseif (
+                                        $refund->status
+                                        === \App\Models\Refund::STATUS_PENDING
+                                    )
+                                        <i class="ri-loader-4-line"></i>
+                                    @else
+                                        <i class="ri-information-line"></i>
+                                    @endif
 
-                                <span class="admin-refund-details-status is-refunded">
-
-                                    <i class="ri-checkbox-circle-line"></i>
-
-                                    {{ ucfirst(
-                                        $refundRequest->refund->status,
-                                    ) }}
-
+                                    {{ ucfirst($refund->status) }}
                                 </span>
 
                             </div>
-
 
                             <div class="admin-refund-details-card-body">
 
                                 <div class="admin-refund-details-refund-grid">
 
                                     <div>
-
-                                        <span>
-                                            Refund Amount
-                                        </span>
+                                        <span>Refund Amount</span>
 
                                         <strong>
                                             ${{ number_format(
-                                                (float) $refundRequest->refund->amount,
+                                                (float) $refund->amount,
                                                 2,
                                             ) }}
                                         </strong>
-
                                     </div>
 
-
                                     <div>
-
-                                        <span>
-                                            Currency
-                                        </span>
+                                        <span>Currency</span>
 
                                         <strong>
-                                            {{ strtoupper(
-                                                $refundRequest->refund->currency,
-                                            ) }}
+                                            {{ strtoupper($refund->currency) }}
                                         </strong>
-
                                     </div>
 
-
                                     <div>
-
-                                        <span>
-                                            Stripe Refund ID
-                                        </span>
+                                        <span>Stripe Refund ID</span>
 
                                         <strong class="refund-id">
-                                            {{ $refundRequest->refund->stripe_refund_id }}
+                                            {{ $refund->stripe_refund_id ?? '—' }}
                                         </strong>
-
                                     </div>
 
-
                                     <div>
-
-                                        <span>
-                                            Processed At
-                                        </span>
+                                        <span>Created At</span>
 
                                         <strong>
-                                            {{ $refundRequest->refund->created_at?->format(
+                                            {{ $refund->created_at?->format(
                                                 'M d, Y h:i A',
                                             ) }}
                                         </strong>
-
                                     </div>
 
                                 </div>
 
+                                @if (
+                                    $refund->status
+                                    === \App\Models\Refund::STATUS_FAILED
+                                )
+
+                                    <div class="admin-refund-details-message">
+
+                                        <div class="admin-refund-details-message-heading">
+                                            <i class="ri-error-warning-line"></i>
+
+                                            <span>
+                                                Refund Processing Failed
+                                            </span>
+                                        </div>
+
+                                        <div class="admin-refund-details-message-content">
+                                            The previous Stripe refund attempt
+                                            failed. You can retry the refund
+                                            using the existing refund operation.
+                                        </div>
+
+                                    </div>
+
+                                @endif
 
                                 {{-- Deduction Summary --}}
                                 @if ($refundRequest->hasDeduction())
@@ -761,7 +697,6 @@
                                         <div class="admin-refund-details-deduction-summary">
 
                                             <div>
-
                                                 <span>
                                                     Original Refundable
                                                 </span>
@@ -772,12 +707,9 @@
                                                         2,
                                                     ) }}
                                                 </strong>
-
                                             </div>
 
-
                                             <div class="is-deduction">
-
                                                 <span>
                                                     Deduction
                                                 </span>
@@ -788,27 +720,22 @@
                                                         2,
                                                     ) }}
                                                 </strong>
-
                                             </div>
 
-
                                             <div class="is-final">
-
                                                 <span>
                                                     Final Refund
                                                 </span>
 
                                                 <strong>
                                                     ${{ number_format(
-                                                        (float) $refundRequest->refund->amount,
+                                                        (float) $refund->amount,
                                                         2,
                                                     ) }}
                                                 </strong>
-
                                             </div>
 
                                         </div>
-
 
                                         @if ($refundRequest->deduction_reason)
 
@@ -840,7 +767,6 @@
 
                 </div>
 
-
                 {{-- Right Sidebar --}}
                 <aside class="admin-refund-details-sidebar">
 
@@ -848,20 +774,16 @@
                     <section class="admin-refund-details-side-card">
 
                         <div class="admin-refund-details-side-heading">
-
                             <i class="ri-user-line"></i>
 
                             <span>
                                 Requested By
                             </span>
-
                         </div>
-
 
                         <div class="admin-refund-details-requester">
 
                             <div class="admin-refund-details-requester-avatar">
-
                                 {{
                                     strtoupper(
                                         substr(
@@ -872,12 +794,9 @@
                                         ),
                                     )
                                 }}
-
                             </div>
 
-
                             <div>
-
                                 <strong>
                                     {{ $refundRequest->requester?->name ?? 'Unknown User' }}
                                 </strong>
@@ -887,13 +806,11 @@
                                         'M d, Y',
                                     ) }}
                                 </span>
-
                             </div>
 
                         </div>
 
                     </section>
-
 
                     {{-- Approval --}}
                     @if ($refundRequest->approver)
@@ -910,13 +827,11 @@
 
                             </div>
 
-
                             <div class="admin-refund-details-approval">
 
                                 <strong>
                                     {{ $refundRequest->approver->name }}
                                 </strong>
-
 
                                 @if ($refundRequest->approved_at)
 
@@ -930,7 +845,6 @@
                                 @endif
 
                             </div>
-
 
                             @if ($refundRequest->admin_note)
 
@@ -951,7 +865,6 @@
                         </section>
 
                     @endif
-
 
                     {{-- Request Actions --}}
                     @if (
@@ -974,12 +887,10 @@
 
                             </div>
 
-
                             <p class="admin-refund-details-action-description">
                                 Review the request carefully before approving
                                 or rejecting it.
                             </p>
-
 
                             {{-- Approve --}}
                             <form
@@ -1006,7 +917,6 @@
                                 </button>
                             </form>
 
-
                             {{-- Reject --}}
                             <form
                                 action="{{ route(
@@ -1023,26 +933,20 @@
                                 <div class="admin-refund-details-note-field">
 
                                     <label for="refund-admin-note">
-
                                         Admin Note
-
-                                        <span>
-                                            (optional)
-                                        </span>
-
+                                        <span>(required)</span>
                                     </label>
-
 
                                     <textarea
                                         id="refund-admin-note"
                                         name="admin_note"
                                         rows="4"
                                         maxlength="5000"
-                                        placeholder="Add a note for the customer..."
+                                        placeholder="Add a note explaining why the request is being rejected..."
+                                        required
                                     ></textarea>
 
                                 </div>
-
 
                                 <button
                                     type="submit"
@@ -1061,35 +965,53 @@
 
                     @endif
 
+                    @php
+                        $hasRefund = $refundRequest->refund !== null;
+
+                        $refundFailed = $hasRefund
+                            && $refundRequest->refund->status
+                                === \App\Models\Refund::STATUS_FAILED;
+
+                        $refundSucceeded = $hasRefund
+                            && $refundRequest->refund->status
+                                === \App\Models\Refund::STATUS_SUCCEEDED;
+
+                        $refundPending = $hasRefund
+                            && $refundRequest->refund->status
+                                === \App\Models\Refund::STATUS_PENDING;
+
+                        $canProcessRefund =
+                            $refundRequest->status
+                                === \App\Models\RefundRequest::STATUS_APPROVED
+                            && ! $refundSucceeded
+                            && ! $refundPending
+                            && (
+                                ! $hasRefund
+                                || $refundFailed
+                            );
+
+                        $originalRefundAmount = round(
+                            (float) $refundRequest->amount,
+                            2,
+                        );
+
+                        $currentDeductionAmount = round(
+                            (float) $refundRequest->deduction_amount,
+                            2,
+                        );
+
+                        $currentFinalRefundAmount = max(
+                            0,
+                            round(
+                                $originalRefundAmount
+                                - $currentDeductionAmount,
+                                2,
+                            ),
+                        );
+                    @endphp
 
                     {{-- Deduction & Process Refund --}}
-                    @if (
-                        $refundRequest->status
-                        === \App\Models\RefundRequest::STATUS_APPROVED
-                        && ! $refundRequest->refund
-                    )
-
-                        @php
-                            $originalRefundAmount = round(
-                                (float) $refundRequest->amount,
-                                2,
-                            );
-
-                            $currentDeductionAmount = round(
-                                (float) $refundRequest->deduction_amount,
-                                2,
-                            );
-
-                            $currentFinalRefundAmount = max(
-                                0,
-                                round(
-                                    $originalRefundAmount
-                                    - $currentDeductionAmount,
-                                    2,
-                                ),
-                            );
-                        @endphp
-
+                    @if ($canProcessRefund)
 
                         <section
                             class="admin-refund-details-side-card
@@ -1101,24 +1023,42 @@
                                 <i class="ri-bank-card-line"></i>
 
                                 <span>
-                                    Process Refund
+                                    {{ $refundFailed
+                                        ? 'Retry Refund'
+                                        : 'Process Refund' }}
                                 </span>
 
                             </div>
 
+                            @if ($refundFailed)
 
-                            <div class="admin-refund-details-process-warning">
+                                <div class="admin-refund-details-process-warning">
 
-                                <i class="ri-information-line"></i>
+                                    <i class="ri-error-warning-line"></i>
 
-                                <p>
-                                    The request is approved. You can optionally
-                                    apply a deduction before processing the
-                                    Stripe refund.
-                                </p>
+                                    <p>
+                                        The previous Stripe attempt failed.
+                                        Retrying will use the same refund
+                                        operation and idempotency key.
+                                    </p>
 
-                            </div>
+                                </div>
 
+                            @else
+
+                                <div class="admin-refund-details-process-warning">
+
+                                    <i class="ri-information-line"></i>
+
+                                    <p>
+                                        The request is approved. You can
+                                        optionally apply a deduction before
+                                        processing the Stripe refund.
+                                    </p>
+
+                                </div>
+
+                            @endif
 
                             {{-- Refund Calculation --}}
                             <div
@@ -1131,7 +1071,6 @@
                                 ) }}"
                             >
 
-                                {{-- Original Amount --}}
                                 <div class="admin-refund-details-calculation-row">
 
                                     <span>
@@ -1149,127 +1088,175 @@
 
                                 </div>
 
-
                                 {{-- Deduction Form --}}
-                                <form
-                                    action="{{ route(
-                                        'admin-refunds.deduction',
-                                        $refundRequest,
-                                    ) }}"
-                                    method="POST"
-                                    class="admin-refund-details-deduction-form"
-                                    data-deduction-form
-                                >
-                                    @csrf
-                                    @method('PATCH')
+                                @if (! $refundFailed)
 
+                                    <form
+                                        action="{{ route(
+                                            'admin-refunds.deduction',
+                                            $refundRequest,
+                                        ) }}"
+                                        method="POST"
+                                        class="admin-refund-details-deduction-form"
+                                        data-deduction-form
+                                    >
+                                        @csrf
+                                        @method('PATCH')
 
-                                    <div class="admin-refund-details-deduction">
+                                        <div class="admin-refund-details-deduction">
 
-                                        {{-- Deduction Amount --}}
-                                        <div class="admin-refund-details-deduction-field">
+                                            <div class="admin-refund-details-deduction-field">
 
-                                            <label for="refund-deduction-amount">
+                                                <label for="refund-deduction-amount">
+                                                    Deduction Amount
+                                                    <span>(optional)</span>
+                                                </label>
 
-                                                Deduction Amount
+                                                <div class="admin-refund-details-input-group">
 
-                                                <span>
-                                                    (optional)
-                                                </span>
+                                                    <span>$</span>
 
-                                            </label>
+                                                    <input
+                                                        type="number"
+                                                        id="refund-deduction-amount"
+                                                        name="deduction_amount"
+                                                        value="{{
+                                                            $currentDeductionAmount > 0
+                                                                ? number_format(
+                                                                    $currentDeductionAmount,
+                                                                    2,
+                                                                    '.',
+                                                                    '',
+                                                                )
+                                                                : ''
+                                                        }}"
+                                                        min="0"
+                                                        max="{{ number_format(
+                                                            $originalRefundAmount,
+                                                            2,
+                                                            '.',
+                                                            '',
+                                                        ) }}"
+                                                        step="0.01"
+                                                        inputmode="decimal"
+                                                        placeholder="0.00"
+                                                        data-deduction-input
+                                                    >
 
+                                                </div>
 
-                                            <div class="admin-refund-details-input-group">
+                                                <small
+                                                    class="admin-refund-details-field-error"
+                                                    data-deduction-error
+                                                ></small>
 
-                                                <span>
-                                                    $
-                                                </span>
+                                            </div>
+
+                                            <div class="admin-refund-details-deduction-field">
+
+                                                <label for="refund-deduction-reason">
+                                                    Deduction Reason
+                                                    <span>(optional)</span>
+                                                </label>
 
                                                 <input
-                                                    type="number"
-                                                    id="refund-deduction-amount"
-                                                    name="deduction_amount"
-                                                    value="{{
-                                                        $currentDeductionAmount > 0
-                                                            ? number_format(
-                                                                $currentDeductionAmount,
-                                                                2,
-                                                                '.',
-                                                                '',
-                                                            )
-                                                            : ''
-                                                    }}"
-                                                    min="0"
-                                                    max="{{ number_format(
-                                                        $originalRefundAmount,
-                                                        2,
-                                                        '.',
-                                                        '',
-                                                    ) }}"
-                                                    step="0.01"
-                                                    inputmode="decimal"
-                                                    placeholder="0.00"
-                                                    data-deduction-input
+                                                    type="text"
+                                                    id="refund-deduction-reason"
+                                                    name="deduction_reason"
+                                                    value="{{ $refundRequest->deduction_reason }}"
+                                                    maxlength="255"
+                                                    placeholder="e.g. Restocking fee"
                                                 >
 
                                             </div>
 
+                                            <div class="admin-refund-details-deduction-summary">
 
-                                            <small
-                                                class="admin-refund-details-field-error"
-                                                data-deduction-error
-                                            ></small>
+                                                <div>
+                                                    <span>
+                                                        Original Refundable
+                                                    </span>
 
-                                        </div>
+                                                    <strong>
+                                                        $<span data-summary-original>
+                                                            {{ number_format(
+                                                                $originalRefundAmount,
+                                                                2,
+                                                            ) }}
+                                                        </span>
+                                                    </strong>
+                                                </div>
 
+                                                <div class="is-deduction">
 
-                                        {{-- Deduction Reason --}}
-                                        <div class="admin-refund-details-deduction-field">
+                                                    <span>
+                                                        Deduction
+                                                    </span>
 
-                                            <label for="refund-deduction-reason">
+                                                    <strong>
+                                                        -$<span data-current-deduction>
+                                                            {{ number_format(
+                                                                $currentDeductionAmount,
+                                                                2,
+                                                            ) }}
+                                                        </span>
+                                                    </strong>
 
-                                                Deduction Reason
+                                                </div>
+
+                                                <div class="is-final">
+
+                                                    <span>
+                                                        Final Refund
+                                                    </span>
+
+                                                    <strong>
+                                                        $<span data-final-refund>
+                                                            {{ number_format(
+                                                                $currentFinalRefundAmount,
+                                                                2,
+                                                            ) }}
+                                                        </span>
+                                                    </strong>
+
+                                                </div>
+
+                                            </div>
+
+                                            <button
+                                                type="submit"
+                                                class="admin-refund-details-action-btn is-save"
+                                                data-save-deduction
+                                            >
+                                                <i class="ri-save-3-line"></i>
 
                                                 <span>
-                                                    (optional)
+                                                    Save Deduction
                                                 </span>
-
-                                            </label>
-
-
-                                            <input
-                                                type="text"
-                                                id="refund-deduction-reason"
-                                                name="deduction_reason"
-                                                value="{{ $refundRequest->deduction_reason }}"
-                                                maxlength="255"
-                                                placeholder="e.g. Restocking fee"
-                                            >
+                                            </button>
 
                                         </div>
 
+                                    </form>
 
-                                        {{-- Live Deduction Summary --}}
+                                @else
+
+                                    <div class="admin-refund-details-deduction">
+
                                         <div class="admin-refund-details-deduction-summary">
 
                                             <div>
-
                                                 <span>
                                                     Original Refundable
                                                 </span>
 
                                                 <strong>
-                                                    $<span data-summary-original>
-                                                        {{ number_format(
-                                                            $originalRefundAmount,
-                                                            2,
-                                                        ) }}
-                                                    </span>
+                                                    ${{ number_format(
+                                                        $originalRefundAmount,
+                                                        2,
+                                                    ) }}
                                                 </strong>
-
                                             </div>
-
 
                                             <div class="is-deduction">
 
@@ -1278,63 +1265,36 @@
                                                 </span>
 
                                                 <strong>
-                                                    -$<span data-current-deduction>
-                                                        {{ number_format(
-                                                            $currentDeductionAmount,
-                                                            2,
-                                                        ) }}
-                                                    </span>
+                                                    -${{ number_format(
+                                                        $currentDeductionAmount,
+                                                        2,
+                                                    ) }}
                                                 </strong>
 
                                             </div>
 
-
                                             <div class="is-final">
 
                                                 <span>
-                                                    Final Refund
+                                                    Refund Amount
                                                 </span>
 
                                                 <strong>
-                                                    $<span data-final-refund>
-                                                        {{ number_format(
-                                                            $currentFinalRefundAmount,
-                                                            2,
-                                                        ) }}
-                                                    </span>
+                                                    ${{ number_format(
+                                                        (float) $refundRequest->refund->amount,
+                                                        2,
+                                                    ) }}
                                                 </strong>
 
                                             </div>
 
                                         </div>
 
-
-                                        {{-- Save Deduction --}}
-                                        <button
-                                            type="submit"
-                                            class="admin-refund-details-action-btn is-save"
-                                            data-save-deduction
-                                        >
-                                            <i class="ri-save-3-line"></i>
-
-                                            <span>
-                                                Save Deduction
-                                            </span>
-                                        </button>
-
                                     </div>
 
-                                </form>
-
-
-                                {{-- Final Refund Status --}}
-                                <div
-                                    class="admin-refund-details-final-refund-status"
-                                    data-final-refund-status
-                                ></div>
+                                @endif
 
                             </div>
-
 
                             {{-- Process Stripe Refund --}}
                             <form
@@ -1349,7 +1309,6 @@
                             >
                                 @csrf
 
-
                                 <button
                                     type="submit"
                                     class="admin-refund-details-action-btn is-process"
@@ -1359,7 +1318,9 @@
                                     <i class="ri-bank-card-line"></i>
 
                                     <span>
-                                        Process Stripe Refund
+                                        {{ $refundFailed
+                                            ? 'Retry Stripe Refund'
+                                            : 'Process Stripe Refund' }}
                                     </span>
                                 </button>
 
@@ -1367,11 +1328,41 @@
 
                         </section>
 
+                    @elseif ($refundPending)
+
+                        <section
+                            class="admin-refund-details-side-card
+                            admin-refund-details-process-card"
+                        >
+
+                            <div class="admin-refund-details-side-heading">
+
+                                <i class="ri-loader-4-line"></i>
+
+                                <span>
+                                    Refund Processing
+                                </span>
+
+                            </div>
+
+                            <div class="admin-refund-details-process-warning">
+
+                                <i class="ri-information-line"></i>
+
+                                <p>
+                                    A Stripe refund request is currently
+                                    marked as pending. Do not submit another
+                                    refund until its final status is known.
+                                </p>
+
+                            </div>
+
+                        </section>
+
                     @endif
 
-
                     {{-- Refund Completed --}}
-                    @if ($refundRequest->refund)
+                    @if ($refundSucceeded)
 
                         <section
                             class="admin-refund-details-side-card
@@ -1379,22 +1370,17 @@
                         >
 
                             <div class="admin-refund-details-completed-icon">
-
                                 <i class="ri-checkbox-circle-line"></i>
-
                             </div>
-
 
                             <h3>
                                 Refund Processed
                             </h3>
 
-
                             <p>
                                 This refund request has already been processed
-                                through Stripe.
+                                successfully through Stripe.
                             </p>
-
 
                             <div class="admin-refund-details-completed-amount">
 
@@ -1415,7 +1401,6 @@
 
                     @endif
 
-
                     {{-- Refund Policy --}}
                     <section
                         class="admin-refund-details-side-card
@@ -1432,40 +1417,30 @@
 
                         </div>
 
-
                         <ul>
 
                             <li>
                                 <i class="ri-checkbox-circle-line"></i>
-
                                 Refund applies to the whole order.
                             </li>
 
-
                             <li>
                                 <i class="ri-checkbox-circle-line"></i>
-
                                 Shipping cost is non-refundable.
                             </li>
 
-
                             <li>
                                 <i class="ri-checkbox-circle-line"></i>
-
                                 Stock is not automatically restored.
                             </li>
 
-
                             <li>
                                 <i class="ri-checkbox-circle-line"></i>
-
                                 Stripe refund is processed only after approval.
                             </li>
 
-
                             <li>
                                 <i class="ri-checkbox-circle-line"></i>
-
                                 Any deduction is subtracted from the refundable amount.
                             </li>
 
@@ -1481,7 +1456,6 @@
     </div>
 @endsection
 
-
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -1492,7 +1466,6 @@
             if (!page) {
                 return;
             }
-
 
             /*
             |--------------------------------------------------------------------------
@@ -1510,7 +1483,6 @@
                 );
             };
 
-
             const showToast = function (
                 message,
                 icon = 'error'
@@ -1525,7 +1497,6 @@
                     });
                 }
             };
-
 
             /*
             |--------------------------------------------------------------------------
@@ -1570,11 +1541,9 @@
                         '[data-process-refund]'
                     );
 
-
                 const originalAmount = Number(
                     calculation?.dataset.originalAmount
                 ) || 0;
-
 
                 const getDeduction = function () {
                     if (!deductionInput) {
@@ -1592,7 +1561,6 @@
                     return Math.max(0, value);
                 };
 
-
                 const setError = function (message) {
                     if (deductionError) {
                         deductionError.textContent = message;
@@ -1606,7 +1574,6 @@
                     }
                 };
 
-
                 const updateRefundCalculation = function () {
                     if (!deductionInput) {
                         return;
@@ -1614,10 +1581,6 @@
 
                     const deduction = getDeduction();
 
-
-                    /*
-                     * Deduction cannot exceed original refundable amount.
-                     */
                     if (deduction > originalAmount) {
                         setError(
                             'Deduction cannot exceed $'
@@ -1636,9 +1599,7 @@
                         return;
                     }
 
-
                     setError('');
-
 
                     const finalAmount = Math.max(
                         0,
@@ -1650,41 +1611,26 @@
                         ) / 100
                     );
 
-
                     if (currentDeductionElement) {
                         currentDeductionElement.textContent =
                             formatAmount(deduction);
                     }
-
 
                     if (finalRefundElement) {
                         finalRefundElement.textContent =
                             formatAmount(finalAmount);
                     }
 
-
-                    /*
-                     * Save deduction is allowed when the
-                     * deduction itself is valid.
-                     */
                     if (saveButton) {
                         saveButton.disabled = false;
                     }
 
-
-                    /*
-                     * Stripe refund must be greater than zero.
-                     */
                     if (processRefundButton) {
                         processRefundButton.disabled =
                             finalAmount <= 0;
                     }
                 };
 
-
-                /*
-                 * Live calculation.
-                 */
                 if (deductionInput) {
                     deductionInput.addEventListener(
                         'input',
@@ -1702,15 +1648,10 @@
                     );
                 }
 
-
-                /*
-                 * Save deduction.
-                 */
                 deductionForm.addEventListener(
                     'submit',
                     function (event) {
                         const deduction = getDeduction();
-
 
                         if (deduction > originalAmount) {
                             event.preventDefault();
@@ -1726,7 +1667,6 @@
                             return;
                         }
 
-
                         if (deduction < 0) {
                             event.preventDefault();
 
@@ -1739,7 +1679,6 @@
                             return;
                         }
 
-
                         if (saveButton) {
                             saveButton.disabled = true;
 
@@ -1751,13 +1690,8 @@
                     }
                 );
 
-
-                /*
-                 * Initial calculation.
-                 */
                 updateRefundCalculation();
             }
-
 
             /*
             |--------------------------------------------------------------------------
@@ -1769,7 +1703,6 @@
                 '[data-confirm-action]'
             );
 
-
             actionForms.forEach(function (form) {
                 form.addEventListener(
                     'submit',
@@ -1777,17 +1710,12 @@
                         const action =
                             form.dataset.confirmAction;
 
-
                         let title = 'Are you sure?';
                         let text =
                             'Please confirm this action.';
                         let confirmText = 'Confirm';
                         let icon = 'question';
 
-
-                        /*
-                         * Approve
-                         */
                         if (action === 'approve') {
                             title =
                                 'Approve refund request?';
@@ -1801,16 +1729,11 @@
                             icon = 'question';
                         }
 
-
-                        /*
-                         * Reject
-                         */
                         if (action === 'reject') {
                             const note =
                                 form.querySelector(
                                     '[name="admin_note"]'
                                 );
-
 
                             if (
                                 !note
@@ -1828,7 +1751,6 @@
                                 return;
                             }
 
-
                             title =
                                 'Reject refund request?';
 
@@ -1841,16 +1763,11 @@
                             icon = 'warning';
                         }
 
-
-                        /*
-                         * Process Stripe Refund
-                         */
                         if (action === 'refund') {
                             const calculation =
                                 page.querySelector(
                                     '[data-original-amount]'
                                 );
-
 
                             const originalAmount =
                                 Number(
@@ -1858,18 +1775,15 @@
                                         .originalAmount
                                 ) || 0;
 
-
                             const deductionInput =
                                 page.querySelector(
                                     '[data-deduction-input]'
                                 );
 
-
                             const deduction =
                                 Number(
                                     deductionInput?.value
                                 ) || 0;
-
 
                             const finalAmount =
                                 Math.max(
@@ -1881,7 +1795,6 @@
                                         ) * 100
                                     ) / 100
                                 );
-
 
                             if (
                                 deduction < 0
@@ -1899,8 +1812,21 @@
                                 return;
                             }
 
+                            /*
+                             * For a failed refund retry, the amount
+                             * comes from the persisted Refund record.
+                             */
+                            const failedRefund =
+                                page.querySelector(
+                                    '.admin-refund-details-process-card'
+                                )?.textContent.includes(
+                                    'Retry Refund'
+                                );
 
-                            if (finalAmount <= 0) {
+                            if (
+                                ! failedRefund
+                                && finalAmount <= 0
+                            ) {
                                 event.preventDefault();
 
                                 showToast(
@@ -1911,32 +1837,32 @@
                                 return;
                             }
 
-
                             title =
-                                'Process Stripe refund?';
+                                failedRefund
+                                    ? 'Retry Stripe refund?'
+                                    : 'Process Stripe refund?';
 
                             text =
-                                'This will create a Stripe refund of $'
-                                + formatAmount(finalAmount)
-                                + '. This action cannot be undone.';
+                                failedRefund
+                                    ? 'The previous Stripe attempt failed. The refund will be retried using the existing refund operation.'
+                                    : 'This will create a Stripe refund of $'
+                                    + formatAmount(finalAmount)
+                                    + '. This action cannot be undone.';
 
                             confirmText =
-                                'Process Refund';
+                                failedRefund
+                                    ? 'Retry Refund'
+                                    : 'Process Refund';
 
                             icon = 'warning';
                         }
 
-
-                        /*
-                         * SweetAlert confirmation.
-                         */
                         if (
                             window.Swal
                             && typeof window.Swal.fire
                             === 'function'
                         ) {
                             event.preventDefault();
-
 
                             window.Swal.fire({
                                 icon: icon,
@@ -1950,26 +1876,20 @@
                                 reverseButtons: true,
                                 focusCancel: true,
                             }).then(function (result) {
-                                if (
-                                    ! result.isConfirmed
-                                ) {
+                                if (! result.isConfirmed) {
                                     return;
                                 }
-
 
                                 const button =
                                     form.querySelector(
                                         'button[type="submit"]'
                                     );
 
-
                                 if (button) {
                                     button.disabled = true;
 
-
                                     button.dataset.originalHtml =
                                         button.innerHTML;
-
 
                                     if (
                                         action
@@ -1995,11 +1915,6 @@
                                     }
                                 }
 
-
-                                /*
-                                 * Native submit prevents
-                                 * this listener from firing again.
-                                 */
                                 HTMLFormElement.prototype.submit.call(
                                     form
                                 );
@@ -2008,15 +1923,10 @@
                             return;
                         }
 
-
-                        /*
-                         * Fallback if SweetAlert is unavailable.
-                         */
                         const button =
                             form.querySelector(
                                 'button[type="submit"]'
                             );
-
 
                         if (button) {
                             button.disabled = true;

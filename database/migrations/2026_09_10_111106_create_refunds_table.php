@@ -28,6 +28,10 @@ return new class extends Migration
                 ->nullOnDelete();
 
             $table->string('stripe_refund_id', 255)
+                ->nullable()
+                ->unique();
+
+            $table->string('stripe_idempotency_key', 255)
                 ->unique();
 
             $table->decimal('amount', 12, 2);

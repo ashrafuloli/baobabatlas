@@ -8,7 +8,9 @@ use App\Http\Controllers\Backend\AttributeController;
 use App\Http\Controllers\Backend\BrandController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\CouponController;
+use App\Http\Controllers\Backend\EcommercePaymentController;
 use App\Http\Controllers\Backend\GeneralSettingsController;
+use App\Http\Controllers\Backend\InventoryController;
 use App\Http\Controllers\Backend\PermissionController;
 use App\Http\Controllers\Backend\ProductController;
 use App\Http\Controllers\Backend\ProfileController;
@@ -976,23 +978,42 @@ Route::middleware('auth')
                         */
 
                         Route::prefix('inventory')
+                            ->controller(InventoryController::class)
                             ->group(function (): void {
-
-                                Route::view(
+                                Route::get(
                                     '/',
-                                    'backend.pages.ecommerce.admin.inventory.index'
+                                    'index',
                                 )->name('admin-inventory');
 
-                                Route::view(
+                                Route::get(
                                     '/low-stock',
-                                    'backend.pages.ecommerce.admin.inventory.low-stock'
+                                    'lowStock',
                                 )->name('admin-inventory-low-stock');
 
-                                Route::view(
+                                Route::get(
                                     '/out-of-stock',
-                                    'backend.pages.ecommerce.admin.inventory.out-of-stock'
+                                    'outOfStock',
                                 )->name('admin-inventory-out-of-stock');
 
+                                Route::get(
+                                    '/product/{product}/edit',
+                                    'editProduct',
+                                )->name('admin-inventory-product-edit');
+
+                                Route::put(
+                                    '/product/{product}',
+                                    'updateProduct',
+                                )->name('admin-inventory-product-update');
+
+                                Route::get(
+                                    '/variant/{variant}/edit',
+                                    'editVariant',
+                                )->name('admin-inventory-variant-edit');
+
+                                Route::put(
+                                    '/variant/{variant}',
+                                    'updateVariant',
+                                )->name('admin-inventory-variant-update');
                             });
 
 
@@ -1085,10 +1106,59 @@ Route::middleware('auth')
                         |--------------------------------------------------------------------------
                         */
 
-                        Route::view(
-                            '/payments',
-                            'backend.pages.ecommerce.admin.payments.index'
-                        )->name('admin-ecommerce-payments');
+                        Route::prefix('payments')
+                            ->controller(EcommercePaymentController::class)
+                            ->group(function (): void {
+                                /*
+                                |--------------------------------------------------------------------------
+                                | Payment Overview
+                                |--------------------------------------------------------------------------
+                                */
+
+                                Route::get(
+                                    '/',
+                                    'index',
+                                )->name('admin-ecommerce-payments');
+
+
+                                /*
+                                |--------------------------------------------------------------------------
+                                | Refund Requests
+                                |--------------------------------------------------------------------------
+                                */
+
+                                Route::get(
+                                    '/refund-requests',
+                                    'refundRequests',
+                                )->name('admin-ecommerce-payment-refund-requests');
+
+                                Route::get(
+                                    '/refund-requests/{refundRequest}',
+                                    'showRefundRequest',
+                                )->name('admin-ecommerce-payment-refund-request-show');
+
+                                Route::put(
+                                    '/refund-requests/{refundRequest}/approve',
+                                    'approveRefund',
+                                )->name('admin-ecommerce-payment-refund-approve');
+
+                                Route::put(
+                                    '/refund-requests/{refundRequest}/reject',
+                                    'rejectRefund',
+                                )->name('admin-ecommerce-payment-refund-reject');
+
+
+                                /*
+                                |--------------------------------------------------------------------------
+                                | Payment Details
+                                |--------------------------------------------------------------------------
+                                */
+
+                                Route::get(
+                                    '/{order}',
+                                    'show',
+                                )->name('admin-ecommerce-payment-show');
+                            });
 
 
                         /*

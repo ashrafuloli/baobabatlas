@@ -1,928 +1,767 @@
 @use "../common" as *;
 
-
-/*
-|--------------------------------------------------------------------------
-| Payments Page
-|--------------------------------------------------------------------------
-*/
-
-.payments-page {
-
-    width: 100%;
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Header
-    |--------------------------------------------------------------------------
-    */
+.ecommerce-payments-page {
+    padding: 24px;
 
     &__header {
-
         display: flex;
         align-items: flex-end;
         justify-content: space-between;
-        gap: 20px;
-        margin-bottom: 25px;
-
+        gap: 24px;
+        margin-bottom: 24px;
     }
 
-
-    &__eyebrow {
-
-        display: block;
-        margin-bottom: 5px;
-        color: $theme-color;
-        font-size: 14px;
-        line-height: 1.4;
-        font-weight: 600;
-        letter-spacing: 0.03em;
-        text-transform: uppercase;
-
+    &__heading {
+        min-width: 0;
     }
 
-
-    &__header h1 {
-
-        margin: 0 0 6px;
-        color: $heading-color;
-        font-size: 24px;
-        line-height: 1.3;
-        font-weight: $head-fw;
-
-    }
-
-
-    &__header p {
-
-        margin: 0;
-        color: $body-color;
-        font-size: 14px;
-        line-height: 1.5;
-
-    }
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Export Button
-|--------------------------------------------------------------------------
-*/
-
-.payments-export-btn {
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-    min-height: 42px;
-    padding: 0 14px;
-    border: 1px solid $gray;
-    border-radius: 8px;
-    background: #fff;
-    color: $body-color;
-    font-family: $body-fonts;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.2s;
-
-
-    i {
-
-        font-size: 17px;
-
-    }
-
-
-    &:hover {
-
-        border-color: argb($theme-color, 0.35);
-        color: $theme-color;
-
-    }
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Stats
-|--------------------------------------------------------------------------
-*/
-
-.payments-stats {
-
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 18px;
-    margin-bottom: 22px;
-
-}
-
-
-.payments-stat-card {
-
-    display: flex;
-    align-items: center;
-    gap: 13px;
-    min-width: 0;
-    padding: 17px;
-    border: 1px solid $gray;
-    border-radius: 11px;
-    background: #fff;
-    transition: 0.2s;
-
-
-    &:hover {
-
-        border-color: argb($theme-color, 0.3);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.04);
-
-    }
-
-
-    &__icon {
-
-        width: 44px;
-        height: 44px;
-        flex: 0 0 44px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 9px;
-        background: argb($theme-color, 0.08);
-        color: $theme-color;
-        font-size: 20px;
-
-
-        &--success {
-
-            background: argb($success, 0.10);
-            color: $success;
-
-        }
-
-
-        &--warning {
-
-            background: argb($warning, 0.12);
-            color: #947000;
-
-        }
-
-
-        &--danger {
-
-            background: argb($danger, 0.10);
-            color: $danger;
-
-        }
-
-    }
-
-
-    span {
-
-        display: block;
-        margin-bottom: 4px;
-        color: $body-color;
-        font-size: 14px;
-        line-height: 1.4;
-
-    }
-
-
-    strong {
-
-        display: block;
-        color: $heading-color;
-        font-size: 20px;
-        line-height: 1.2;
-        font-weight: $head-fw;
-
-    }
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Card
-|--------------------------------------------------------------------------
-*/
-
-.payments-card {
-
-    overflow: hidden;
-    border: 1px solid $gray;
-    border-radius: 12px;
-    background: #fff;
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Toolbar
-|--------------------------------------------------------------------------
-*/
-
-.payments-toolbar {
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
-    padding: 17px 18px;
-    border-bottom: 1px solid argb($gray, 0.7);
-
-
-    &__filters {
-
+    &__breadcrumb {
         display: flex;
         align-items: center;
         gap: 8px;
-        flex-wrap: wrap;
-
-    }
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Search
-|--------------------------------------------------------------------------
-*/
-
-.payments-search {
-
-    position: relative;
-    width: 100%;
-    max-width: 360px;
-
-
-    i {
-
-        position: absolute;
-        top: 50%;
-        left: 12px;
-        transform: translateY(-50%);
-        color: #888;
-        font-size: 17px;
-        pointer-events: none;
-
-    }
-
-
-    input {
-
-        width: 100%;
-        height: 42px;
-        padding: 0 12px 0 38px;
-        border: 1px solid $gray;
-        border-radius: 8px;
-        outline: none;
-        background: #fff;
-        color: $heading-color;
+        margin-bottom: 8px;
+        color: $gray;
         font-family: $body-fonts;
         font-size: 14px;
-        transition: 0.2s;
 
+        a {
+            color: $body-color;
+            text-decoration: none;
 
-        &::placeholder {
+            @include transition(0.3s);
 
-            color: #999;
-
+            &:hover {
+                color: $theme-color;
+            }
         }
 
-
-        &:focus {
-
-            border-color: argb($theme-color, 0.5);
-            box-shadow: 0 0 0 3px argb($theme-color, 0.06);
-
+        i {
+            font-size: 14px;
         }
-
     }
 
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Filters
-|--------------------------------------------------------------------------
-*/
-
-.payments-filter {
-
-    height: 42px;
-    min-width: 145px;
-    padding: 0 12px;
-    border: 1px solid $gray;
-    border-radius: 8px;
-    outline: none;
-    background: #fff;
-    color: $body-color;
-    font-family: $body-fonts;
-    font-size: 14px;
-    cursor: pointer;
-
-
-    &:focus {
-
-        border-color: argb($theme-color, 0.5);
-
-    }
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Table Wrapper
-|--------------------------------------------------------------------------
-*/
-
-.payments-table-wrapper {
-
-    width: 100%;
-    overflow-x: auto;
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Table
-|--------------------------------------------------------------------------
-*/
-
-.payments-table {
-
-    width: 100%;
-    min-width: 1100px;
-    border-collapse: collapse;
-
-
-    th,
-    td {
-
-        padding: 14px 16px;
-        border-bottom: 1px solid argb($gray, 0.65);
-        text-align: left;
-        vertical-align: middle;
-        font-size: 14px;
-        line-height: 1.5;
-
-    }
-
-
-    th {
-
-        background: $light;
-        color: $body-color;
-        font-size: 14px;
+    &__title {
+        margin: 0;
+        color: $heading-color;
+        font-family: $header-fonts;
+        font-size: 24px;
         font-weight: 600;
-        white-space: nowrap;
-
+        line-height: 1.3;
     }
 
-
-    td {
-
+    &__subtitle {
+        margin: 6px 0 0;
         color: $body-color;
-
+        font-family: $body-fonts;
+        font-size: 14px;
+        line-height: 1.6;
     }
 
-
-    tbody tr {
-
-        transition: 0.2s;
-
-
-        &:hover {
-
-            background: argb($theme-color, 0.02);
-
-        }
-
-    }
-
-
-    tbody tr:last-child td {
-
-        border-bottom: 0;
-
-    }
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Transaction
-|--------------------------------------------------------------------------
-*/
-
-.payments-transaction {
-
-    color: $heading-color;
-    font-size: 14px;
-    font-weight: 600;
-    white-space: nowrap;
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Order
-|--------------------------------------------------------------------------
-*/
-
-.payments-order {
-
-    color: $theme-color;
-    font-size: 14px;
-    font-weight: 600;
-    text-decoration: none;
-    white-space: nowrap;
-
-
-    &:hover {
-
-        text-decoration: underline;
-
-    }
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Customer
-|--------------------------------------------------------------------------
-*/
-
-.payments-customer {
-
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    min-width: 190px;
-
-
-    &__avatar {
-
-        width: 38px;
-        height: 38px;
-        flex: 0 0 38px;
+    &__refund-button {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        border-radius: 50%;
-        background: argb($theme-color, 0.08);
-        color: $theme-color;
+        gap: 8px;
+        min-height: 42px;
+        padding: 0 16px;
+        border: 1px solid $hr-color;
+        border-radius: 8px;
+        background: $white;
+        color: $body-color;
+        font-family: $body-fonts;
         font-size: 14px;
-        font-weight: 700;
-
-    }
-
-
-    strong {
-
-        display: block;
-        margin-bottom: 2px;
-        color: $heading-color;
-        font-size: 14px;
-        line-height: 1.4;
-        font-weight: 600;
+        font-weight: 500;
+        text-decoration: none;
         white-space: nowrap;
 
-    }
-
-
-    span {
-
-        display: block;
-        color: $body-color;
-        font-size: 14px;
-        line-height: 1.4;
-        white-space: nowrap;
-
-    }
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Payment Method
-|--------------------------------------------------------------------------
-*/
-
-.payments-method {
-
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    color: $body-color;
-    font-size: 14px;
-    white-space: nowrap;
-
-
-    i {
-
-        color: $theme-color;
-        font-size: 17px;
-
-    }
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Amount
-|--------------------------------------------------------------------------
-*/
-
-.payments-amount {
-
-    color: $heading-color;
-    font-size: 14px;
-    font-weight: 600;
-    white-space: nowrap;
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Status
-|--------------------------------------------------------------------------
-*/
-
-.payments-status {
-
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    min-height: 27px;
-    padding: 4px 9px;
-    border-radius: 20px;
-    font-size: 14px;
-    line-height: 1.3;
-    font-weight: 600;
-    white-space: nowrap;
-
-
-    i {
-
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background: currentColor;
-
-    }
-
-
-    &--paid {
-
-        background: argb($success, 0.10);
-        color: $success;
-
-    }
-
-
-    &--pending {
-
-        background: argb($warning, 0.12);
-        color: #947000;
-
-    }
-
-
-    &--failed {
-
-        background: argb($danger, 0.10);
-        color: $danger;
-
-    }
-
-
-    &--refunded {
-
-        background: argb($info, 0.10);
-        color: #087f99;
-
-    }
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Date
-|--------------------------------------------------------------------------
-*/
-
-.payments-date {
-
-    color: $body-color;
-    font-size: 14px;
-    white-space: nowrap;
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| View Button
-|--------------------------------------------------------------------------
-*/
-
-.payments-view-btn {
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    min-height: 36px;
-    padding: 0 11px;
-    border: 1px solid $gray;
-    border-radius: 7px;
-    background: #fff;
-    color: $body-color;
-    font-size: 14px;
-    font-weight: 600;
-    text-decoration: none;
-    white-space: nowrap;
-    transition: 0.2s;
-
-
-    i {
-
-        font-size: 16px;
-
-    }
-
-
-    &:hover {
-
-        border-color: argb($theme-color, 0.35);
-        color: $theme-color;
-
-    }
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Pagination
-|--------------------------------------------------------------------------
-*/
-
-.payments-pagination {
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
-    padding: 15px 18px;
-    border-top: 1px solid argb($gray, 0.65);
-
-
-    &__info {
-
-        color: $body-color;
-        font-size: 14px;
-
-
-        strong {
-
-            color: $heading-color;
-            font-weight: 600;
-
+        @include transition(0.3s);
+
+        &:hover {
+            border-color: $theme-color;
+            color: $theme-color;
         }
-
     }
 
+    &__stats {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 20px;
+    }
 
-    &__buttons {
-
+    &__stat {
         display: flex;
         align-items: center;
-        gap: 5px;
+        gap: 12px;
+        min-width: 0;
+        padding: 16px;
+        border: 1px solid $hr-color;
+        border-radius: 10px;
+        background: $white;
+    }
 
+    &__stat-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 40px;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        background: $light;
+        color: $theme-color;
+        font-size: 17px;
+    }
 
-        button {
+    &__stat-content {
+        min-width: 0;
 
-            width: 34px;
-            height: 34px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid $gray;
-            border-radius: 7px;
-            background: #fff;
+        span {
+            display: block;
+            margin-bottom: 4px;
+            overflow: hidden;
             color: $body-color;
             font-family: $body-fonts;
             font-size: 14px;
-            cursor: pointer;
-            transition: 0.2s;
-
-
-            &:hover {
-
-                border-color: argb($theme-color, 0.35);
-                color: $theme-color;
-
-            }
-
-
-            &.active {
-
-                border-color: $theme-color;
-                background: $theme-color;
-                color: #fff;
-
-            }
-
-
-            &:disabled {
-
-                opacity: 0.45;
-                cursor: not-allowed;
-
-            }
-
+            line-height: 1.4;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
+        strong {
+            display: block;
+            overflow: hidden;
+            color: $heading-color;
+            font-family: $header-fonts;
+            font-size: 18px;
+            font-weight: 600;
+            line-height: 1.3;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
     }
 
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Responsive XL
-|--------------------------------------------------------------------------
-*/
-
-@include mq(xl) {
-
-    .payments-stats {
-
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-
+    &__filters {
+        margin-bottom: 20px;
+        padding: 18px;
+        border: 1px solid $hr-color;
+        border-radius: 12px;
+        background: $white;
     }
 
-
-    .payments-toolbar {
-
-        align-items: flex-start;
-        flex-direction: column;
-
-    }
-
-
-    .payments-search {
-
-        max-width: 100%;
-
-    }
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Responsive MD
-|--------------------------------------------------------------------------
-*/
-
-@include mq(md) {
-
-    .payments-page__header {
-
-        align-items: flex-start;
-        flex-direction: column;
-
-    }
-
-
-    .payments-page__header-actions {
-
-        width: 100%;
-
-    }
-
-
-    .payments-export-btn {
-
-        width: 100%;
-
-    }
-
-
-    .payments-toolbar__filters {
-
-        width: 100%;
-
-    }
-
-
-    .payments-filter {
-
-        flex: 1;
-        min-width: 130px;
-
-    }
-
-
-    .payments-pagination {
-
-        align-items: flex-start;
-        flex-direction: column;
-
-    }
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Responsive XS
-|--------------------------------------------------------------------------
-*/
-
-@include mq(xs) {
-
-    .payments-stats {
-
-        grid-template-columns: 1fr;
-        gap: 12px;
-
-    }
-
-
-    .payments-stat-card {
-
-        padding: 15px;
-
-    }
-
-
-    .payments-page__header h1 {
-
-        font-size: 24px;
-
-    }
-
-
-    .payments-toolbar {
-
-        padding: 14px;
-
-    }
-
-
-    .payments-toolbar__filters {
-
+    &__filter-form {
         display: grid;
-        grid-template-columns: 1fr;
-        width: 100%;
-
+        grid-template-columns: minmax(220px, 1.5fr) repeat(3, minmax(130px, 1fr)) repeat(2, minmax(140px, 0.8fr)) auto;
+        align-items: end;
+        gap: 12px;
     }
 
+    &__search {
+        position: relative;
 
-    .payments-filter {
+        i {
+            position: absolute;
+            top: 50%;
+            left: 13px;
+            color: $gray;
+            font-size: 14px;
+            pointer-events: none;
 
-        width: 100%;
+            @include transform(translateY(-50%));
+        }
 
+        input {
+            width: 100%;
+            height: 42px;
+            padding: 0 13px 0 37px;
+            border: 1px solid $hr-color;
+            border-radius: 8px;
+            outline: 0;
+            background: $white;
+            color: $heading-color;
+            font-family: $body-fonts;
+            font-size: 14px;
+
+            @include transition(0.3s);
+
+            @include placeholder {
+                color: $gray;
+            }
+
+            &:focus {
+                border-color: $theme-color;
+            }
+        }
     }
 
+    &__filter {
+        min-width: 0;
 
-    .payments-pagination {
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: $heading-color;
+            font-family: $body-fonts;
+            font-size: 14px;
+            font-weight: 500;
+        }
 
-        padding: 14px;
+        input,
+        select {
+            width: 100%;
+            height: 42px;
+            padding: 0 11px;
+            border: 1px solid $hr-color;
+            border-radius: 8px;
+            outline: 0;
+            background: $white;
+            color: $heading-color;
+            font-family: $body-fonts;
+            font-size: 14px;
 
+            @include transition(0.3s);
+
+            &:focus {
+                border-color: $theme-color;
+            }
+        }
+
+        select {
+            cursor: pointer;
+        }
     }
 
+    &__filter-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
 
-    .payments-pagination__buttons {
-
-        width: 100%;
+    &__apply,
+    &__reset {
+        display: inline-flex;
+        align-items: center;
         justify-content: center;
-
+        gap: 7px;
+        min-height: 42px;
+        padding: 0 13px;
+        border-radius: 8px;
+        font-family: $body-fonts;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+        white-space: nowrap;
     }
 
+    &__apply {
+        border: 1px solid $theme-color;
+        background: $theme-color;
+        color: $white;
+        cursor: pointer;
+
+        @include transition(0.3s);
+
+        &:hover {
+            border-color: $theme-color-2;
+            background: $theme-color-2;
+        }
+
+        &:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+    }
+
+    &__reset {
+        border: 1px solid $hr-color;
+        background: $white;
+        color: $body-color;
+
+        @include transition(0.3s);
+
+        &:hover {
+            border-color: $theme-color;
+            color: $theme-color;
+        }
+
+        &.is-loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    }
+
+    &__table-card {
+        overflow: hidden;
+        border: 1px solid $hr-color;
+        border-radius: 12px;
+        background: $white;
+    }
+
+    &__table-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px;
+        border-bottom: 1px solid $hr-color;
+
+        h2 {
+            margin: 0 0 4px;
+            color: $heading-color;
+            font-family: $header-fonts;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        p {
+            margin: 0;
+            color: $body-color;
+            font-family: $body-fonts;
+            font-size: 14px;
+        }
+    }
+
+    &__table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    &__table {
+        width: 100%;
+        min-width: 1100px;
+        border-collapse: collapse;
+
+        th {
+            padding: 13px 16px;
+            border-bottom: 1px solid $hr-color;
+            background: $light;
+            color: $body-color;
+            font-family: $body-fonts;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid $hr-color;
+            vertical-align: middle;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        tbody tr {
+            @include transition(0.3s);
+
+            &:hover {
+                background: $light;
+            }
+        }
+    }
+
+    &__order {
+        color: $theme-color;
+        font-family: $body-fonts;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        white-space: nowrap;
+
+        @include transition(0.3s);
+
+        &:hover {
+            color: $theme-color-2;
+        }
+    }
+
+    &__customer {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        min-width: 180px;
+    }
+
+    &__customer-avatar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 34px;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: $light;
+        color: $heading-color;
+        font-family: $header-fonts;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    &__customer-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+
+        strong {
+            overflow: hidden;
+            color: $heading-color;
+            font-family: $body-fonts;
+            font-size: 14px;
+            font-weight: 500;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        span {
+            overflow: hidden;
+            color: $body-color;
+            font-family: $body-fonts;
+            font-size: 14px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+
+    &__amount {
+        strong {
+            color: $heading-color;
+            font-family: $body-fonts;
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+    }
+
+    &__gateway {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 0 9px;
+        border: 1px solid $hr-color;
+        border-radius: 6px;
+        background: $white;
+        color: $heading-color;
+        font-family: $body-fonts;
+        font-size: 14px;
+        text-transform: capitalize;
+        white-space: nowrap;
+    }
+
+    &__transaction {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        max-width: 180px;
+        padding: 0;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        color: $body-color;
+        font-family: $body-fonts;
+        font-size: 14px;
+        cursor: pointer;
+
+        span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        i {
+            flex: 0 0 auto;
+            color: $gray;
+
+            @include transition(0.3s);
+        }
+
+        &:hover {
+            color: $theme-color;
+
+            i {
+                color: $theme-color;
+            }
+        }
+
+        &.is-copied {
+            color: $success;
+
+            i {
+                color: $success;
+            }
+        }
+    }
+
+    &__muted {
+        color: $gray;
+        font-family: $body-fonts;
+        font-size: 14px;
+    }
+
+    &__status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 28px;
+        padding: 0 9px;
+        border-radius: 6px;
+        font-family: $body-fonts;
+        font-size: 14px;
+        font-weight: 500;
+        white-space: nowrap;
+
+        i {
+            font-size: 7px;
+        }
+
+        &--paid {
+            background: $light;
+            color: $success;
+        }
+
+        &--pending {
+            background: $light;
+            color: $warning;
+        }
+
+        &--failed {
+            background: $light;
+            color: $danger;
+        }
+
+        &--refund-none {
+            background: $light;
+            color: $gray;
+        }
+
+        &--refund-pending {
+            background: $light;
+            color: $warning;
+        }
+
+        &--refund-approved {
+            background: $light;
+            color: $info;
+        }
+
+        &--refund-rejected {
+            background: $light;
+            color: $danger;
+        }
+
+        &--refund-refunded {
+            background: $light;
+            color: $success;
+        }
+    }
+
+    &__date {
+        color: $body-color;
+        font-family: $body-fonts;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+
+    &__view {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border: 1px solid $hr-color;
+        border-radius: 7px;
+        background: $white;
+        color: $body-color;
+        font-size: 14px;
+        text-decoration: none;
+
+        @include transition(0.3s);
+
+        &:hover {
+            border-color: $theme-color;
+            color: $theme-color;
+        }
+    }
+
+    &__pagination {
+        display: flex;
+        justify-content: flex-end;
+        padding: 16px 18px;
+        border-top: 1px solid $hr-color;
+
+        nav {
+            display: flex;
+            align-items: center;
+        }
+
+        a,
+        span {
+            font-family: $body-fonts;
+            font-size: 14px;
+        }
+    }
+
+    &__empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 340px;
+        padding: 40px 24px;
+        text-align: center;
+    }
+
+    &__empty-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 58px;
+        height: 58px;
+        margin-bottom: 16px;
+        border-radius: 50%;
+        background: $light;
+        color: $gray;
+        font-size: 22px;
+    }
+
+    &__empty {
+        h2 {
+            margin: 0 0 7px;
+            color: $heading-color;
+            font-family: $header-fonts;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        p {
+            margin: 0 0 18px;
+            color: $body-color;
+            font-family: $body-fonts;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+    }
+
+    &__empty-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        padding: 0 15px;
+        border: 1px solid $hr-color;
+        border-radius: 8px;
+        background: $white;
+        color: $body-color;
+        font-family: $body-fonts;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+
+        @include transition(0.3s);
+
+        &:hover {
+            border-color: $theme-color;
+            color: $theme-color;
+        }
+    }
+
+    @include mq('xxl') {
+        &__filter-form {
+            grid-template-columns:
+                minmax(220px, 1.5fr)
+                repeat(3, minmax(120px, 1fr))
+                repeat(2, minmax(125px, 0.8fr))
+                auto;
+        }
+    }
+
+    @include mq('xl') {
+        &__stats {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        &__filter-form {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        &__search {
+            grid-column: span 2;
+        }
+
+        &__filter-actions {
+            justify-content: flex-start;
+        }
+    }
+
+    @include mq('lg') {
+        &__header {
+            align-items: flex-start;
+        }
+
+        &__filter-form {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        &__search {
+            grid-column: span 2;
+        }
+    }
+
+    @include mq('md') {
+        padding: 20px;
+
+        &__header {
+            flex-direction: column;
+        }
+
+        &__refund-button {
+            width: 100%;
+        }
+
+        &__stats {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        &__filter-form {
+            grid-template-columns: 1fr;
+        }
+
+        &__search {
+            grid-column: auto;
+        }
+
+        &__filter-actions {
+            width: 100%;
+        }
+
+        &__apply,
+        &__reset {
+            flex: 1;
+        }
+    }
+
+    @include mq('xs') {
+        padding: 16px;
+
+        &__title {
+            font-size: 22px;
+        }
+
+        &__stats {
+            grid-template-columns: 1fr;
+        }
+
+        &__stat {
+            padding: 14px;
+        }
+
+        &__filters {
+            padding: 14px;
+        }
+
+        &__table-header {
+            padding: 16px;
+        }
+    }
 }

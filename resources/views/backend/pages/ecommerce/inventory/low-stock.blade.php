@@ -1,1030 +1,349 @@
 @extends('backend.layouts.backend')
 
-@section('title', 'Low Stock')
+@section('title', 'Low Stock Inventory')
 
 @section('content')
+    <div class="inventory-low-stock-page">
+        <div class="inventory-low-stock-page__header">
+            <div class="inventory-low-stock-page__heading">
+                <div class="inventory-low-stock-page__breadcrumb">
+                    <a href="{{ route('admin-inventory') }}">
+                        Inventory
+                    </a>
 
-    <div class="inventory-page inventory-low-stock-page">
+                    <i class="fa-solid fa-chevron-right"></i>
 
-        {{-- ================================================================ --}}
-        {{-- PAGE HEADER --}}
-        {{-- ================================================================ --}}
+                    <span>Low Stock</span>
+                </div>
 
-        <div class="inventory-page__header">
-
-            <div>
-
-            <span class="inventory-page__eyebrow">
-                Ecommerce / Inventory
-            </span>
-
-                <h1>
-                    Low Stock
+                <h1 class="inventory-low-stock-page__title">
+                    Low Stock Inventory
                 </h1>
 
-                <p>
-                    Products that are running low on available stock.
+                <p class="inventory-low-stock-page__subtitle">
+                    Products with variants that are running low on stock.
                 </p>
-
             </div>
-
 
             <a
                 href="{{ route('admin-inventory') }}"
-                class="inventory-page__back"
+                class="inventory-low-stock-page__back"
             >
-
-                <i class="ri-arrow-left-line"></i>
-
-                All Inventory
-
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>All Inventory</span>
             </a>
-
         </div>
 
-
-        {{-- ================================================================ --}}
-        {{-- STATS --}}
-        {{-- ================================================================ --}}
-
-        <div class="inventory-stats">
-
-
-            {{-- Low Stock Products --}}
-            <div class="inventory-stat-card">
-
-                <div class="inventory-stat-card__icon inventory-stat-card__icon--warning">
-
-                    <i class="ri-error-warning-line"></i>
-
+        <div class="inventory-low-stock-page__toolbar">
+            <div class="inventory-low-stock-page__summary">
+                <div class="inventory-low-stock-page__summary-icon">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
                 </div>
 
                 <div>
-
-                <span>
-                    Low Stock Products
-                </span>
-
                     <strong>
-                        12
+                        Low Stock Items
                     </strong>
 
+                    <span>
+                        Stock quantity is between 1 and
+                        {{ $lowStockThreshold }}.
+                    </span>
                 </div>
-
             </div>
 
-
-            {{-- Critical Stock --}}
-            <div class="inventory-stat-card">
-
-                <div class="inventory-stat-card__icon inventory-stat-card__icon--danger">
-
-                    <i class="ri-alarm-warning-line"></i>
-
-                </div>
-
-                <div>
-
-                <span>
-                    Critical Stock
-                </span>
-
-                    <strong>
-                        4
-                    </strong>
-
-                </div>
-
+            <div class="inventory-low-stock-page__count">
+                {{ $products->total() }}
+                {{ Str::plural('product', $products->total()) }}
             </div>
-
-
-            {{-- Total Units --}}
-            <div class="inventory-stat-card">
-
-                <div class="inventory-stat-card__icon inventory-stat-card__icon--stock">
-
-                    <i class="ri-stack-line"></i>
-
-                </div>
-
-                <div>
-
-                <span>
-                    Remaining Units
-                </span>
-
-                    <strong>
-                        68
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            {{-- Out of Stock --}}
-            <div class="inventory-stat-card">
-
-                <div class="inventory-stat-card__icon inventory-stat-card__icon--danger">
-
-                    <i class="ri-close-circle-line"></i>
-
-                </div>
-
-                <div>
-
-                <span>
-                    Out of Stock
-                </span>
-
-                    <strong>
-                        5
-                    </strong>
-
-                </div>
-
-            </div>
-
         </div>
 
+        @if ($products->isNotEmpty())
+            <div class="inventory-low-stock-page__card">
+                <div class="inventory-low-stock-page__table-wrapper">
+                    <table class="inventory-low-stock-page__table">
+                        <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>SKU</th>
+                            <th>Variants</th>
+                            <th>Low Stock</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
 
-        {{-- ================================================================ --}}
-        {{-- INVENTORY CARD --}}
-        {{-- ================================================================ --}}
+                        <tbody>
+                        @foreach ($products as $product)
+                            @php
+                                $lowStockVariants = $product->variants
+                                    ->filter(
+                                        fn ($variant): bool =>
+                                            $variant->stock > 0
+                                            && $variant->stock <= $lowStockThreshold
+                                    );
 
-        <div class="inventory-card">
+                                $productImage = $product->thumbnail;
+                            @endphp
 
+                            <tr>
+                                <td>
+                                    <div class="inventory-low-stock-page__product">
+                                        <div class="inventory-low-stock-page__product-image">
+                                            @if ($productImage)
+                                                <img
+                                                    src="{{ asset($productImage) }}"
+                                                    alt="{{ $product->name }}"
+                                                >
+                                            @else
+                                                <i class="fa-solid fa-box"></i>
+                                            @endif
+                                        </div>
 
-            {{-- ============================================================ --}}
-            {{-- TOOLBAR --}}
-            {{-- ============================================================ --}}
+                                        <div class="inventory-low-stock-page__product-info">
+                                            <a
+                                                href="{{ route('admin-inventory-product-edit', [
+                                                        'product' => $product,
+                                                    ]) }}"
+                                            >
+                                                {{ $product->name }}
+                                            </a>
 
-            <div class="inventory-toolbar">
+                                            @if ($product->brand)
+                                                <span>
+                                                        {{ $product->brand->name }}
+                                                    </span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </td>
 
-                <div class="inventory-search">
+                                <td>
+                                        <span class="inventory-low-stock-page__sku">
+                                            {{ $product->sku ?: '—' }}
+                                        </span>
+                                </td>
 
-                    <i class="ri-search-line"></i>
+                                <td>
+                                        <span class="inventory-low-stock-page__variant-count">
+                                            {{ $product->variants->count() }}
+                                        </span>
+                                </td>
 
-                    <input
-                        type="search"
-                        name="search"
-                        placeholder="Search product or SKU..."
-                    >
+                                <td>
+                                    <div class="inventory-low-stock-page__stock-list">
+                                        @foreach ($lowStockVariants as $variant)
+                                            @php
+                                                $variantLabels = $variant->values
+                                                    ->map(function ($value): string {
+                                                        $attribute = $value->attribute?->name;
 
+                                                        $attributeValue = $value->attributeValue?->value
+                                                            ?? $value->attributeValue?->name;
+
+                                                        if (!$attributeValue) {
+                                                            return '';
+                                                        }
+
+                                                        return $attribute
+                                                            ? "{$attribute}: {$attributeValue}"
+                                                            : $attributeValue;
+                                                    })
+                                                    ->filter()
+                                                    ->implode(' / ');
+                                            @endphp
+
+                                            <div
+                                                class="inventory-low-stock-page__stock-item"
+                                                data-stock-item
+                                            >
+                                                <div class="inventory-low-stock-page__stock-info">
+                                                    <strong>
+                                                        {{ $variantLabels ?: 'Default variant' }}
+                                                    </strong>
+
+                                                    <span>
+                                                            SKU:
+                                                            {{ $variant->sku ?: '—' }}
+                                                        </span>
+                                                </div>
+
+                                                <span class="inventory-low-stock-page__stock-badge">
+                                                        {{ number_format($variant->stock) }}
+                                                    </span>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="inventory-low-stock-page__actions">
+                                        <a
+                                            href="{{ route('admin-inventory-product-edit', [
+                                                    'product' => $product,
+                                                ]) }}"
+                                            class="inventory-low-stock-page__action"
+                                            title="Edit product"
+                                            aria-label="Edit product"
+                                        >
+                                            <i class="fa-solid fa-pen"></i>
+                                        </a>
+
+                                        <button
+                                            type="button"
+                                            class="inventory-low-stock-page__action inventory-low-stock-page__action--toggle"
+                                            data-variants-toggle
+                                            aria-expanded="false"
+                                            aria-label="Toggle variants"
+                                            title="Toggle variants"
+                                        >
+                                            <i class="fa-solid fa-chevron-down"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr
+                                class="inventory-low-stock-page__mobile-details"
+                                data-variants-row
+                            >
+                                <td colspan="5">
+                                    <div class="inventory-low-stock-page__details">
+                                        <div class="inventory-low-stock-page__details-header">
+                                            <strong>
+                                                Low Stock Variants
+                                            </strong>
+                                        </div>
+
+                                        <div class="inventory-low-stock-page__details-list">
+                                            @foreach ($lowStockVariants as $variant)
+                                                @php
+                                                    $variantLabels = $variant->values
+                                                        ->map(function ($value): string {
+                                                            $attribute = $value->attribute?->name;
+
+                                                            $attributeValue = $value->attributeValue?->value
+                                                                ?? $value->attributeValue?->name;
+
+                                                            if (!$attributeValue) {
+                                                                return '';
+                                                            }
+
+                                                            return $attribute
+                                                                ? "{$attribute}: {$attributeValue}"
+                                                                : $attributeValue;
+                                                        })
+                                                        ->filter()
+                                                        ->implode(' / ');
+                                                @endphp
+
+                                                <a
+                                                    href="{{ route('admin-inventory-variant-edit', [
+                                                            'variant' => $variant,
+                                                        ]) }}"
+                                                    class="inventory-low-stock-page__details-item"
+                                                >
+                                                        <span>
+                                                            {{ $variantLabels ?: 'Default variant' }}
+                                                        </span>
+
+                                                    <strong>
+                                                        {{ number_format($variant->stock) }}
+                                                    </strong>
+
+                                                    <i class="fa-solid fa-arrow-right"></i>
+                                                </a>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
                 </div>
 
-
-                <div class="inventory-toolbar__actions">
-
-                    <select
-                        name="category"
-                        class="inventory-filter"
-                    >
-
-                        <option value="">
-                            All Categories
-                        </option>
-
-                        <option value="fashion">
-                            Fashion
-                        </option>
-
-                        <option value="electronics">
-                            Electronics
-                        </option>
-
-                        <option value="home-living">
-                            Home & Living
-                        </option>
-
-                        <option value="beauty">
-                            Beauty
-                        </option>
-
-                        <option value="sports">
-                            Sports & Fitness
-                        </option>
-
-                    </select>
-
-
-                    <select
-                        name="stock_level"
-                        class="inventory-filter"
-                    >
-
-                        <option value="">
-                            All Low Stock
-                        </option>
-
-                        <option value="critical">
-                            Critical
-                        </option>
-
-                        <option value="low">
-                            Low
-                        </option>
-
-                    </select>
-
-
-                    <a
-                        href="{{ route('admin-inventory') }}"
-                        class="inventory-filter-link"
-                    >
-
-                        <i class="ri-stack-line"></i>
-
-                        All Stock
-
-                    </a>
-
-
-                    <a
-                        href="{{ route('admin-inventory-out-of-stock') }}"
-                        class="inventory-filter-link inventory-filter-link--danger"
-                    >
-
-                        <i class="ri-close-circle-line"></i>
-
-                        Out of Stock
-
-                    </a>
-
-                </div>
-
+                @if ($products->hasPages())
+                    <div class="inventory-low-stock-page__pagination">
+                        {{ $products->links() }}
+                    </div>
+                @endif
             </div>
-
-
-            {{-- ============================================================ --}}
-            {{-- ALERT --}}
-            {{-- ============================================================ --}}
-
-            <div class="inventory-low-stock-alert">
-
-                <div class="inventory-low-stock-alert__icon">
-
-                    <i class="ri-error-warning-line"></i>
-
+        @else
+            <div class="inventory-low-stock-page__empty">
+                <div class="inventory-low-stock-page__empty-icon">
+                    <i class="fa-solid fa-circle-check"></i>
                 </div>
 
+                <h2>
+                    No Low Stock Products
+                </h2>
 
-                <div>
+                <p>
+                    All product variants currently have stock above the
+                    low-stock threshold.
+                </p>
 
-                    <strong>
-                        Stock Attention Required
-                    </strong>
-
-                    <p>
-                        These products have reached their low-stock threshold.
-                        Consider updating their stock levels.
-                    </p>
-
-                </div>
-
+                <a
+                    href="{{ route('admin-inventory') }}"
+                    class="inventory-low-stock-page__button"
+                >
+                    <i class="fa-solid fa-boxes-stacked"></i>
+                    <span>View Inventory</span>
+                </a>
             </div>
-
-
-            {{-- ============================================================ --}}
-            {{-- TABLE --}}
-            {{-- ============================================================ --}}
-
-            <div class="inventory-table-wrapper">
-
-                <table class="inventory-table inventory-low-stock-table">
-
-                    <thead>
-
-                    <tr>
-
-                        <th>
-                            Product
-                        </th>
-
-                        <th>
-                            SKU
-                        </th>
-
-                        <th>
-                            Type
-                        </th>
-
-                        <th>
-                            Price
-                        </th>
-
-                        <th>
-                            Current Stock
-                        </th>
-
-                        <th>
-                            Threshold
-                        </th>
-
-                        <th>
-                            Status
-                        </th>
-
-                        <th>
-                            Update
-                        </th>
-
-                    </tr>
-
-                    </thead>
-
-
-                    <tbody>
-
-
-                    {{-- ================================================= --}}
-                    {{-- PRODUCT 1 --}}
-                    {{-- ================================================= --}}
-
-                    <tr>
-
-                        <td>
-
-                            <div class="inventory-product">
-
-                                <div class="inventory-product__image">
-
-                                    <img
-                                        src="https://placehold.co/100x100"
-                                        alt="Running Sneakers"
-                                    >
-
-                                </div>
-
-
-                                <div class="inventory-product__content">
-
-                                    <strong>
-                                        Running Sneakers
-                                    </strong>
-
-                                    <span>
-                                        Sports & Fitness
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-sku">
-                                BA-SN-002
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-type">
-                                Variable
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <strong class="inventory-price">
-                                $79.99
-                            </strong>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="inventory-stock-input inventory-stock-input--warning">
-
-                                <input
-                                    type="number"
-                                    name="stock"
-                                    value="8"
-                                    min="0"
-                                >
-
-                                <span>
-                                    units
-                                </span>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-threshold">
-                                10 units
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-status inventory-status--low-stock">
-
-                                <i></i>
-
-                                Low Stock
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <button
-                                type="button"
-                                class="inventory-update-btn"
-                            >
-
-                                <i class="ri-save-line"></i>
-
-                                Update
-
-                            </button>
-
-                        </td>
-
-                    </tr>
-
-
-                    {{-- ================================================= --}}
-                    {{-- PRODUCT 2 --}}
-                    {{-- ================================================= --}}
-
-                    <tr>
-
-                        <td>
-
-                            <div class="inventory-product">
-
-                                <div class="inventory-product__image">
-
-                                    <img
-                                        src="https://placehold.co/100x100"
-                                        alt="Ceramic Coffee Mug"
-                                    >
-
-                                </div>
-
-
-                                <div class="inventory-product__content">
-
-                                    <strong>
-                                        Ceramic Coffee Mug
-                                    </strong>
-
-                                    <span>
-                                        Home & Living
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-sku">
-                                BA-CM-005
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-type">
-                                Simple
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <strong class="inventory-price">
-                                $18.99
-                            </strong>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="inventory-stock-input inventory-stock-input--critical">
-
-                                <input
-                                    type="number"
-                                    name="stock"
-                                    value="4"
-                                    min="0"
-                                >
-
-                                <span>
-                                    units
-                                </span>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-threshold">
-                                10 units
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-status inventory-status--low-stock">
-
-                                <i></i>
-
-                                Low Stock
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <button
-                                type="button"
-                                class="inventory-update-btn"
-                            >
-
-                                <i class="ri-save-line"></i>
-
-                                Update
-
-                            </button>
-
-                        </td>
-
-                    </tr>
-
-
-                    {{-- ================================================= --}}
-                    {{-- PRODUCT 3 --}}
-                    {{-- ================================================= --}}
-
-                    <tr>
-
-                        <td>
-
-                            <div class="inventory-product">
-
-                                <div class="inventory-product__image">
-
-                                    <img
-                                        src="https://placehold.co/100x100"
-                                        alt="Leather Wallet"
-                                    >
-
-                                </div>
-
-
-                                <div class="inventory-product__content">
-
-                                    <strong>
-                                        Leather Wallet
-                                    </strong>
-
-                                    <span>
-                                        Bags & Accessories
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-sku">
-                                BA-LW-006
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-type">
-                                Simple
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <strong class="inventory-price">
-                                $29.99
-                            </strong>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="inventory-stock-input inventory-stock-input--critical">
-
-                                <input
-                                    type="number"
-                                    name="stock"
-                                    value="3"
-                                    min="0"
-                                >
-
-                                <span>
-                                    units
-                                </span>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-threshold">
-                                8 units
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-status inventory-status--low-stock">
-
-                                <i></i>
-
-                                Low Stock
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <button
-                                type="button"
-                                class="inventory-update-btn"
-                            >
-
-                                <i class="ri-save-line"></i>
-
-                                Update
-
-                            </button>
-
-                        </td>
-
-                    </tr>
-
-
-                    {{-- ================================================= --}}
-                    {{-- PRODUCT 4 --}}
-                    {{-- ================================================= --}}
-
-                    <tr>
-
-                        <td>
-
-                            <div class="inventory-product">
-
-                                <div class="inventory-product__image">
-
-                                    <img
-                                        src="https://placehold.co/100x100"
-                                        alt="Wireless Mouse"
-                                    >
-
-                                </div>
-
-
-                                <div class="inventory-product__content">
-
-                                    <strong>
-                                        Wireless Mouse
-                                    </strong>
-
-                                    <span>
-                                        Electronics
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-sku">
-                                BA-WM-007
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-type">
-                                Simple
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <strong class="inventory-price">
-                                $24.99
-                            </strong>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="inventory-stock-input inventory-stock-input--warning">
-
-                                <input
-                                    type="number"
-                                    name="stock"
-                                    value="7"
-                                    min="0"
-                                >
-
-                                <span>
-                                    units
-                                </span>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-threshold">
-                                10 units
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-status inventory-status--low-stock">
-
-                                <i></i>
-
-                                Low Stock
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <button
-                                type="button"
-                                class="inventory-update-btn"
-                            >
-
-                                <i class="ri-save-line"></i>
-
-                                Update
-
-                            </button>
-
-                        </td>
-
-                    </tr>
-
-
-                    {{-- ================================================= --}}
-                    {{-- PRODUCT 5 --}}
-                    {{-- ================================================= --}}
-
-                    <tr>
-
-                        <td>
-
-                            <div class="inventory-product">
-
-                                <div class="inventory-product__image">
-
-                                    <img
-                                        src="https://placehold.co/100x100"
-                                        alt="Cotton Hoodie"
-                                    >
-
-                                </div>
-
-
-                                <div class="inventory-product__content">
-
-                                    <strong>
-                                        Cotton Hoodie
-                                    </strong>
-
-                                    <span>
-                                        Fashion
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-sku">
-                                BA-HD-008
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-type">
-                                Variable
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <strong class="inventory-price">
-                                $54.99
-                            </strong>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="inventory-stock-input inventory-stock-input--critical">
-
-                                <input
-                                    type="number"
-                                    name="stock"
-                                    value="5"
-                                    min="0"
-                                >
-
-                                <span>
-                                    units
-                                </span>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-threshold">
-                                12 units
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="inventory-status inventory-status--low-stock">
-
-                                <i></i>
-
-                                Low Stock
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <button
-                                type="button"
-                                class="inventory-update-btn"
-                            >
-
-                                <i class="ri-save-line"></i>
-
-                                Update
-
-                            </button>
-
-                        </td>
-
-                    </tr>
-
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-
-            {{-- ============================================================ --}}
-            {{-- PAGINATION --}}
-            {{-- ============================================================ --}}
-
-            <div class="inventory-pagination">
-
-                <div class="inventory-pagination__info">
-
-                    Showing
-                    <strong>1</strong>
-                    to
-                    <strong>5</strong>
-                    of
-                    <strong>12</strong>
-                    low-stock products
-
-                </div>
-
-
-                <div class="inventory-pagination__buttons">
-
-                    <button
-                        type="button"
-                        disabled
-                    >
-
-                        <i class="ri-arrow-left-s-line"></i>
-
-                    </button>
-
-
-                    <button
-                        type="button"
-                        class="active"
-                    >
-                        1
-                    </button>
-
-
-                    <button type="button">
-                        2
-                    </button>
-
-
-                    <button type="button">
-                        3
-                    </button>
-
-
-                    <button type="button">
-
-                        <i class="ri-arrow-right-s-line"></i>
-
-                    </button>
-
-                </div>
-
-            </div>
-
-        </div>
-
+        @endif
     </div>
-
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const page = document.querySelector(
+                '.inventory-low-stock-page'
+            );
+
+            if (!page) {
+                return;
+            }
+
+            const toggleButtons = page.querySelectorAll(
+                '[data-variants-toggle]'
+            );
+
+            toggleButtons.forEach((button) => {
+                button.addEventListener('click', () => {
+                    const currentRow = button.closest('tr');
+
+                    if (!currentRow) {
+                        return;
+                    }
+
+                    const detailsRow = currentRow.nextElementSibling;
+
+                    if (
+                        !detailsRow
+                        || !detailsRow.matches(
+                            '[data-variants-row]'
+                        )
+                    ) {
+                        return;
+                    }
+
+                    const isOpen = (
+                        detailsRow.classList.toggle('is-open')
+                    );
+
+                    button.setAttribute(
+                        'aria-expanded',
+                        String(isOpen)
+                    );
+
+                    button.classList.toggle(
+                        'is-active',
+                        isOpen
+                    );
+                });
+            });
+        });
+    </script>
+@endpush

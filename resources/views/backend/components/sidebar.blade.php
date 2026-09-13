@@ -266,10 +266,13 @@
                         'admin-orders*',
                         'admin-refunds*',
                         'admin-order-details',
+                        'admin-order-status',
+                        'admin-order-cancel',
                         'admin-ecommerce-payments',
-                        'ecommerce-shipments',
-                        'ecommerce-shipment-create',
-                        'ecommerce-shipment-details'
+                        'admin-ecommerce-payment-refund-requests',
+                        'admin-ecommerce-payment-refund-request-show',
+                        'admin-ecommerce-payment-show',
+                        'ecommerce-shipments*',
                     ) ? 'active open' : '' }}">
 
                         <a href="javascript:void(0);">
@@ -356,7 +359,7 @@
 
                             @endif
 
-                            {{-- Attributes --}}
+                            {{-- Coupons --}}
                             @if(auth()->user()->hasPermission('view-coupons'))
 
                                 <li class="{{ request()->routeIs('admin-coupons*') ? 'active' : '' }}">
@@ -378,7 +381,7 @@
                             @if(auth()->user()->hasPermission('view-inventory'))
 
                                 <li class="{{ request()->routeIs(
-                                    'admin-inventory',
+                                    'admin-inventory*',
                                     'admin-inventory-low-stock',
                                     'admin-inventory-out-of-stock'
                                 ) ? 'active' : '' }}">
@@ -400,7 +403,7 @@
                             @if(auth()->user()->hasPermission('view-orders'))
 
                                 <li class="{{ request()->routeIs(
-                                    'admin-orders',
+                                    'admin-orders*',
                                     'admin-order-details'
                                 ) ? 'active' : '' }}">
 
@@ -417,7 +420,7 @@
                             @endif
 
 
-                            {{-- ORDERS --}}
+                            {{-- Refund --}}
                             @if(auth()->user()->hasPermission('view-orders'))
 
                                 <li class="{{ request()->routeIs(
@@ -437,11 +440,14 @@
                             @endif
 
 
-                            {{-- PAYMENTS --}}
+                            {{-- Payments --}}
                             @if(auth()->user()->hasPermission('view-ecommerce-payments'))
 
                                 <li class="{{ request()->routeIs(
-                                    'admin-ecommerce-payments'
+                                    'admin-ecommerce-payments',
+                                    'admin-ecommerce-payment-refund-requests',
+                                    'admin-ecommerce-payment-refund-request-show',
+                                    'admin-ecommerce-payment-show',
                                 ) ? 'active' : '' }}">
 
                                     <a href="{{ route('admin-ecommerce-payments') }}">
@@ -461,7 +467,7 @@
                             @if(auth()->user()->hasPermission('view-ecommerce-shipments'))
 
                                 <li class="{{ request()->routeIs(
-                                    'ecommerce-shipments',
+                                    'ecommerce-shipments*',
                                     'ecommerce-shipment-create',
                                     'ecommerce-shipment-details'
                                 ) ? 'active' : '' }}">
