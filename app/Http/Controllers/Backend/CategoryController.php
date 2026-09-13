@@ -318,7 +318,7 @@ class CategoryController extends Controller
         */
 
         return view(
-            'backend.pages.ecommerce.admin.categories.index',
+            'backend.pages.ecommerce.categories.index',
             compact(
                 'categories',
                 'totalCategories',
@@ -344,7 +344,7 @@ class CategoryController extends Controller
             ->get();
 
         return view(
-            'backend.pages.ecommerce.admin.categories.create',
+            'backend.pages.ecommerce.categories.create',
             compact('parentCategories')
         );
     }
@@ -582,7 +582,7 @@ class CategoryController extends Controller
         $category->loadCount('products');
 
         return view(
-            'backend.pages.ecommerce.admin.categories.details',
+            'backend.pages.ecommerce.categories.details',
             compact('category'),
         );
     }
@@ -601,7 +601,7 @@ class CategoryController extends Controller
             ->get();
 
         return view(
-            'backend.pages.ecommerce.admin.categories.edit',
+            'backend.pages.ecommerce.categories.edit',
             compact(
                 'category',
                 'parentCategories'

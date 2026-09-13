@@ -9,6 +9,92 @@
 
         /*
         |--------------------------------------------------------------------------
+        | Checkout Items
+        |--------------------------------------------------------------------------
+        */
+
+        $checkoutItems = $items ?? $cart?->items ?? collect();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Subtotal
+        |--------------------------------------------------------------------------
+        */
+
+        $subtotal = $checkoutItems->sum(
+            function ($cartItem): float {
+                $variant = $cartItem->variant;
+                $product = $cartItem->product;
+
+                $unitPrice = $variant !== null
+                    ? (float) $variant->price
+                    : (float) $product->price;
+
+                return $unitPrice * (int) $cartItem->quantity;
+            }
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Shipping
+        |--------------------------------------------------------------------------
+        |
+        | Product shipping_cost is charged once per cart line.
+        |
+        | Example:
+        |
+        | Product A = $10
+        | Quantity = 5
+        |
+        | Shipping = $10
+        |
+        | NOT $50.
+        |
+        */
+
+        $shipping = $checkoutItems->sum(
+            function ($cartItem): float {
+                return (float) (
+                    $cartItem->product->shipping_cost ?? 0
+                );
+            }
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Discount / Tax
+        |--------------------------------------------------------------------------
+        */
+
+        $discount = isset($discount)
+            ? (float) $discount
+            : 0;
+
+        $tax = isset($tax)
+            ? (float) $tax
+            : 0;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Final Total
+        |--------------------------------------------------------------------------
+        */
+
+        $total = max(
+            0,
+            $subtotal +
+            $shipping +
+            $tax -
+            $discount
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
         | Profile Contact Information
         |--------------------------------------------------------------------------
         */
@@ -31,6 +117,7 @@
 
         $userEmail = trim((string) data_get($user, 'email'));
         $userPhone = trim((string) data_get($user, 'phone'));
+
 
         /*
         |--------------------------------------------------------------------------
@@ -58,6 +145,7 @@
 
         $profileComplete = empty($profileMissingFields);
 
+
         /*
         |--------------------------------------------------------------------------
         | Saved Addresses
@@ -72,6 +160,7 @@
             'address_id',
             $defaultAddress?->id
         );
+
 
         /*
         |--------------------------------------------------------------------------
@@ -118,6 +207,7 @@
         $savedAddressLabel = trim(
             (string) data_get($defaultAddress, 'label')
         );
+
 
         /*
         |--------------------------------------------------------------------------
@@ -189,6 +279,7 @@
             'save_address',
             false
         );
+
 
         /*
         |--------------------------------------------------------------------------
@@ -788,7 +879,6 @@
 
                                     </div>
 
-                                    {{-- Hidden address id for new address mode --}}
                                     <input
                                         type="hidden"
                                         name="address_id"
@@ -838,14 +928,17 @@
                                             </span>
 
                                             <span data-selected-address-line>
+
                                                 {{ $checkoutAddress }}
 
                                                 @if($checkoutApartment !== '')
                                                     , {{ $checkoutApartment }}
                                                 @endif
+
                                             </span>
 
                                             <span data-selected-address-location>
+
                                                 {{ $checkoutCity }}
 
                                                 @if($checkoutState !== '')
@@ -853,6 +946,7 @@
                                                 @endif
 
                                                 {{ $checkoutPostalCode }}
+
                                             </span>
 
                                             <span data-selected-address-country>
@@ -1370,11 +1464,17 @@
                             {{-- Products --}}
                             <div class="order-summary__products">
 
-                                @foreach($items as $item)
+                                @foreach($checkoutItems as $item)
 
                                     @php
                                         $variant = $item->variant;
                                         $product = $item->product;
+
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | Product Image
+                                        |--------------------------------------------------------------------------
+                                        */
 
                                         $image = null;
 
@@ -1408,6 +1508,13 @@
                                             }
                                         }
 
+
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | Variant Label
+                                        |--------------------------------------------------------------------------
+                                        */
+
                                         $variantLabel = '';
 
                                         if ($variant !== null) {
@@ -1424,19 +1531,56 @@
                                                     ->implode(' / ');
                                         }
 
+
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | Unit Price
+                                        |--------------------------------------------------------------------------
+                                        */
+
                                         $checkoutUnitPrice =
-                                            (float)
-                                            $item->checkout_unit_price;
+                                            isset($item->checkout_unit_price)
+                                                ? (float) $item->checkout_unit_price
+                                                : (
+                                                    $variant !== null
+                                                        ? (float) $variant->price
+                                                        : (float) $product->price
+                                                );
+
+
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | Line Total
+                                        |--------------------------------------------------------------------------
+                                        */
 
                                         $checkoutTotal =
-                                            (float)
-                                            $item->checkout_total;
+                                            isset($item->checkout_total)
+                                                ? (float) $item->checkout_total
+                                                : (
+                                                    $checkoutUnitPrice *
+                                                    (int) $item->quantity
+                                                );
+
+
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | Product Shipping Cost
+                                        |--------------------------------------------------------------------------
+                                        */
+
+                                        $itemShippingCost =
+                                            (float) (
+                                                $product->shipping_cost ?? 0
+                                            );
                                     @endphp
+
 
                                     <div
                                         class="summary-product"
                                         data-item-id="{{ $item->id }}"
                                         data-unit-price="{{ $checkoutUnitPrice }}"
+                                        data-shipping-cost="{{ $itemShippingCost }}"
                                     >
 
                                         <div class="summary-product__image">
@@ -1518,9 +1662,13 @@
                                     <strong class="summary-shipping">
 
                                         @if($shipping > 0)
+
                                             ${{ number_format($shipping, 2) }}
+
                                         @else
+
                                             Free
+
                                         @endif
 
                                     </strong>
@@ -1591,6 +1739,7 @@
                             <div class="checkout-terms">
 
                                 <p>
+
                                     By continuing, you agree to our
 
                                     <a href="#">
@@ -1972,7 +2121,7 @@
 
                 /*
                 |--------------------------------------------------------------------------
-                | Get Country Name
+                | Countries
                 |--------------------------------------------------------------------------
                 */
 
@@ -2752,13 +2901,6 @@
                 |--------------------------------------------------------------------------
                 | Copy Shipping Contact to Checkout Contact
                 |--------------------------------------------------------------------------
-                |
-                | CheckoutRequest/CreateOrder currently use:
-                | first_name, last_name, phone.
-                |
-                | When a new address is selected, copy the shipping contact
-                | values into those backend fields before submission.
-                |
                 */
 
                 const syncShippingContact =

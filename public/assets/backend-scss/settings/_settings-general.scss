@@ -1,70 +1,5 @@
 @use "../common" as *;
 
-@function argb($color, $opacity: 0.3) {
-    @return rgba($color, $opacity);
-}
-
-@mixin mq($value) {
-    @if $value == 'xxl' {
-        @media (min-width: 1400px) and (max-width: 1700px) {
-            @content;
-        }
-    }
-
-    @if $value == 'xl' {
-        @media (min-width: 1200px) and (max-width: 1399px) {
-            @content;
-        }
-    }
-
-    @if $value == 'lg' {
-        @media (min-width: 992px) and (max-width: 1199px) {
-            @content;
-        }
-    }
-
-    @if $value == 'md' {
-        @media (min-width: 768px) and (max-width: 991px) {
-            @content;
-        }
-    }
-
-    @if $value == 'xs' {
-        @media (max-width: 767px) {
-            @content;
-        }
-    }
-
-    @if $value == 'sm' {
-        @media (min-width: 480px) and (max-width: 767px) {
-            @content;
-        }
-    }
-}
-
-
-/* =========================================================
-   General Settings Page
-========================================================= */
-
-.settings-general-page {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 24px;
-
-    * {
-        box-sizing: border-box;
-    }
-
-    button,
-    input,
-    select,
-    textarea {
-        font-family: inherit;
-    }
-}
-
 
 /* =========================================================
    Page Header
@@ -638,28 +573,6 @@ select.form-control {
 }
 
 
-/* =========================================================
-   XXL
-========================================================= */
-
-@include mq(xxl) {
-
-    .settings-general-page {
-        max-width: 1100px;
-    }
-}
-
-
-/* =========================================================
-   XL
-========================================================= */
-
-@include mq(xl) {
-
-    .settings-general-page {
-        max-width: 1050px;
-    }
-}
 
 
 /* =========================================================

@@ -17,8 +17,6 @@
 @use "profile/profile-all";
 
 @use "settings/settings-general";
-@use "settings/settings-ecommerce";
-@use "settings/settings-smart-buy";
 @use "settings/audit-logs-index";
 @use "settings/audit-logs-details";
 
@@ -105,6 +103,8 @@
 
 @use "ecommerce/orders-index";
 @use "ecommerce/orders-details";
+@use "ecommerce/orders-refund";
+@use "ecommerce/orders-refund-details";
 
 @use "ecommerce/payments-index";
 

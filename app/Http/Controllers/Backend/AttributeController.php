@@ -40,7 +40,7 @@ final class AttributeController extends Controller
             ->sum('values_count');
 
         return view(
-            'backend.pages.ecommerce.admin.attributes.index',
+            'backend.pages.ecommerce.attributes.index',
             compact(
                 'attributes',
                 'totalAttributes',
@@ -57,7 +57,7 @@ final class AttributeController extends Controller
     public function create(): View
     {
         return view(
-            'backend.pages.ecommerce.admin.attributes.create',
+            'backend.pages.ecommerce.attributes.create',
         );
     }
 
@@ -131,7 +131,7 @@ final class AttributeController extends Controller
         $attribute->load('values');
 
         return view(
-            'backend.pages.ecommerce.admin.attributes.details',
+            'backend.pages.ecommerce.attributes.details',
             compact('attribute'),
         );
     }
@@ -144,7 +144,7 @@ final class AttributeController extends Controller
         $attribute->load('values');
 
         return view(
-            'backend.pages.ecommerce.admin.attributes.edit',
+            'backend.pages.ecommerce.attributes.edit',
             compact('attribute'),
         );
     }

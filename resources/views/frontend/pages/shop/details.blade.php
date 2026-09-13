@@ -43,6 +43,14 @@
 
         /*
         |--------------------------------------------------------------------------
+        | Product Shipping Cost
+        |--------------------------------------------------------------------------
+        */
+
+        $shippingCost = (float) ($product->shipping_cost ?? 0);
+
+        /*
+        |--------------------------------------------------------------------------
         | Product-level images
         |--------------------------------------------------------------------------
         */
@@ -349,6 +357,7 @@
                     </a>
 
                     @if($product->categories->isNotEmpty())
+
                         @php
                             $category = $product->categories->first();
                         @endphp
@@ -358,6 +367,7 @@
                         <a href="{{ route('shop', ['category' => $category->slug]) }}">
                             {{ $category->name }}
                         </a>
+
                     @endif
 
                     <i class="ri-arrow-right-s-line"></i>
@@ -403,14 +413,18 @@
                                     $initialVariant['compare_price']
                                     ?? $product->compare_price
                             )
+
                                 @if(
                                     $initialComparePrice >
                                     ($initialVariant['price'] ?? $product->price)
                                 )
+
                                     <span class="product-sale-tag">
                                         Sale
                                     </span>
+
                                 @endif
+
                             @endif
 
 
@@ -549,10 +563,12 @@
                                     hidden
                                 @endif
                             >
+
                                 @if(
                                     $initialComparePrice &&
                                     $initialComparePrice > $initialCurrentPrice
                                 )
+
                                     {{ round(
                                         (
                                             (
@@ -562,11 +578,50 @@
                                             $initialComparePrice
                                         ) * 100
                                     ) }}% OFF
+
                                 @endif
+
                             </span>
 
                         </div>
 
+
+                        {{-- =================================================
+                            Shipping Cost
+                        ================================================== --}}
+
+                        <div class="product-shipping-cost">
+
+                            <i class="ri-truck-line"></i>
+
+                            @if($shippingCost > 0)
+
+                                <span>
+                                    Shipping:
+                                    <strong>
+                                        ${{ number_format(
+                                            $shippingCost,
+                                            2
+                                        ) }}
+                                    </strong>
+                                </span>
+
+                            @else
+
+                                <span>
+                                    <strong>
+                                        Free Shipping
+                                    </strong>
+                                </span>
+
+                            @endif
+
+                        </div>
+
+
+                        {{-- =================================================
+                            Short Description
+                        ================================================== --}}
 
                         @if($product->short_description)
 
@@ -944,6 +999,27 @@
 
                                 @endif
 
+
+                                {{-- =================================================
+                                    Shipping
+                                ================================================== --}}
+
+                                <div class="product-specification-row">
+
+                                    <span>
+                                        Shipping
+                                    </span>
+
+                                    <strong>
+                                        @if($shippingCost > 0)
+                                            ${{ number_format($shippingCost, 2) }}
+                                        @else
+                                            Free Shipping
+                                        @endif
+                                    </strong>
+
+                                </div>
+
                             </div>
 
                         </div>
@@ -1168,8 +1244,10 @@
 
 
 @push('scripts')
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+
             const page = document.querySelector(
                 '.product-details-page'
             );
@@ -1304,10 +1382,6 @@
 
             let selectedVariant = null;
 
-            /*
-             * This only controls whether the currently selected
-             * attributes represent an exact valid combination.
-             */
             let hasValidVariantSelection =
                 !variants.length;
 
@@ -1319,6 +1393,7 @@
             */
 
             function formatPrice(value) {
+
                 const number = Number(value);
 
                 if (!Number.isFinite(number)) {
@@ -1339,6 +1414,7 @@
             */
 
             function normalizeImageUrl(url) {
+
                 if (!url) {
                     return '';
                 }
@@ -1354,12 +1430,14 @@
             */
 
             function hasCompleteSelection() {
+
                 if (!requiredAttributeIds.length) {
                     return true;
                 }
 
                 return requiredAttributeIds.every(
                     (attributeId) => {
+
                         const key = String(
                             attributeId
                         );
@@ -1381,30 +1459,25 @@
             */
 
             function findExactVariant() {
+
                 if (!variants.length) {
                     return null;
                 }
 
-                /*
-                 * If there are no attribute groups but variants exist,
-                 * use the first active variant.
-                 */
                 if (!requiredAttributeIds.length) {
                     return variants[0] || null;
                 }
 
-                /*
-                 * Do not match until every required attribute
-                 * has been selected.
-                 */
                 if (!hasCompleteSelection()) {
                     return null;
                 }
 
                 return variants.find(
                     (variant) => {
+
                         return requiredAttributeIds.every(
                             (attributeId) => {
+
                                 const key = String(
                                     attributeId
                                 );
@@ -1431,6 +1504,7 @@
             */
 
             function getAllVariantImages() {
+
                 const images = [];
 
                 const seen = new Set();
@@ -1438,6 +1512,7 @@
 
                 variants.forEach(
                     (variant) => {
+
                         const variantId =
                             Number(
                                 variant.id
@@ -1448,6 +1523,7 @@
                          * Direct ProductVariant.image
                          */
                         if (variant.image) {
+
                             const imageUrl =
                                 normalizeImageUrl(
                                     variant.image
@@ -1457,6 +1533,7 @@
                                 imageUrl &&
                                 !seen.has(imageUrl)
                             ) {
+
                                 seen.add(imageUrl);
 
                                 images.push({
@@ -1469,16 +1546,18 @@
 
 
                         /*
-                         * ProductImage records attached
-                         * to this variant.
+                         * ProductImage records
+                         * attached to variant.
                          */
                         if (
                             Array.isArray(
                                 variant.images
                             )
                         ) {
+
                             variant.images.forEach(
                                 (image) => {
+
                                     const imageUrl =
                                         normalizeImageUrl(
                                             image.url ||
@@ -1517,8 +1596,10 @@
                         productGallery
                     )
                 ) {
+
                     productGallery.forEach(
                         (image) => {
+
                             const imageUrl =
                                 normalizeImageUrl(
                                     image.url ||
@@ -1554,6 +1635,7 @@
                     !images.length &&
                     thumbnail
                 ) {
+
                     images.push({
                         url: thumbnail,
                         alt: productName,
@@ -1573,6 +1655,7 @@
             */
 
             function getVariantImages(variant) {
+
                 if (!variant) {
                     return getAllVariantImages();
                 }
@@ -1591,12 +1674,14 @@
                  * Direct ProductVariant.image
                  */
                 if (variant.image) {
+
                     const imageUrl =
                         normalizeImageUrl(
                             variant.image
                         );
 
                     if (imageUrl) {
+
                         seen.add(imageUrl);
 
                         images.push({
@@ -1616,8 +1701,10 @@
                         variant.images
                     )
                 ) {
+
                     variant.images.forEach(
                         (image) => {
+
                             const imageUrl =
                                 normalizeImageUrl(
                                     image.url ||
@@ -1646,10 +1733,6 @@
                 }
 
 
-                /*
-                 * If this variant has no image,
-                 * use the complete gallery.
-                 */
                 return images.length
                     ? images
                     : getAllVariantImages();
@@ -1663,6 +1746,7 @@
             */
 
             function setMainImage(imageUrl) {
+
                 if (
                     !mainImage ||
                     !imageUrl
@@ -1679,6 +1763,7 @@
 
 
                 if (imagePlaceholder) {
+
                     imagePlaceholder.hidden =
                         true;
                 }
@@ -1690,6 +1775,7 @@
                     )
                     .forEach(
                         (thumbnailElement) => {
+
                             const active =
                                 thumbnailElement.dataset.image ===
                                 imageUrl;
@@ -1720,6 +1806,7 @@
                 images,
                 activeUrl = ''
             ) {
+
                 if (!galleryThumbnails) {
                     return;
                 }
@@ -1728,7 +1815,9 @@
 
 
                 if (!images.length) {
+
                     if (mainImage) {
+
                         mainImage.hidden = true;
 
                         mainImage.removeAttribute(
@@ -1737,6 +1826,7 @@
                     }
 
                     if (imagePlaceholder) {
+
                         imagePlaceholder.hidden =
                             false;
                     }
@@ -1753,6 +1843,7 @@
 
                 images.forEach(
                     (image, index) => {
+
                         if (!image.url) {
                             return;
                         }
@@ -1786,6 +1877,7 @@
 
 
                         if (isActive) {
+
                             button.classList.add(
                                 'is-active'
                             );
@@ -1847,12 +1939,14 @@
             */
 
             function renderAttributeSelections() {
+
                 page
                     .querySelectorAll(
                         '[data-option-value]'
                     )
                     .forEach(
                         (button) => {
+
                             const attributeId =
                                 String(
                                     button.dataset.attributeId
@@ -1893,6 +1987,7 @@
                     )
                     .forEach(
                         (group) => {
+
                             const attributeId =
                                 String(
                                     group.dataset.attributeId
@@ -1924,6 +2019,7 @@
 
 
                             if (selectedButton) {
+
                                 selectedLabel.textContent =
                                     selectedButton.textContent.trim();
 
@@ -1945,12 +2041,14 @@
             */
 
             function updateOptionAvailability() {
+
                 page
                     .querySelectorAll(
                         '[data-option-value]'
                     )
                     .forEach(
                         (button) => {
+
                             const attributeId =
                                 String(
                                     button.dataset.attributeId
@@ -1962,11 +2060,8 @@
                                 );
 
 
-                            /*
-                             * If variants do not exist,
-                             * all options are irrelevant.
-                             */
                             if (!variants.length) {
+
                                 button.disabled =
                                     false;
 
@@ -1981,22 +2076,21 @@
                             const possible =
                                 variants.some(
                                     (variant) => {
+
                                         return requiredAttributeIds.every(
                                             (requiredAttributeId) => {
+
                                                 const key =
                                                     String(
                                                         requiredAttributeId
                                                     );
 
 
-                                                /*
-                                                 * Current option
-                                                 * being checked.
-                                                 */
                                                 if (
                                                     key ===
                                                     attributeId
                                                 ) {
+
                                                     return (
                                                         Number(
                                                             variant.attributes?.[key]
@@ -2006,10 +2100,6 @@
                                                 }
 
 
-                                                /*
-                                                 * Other selected
-                                                 * attributes.
-                                                 */
                                                 if (
                                                     selectedAttributes[
                                                         key
@@ -2021,6 +2111,7 @@
                                                         key
                                                         ] !== ''
                                                 ) {
+
                                                     return (
                                                         Number(
                                                             variant.attributes?.[key]
@@ -2034,10 +2125,6 @@
                                                 }
 
 
-                                                /*
-                                                 * Attribute has not
-                                                 * been selected yet.
-                                                 */
                                                 return true;
                                             }
                                         );
@@ -2064,6 +2151,7 @@
             */
 
             function updatePrice(variant) {
+
                 const currentPrice =
                     variant &&
                     variant.price !== null &&
@@ -2092,6 +2180,7 @@
 
 
                 if (priceElement) {
+
                     priceElement.textContent =
                         formatPrice(
                             currentPrice
@@ -2100,11 +2189,13 @@
 
 
                 if (comparePriceElement) {
+
                     if (
                         comparePrice !== null &&
                         Number.isFinite(comparePrice) &&
                         comparePrice > currentPrice
                     ) {
+
                         comparePriceElement.textContent =
                             formatPrice(
                                 comparePrice
@@ -2112,7 +2203,9 @@
 
                         comparePriceElement.hidden =
                             false;
+
                     } else {
+
                         comparePriceElement.hidden =
                             true;
                     }
@@ -2120,11 +2213,13 @@
 
 
                 if (discountElement) {
+
                     if (
                         comparePrice !== null &&
                         Number.isFinite(comparePrice) &&
                         comparePrice > currentPrice
                     ) {
+
                         const discount =
                             Math.round(
                                 (
@@ -2142,7 +2237,9 @@
 
                         discountElement.hidden =
                             false;
+
                     } else {
+
                         discountElement.hidden =
                             true;
                     }
@@ -2157,18 +2254,21 @@
             */
 
             function updateSku(variant) {
+
                 const sku =
                     variant?.sku ||
                     productSku;
 
 
                 if (skuElement) {
+
                     skuElement.textContent =
                         `SKU: ${sku}`;
                 }
 
 
                 if (specificationSkuElement) {
+
                     specificationSkuElement.textContent =
                         sku;
                 }
@@ -2182,6 +2282,7 @@
             */
 
             function updateStock(variant) {
+
                 if (!stockElement) {
                     return;
                 }
@@ -2189,9 +2290,10 @@
 
                 /*
                  * Non-variant products do not have
-                 * product-level stock in the current model.
+                 * product-level stock.
                  */
                 if (!variants.length) {
+
                     stockElement.innerHTML = `
                         <i class="ri-checkbox-circle-line"></i>
                         <span>Available</span>
@@ -2203,11 +2305,9 @@
 
                 /*
                  * No valid exact combination.
-                 *
-                 * Keep the selectedVariant information
-                 * visible instead of clearing it.
                  */
                 if (!hasValidVariantSelection) {
+
                     stockElement.innerHTML = `
                         <i class="ri-information-line"></i>
                         <span>Please select a valid combination</span>
@@ -2218,6 +2318,7 @@
 
 
                 if (!variant) {
+
                     stockElement.innerHTML = `
                         <i class="ri-information-line"></i>
                         <span>Select product options</span>
@@ -2237,6 +2338,7 @@
 
 
                 if (stock > 0) {
+
                     stockElement.innerHTML = `
                         <i class="ri-checkbox-circle-line"></i>
                         <span>In Stock</span>
@@ -2261,6 +2363,7 @@
             */
 
             function updateQuantity(variant) {
+
                 if (!quantityInput) {
                     return;
                 }
@@ -2268,11 +2371,9 @@
 
                 /*
                  * Non-variant product.
-                 *
-                 * There is no product-level stock field,
-                 * so do not create an artificial max.
                  */
                 if (!variants.length) {
+
                     quantityInput.disabled =
                         false;
 
@@ -2304,12 +2405,14 @@
 
 
                     if (quantityDecrease) {
+
                         quantityDecrease.disabled =
                             quantity <= 1;
                     }
 
 
                     if (quantityIncrease) {
+
                         quantityIncrease.disabled =
                             false;
                     }
@@ -2320,13 +2423,11 @@
 
 
                 /*
-                 * Variant product with an invalid
+                 * Variant product with invalid
                  * attribute combination.
-                 *
-                 * Keep current variant information,
-                 * but disable quantity controls.
                  */
                 if (!hasValidVariantSelection) {
+
                     quantityInput.disabled =
                         true;
 
@@ -2342,12 +2443,14 @@
 
 
                     if (quantityDecrease) {
+
                         quantityDecrease.disabled =
                             true;
                     }
 
 
                     if (quantityIncrease) {
+
                         quantityIncrease.disabled =
                             true;
                     }
@@ -2361,6 +2464,7 @@
                  * Valid combination but no variant.
                  */
                 if (!variant) {
+
                     quantityInput.disabled =
                         true;
 
@@ -2373,12 +2477,14 @@
 
 
                     if (quantityDecrease) {
+
                         quantityDecrease.disabled =
                             true;
                     }
 
 
                     if (quantityIncrease) {
+
                         quantityIncrease.disabled =
                             true;
                     }
@@ -2435,6 +2541,7 @@
 
 
                 if (quantityDecrease) {
+
                     quantityDecrease.disabled =
                         stock <= 0 ||
                         quantity <= 1;
@@ -2442,6 +2549,7 @@
 
 
                 if (quantityIncrease) {
+
                     quantityIncrease.disabled =
                         stock <= 0 ||
                         quantity >= stock;
@@ -2456,6 +2564,7 @@
             */
 
             function updateAddToCart(variant) {
+
                 if (!addToCartButton) {
                     return;
                 }
@@ -2463,10 +2572,9 @@
 
                 /*
                  * Non-variant product.
-                 *
-                 * Backend accepts variant_id = null.
                  */
                 if (!variants.length) {
+
                     addToCartButton.disabled =
                         false;
 
@@ -2476,9 +2584,6 @@
 
                 /*
                  * Variant product.
-                 *
-                 * Must have an exact combination
-                 * and available stock.
                  */
                 addToCartButton.disabled =
                     !hasValidVariantSelection ||
@@ -2496,6 +2601,7 @@
             */
 
             function updateProductInformation() {
+
                 updatePrice(
                     selectedVariant
                 );
@@ -2527,6 +2633,7 @@
             function setAddToCartLoading(
                 loading
             ) {
+
                 if (!addToCartButton) {
                     return;
                 }
@@ -2547,9 +2654,12 @@
 
 
                 if (loading) {
+
                     addToCartButton.disabled =
                         true;
+
                 } else {
+
                     updateAddToCart(
                         selectedVariant
                     );
@@ -2568,12 +2678,15 @@
 
 
                 if (loading) {
+
                     if (icon) {
+
                         icon.className =
                             'ri-loader-4-line';
                     }
 
                     if (text) {
+
                         text.textContent =
                             'Adding...';
                     }
@@ -2583,11 +2696,13 @@
 
 
                 if (icon) {
+
                     icon.className =
                         'ri-shopping-bag-3-line';
                 }
 
                 if (text) {
+
                     text.textContent =
                         'Add to Cart';
                 }
@@ -2604,11 +2719,13 @@
                 message,
                 type = 'success'
             ) {
+
                 if (
                     window.AppToast &&
                     typeof window.AppToast.fire ===
                     'function'
                 ) {
+
                     window.AppToast.fire({
                         icon: type,
                         title: message,
@@ -2617,9 +2734,10 @@
                     return;
                 }
 
-                console[type === 'error'
-                    ? 'error'
-                    : 'log'
+                console[
+                    type === 'error'
+                        ? 'error'
+                        : 'log'
                     ](
                     message
                 );
@@ -2633,6 +2751,7 @@
             */
 
             function updateCartCount(count) {
+
                 const normalizedCount =
                     Math.max(
                         0,
@@ -2646,6 +2765,7 @@
                     )
                     .forEach(
                         (element) => {
+
                             element.textContent =
                                 String(
                                     normalizedCount
@@ -2654,9 +2774,6 @@
                     );
 
 
-                /*
-                 * Notify other frontend components.
-                 */
                 document.dispatchEvent(
                     new CustomEvent(
                         'cart:updated',
@@ -2678,6 +2795,7 @@
             */
 
             function getCsrfToken() {
+
                 const meta =
                     document.querySelector(
                         'meta[name="csrf-token"]'
@@ -2699,6 +2817,7 @@
             */
 
             async function addProductToCart() {
+
                 if (
                     !addToCartButton ||
                     addToCartButton.disabled
@@ -2718,6 +2837,7 @@
                         !hasValidVariantSelection
                     )
                 ) {
+
                     showCartToast(
                         'Please select a valid product option.',
                         'error'
@@ -2731,11 +2851,8 @@
                     getCsrfToken();
 
 
-                /*
-                 * Do not submit a state-changing request
-                 * without a CSRF token.
-                 */
                 if (!csrfToken) {
+
                     console.error(
                         'CSRF token is missing.'
                     );
@@ -2762,6 +2879,7 @@
                     ) ||
                     quantity < 1
                 ) {
+
                     quantity = 1;
                 }
 
@@ -2773,13 +2891,13 @@
 
 
                 /*
-                 * For variants, never send more
-                 * than the currently available stock.
+                 * Variant stock validation.
                  */
                 if (
                     variants.length &&
                     selectedVariant
                 ) {
+
                     const stock =
                         Math.max(
                             0,
@@ -2789,9 +2907,8 @@
                         );
 
 
-                    if (
-                        stock <= 0
-                    ) {
+                    if (stock <= 0) {
+
                         showCartToast(
                             'This product variant is currently out of stock.',
                             'error'
@@ -2814,6 +2931,7 @@
                  * send variant_id as null.
                  */
                 const payload = {
+
                     product_id:
                         Number(
                             productId
@@ -2836,6 +2954,7 @@
 
 
                 try {
+
                     const response =
                         await fetch(
                             @json(route('cart.items.store')),
@@ -2843,6 +2962,7 @@
                                 method: 'POST',
 
                                 headers: {
+
                                     'Content-Type':
                                         'application/json',
 
@@ -2871,9 +2991,12 @@
 
 
                     try {
+
                         data =
                             await response.json();
+
                     } catch {
+
                         data = null;
                     }
 
@@ -2887,6 +3010,7 @@
                     if (
                         response.status === 419
                     ) {
+
                         throw new Error(
                             'Your session has expired. Please refresh the page and try again.'
                         );
@@ -2902,6 +3026,7 @@
                     if (
                         response.status === 422
                     ) {
+
                         const validationMessage =
                             data?.errors
                                 ? Object.values(
@@ -2933,6 +3058,7 @@
                     if (
                         response.status === 401
                     ) {
+
                         throw new Error(
                             'Please sign in to continue.'
                         );
@@ -2946,6 +3072,7 @@
                     */
 
                     if (!response.ok) {
+
                         throw new Error(
                             data?.message ||
                             'Unable to add this product to your cart.'
@@ -2962,6 +3089,7 @@
                     if (
                         data?.cart_count !== undefined
                     ) {
+
                         updateCartCount(
                             data.cart_count
                         );
@@ -2969,13 +3097,14 @@
 
 
                     /*
-                     * Send one complete cart event.
+                     * Send complete cart event.
                      */
                     document.dispatchEvent(
                         new CustomEvent(
                             'cart:updated',
                             {
                                 detail: {
+
                                     count:
                                         Number(
                                             data?.cart_count ||
@@ -3012,6 +3141,7 @@
                     );
 
                 } catch (error) {
+
                     console.error(
                         'Add to cart error:',
                         error
@@ -3025,13 +3155,12 @@
                     );
 
                 } finally {
+
                     setAddToCartLoading(
                         false
                     );
 
-                    /*
-                     * Restore correct state.
-                     */
+
                     updateAddToCart(
                         selectedVariant
                     );
@@ -3048,6 +3177,7 @@
             page.addEventListener(
                 'click',
                 (event) => {
+
                     const button =
                         event.target.closest(
                             '[data-option-value]'
@@ -3084,6 +3214,7 @@
 
 
                     if (exactVariant) {
+
                         /*
                          * Exact combination exists.
                          */
@@ -3119,17 +3250,12 @@
                         updateProductInformation();
 
                     } else {
+
                         /*
                          * No exact combination.
                          *
-                         * IMPORTANT:
-                         *
-                         * Do NOT clear selectedVariant.
-                         *
-                         * The previous valid variant remains
-                         * visible for price/SKU/stock.
-                         *
-                         * But Add To Cart becomes disabled.
+                         * Keep previous selectedVariant
+                         * visible, but disable cart.
                          */
                         hasValidVariantSelection =
                             false;
@@ -3165,6 +3291,7 @@
             galleryThumbnails?.addEventListener(
                 'click',
                 (event) => {
+
                     const thumbnailElement =
                         event.target.closest(
                             '.product-thumbnail'
@@ -3257,6 +3384,7 @@
             quantityDecrease?.addEventListener(
                 'click',
                 () => {
+
                     if (
                         !quantityInput ||
                         quantityInput.disabled
@@ -3300,6 +3428,7 @@
             quantityIncrease?.addEventListener(
                 'click',
                 () => {
+
                     if (
                         !quantityInput ||
                         quantityInput.disabled
@@ -3322,6 +3451,7 @@
                         selectedVariant &&
                         hasValidVariantSelection
                     ) {
+
                         const stock =
                             Math.max(
                                 0,
@@ -3338,10 +3468,9 @@
                             );
 
                     } else {
+
                         /*
                          * Non-variant product.
-                         *
-                         * No artificial stock limit.
                          */
                         quantity += 1;
                     }
@@ -3376,6 +3505,7 @@
             quantityInput?.addEventListener(
                 'input',
                 () => {
+
                     updateQuantity(
                         selectedVariant
                     );
@@ -3414,15 +3544,18 @@
 
             tabButtons.forEach(
                 (button) => {
+
                     button.addEventListener(
                         'click',
                         () => {
+
                             const tab =
                                 button.dataset.tabButton;
 
 
                             tabButtons.forEach(
                                 (item) => {
+
                                     item.classList.toggle(
                                         'is-active',
                                         item === button
@@ -3433,6 +3566,7 @@
 
                             tabPanels.forEach(
                                 (panel) => {
+
                                     panel.classList.toggle(
                                         'is-active',
                                         panel.dataset.tabPanel ===
@@ -3455,6 +3589,7 @@
             wishlistButton?.addEventListener(
                 'click',
                 () => {
+
                     const active =
                         wishlistButton.classList.toggle(
                             'is-active'
@@ -3476,6 +3611,7 @@
 
 
                     if (icon) {
+
                         icon.className =
                             active
                                 ? 'ri-heart-fill'
@@ -3497,9 +3633,11 @@
                 )
                 .forEach(
                     (button) => {
+
                         button.addEventListener(
                             'click',
                             () => {
+
                                 const active =
                                     button.classList.toggle(
                                         'is-active'
@@ -3513,6 +3651,7 @@
 
 
                                 if (icon) {
+
                                     icon.className =
                                         active
                                             ? 'ri-heart-fill'
@@ -3552,6 +3691,7 @@
 
 
             function openLightbox() {
+
                 if (
                     !lightbox ||
                     !lightboxImage ||
@@ -3580,6 +3720,7 @@
 
 
             function closeLightbox() {
+
                 if (!lightbox) {
                     return;
                 }
@@ -3602,6 +3743,7 @@
 
             lightboxCloseButtons.forEach(
                 (button) => {
+
                     button.addEventListener(
                         'click',
                         closeLightbox
@@ -3613,11 +3755,13 @@
             document.addEventListener(
                 'keydown',
                 (event) => {
+
                     if (
                         event.key === 'Escape' &&
                         lightbox &&
                         !lightbox.hidden
                     ) {
+
                         closeLightbox();
                     }
                 }
@@ -3631,11 +3775,13 @@
             */
 
             if (variants.length) {
+
                 const exactInitialVariant =
                     findExactVariant();
 
 
                 if (exactInitialVariant) {
+
                     selectedVariant =
                         exactInitialVariant;
 
@@ -3643,13 +3789,11 @@
                         true;
 
                 } else {
+
                     /*
-                     * If initial selections do not produce
-                     * an exact variant, use the first variant
-                     * only as the currently displayed variant.
-                     *
-                     * Add To Cart remains disabled until the
-                     * attributes become an exact combination.
+                     * Use first variant only for display.
+                     * Cart remains disabled until exact
+                     * combination is selected.
                      */
                     selectedVariant =
                         variants[0] || null;
@@ -3659,6 +3803,7 @@
                 }
 
             } else {
+
                 /*
                  * Non-variant product.
                  */
@@ -3694,6 +3839,7 @@
                 selectedVariant &&
                 hasValidVariantSelection
             ) {
+
                 const initialVariantImages =
                     getVariantImages(
                         selectedVariant
@@ -3723,6 +3869,8 @@
             updateOptionAvailability();
 
             updateProductInformation();
+
         });
     </script>
+
 @endpush

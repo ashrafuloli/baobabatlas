@@ -50,6 +50,9 @@ return new class extends Migration
             $table->decimal('cost_price', 12, 2)
                 ->nullable();
 
+            $table->decimal('shipping_cost', 12, 2)
+                ->default(0);
+
             $table->boolean('status')
                 ->default(true);
 

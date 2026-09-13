@@ -34,7 +34,7 @@ final class BrandController extends Controller
             ->count();
 
         return view(
-            'backend.pages.ecommerce.admin.brands.index',
+            'backend.pages.ecommerce.brands.index',
             compact(
                 'brands',
                 'totalBrands',
@@ -50,7 +50,7 @@ final class BrandController extends Controller
     public function create(): View
     {
         return view(
-            'backend.pages.ecommerce.admin.brands.create',
+            'backend.pages.ecommerce.brands.create',
         );
     }
 
@@ -215,7 +215,7 @@ final class BrandController extends Controller
     public function show(Brand $brand): View
     {
         return view(
-            'backend.pages.ecommerce.admin.brands.details',
+            'backend.pages.ecommerce.brands.details',
             compact('brand'),
         );
     }
@@ -226,7 +226,7 @@ final class BrandController extends Controller
     public function edit(Brand $brand): View
     {
         return view(
-            'backend.pages.ecommerce.admin.brands.edit',
+            'backend.pages.ecommerce.brands.edit',
             compact('brand'),
         );
     }

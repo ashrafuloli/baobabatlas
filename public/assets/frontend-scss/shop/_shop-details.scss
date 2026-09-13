@@ -1369,4 +1369,31 @@
             padding: 12px;
         }
     }
+
+    .product-shipping-cost {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 10px;
+        color: $body-color;
+        font-size: 14px;
+        line-height: 1.5;
+
+        i {
+            flex: 0 0 auto;
+            font-size: 18px;
+            color: $theme-color;
+        }
+
+        span {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        strong {
+            color: $heading-color;
+            font-weight: 600;
+        }
+    }
 }

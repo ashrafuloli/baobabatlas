@@ -6,10 +6,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>@yield('title', config('app.name'))</title>
+    <title>
+        @yield('title', setting('website_name', config('app.name')))
+    </title>
 
     <!-- favicon -->
-    <link rel="shortcut icon" type="image/x-icon" href="{{asset('favicon.png')}}">
+    <link
+        rel="shortcut icon"
+        type="image/x-icon"
+        href="{{ setting('favicon') ? asset(setting('favicon')) : asset('favicon.png') }}"
+    >
 
     <!-- Vendors Css -->
     <link rel="stylesheet" href="{{asset('assets/vendor/animate/animate.min.css')}}">
@@ -25,6 +31,9 @@
     <!-- Main CSS -->
     <link rel="stylesheet" href="{{asset('assets/css/spacing.css')}}">
     <link rel="stylesheet" href="{{asset('assets/css/backend.css')}}">
+
+    <!-- Page Specific Style -->
+    @stack('styles')
 </head>
 
 <body>

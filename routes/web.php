@@ -3,14 +3,17 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Backend\AdminOrderController;
+use App\Http\Controllers\Backend\AdminRefundController;
 use App\Http\Controllers\Backend\AttributeController;
 use App\Http\Controllers\Backend\BrandController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\CouponController;
+use App\Http\Controllers\Backend\GeneralSettingsController;
 use App\Http\Controllers\Backend\PermissionController;
 use App\Http\Controllers\Backend\ProductController;
 use App\Http\Controllers\Backend\ProfileController;
 use App\Http\Controllers\Backend\RoleController;
+use App\Http\Controllers\Backend\ShipmentController;
 use App\Http\Controllers\Backend\SmartBuyController;
 use App\Http\Controllers\Backend\SmartBuyPaymentController;
 use App\Http\Controllers\Backend\SmartBuyQuoteController;
@@ -27,6 +30,7 @@ use App\Http\Controllers\Frontend\CheckoutController;
 use App\Http\Controllers\Frontend\FrontendTrackingController;
 use App\Http\Controllers\Frontend\MarketplaceController;
 use App\Http\Controllers\Frontend\OrderController;
+use App\Http\Controllers\Frontend\RefundRequestController;
 use App\Http\Controllers\StripeWebhookController;
 use Illuminate\Support\Facades\Route;
 
@@ -37,70 +41,316 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::view('/', 'frontend.pages.home.index')->name('home');
+Route::middleware('maintenance')->group(function (): void {
+
+    Route::view(
+        '/',
+        'frontend.pages.home.index'
+    )->name('home');
 
 
-/*
-|--------------------------------------------------------------------------
-| Shop
-|--------------------------------------------------------------------------
-*/
+    /*
+    |--------------------------------------------------------------------------
+    | Shop
+    |--------------------------------------------------------------------------
+    */
 
-Route::get(
-    '/shop',
-    [MarketplaceController::class, 'index'],
-)->name('shop');
+    Route::get(
+        '/shop',
+        [MarketplaceController::class, 'index'],
+    )->name('shop');
 
-Route::get(
-    '/shop/{product:slug}',
-    [MarketplaceController::class, 'show'],
-)->name('shop.details');
+    Route::get(
+        '/shop/{product:slug}',
+        [MarketplaceController::class, 'show'],
+    )->name('shop.details');
 
-/*
-|--------------------------------------------------------------------------
-| Cart
-|--------------------------------------------------------------------------
-*/
 
-Route::get(
-    '/cart',
-    [CartController::class, 'index'],
-)->name('my-cart');
+    /*
+    |--------------------------------------------------------------------------
+    | Cart
+    |--------------------------------------------------------------------------
+    */
 
-Route::post(
-    '/cart/items',
-    [CartController::class, 'store'],
-)->name('cart.items.store');
+    Route::get(
+        '/cart',
+        [CartController::class, 'index'],
+    )->name('my-cart');
 
-Route::patch(
-    '/cart/items/{cartItem}',
-    [CartController::class, 'update'],
-)->name('cart.items.update');
+    Route::post(
+        '/cart/items',
+        [CartController::class, 'store'],
+    )->name('cart.items.store');
 
-Route::delete(
-    '/cart/items/{cartItem}',
-    [CartController::class, 'destroy'],
-)->name('cart.items.destroy');
+    Route::patch(
+        '/cart/items/{cartItem}',
+        [CartController::class, 'update'],
+    )->name('cart.items.update');
 
-Route::delete(
-    '/cart',
-    [CartController::class, 'clear'],
-)->name('cart.clear');
+    Route::delete(
+        '/cart/items/{cartItem}',
+        [CartController::class, 'destroy'],
+    )->name('cart.items.destroy');
 
-Route::post(
-    '/cart/coupon',
-    [CartController::class, 'applyCoupon']
-)->name('cart.coupon.apply');
+    Route::delete(
+        '/cart',
+        [CartController::class, 'clear'],
+    )->name('cart.clear');
 
-Route::delete(
-    '/cart/coupon',
-    [CartController::class, 'removeCoupon']
-)->name('cart.coupon.remove');
+    Route::post(
+        '/cart/coupon',
+        [CartController::class, 'applyCoupon']
+    )->name('cart.coupon.apply');
+
+    Route::delete(
+        '/cart/coupon',
+        [CartController::class, 'removeCoupon']
+    )->name('cart.coupon.remove');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Frontend Authenticated Routes
+    |--------------------------------------------------------------------------
+    */
+
+    Route::middleware('auth')->group(function (): void {
+
+        Route::view(
+            '/my-account',
+            'frontend.pages.shop.my-account',
+        )->name('my-account');
+
+        Route::get(
+            '/my-orders',
+            [OrderController::class, 'index'],
+        )->name('my-orders');
+
+        Route::get(
+            '/my-orders/{order:order_number}',
+            [OrderController::class, 'show'],
+        )->name('my-orders.show');
+
+        Route::get(
+            '/orders/{order}/payment',
+            [OrderController::class, 'payment']
+        )
+            ->name('my-order.payment');
+
+        Route::patch(
+            '/orders/{order}/cancel',
+            [OrderController::class, 'cancel']
+        )
+            ->name('my-order.cancel');
+
+        Route::post(
+            '/my-orders/{order}/refund-request',
+            [RefundRequestController::class, 'store']
+        )->name('my-order.refund-request');
+
+        Route::view(
+            '/my-wishlist',
+            'frontend.pages.shop.my-wishlist',
+        )->name('my-wishlist');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Frontend Checkout
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get(
+            '/checkout',
+            [CheckoutController::class, 'index'],
+        )->name('checkout');
+
+        Route::post(
+            '/checkout/payment',
+            [CheckoutController::class, 'payment'],
+        )->name('checkout.payment');
+
+        Route::get(
+            '/checkout/success',
+            [CheckoutController::class, 'success'],
+        )->name('checkout.success');
+
+    });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Categories
+    |--------------------------------------------------------------------------
+    */
+
+    Route::view(
+        '/categories',
+        'frontend.pages.categories.index'
+    )->name('categories');
+
+    Route::view(
+        '/categories/{category}',
+        'frontend.pages.categories.details'
+    )->name('category-details');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Smart Buy
+    |--------------------------------------------------------------------------
+    */
+
+    Route::view(
+        '/smart-buy',
+        'frontend.pages.smart-buy.index'
+    )->name('smart-buy-public');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | About
+    |--------------------------------------------------------------------------
+    */
+
+    Route::view(
+        '/about',
+        'frontend.pages.about.index'
+    )->name('about');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Service
+    |--------------------------------------------------------------------------
+    */
+
+    Route::view(
+        '/service',
+        'frontend.pages.service.index'
+    )->name('service');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Track Shipment
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get(
+        '/tracking',
+        [FrontendTrackingController::class, 'index']
+    )->name('tracking');
+
+    Route::post(
+        '/tracking',
+        [FrontendTrackingController::class, 'search']
+    )->name('tracking.search');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Partners
+    |--------------------------------------------------------------------------
+    */
+
+    Route::view(
+        '/partners',
+        'frontend.pages.partners.index'
+    )->name('partners');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Contact
+    |--------------------------------------------------------------------------
+    */
+
+    Route::view(
+        '/contact',
+        'frontend.pages.contact.index'
+    )->name('contact');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Guest Routes
+    |--------------------------------------------------------------------------
+    */
+
+    Route::middleware('guest')->group(function (): void {
+
+        /*
+        |--------------------------------------------------------------------------
+        | Login
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get(
+            '/login',
+            [LoginController::class, 'showLogin']
+        )->name('login');
+
+        Route::post(
+            '/login',
+            [LoginController::class, 'login']
+        )->name('login.submit');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Registration
+        |--------------------------------------------------------------------------
+        */
+
+        Route::middleware('registration')->group(function (): void {
+            Route::get(
+                '/register',
+                [RegisterController::class, 'showRegister']
+            )->name('register');
+
+            Route::post(
+                '/register',
+                [RegisterController::class, 'register']
+            )->name('register.submit');
+        });
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Forgot Password
+        |--------------------------------------------------------------------------
+        */
+
+        Route::view(
+            '/forgot-password',
+            'backend.pages.auth.forgot-password'
+        )->name('forgot-password');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Reset Password
+        |--------------------------------------------------------------------------
+        */
+
+        Route::view(
+            '/reset-password/{token}',
+            'backend.pages.auth.reset-password'
+        )->name('password.reset');
+
+    });
+
+});
+
 
 /*
 |--------------------------------------------------------------------------
 | Stripe Webhook
 |--------------------------------------------------------------------------
+|
+| Stripe webhook MUST NOT be affected by maintenance mode.
+|
 */
 
 Route::post(
@@ -109,221 +359,18 @@ Route::post(
 )->name('stripe.webhook');
 
 
-Route::middleware('auth')->group(function () {
-    Route::view(
-        '/my-account',
-        'frontend.pages.shop.my-account',
-    )->name('my-account');
-
-    Route::get(
-        '/my-orders',
-        [OrderController::class, 'index'],
-    )->name('my-orders');
-
-    Route::get(
-        '/my-orders/{order:order_number}',
-        [OrderController::class, 'show'],
-    )->name('my-orders.show');
-
-    Route::view(
-        '/my-wishlist',
-        'frontend.pages.shop.my-wishlist',
-    )->name('my-wishlist');
-
-    /*
-    |--------------------------------------------------------------------------
-    | Frontend Checkout
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get(
-        '/checkout',
-        [CheckoutController::class, 'index'],
-    )->name('checkout');
-
-    Route::post(
-        '/checkout/payment',
-        [CheckoutController::class, 'payment'],
-    )->name('checkout.payment');
-
-    Route::get(
-        '/checkout/success',
-        [CheckoutController::class, 'success'],
-    )->name('checkout.success');
-
-});
-
-/*
-|--------------------------------------------------------------------------
-| Categories
-|--------------------------------------------------------------------------
-*/
-
-Route::view(
-    '/categories',
-    'frontend.pages.categories.index'
-)->name('categories');
-
-Route::view(
-    '/categories/{category}',
-    'frontend.pages.categories.details'
-)->name('category-details');
-
-
-/*
-|--------------------------------------------------------------------------
-| Smart Buy
-|--------------------------------------------------------------------------
-*/
-
-Route::view(
-    '/smart-buy',
-    'frontend.pages.smart-buy.index'
-)->name('smart-buy-public');
-
-
-/*
-|--------------------------------------------------------------------------
-| About
-|--------------------------------------------------------------------------
-*/
-
-Route::view(
-    '/about',
-    'frontend.pages.about.index'
-)->name('about');
-
-
-/*
-|--------------------------------------------------------------------------
-| Service
-|--------------------------------------------------------------------------
-*/
-
-Route::view(
-    '/service',
-    'frontend.pages.service.index'
-)->name('service');
-
-
-/*
-|--------------------------------------------------------------------------
-| Track Shipment
-|--------------------------------------------------------------------------
-*/
-
-Route::get(
-    '/tracking',
-    [FrontendTrackingController::class, 'index']
-)->name('tracking');
-
-Route::post(
-    '/tracking',
-    [FrontendTrackingController::class, 'search']
-)->name('tracking.search');
-
-/*
-|--------------------------------------------------------------------------
-| Partners
-|--------------------------------------------------------------------------
-*/
-
-Route::view(
-    '/partners',
-    'frontend.pages.partners.index'
-)->name('partners');
-
-
-/*
-|--------------------------------------------------------------------------
-| Contact
-|--------------------------------------------------------------------------
-*/
-
-Route::view(
-    '/contact',
-    'frontend.pages.contact.index'
-)->name('contact');
-
-
-/*
-|--------------------------------------------------------------------------
-| Guest Routes
-|--------------------------------------------------------------------------
-*/
-
-Route::middleware('guest')->group(function () {
-
-    /*
-    |--------------------------------------------------------------------------
-    | Login
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get(
-        '/login',
-        [LoginController::class, 'showLogin']
-    )->name('login');
-
-    Route::post(
-        '/login',
-        [LoginController::class, 'login']
-    )->name('login.submit');
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Registration
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get(
-        '/register',
-        [RegisterController::class, 'showRegister']
-    )->name('register');
-
-    Route::post(
-        '/register',
-        [RegisterController::class, 'register']
-    )->name('register.submit');
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Forgot Password
-    |--------------------------------------------------------------------------
-    */
-
-    Route::view(
-        '/forgot-password',
-        'backend.pages.auth.forgot-password'
-    )->name('forgot-password');
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Reset Password
-    |--------------------------------------------------------------------------
-    */
-
-    Route::view(
-        '/reset-password/{token}',
-        'backend.pages.auth.reset-password'
-    )->name('password.reset');
-
-});
-
-
 /*
 |--------------------------------------------------------------------------
 | Authenticated Portal Routes
 |--------------------------------------------------------------------------
+|
+| Portal/Admin MUST remain accessible during maintenance mode.
+|
 */
 
 Route::middleware('auth')
     ->prefix('portal')
-    ->group(function () {
-
+    ->group(function (): void {
 
         /*
         |--------------------------------------------------------------------------
@@ -413,14 +460,11 @@ Route::middleware('auth')
         |--------------------------------------------------------------------------
         */
 
-        // Show tracking page
         Route::get(
             '/tracking',
             [TrackingController::class, 'index']
         )->name('global-tracking');
 
-
-        // Search tracking
         Route::post(
             '/tracking/search',
             [TrackingController::class, 'search']
@@ -435,7 +479,7 @@ Route::middleware('auth')
 
         Route::prefix('profile')
             ->middleware('permission:view-profile')
-            ->group(function () {
+            ->group(function (): void {
 
                 Route::get(
                     '/',
@@ -484,7 +528,7 @@ Route::middleware('auth')
         */
 
         Route::prefix('my-smart-buy')
-            ->group(function () {
+            ->group(function (): void {
 
                 Route::get(
                     '/',
@@ -493,14 +537,12 @@ Route::middleware('auth')
                     ->middleware('permission:my-smart-buy')
                     ->name('my-smart-buy');
 
-
                 Route::get(
                     '/create',
                     [MySmartBuyController::class, 'create']
                 )
                     ->middleware('permission:my-smart-buy-create')
                     ->name('my-smart-buy.create');
-
 
                 Route::post(
                     '/store',
@@ -509,7 +551,6 @@ Route::middleware('auth')
                     ->middleware('permission:my-smart-buy-create')
                     ->name('my-smart-buy.store');
 
-
                 Route::get(
                     '/{smartBuy}/quote',
                     [MySmartBuyQuoteController::class, 'show']
@@ -517,14 +558,12 @@ Route::middleware('auth')
                     ->middleware('permission:my-smart-buy-quote')
                     ->name('my-smart-buy.quote');
 
-
                 Route::post(
                     '/{smartBuy}/quote/accept',
                     [MySmartBuyQuoteController::class, 'accept']
                 )
                     ->middleware('permission:my-smart-buy-quote')
                     ->name('my-smart-buy.quote.accept');
-
 
                 Route::post(
                     '/{smartBuy}/quote/reject',
@@ -540,14 +579,12 @@ Route::middleware('auth')
                     ->middleware('permission:my-smart-buy-quote')
                     ->name('my-smart-buy.quote.request-extension');
 
-
                 Route::get(
                     '/{smartBuy}/payment',
                     [MySmartBuyPaymentController::class, 'show']
                 )
                     ->middleware('permission:my-smart-buy-payment')
                     ->name('my-smart-buy.payment');
-
 
                 Route::post(
                     '/{smartBuy}/payment',
@@ -556,14 +593,12 @@ Route::middleware('auth')
                     ->middleware('permission:my-smart-buy-payment')
                     ->name('my-smart-buy.payment.store');
 
-
                 Route::get(
                     '/{smartBuy}/payment/success',
                     [MySmartBuyPaymentController::class, 'success']
                 )
                     ->middleware('permission:my-smart-buy-payment')
                     ->name('my-smart-buy.payment.success');
-
 
                 Route::get(
                     '/{smartBuy}/payment/cancel',
@@ -572,7 +607,6 @@ Route::middleware('auth')
                     ->middleware('permission:my-smart-buy-payment')
                     ->name('my-smart-buy.payment.cancel');
 
-
                 Route::get(
                     '/{smartBuy}/tracking',
                     [MySmartBuyTrackingController::class, 'show']
@@ -580,8 +614,6 @@ Route::middleware('auth')
                     ->middleware('permission:my-smart-buy-tracking')
                     ->name('my-smart-buy.tracking');
 
-
-                // Dynamic route MUST be last
                 Route::get(
                     '/{id}',
                     [MySmartBuyController::class, 'details']
@@ -599,13 +631,7 @@ Route::middleware('auth')
         */
 
         Route::prefix('smart-buy')
-            ->group(function () {
-
-                /*
-                |--------------------------------------------------------------------------
-                | Smart Buy Index
-                |--------------------------------------------------------------------------
-                */
+            ->group(function (): void {
 
                 Route::get(
                     '/',
@@ -614,24 +640,12 @@ Route::middleware('auth')
                     ->middleware('permission:smart-buy')
                     ->name('smart-buy');
 
-                /*
-                |--------------------------------------------------------------------------
-                | Smart Buy Details
-                |--------------------------------------------------------------------------
-                */
-
                 Route::get(
                     '/{smartBuy}',
                     [SmartBuyController::class, 'show']
                 )
                     ->middleware('permission:smart-buy-details')
                     ->name('smart-buy.details');
-
-                /*
-                |--------------------------------------------------------------------------
-                | Status
-                |--------------------------------------------------------------------------
-                */
 
                 Route::put(
                     '/{smartBuy}/status',
@@ -640,20 +654,12 @@ Route::middleware('auth')
                     ->middleware('permission:smart-buy-status')
                     ->name('smart-buy.status.update');
 
-
-                /*
-                |--------------------------------------------------------------------------
-                | Quote
-                |--------------------------------------------------------------------------
-                */
-
                 Route::get(
                     '/{smartBuy}/quote/create',
                     [SmartBuyQuoteController::class, 'create']
                 )
                     ->middleware('permission:smart-buy-quote')
                     ->name('smart-buy.quote.create');
-
 
                 Route::post(
                     '/{smartBuy}/quote',
@@ -676,20 +682,12 @@ Route::middleware('auth')
                     ->middleware('permission:smart-buy-quote-edit')
                     ->name('smart-buy.quote.edit');
 
-
                 Route::put(
                     '/quote/{quote}',
                     [SmartBuyQuoteController::class, 'update']
                 )
                     ->middleware('permission:smart-buy-quote-edit')
                     ->name('smart-buy.quote.update');
-
-
-                /*
-                |--------------------------------------------------------------------------
-                | Payment
-                |--------------------------------------------------------------------------
-                */
 
                 Route::post(
                     '/{smartBuy}/payment',
@@ -698,7 +696,6 @@ Route::middleware('auth')
                     ->middleware('permission:smart-buy-payment')
                     ->name('smart-buy.payment.store');
 
-
                 Route::put(
                     '/payment/{payment}',
                     [SmartBuyPaymentController::class, 'update']
@@ -706,16 +703,6 @@ Route::middleware('auth')
                     ->middleware('permission:smart-buy-payment')
                     ->name('smart-buy.payment.update');
 
-
-                /*
-                |--------------------------------------------------------------------------
-                | Shipment
-                |--------------------------------------------------------------------------
-                */
-
-                /**
-                 * Create Shipment Form
-                 */
                 Route::get(
                     '/{smartBuy}/shipment/create',
                     [SmartBuyShipmentController::class, 'create']
@@ -723,10 +710,6 @@ Route::middleware('auth')
                     ->middleware('permission:manage-smart-buy-shipment')
                     ->name('smart-buy.shipment.create');
 
-
-                /**
-                 * Store Shipment
-                 */
                 Route::post(
                     '/{smartBuy}/shipment',
                     [SmartBuyShipmentController::class, 'store']
@@ -734,10 +717,6 @@ Route::middleware('auth')
                     ->middleware('permission:manage-smart-buy-shipment')
                     ->name('smart-buy.shipment.store');
 
-
-                /**
-                 * View Shipment
-                 */
                 Route::get(
                     '/shipment/{shipment}',
                     [SmartBuyShipmentController::class, 'show']
@@ -745,10 +724,6 @@ Route::middleware('auth')
                     ->middleware('permission:manage-smart-buy-shipment')
                     ->name('smart-buy.shipment.show');
 
-
-                /**
-                 * Edit Shipment
-                 */
                 Route::get(
                     '/shipment/{shipment}/edit',
                     [SmartBuyShipmentController::class, 'edit']
@@ -756,10 +731,6 @@ Route::middleware('auth')
                     ->middleware('permission:manage-smart-buy-shipment')
                     ->name('smart-buy.shipment.edit');
 
-
-                /**
-                 * Update Shipment
-                 */
                 Route::put(
                     '/shipment/{shipment}',
                     [SmartBuyShipmentController::class, 'update']
@@ -805,14 +776,7 @@ Route::middleware('auth')
         */
 
         Route::middleware('role:admin')
-            ->group(function () {
-
-
-                /*
-                |--------------------------------------------------------------------------
-                | Users
-                |--------------------------------------------------------------------------
-                */
+            ->group(function (): void {
 
                 Route::resource(
                     'users',
@@ -827,13 +791,6 @@ Route::middleware('auth')
                     'destroy' => 'user-destroy',
                 ]);
 
-
-                /*
-                |--------------------------------------------------------------------------
-                | Roles
-                |--------------------------------------------------------------------------
-                */
-
                 Route::resource(
                     'roles',
                     RoleController::class
@@ -847,30 +804,15 @@ Route::middleware('auth')
                     'destroy' => 'role-destroy',
                 ]);
 
-
-                /*
-                |--------------------------------------------------------------------------
-                | Role Permissions
-                |--------------------------------------------------------------------------
-                */
-
                 Route::get(
                     '/roles/{role}/permissions',
                     [RoleController::class, 'permissions']
                 )->name('role-permissions');
 
-
                 Route::put(
                     '/roles/{role}/permissions',
                     [RoleController::class, 'updatePermissions']
                 )->name('role-permissions.update');
-
-
-                /*
-                |--------------------------------------------------------------------------
-                | Permissions
-                |--------------------------------------------------------------------------
-                */
 
                 Route::resource(
                     'permissions',
@@ -893,8 +835,7 @@ Route::middleware('auth')
                 */
 
                 Route::prefix('ecommerce')
-                    ->group(function () {
-
+                    ->group(function (): void {
 
                         /*
                         |--------------------------------------------------------------------------
@@ -943,6 +884,7 @@ Route::middleware('auth')
                                 'destroy' => 'admin-categories.destroy',
                             ]);
 
+
                         /*
                         |--------------------------------------------------------------------------
                         | Brands
@@ -966,6 +908,7 @@ Route::middleware('auth')
                                 'destroy' => 'admin-brands.destroy',
                             ]);
 
+
                         /*
                         |--------------------------------------------------------------------------
                         | Attributes
@@ -988,6 +931,7 @@ Route::middleware('auth')
                                 'update' => 'admin-attributes.update',
                                 'destroy' => 'admin-attributes.destroy',
                             ]);
+
 
                         /*
                         |--------------------------------------------------------------------------
@@ -1020,19 +964,17 @@ Route::middleware('auth')
                         */
 
                         Route::prefix('inventory')
-                            ->group(function () {
+                            ->group(function (): void {
 
                                 Route::view(
                                     '/',
                                     'backend.pages.ecommerce.admin.inventory.index'
                                 )->name('admin-inventory');
 
-
                                 Route::view(
                                     '/low-stock',
                                     'backend.pages.ecommerce.admin.inventory.low-stock'
                                 )->name('admin-inventory-low-stock');
-
 
                                 Route::view(
                                     '/out-of-stock',
@@ -1076,12 +1018,53 @@ Route::middleware('auth')
                             ->middleware('permission:cancel-orders')
                             ->name('admin-order-cancel');
 
-                        Route::post(
-                            '/admin-orders/{order}/refund',
-                            [AdminOrderController::class, 'refund'],
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Order Refunds
+                        |--------------------------------------------------------------------------
+                        */
+
+                        Route::get(
+                            '/admin-refund-requests',
+                            [AdminRefundController::class, 'index'],
                         )
-                            ->middleware('permission:refund-orders')
-                            ->name('admin-order-refund');
+                            ->middleware('permission:view-orders')
+                            ->name('admin-refunds');
+
+                        Route::get(
+                            '/admin-refund-requests/{refundRequest}',
+                            [AdminRefundController::class, 'show'],
+                        )
+                            ->middleware('permission:view-order-details')
+                            ->name('admin-refunds.show');
+
+                        Route::patch(
+                            '/admin-refund-requests/{refundRequest}/approve',
+                            [AdminRefundController::class, 'approve'],
+                        )
+                            ->middleware('permission:update-orders')
+                            ->name('admin-refunds.approve');
+
+                        Route::patch(
+                            '/admin-refund-requests/{refundRequest}/reject',
+                            [AdminRefundController::class, 'reject'],
+                        )
+                            ->middleware('permission:update-orders')
+                            ->name('admin-refunds.reject');
+
+                        Route::post(
+                            '/admin-refund-requests/{refundRequest}/process',
+                            [AdminRefundController::class, 'refund'],
+                        )
+                            ->middleware('permission:update-orders')
+                            ->name('admin-refunds.process');
+
+                        Route::patch(
+                            '/admin-refund-requests/{refundRequest}/deduction',
+                            [AdminRefundController::class, 'updateDeduction'],
+                        )
+                            ->middleware('permission:update-orders')
+                            ->name('admin-refunds.deduction');
 
 
                         /*
@@ -1102,36 +1085,40 @@ Route::middleware('auth')
                         |--------------------------------------------------------------------------
                         */
 
-                        Route::prefix('shipments')
-                            ->group(function () {
+                        Route::get(
+                            '/ecommerce-shipments',
+                            [ShipmentController::class, 'index'],
+                        )
+                            ->middleware('permission:update-orders')
+                            ->name('ecommerce-shipments');
 
-                                Route::view(
-                                    '/',
-                                    'backend.pages.ecommerce.admin.shipments.index'
-                                )->name('ecommerce-shipments');
+                        Route::get(
+                            '/ecommerce-shipments/create/{order}',
+                            [ShipmentController::class, 'create'],
+                        )
+                            ->middleware('permission:update-orders')
+                            ->name('ecommerce-shipments.create');
 
+                        Route::post(
+                            '/ecommerce-shipments',
+                            [ShipmentController::class, 'store'],
+                        )
+                            ->middleware('permission:update-orders')
+                            ->name('ecommerce-shipments.store');
 
-                                Route::get(
-                                    '/create',
-                                    function () {
-                                        return view(
-                                            'backend.pages.ecommerce.admin.shipments.create'
-                                        );
-                                    }
-                                )->name('ecommerce-shipment-create');
+                        Route::get(
+                            '/ecommerce-shipments/{shipment}',
+                            [ShipmentController::class, 'show'],
+                        )
+                            ->middleware('permission:view-orders')
+                            ->name('ecommerce-shipments.show');
 
-
-                                Route::get(
-                                    '/{shipment}',
-                                    function ($shipment) {
-                                        return view(
-                                            'backend.pages.ecommerce.admin.shipments.details',
-                                            compact('shipment')
-                                        );
-                                    }
-                                )->name('ecommerce-shipment-details');
-
-                            });
+                        Route::patch(
+                            '/ecommerce-shipments/{shipment}/status',
+                            [ShipmentController::class, 'updateStatus'],
+                        )
+                            ->middleware('permission:update-orders')
+                            ->name('ecommerce-shipments.update-status');
 
                     });
 
@@ -1143,7 +1130,7 @@ Route::middleware('auth')
                 */
 
                 Route::prefix('payments')
-                    ->group(function () {
+                    ->group(function (): void {
 
                         Route::view(
                             '/',
@@ -1152,14 +1139,12 @@ Route::middleware('auth')
                             ->middleware('permission:view-payments')
                             ->name('payments');
 
-
                         Route::view(
                             '/ecommerce',
                             'backend.pages.payments.ecommerce'
                         )
                             ->middleware('permission:view-ecommerce-payments')
                             ->name('payments-ecommerce');
-
 
                         Route::view(
                             '/smart-buy',
@@ -1168,7 +1153,6 @@ Route::middleware('auth')
                             ->middleware('permission:view-smart-buy-payments')
                             ->name('payments-smart-buy');
 
-
                         Route::view(
                             '/failed',
                             'backend.pages.payments.failed'
@@ -1176,8 +1160,6 @@ Route::middleware('auth')
                             ->middleware('permission:view-failed-payments')
                             ->name('payments-failed');
 
-
-                        // Dynamic route MUST be last
                         Route::get(
                             '/{payment}',
                             function ($payment) {
@@ -1200,7 +1182,7 @@ Route::middleware('auth')
                 */
 
                 Route::prefix('reports')
-                    ->group(function () {
+                    ->group(function (): void {
 
                         Route::view(
                             '/',
@@ -1209,14 +1191,12 @@ Route::middleware('auth')
                             ->middleware('permission:view-reports')
                             ->name('reports');
 
-
                         Route::view(
                             '/ecommerce',
                             'backend.pages.reports.ecommerce'
                         )
                             ->middleware('permission:view-ecommerce-reports')
                             ->name('reports-ecommerce');
-
 
                         Route::view(
                             '/smart-buy',
@@ -1235,43 +1215,21 @@ Route::middleware('auth')
                 */
 
                 Route::prefix('settings')
-                    ->group(function () {
+                    ->group(function (): void {
 
                         Route::get(
                             '/',
-                            function () {
-                                return view(
-                                    'backend.pages.settings.general'
-                                );
-                            }
+                            [GeneralSettingsController::class, 'index']
                         )
                             ->middleware('permission:view-settings')
                             ->name('settings');
 
-
-                        Route::get(
-                            '/ecommerce',
-                            function () {
-                                return view(
-                                    'backend.pages.settings.ecommerce'
-                                );
-                            }
+                        Route::put(
+                            '/',
+                            [GeneralSettingsController::class, 'update']
                         )
-                            ->middleware('permission:view-ecommerce-settings')
-                            ->name('settings-ecommerce');
-
-
-                        Route::get(
-                            '/smart-buy',
-                            function () {
-                                return view(
-                                    'backend.pages.settings.smart-buy'
-                                );
-                            }
-                        )
-                            ->middleware('permission:view-smart-buy-settings')
-                            ->name('settings-smart-buy');
-
+                            ->middleware('permission:update-settings')
+                            ->name('settings.update');
 
                         Route::get(
                             '/audit-logs',
@@ -1283,7 +1241,6 @@ Route::middleware('auth')
                         )
                             ->middleware('permission:view-audit-logs')
                             ->name('settings-audit-logs');
-
 
                         Route::get(
                             '/audit-logs/{auditLog}',

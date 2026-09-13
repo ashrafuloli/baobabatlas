@@ -116,7 +116,7 @@ final class AdminOrderController extends Controller
             ->count();
 
         return view(
-            'backend.pages.ecommerce.admin.orders.index',
+            'backend.pages.ecommerce.orders.index',
             [
                 'orders' => $orders,
                 'search' => $search,
@@ -149,11 +149,19 @@ final class AdminOrderController extends Controller
     {
         $order->load([
             'user',
-            'items',
+            'items.product',
+            'items.variant.values.attribute',
+            'shipment',
+            'messages.user',
+            'messages.orderItem',
+            'refundRequests.requester',
+            'refundRequests.approver',
+            'refundRequests.refund',
+            'refunds',
         ]);
 
         return view(
-            'backend.pages.ecommerce.admin.orders.details',
+            'backend.pages.ecommerce.orders.details',
             compact('order'),
         );
     }
@@ -177,7 +185,13 @@ final class AdminOrderController extends Controller
             ],
         ]);
 
-        DB::transaction(function () use ($order, $validated): void {
+        $blockedMessage = null;
+
+        DB::transaction(function () use (
+            $order,
+            $validated,
+            &$blockedMessage,
+        ): void {
             $lockedOrder = Order::query()
                 ->lockForUpdate()
                 ->findOrFail($order->id);
@@ -188,30 +202,33 @@ final class AdminOrderController extends Controller
                 $newStatus === Order::STATUS_PAID
                 && $lockedOrder->payment_status !== Order::PAYMENT_STATUS_PAID
             ) {
-                abort(
-                    422,
-                    'The order cannot be marked as paid before the payment is confirmed.',
-                );
+                $blockedMessage = 'The order cannot be marked as paid before the payment is confirmed.';
+
+                return;
             }
 
             if ($lockedOrder->status === Order::STATUS_CANCELLED) {
-                abort(
-                    422,
-                    'A cancelled order cannot be changed.',
-                );
+                $blockedMessage = 'A cancelled order cannot be changed.';
+
+                return;
             }
 
             if ($lockedOrder->status === Order::STATUS_COMPLETED) {
-                abort(
-                    422,
-                    'A completed order cannot be changed.',
-                );
+                $blockedMessage = 'A completed order cannot be changed.';
+
+                return;
             }
 
             $lockedOrder->update([
                 'status' => $newStatus,
             ]);
         });
+
+        if ($blockedMessage !== null) {
+            return redirect()
+                ->back()
+                ->with('error', $blockedMessage);
+        }
 
         return redirect()
             ->route(
@@ -221,6 +238,66 @@ final class AdminOrderController extends Controller
             ->with(
                 'success',
                 'Order status updated successfully.',
+            );
+    }
+
+    public function cancel(Order $order): RedirectResponse
+    {
+        $blockedMessage = null;
+
+        DB::transaction(function () use (
+            $order,
+            &$blockedMessage,
+        ): void {
+            $lockedOrder = Order::query()
+                ->lockForUpdate()
+                ->findOrFail($order->id);
+
+            if ($lockedOrder->status === Order::STATUS_CANCELLED) {
+                $blockedMessage = 'The order is already cancelled.';
+
+                return;
+            }
+
+            if ($lockedOrder->status === Order::STATUS_COMPLETED) {
+                $blockedMessage = 'A completed order cannot be cancelled.';
+
+                return;
+            }
+
+            if (
+                $lockedOrder->payment_status !== Order::PAYMENT_STATUS_PENDING
+            ) {
+                $blockedMessage = 'A paid or otherwise processed order cannot be cancelled from here.';
+
+                return;
+            }
+
+            if ($lockedOrder->status !== Order::STATUS_PENDING) {
+                $blockedMessage = 'Only pending orders can be cancelled.';
+
+                return;
+            }
+
+            $lockedOrder->update([
+                'status' => Order::STATUS_CANCELLED,
+            ]);
+        });
+
+        if ($blockedMessage !== null) {
+            return redirect()
+                ->back()
+                ->with('error', $blockedMessage);
+        }
+
+        return redirect()
+            ->route(
+                'admin-order-details',
+                ['order' => $order],
+            )
+            ->with(
+                'success',
+                'Order cancelled successfully.',
             );
     }
 }

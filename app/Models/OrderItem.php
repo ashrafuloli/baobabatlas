@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 final class OrderItem extends Model
 {
@@ -18,6 +19,7 @@ final class OrderItem extends Model
         'image',
         'quantity',
         'unit_price',
+        'shipping_cost',
         'line_total',
     ];
 
@@ -29,6 +31,7 @@ final class OrderItem extends Model
             'variant_id' => 'integer',
             'quantity' => 'integer',
             'unit_price' => 'decimal:2',
+            'shipping_cost' => 'decimal:2',
             'line_total' => 'decimal:2',
         ];
     }
@@ -49,5 +52,15 @@ final class OrderItem extends Model
             ProductVariant::class,
             'variant_id'
         );
+    }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(OrderMessage::class);
+    }
+
+    public function refundRequests(): HasMany
+    {
+        return $this->hasMany(RefundRequest::class);
     }
 }

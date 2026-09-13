@@ -153,6 +153,46 @@
                                     Cancelled
                                 </button>
 
+                                <button
+                                    type="button"
+                                    class="status-option"
+                                    data-value="refund_pending"
+                                    role="option"
+                                    aria-selected="false"
+                                >
+                                    Refund Requested
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="status-option"
+                                    data-value="refund_approved"
+                                    role="option"
+                                    aria-selected="false"
+                                >
+                                    Refund Approved
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="status-option"
+                                    data-value="refund_rejected"
+                                    role="option"
+                                    aria-selected="false"
+                                >
+                                    Refund Rejected
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="status-option"
+                                    data-value="refunded"
+                                    role="option"
+                                    aria-selected="false"
+                                >
+                                    Refunded
+                                </button>
+
                             </div>
 
 
@@ -203,37 +243,111 @@
                     @forelse($orders as $order)
 
                         @php
-                            $status = match ($order->status) {
+                            /*
+                             |--------------------------------------------------------------------------
+                             | Order Status
+                             |--------------------------------------------------------------------------
+                             */
+
+                            $orderStatus = match ($order->status) {
                                 \App\Models\Order::STATUS_COMPLETED => 'completed',
+
                                 \App\Models\Order::STATUS_CANCELLED,
                                 \App\Models\Order::STATUS_FAILED => 'cancelled',
+
                                 \App\Models\Order::STATUS_PROCESSING,
                                 \App\Models\Order::STATUS_PAID => 'processing',
+
                                 default => 'pending',
                             };
 
-                            $statusLabel = match ($status) {
+                            $orderStatusLabel = match ($orderStatus) {
                                 'completed' => 'Delivered',
                                 'processing' => 'Processing',
                                 'cancelled' => 'Cancelled',
                                 default => 'Pending',
                             };
 
-                            $statusIcon = match ($status) {
+                            $orderStatusIcon = match ($orderStatus) {
                                 'completed' => 'ri-checkbox-circle-fill',
                                 'processing' => 'ri-loader-4-line',
                                 'cancelled' => 'ri-close-circle-line',
                                 default => 'ri-time-line',
                             };
 
-                            $deliveryIcon = match ($status) {
+
+                            /*
+                             |--------------------------------------------------------------------------
+                             | Refund Status
+                             |--------------------------------------------------------------------------
+                             */
+
+                            $refundStatus = $order->refund_status
+                                ?? \App\Models\Order::REFUND_STATUS_NONE;
+
+                            $refundStatusFilter = match ($refundStatus) {
+                                \App\Models\Order::REFUND_STATUS_PENDING => 'refund_pending',
+
+                                \App\Models\Order::REFUND_STATUS_APPROVED => 'refund_approved',
+
+                                \App\Models\Order::REFUND_STATUS_REJECTED => 'refund_rejected',
+
+                                \App\Models\Order::REFUND_STATUS_REFUNDED => 'refunded',
+
+                                default => null,
+                            };
+
+                            $refundStatusLabel = match ($refundStatus) {
+                                \App\Models\Order::REFUND_STATUS_PENDING => 'Refund Requested',
+
+                                \App\Models\Order::REFUND_STATUS_APPROVED => 'Refund Approved',
+
+                                \App\Models\Order::REFUND_STATUS_REJECTED => 'Refund Rejected',
+
+                                \App\Models\Order::REFUND_STATUS_REFUNDED => 'Refunded',
+
+                                default => null,
+                            };
+
+                            $refundStatusIcon = match ($refundStatus) {
+                                \App\Models\Order::REFUND_STATUS_PENDING => 'ri-time-line',
+
+                                \App\Models\Order::REFUND_STATUS_APPROVED => 'ri-checkbox-circle-line',
+
+                                \App\Models\Order::REFUND_STATUS_REJECTED => 'ri-close-circle-line',
+
+                                \App\Models\Order::REFUND_STATUS_REFUNDED => 'ri-refund-2-line',
+
+                                default => null,
+                            };
+
+                            $refundStatusClass = match ($refundStatus) {
+                                \App\Models\Order::REFUND_STATUS_PENDING => 'pending',
+
+                                \App\Models\Order::REFUND_STATUS_APPROVED => 'approved',
+
+                                \App\Models\Order::REFUND_STATUS_REJECTED => 'rejected',
+
+                                \App\Models\Order::REFUND_STATUS_REFUNDED => 'refunded',
+
+                                default => null,
+                            };
+
+
+                            /*
+                             |--------------------------------------------------------------------------
+                             | Delivery Status
+                             |--------------------------------------------------------------------------
+                             */
+
+                            $deliveryIcon = match ($orderStatus) {
                                 'completed' => 'ri-map-pin-line',
                                 'processing' => 'ri-time-line',
                                 'cancelled' => 'ri-close-circle-line',
                                 default => 'ri-time-line',
                             };
 
-                            $deliveryText = match ($status) {
+                            $deliveryText = match ($orderStatus) {
                                 'completed' => 'Order completed',
                                 'processing' => 'Preparing your order',
                                 'cancelled' => 'Order cancelled',
@@ -244,7 +358,8 @@
 
                         <article
                             class="my-orders-page__order-card"
-                            data-status="{{ $status }}"
+                            data-status="{{ $orderStatus }}"
+                            data-refund-status="{{ $refundStatusFilter ?? 'none' }}"
                             data-order="{{ $order->order_number }}"
                         >
 
@@ -273,13 +388,30 @@
                                 </div>
 
 
-                                <span
-                                    class="my-orders-page__status my-orders-page__status--{{ $status }}"
-                                >
-                                    <i class="{{ $statusIcon }}"></i>
+                                <div class="my-orders-page__status-group">
 
-                                    {{ $statusLabel }}
-                                </span>
+                                    <span
+                                        class="my-orders-page__status my-orders-page__status--{{ $orderStatus }}"
+                                    >
+                                        <i class="{{ $orderStatusIcon }}"></i>
+
+                                        {{ $orderStatusLabel }}
+                                    </span>
+
+
+                                    @if($refundStatusLabel)
+
+                                        <span
+                                            class="my-orders-page__refund-status my-orders-page__refund-status--{{ $refundStatusClass }}"
+                                        >
+                                            <i class="{{ $refundStatusIcon }}"></i>
+
+                                            {{ $refundStatusLabel }}
+                                        </span>
+
+                                    @endif
+
+                                </div>
 
                             </div>
 
@@ -306,7 +438,8 @@
                                                     $valueName = $value->value ?? null;
 
                                                     if ($attributeName && $valueName) {
-                                                        $attributes[] = $attributeName . ': ' . $valueName;
+                                                        $attributes[] =
+                                                            $attributeName . ': ' . $valueName;
                                                     }
                                                 }
                                             }
@@ -318,15 +451,19 @@
                                             <div class="my-orders-page__product-image">
 
                                                 @if($image)
+
                                                     <img
                                                         src="{{ asset($image) }}"
                                                         alt="{{ $item->product_name }}"
                                                         loading="lazy"
                                                     >
+
                                                 @else
+
                                                     <span>
                                                         No Image
                                                     </span>
+
                                                 @endif
 
                                             </div>
@@ -335,10 +472,13 @@
                                             <div class="my-orders-page__product-info">
 
                                                 @if($category)
+
                                                     <span class="my-orders-page__product-category">
                                                         {{ $category }}
                                                     </span>
+
                                                 @endif
+
 
                                                 <h3>
                                                     {{ $item->product_name }}
@@ -348,10 +488,13 @@
                                                 <div class="my-orders-page__product-meta">
 
                                                     @foreach($attributes as $attribute)
+
                                                         <span>
                                                             {{ $attribute }}
                                                         </span>
+
                                                     @endforeach
+
 
                                                     <span>
                                                         Qty: {{ $item->quantity }}
@@ -386,6 +529,48 @@
                                     </strong>
 
                                 </div>
+
+
+                                {{-- Refund Information --}}
+                                @if($refundStatusLabel)
+
+                                    <div
+                                        class="my-orders-page__refund-info my-orders-page__refund-info--{{ $refundStatusClass }}"
+                                    >
+
+                                        <i class="{{ $refundStatusIcon }}"></i>
+
+                                        <div>
+                                            <strong>
+                                                {{ $refundStatusLabel }}
+                                            </strong>
+
+                                            <span>
+                                                @switch($refundStatus)
+
+                                                    @case(\App\Models\Order::REFUND_STATUS_PENDING)
+                                                        Your refund request is under review.
+                                                        @break
+
+                                                    @case(\App\Models\Order::REFUND_STATUS_APPROVED)
+                                                        Your refund request has been approved and is being processed.
+                                                        @break
+
+                                                    @case(\App\Models\Order::REFUND_STATUS_REJECTED)
+                                                        Your refund request was rejected. View order details for more information.
+                                                        @break
+
+                                                    @case(\App\Models\Order::REFUND_STATUS_REFUNDED)
+                                                        Your refund has been successfully processed.
+                                                        @break
+
+                                                @endswitch
+                                            </span>
+                                        </div>
+
+                                    </div>
+
+                                @endif
 
                             </div>
 
@@ -540,17 +725,23 @@
             );
 
             const statusOptions = statusSelect
-                ? Array.from(statusSelect.querySelectorAll(".status-option"))
+                ? Array.from(
+                    statusSelect.querySelectorAll(".status-option"),
+                )
                 : [];
 
             const statusValue = statusSelect?.querySelector(
                 ".status-select-value strong",
             );
 
-            const statusInput = statusSelect?.querySelector(".status-input");
+            const statusInput = statusSelect?.querySelector(
+                ".status-input",
+            );
 
             const orderCards = Array.from(
-                ordersPage.querySelectorAll(".my-orders-page__order-card"),
+                ordersPage.querySelectorAll(
+                    ".my-orders-page__order-card",
+                ),
             );
 
             const filterEmpty = ordersPage.querySelector(
@@ -560,6 +751,7 @@
             const resetButton = ordersPage.querySelector(
                 ".my-orders-page__empty--filter .my-orders-page__reset-btn",
             );
+
 
             const filterOrders = function () {
                 const searchValue = searchInput
@@ -572,42 +764,74 @@
 
                 let visibleOrders = 0;
 
+
                 orderCards.forEach(function (orderCard) {
+
                     const orderNumber = (
                         orderCard.dataset.order || ""
                     ).toLowerCase();
 
-                    const orderText = orderCard.textContent.toLowerCase();
+                    const orderText =
+                        orderCard.textContent.toLowerCase();
 
                     const orderStatus = (
                         orderCard.dataset.status || ""
                     ).toLowerCase();
+
+                    const refundStatus = (
+                        orderCard.dataset.refundStatus || ""
+                    ).toLowerCase();
+
 
                     const matchesSearch =
                         searchValue === "" ||
                         orderNumber.includes(searchValue) ||
                         orderText.includes(searchValue);
 
-                    const matchesStatus =
-                        selectedStatus === "all" ||
-                        orderStatus === selectedStatus;
+
+                    let matchesStatus = true;
+
+                    if (selectedStatus !== "all") {
+
+                        if (
+                            selectedStatus === "refund_pending"
+                            || selectedStatus === "refund_approved"
+                            || selectedStatus === "refund_rejected"
+                            || selectedStatus === "refunded"
+                        ) {
+                            matchesStatus =
+                                refundStatus === selectedStatus;
+                        } else {
+                            matchesStatus =
+                                orderStatus === selectedStatus;
+                        }
+
+                    }
+
 
                     const shouldShow =
                         matchesSearch && matchesStatus;
 
+
                     orderCard.hidden = !shouldShow;
+
 
                     if (shouldShow) {
                         visibleOrders++;
                     }
+
                 });
 
+
                 if (filterEmpty) {
-                    filterEmpty.hidden = visibleOrders !== 0;
+                    filterEmpty.hidden =
+                        visibleOrders !== 0;
                 }
             };
 
+
             const closeStatusDropdown = function () {
+
                 if (!statusSelect) {
                     return;
                 }
@@ -620,9 +844,12 @@
                         "false",
                     );
                 }
+
             };
 
+
             const resetFilters = function () {
+
                 if (searchInput) {
                     searchInput.value = "";
                 }
@@ -635,65 +862,93 @@
                     statusValue.textContent = "All Orders";
                 }
 
+
                 statusOptions.forEach(function (option) {
+
                     const isSelected =
                         option.dataset.value === "all";
+
 
                     option.classList.toggle(
                         "is-selected",
                         isSelected,
                     );
 
+
                     option.setAttribute(
                         "aria-selected",
-                        isSelected ? "true" : "false",
+                        isSelected
+                            ? "true"
+                            : "false",
                     );
+
                 });
+
 
                 closeStatusDropdown();
 
                 filterOrders();
             };
 
+
             if (searchInput) {
+
                 searchInput.addEventListener(
                     "input",
                     filterOrders,
                 );
+
             }
 
+
             if (statusTrigger && statusSelect) {
+
                 statusTrigger.addEventListener(
                     "click",
                     function (event) {
+
                         event.stopPropagation();
+
 
                         const isOpen =
                             statusSelect.classList.contains(
                                 "is-open",
                             );
 
+
                         if (isOpen) {
+
                             closeStatusDropdown();
 
                             return;
+
                         }
 
-                        statusSelect.classList.add("is-open");
+
+                        statusSelect.classList.add(
+                            "is-open",
+                        );
+
 
                         statusTrigger.setAttribute(
                             "aria-expanded",
                             "true",
                         );
+
                     },
                 );
+
             }
 
+
             statusOptions.forEach(function (option) {
+
                 option.addEventListener(
                     "click",
                     function (event) {
+
                         event.stopPropagation();
+
 
                         const value =
                             option.dataset.value || "all";
@@ -701,23 +956,29 @@
                         const text =
                             option.textContent.trim();
 
+
                         if (statusInput) {
                             statusInput.value = value;
                         }
+
 
                         if (statusValue) {
                             statusValue.textContent = text;
                         }
 
+
                         statusOptions.forEach(
                             function (item) {
+
                                 const isSelected =
                                     item === option;
+
 
                                 item.classList.toggle(
                                     "is-selected",
                                     isSelected,
                                 );
+
 
                                 item.setAttribute(
                                     "aria-selected",
@@ -725,34 +986,47 @@
                                         ? "true"
                                         : "false",
                                 );
+
                             },
                         );
+
 
                         closeStatusDropdown();
 
                         filterOrders();
+
                     },
                 );
+
             });
+
 
             document.addEventListener(
                 "click",
                 function (event) {
+
                     if (
                         statusSelect &&
-                        !statusSelect.contains(event.target)
+                        !statusSelect.contains(
+                            event.target,
+                        )
                     ) {
                         closeStatusDropdown();
                     }
+
                 },
             );
 
+
             if (resetButton) {
+
                 resetButton.addEventListener(
                     "click",
                     resetFilters,
                 );
+
             }
+
 
             filterOrders();
         });

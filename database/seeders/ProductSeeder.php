@@ -38,6 +38,7 @@ final class ProductSeeder extends Seeder
                     'price' => 1199.00,
                     'compare_price' => 1299.00,
                     'cost_price' => 980.00,
+                    'shipping_cost' => 18.00,
                     'featured' => true,
                     'thumbnail' => 'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?auto=format&fit=crop&w=900&q=85',
                     'description' => 'A premium flagship smartphone with a large high-resolution display, advanced camera system and powerful performance.',
@@ -95,6 +96,7 @@ final class ProductSeeder extends Seeder
                     'price' => 899.00,
                     'compare_price' => 999.00,
                     'cost_price' => 720.00,
+                    'shipping_cost' => 15.00,
                     'featured' => true,
                     'thumbnail' => 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=900&q=85',
                     'description' => 'A modern flagship smartphone offering fast performance, an immersive display and an advanced camera experience.',
@@ -143,6 +145,7 @@ final class ProductSeeder extends Seeder
                     'price' => 1099.00,
                     'compare_price' => 1199.00,
                     'cost_price' => 890.00,
+                    'shipping_cost' => 18.00,
                     'featured' => true,
                     'thumbnail' => 'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?auto=format&fit=crop&w=900&q=85',
                     'description' => 'Premium Android smartphone featuring a vivid display, high-performance processor and versatile camera system.',
@@ -182,6 +185,7 @@ final class ProductSeeder extends Seeder
                     'price' => 799.00,
                     'compare_price' => 899.00,
                     'cost_price' => 630.00,
+                    'shipping_cost' => 15.00,
                     'featured' => false,
                     'thumbnail' => 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=900&q=85',
                     'description' => 'A sleek Samsung smartphone with a vibrant AMOLED display, fast performance and versatile cameras.',
@@ -220,6 +224,7 @@ final class ProductSeeder extends Seeder
                     'price' => 399.00,
                     'compare_price' => 449.00,
                     'cost_price' => 285.00,
+                    'shipping_cost' => 12.00,
                     'featured' => true,
                     'thumbnail' => 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=85',
                     'description' => 'Premium wireless headphones with active noise cancellation, rich sound and all-day comfort.',
@@ -257,6 +262,7 @@ final class ProductSeeder extends Seeder
                     'price' => 129.00,
                     'compare_price' => 149.00,
                     'cost_price' => 82.00,
+                    'shipping_cost' => 10.00,
                     'featured' => false,
                     'thumbnail' => 'https://images.unsplash.com/photo-1484704849700-f032a568e944?auto=format&fit=crop&w=900&q=85',
                     'description' => 'Lightweight wireless noise-cancelling headphones designed for comfortable everyday listening.',
@@ -293,6 +299,7 @@ final class ProductSeeder extends Seeder
                     'price' => 179.00,
                     'compare_price' => 199.00,
                     'cost_price' => 120.00,
+                    'shipping_cost' => 14.00,
                     'featured' => true,
                     'thumbnail' => 'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=900&q=85',
                     'description' => 'Portable Bluetooth speaker with powerful sound, durable construction and long battery life.',
@@ -329,6 +336,7 @@ final class ProductSeeder extends Seeder
                     'price' => 129.00,
                     'compare_price' => 149.00,
                     'cost_price' => 84.00,
+                    'shipping_cost' => 10.00,
                     'featured' => false,
                     'thumbnail' => 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=900&q=85',
                     'description' => 'Wireless over-ear headphones with adaptive noise cancellation and powerful JBL sound.',
@@ -365,6 +373,7 @@ final class ProductSeeder extends Seeder
                     'price' => 1999.00,
                     'compare_price' => 2199.00,
                     'cost_price' => 1580.00,
+                    'shipping_cost' => 25.00,
                     'featured' => true,
                     'thumbnail' => 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=1200&q=85',
                     'description' => 'Professional laptop with powerful Apple Silicon performance, premium display and long battery life.',
@@ -403,6 +412,7 @@ final class ProductSeeder extends Seeder
                     'price' => 1299.00,
                     'compare_price' => 1399.00,
                     'cost_price' => 980.00,
+                    'shipping_cost' => 22.00,
                     'featured' => false,
                     'thumbnail' => 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=900&q=85',
                     'description' => 'Slim premium laptop designed for productivity, mobility and everyday computing.',
@@ -441,6 +451,7 @@ final class ProductSeeder extends Seeder
                     'price' => 99.00,
                     'compare_price' => 119.00,
                     'cost_price' => 62.00,
+                    'shipping_cost' => 8.00,
                     'featured' => true,
                     'thumbnail' => 'https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=900&q=85',
                     'description' => 'Premium wireless productivity mouse designed for precision, comfort and multi-device workflows.',
@@ -469,6 +480,7 @@ final class ProductSeeder extends Seeder
                     'price' => 109.00,
                     'compare_price' => 129.00,
                     'cost_price' => 70.00,
+                    'shipping_cost' => 9.00,
                     'featured' => false,
                     'thumbnail' => 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=900&q=85',
                     'description' => 'Premium wireless keyboard with comfortable low-profile keys and a clean professional design.',
@@ -505,6 +517,7 @@ final class ProductSeeder extends Seeder
                     'price' => 149.00,
                     'compare_price' => 179.00,
                     'cost_price' => 88.00,
+                    'shipping_cost' => 12.00,
                     'featured' => true,
                     'thumbnail' => 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=85',
                     'description' => 'Comfortable everyday sneakers with lightweight construction and distinctive Air cushioning.',
@@ -562,6 +575,7 @@ final class ProductSeeder extends Seeder
                     'price' => 119.00,
                     'compare_price' => 139.00,
                     'cost_price' => 72.00,
+                    'shipping_cost' => 12.00,
                     'featured' => true,
                     'thumbnail' => 'https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=900&q=85',
                     'description' => 'Classic everyday sneakers with timeless styling, durable construction and comfortable cushioning.',
@@ -609,6 +623,7 @@ final class ProductSeeder extends Seeder
                     'price' => 160.00,
                     'compare_price' => 190.00,
                     'cost_price' => 95.00,
+                    'shipping_cost' => 12.00,
                     'featured' => true,
                     'thumbnail' => 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=900&q=85',
                     'description' => 'Responsive running shoes designed for everyday training, comfort and long-distance performance.',
@@ -647,6 +662,7 @@ final class ProductSeeder extends Seeder
                     'price' => 110.00,
                     'compare_price' => 130.00,
                     'cost_price' => 68.00,
+                    'shipping_cost' => 11.00,
                     'featured' => false,
                     'thumbnail' => 'https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&w=900&q=85',
                     'description' => 'Iconic low-profile sneakers with classic Adidas styling and versatile everyday comfort.',
@@ -685,6 +701,7 @@ final class ProductSeeder extends Seeder
                     'price' => 149.00,
                     'compare_price' => 169.00,
                     'cost_price' => 98.00,
+                    'shipping_cost' => 10.00,
                     'featured' => true,
                     'thumbnail' => 'https://images.unsplash.com/photo-1625842268584-8f3296236761?auto=format&fit=crop&w=1200&q=85',
                     'description' => 'High-capacity portable charger designed for laptops, tablets and smartphones.',
@@ -713,6 +730,7 @@ final class ProductSeeder extends Seeder
                     'price' => 59.00,
                     'compare_price' => 69.00,
                     'cost_price' => 36.00,
+                    'shipping_cost' => 7.00,
                     'featured' => false,
                     'thumbnail' => 'https://images.unsplash.com/photo-1625842268584-8f3296236761?auto=format&fit=crop&w=900&q=85',
                     'description' => 'Compact USB-C hub with multiple ports for laptops, tablets and modern workstations.',
@@ -741,6 +759,7 @@ final class ProductSeeder extends Seeder
                     'price' => 249.00,
                     'compare_price' => 279.00,
                     'cost_price' => 178.00,
+                    'shipping_cost' => 8.00,
                     'featured' => true,
                     'thumbnail' => 'https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?auto=format&fit=crop&w=900&q=85',
                     'description' => 'Premium wireless earbuds with active noise cancellation, spatial audio and a compact charging case.',
@@ -769,6 +788,7 @@ final class ProductSeeder extends Seeder
                     'price' => 179.00,
                     'compare_price' => 199.00,
                     'cost_price' => 115.00,
+                    'shipping_cost' => 9.00,
                     'featured' => true,
                     'thumbnail' => 'https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?auto=format&fit=crop&w=900&q=85',
                     'description' => 'Premium 4K webcam designed for professional video calls, streaming and content creation.',
@@ -797,6 +817,7 @@ final class ProductSeeder extends Seeder
                     'price' => 399.00,
                     'compare_price' => 449.00,
                     'cost_price' => 290.00,
+                    'shipping_cost' => 9.00,
                     'featured' => false,
                     'thumbnail' => 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=900&q=85',
                     'description' => 'Premium smartwatch with fitness tracking, notifications, health features and seamless smartphone integration.',
@@ -849,11 +870,15 @@ final class ProductSeeder extends Seeder
         Attribute $size,
         Attribute $storage,
     ): void {
-        $brand = Brand::where('slug', Str::slug($productData['brand']))
-            ->firstOrFail();
+        $brand = Brand::where(
+            'slug',
+            Str::slug($productData['brand']),
+        )->firstOrFail();
 
-        $category = Category::where('slug', Str::slug($productData['category']))
-            ->firstOrFail();
+        $category = Category::where(
+            'slug',
+            Str::slug($productData['category']),
+        )->firstOrFail();
 
         $product = Product::updateOrCreate(
             ['slug' => Str::slug($productData['name'])],
@@ -872,6 +897,7 @@ final class ProductSeeder extends Seeder
                 'price' => $productData['price'],
                 'compare_price' => $productData['compare_price'],
                 'cost_price' => $productData['cost_price'],
+                'shipping_cost' => $productData['shipping_cost'],
                 'status' => true,
                 'featured' => $productData['featured'],
                 'sort_order' => $sortOrder,
@@ -884,12 +910,21 @@ final class ProductSeeder extends Seeder
 
         ProductVariantValue::whereHas(
             'variant',
-            fn ($query) => $query->where('product_id', $product->id),
+            fn ($query) => $query->where(
+                'product_id',
+                $product->id,
+            ),
         )->delete();
 
-        ProductVariant::where('product_id', $product->id)->delete();
+        ProductVariant::where(
+            'product_id',
+            $product->id,
+        )->delete();
 
-        ProductImage::where('product_id', $product->id)->delete();
+        ProductImage::where(
+            'product_id',
+            $product->id,
+        )->delete();
 
         foreach ($productData['variants'] as $variantData) {
             $variant = ProductVariant::create([
@@ -908,12 +943,19 @@ final class ProductSeeder extends Seeder
                     'size' => $size,
                     'storage' => $storage,
                     default => throw new \InvalidArgumentException(
-                        'Unknown attribute: ' . $variantValue['attribute'],
+                        'Unknown attribute: '
+                        . $variantValue['attribute'],
                     ),
                 };
 
-                $attributeValue = AttributeValue::where('attribute_id', $attribute->id)
-                    ->where('slug', $variantValue['value'])
+                $attributeValue = AttributeValue::where(
+                    'attribute_id',
+                    $attribute->id,
+                )
+                    ->where(
+                        'slug',
+                        $variantValue['value'],
+                    )
                     ->firstOrFail();
 
                 ProductVariantValue::create([
@@ -929,7 +971,8 @@ final class ProductSeeder extends Seeder
                 'product_id' => $product->id,
                 'variant_id' => null,
                 'image' => $image,
-                'alt_text' => $productData['name'] . ' product image',
+                'alt_text' => $productData['name']
+                    . ' product image',
                 'sort_order' => $imageOrder + 1,
                 'is_primary' => $imageOrder === 0,
             ]);

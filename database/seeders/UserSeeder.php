@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Models\Permission;
@@ -8,7 +10,7 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
-class UserSeeder extends Seeder
+final class UserSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -21,15 +23,13 @@ class UserSeeder extends Seeder
         |--------------------------------------------------------------------------
         */
 
-        $adminRole = Role::where(
-            'slug',
-            'admin'
-        )->firstOrFail();
+        $adminRole = Role::query()
+            ->where('slug', 'admin')
+            ->firstOrFail();
 
-        $clientRole = Role::where(
-            'slug',
-            'client'
-        )->firstOrFail();
+        $clientRole = Role::query()
+            ->where('slug', 'client')
+            ->firstOrFail();
 
 
         /*
@@ -71,7 +71,8 @@ class UserSeeder extends Seeder
         |--------------------------------------------------------------------------
         */
 
-        $allPermissionIds = Permission::pluck('id')
+        $allPermissionIds = Permission::query()
+            ->pluck('id')
             ->toArray();
 
         $adminRole->permissions()->sync(
@@ -163,7 +164,7 @@ class UserSeeder extends Seeder
 
             /*
             |--------------------------------------------------------------------------
-            | Service Requests
+            | Requests
             |--------------------------------------------------------------------------
             */
 
@@ -174,11 +175,19 @@ class UserSeeder extends Seeder
 
             /*
             |--------------------------------------------------------------------------
-            | Ecommerce - Products & Categories
+            | Ecommerce - Products
             |--------------------------------------------------------------------------
             */
 
             'view-products',
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Ecommerce - Categories
+            |--------------------------------------------------------------------------
+            */
+
             'view-categories',
 
 
@@ -210,7 +219,6 @@ class UserSeeder extends Seeder
             */
 
             'view-payments',
-            'view-ecommerce-payments',
 
 
             /*
@@ -265,62 +273,14 @@ class UserSeeder extends Seeder
             |--------------------------------------------------------------------------
             | Smart Buy - Customer
             |--------------------------------------------------------------------------
-            |
-            | These permissions exactly match PermissionSeeder
-            | and web.php middleware.
-            |
-            */
-
-            /*
-            | My Smart Buy List
             */
 
             'my-smart-buy',
-
-
-            /*
-            | Smart Buy Details
-            */
-
             'my-smart-buy-details',
-
-
-            /*
-            | Create Smart Buy
-            */
-
             'my-smart-buy-create',
-
-
-            /*
-            | Smart Buy Confirmation
-            */
-
             'my-smart-buy-confirmation',
-
-
-            /*
-            | Smart Buy Quote
-            |
-            | Allows viewing, accepting and rejecting quotes.
-            */
-
             'my-smart-buy-quote',
-
-
-            /*
-            | Smart Buy Payment
-            |
-            | Allows viewing and submitting Smart Buy payments.
-            */
-
             'my-smart-buy-payment',
-
-
-            /*
-            | Smart Buy Tracking
-            */
-
             'my-smart-buy-tracking',
 
         ];
@@ -333,9 +293,7 @@ class UserSeeder extends Seeder
         */
 
         $clientPermissions = array_values(
-            array_unique(
-                $clientPermissions
-            )
+            array_unique($clientPermissions)
         );
 
 
@@ -345,10 +303,8 @@ class UserSeeder extends Seeder
         |--------------------------------------------------------------------------
         */
 
-        $clientPermissionIds = Permission::whereIn(
-            'slug',
-            $clientPermissions
-        )
+        $clientPermissionIds = Permission::query()
+            ->whereIn('slug', $clientPermissions)
             ->pluck('id')
             ->toArray();
 

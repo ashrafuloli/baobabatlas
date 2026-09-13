@@ -21,15 +21,102 @@
             )
             ->implode('');
 
-        $statusClass = match ($order->status) {
-            \App\Models\Order::STATUS_PENDING => 'pending',
-            \App\Models\Order::STATUS_PAID => 'paid',
-            \App\Models\Order::STATUS_PROCESSING => 'processing',
-            \App\Models\Order::STATUS_COMPLETED => 'completed',
-            \App\Models\Order::STATUS_CANCELLED => 'cancelled',
-            \App\Models\Order::STATUS_FAILED => 'failed',
-            default => 'pending',
+        $customerInitials = $customerInitials ?: '?';
+
+        /*
+        |--------------------------------------------------------------------------
+        | Refund Status
+        |--------------------------------------------------------------------------
+        */
+
+        $refundStatus = $order->refund_status
+            ?? \App\Models\Order::REFUND_STATUS_NONE;
+
+        $refundStatusOverview = match ($refundStatus) {
+            \App\Models\Order::REFUND_STATUS_PENDING => [
+                'label' => 'Refund Requested',
+                'class' => 'refund-pending',
+                'icon' => 'ri-time-line',
+            ],
+            \App\Models\Order::REFUND_STATUS_APPROVED => [
+                'label' => 'Refund Approved',
+                'class' => 'refund-approved',
+                'icon' => 'ri-checkbox-circle-line',
+            ],
+            \App\Models\Order::REFUND_STATUS_REJECTED => [
+                'label' => 'Refund Rejected',
+                'class' => 'refund-rejected',
+                'icon' => 'ri-close-circle-line',
+            ],
+            \App\Models\Order::REFUND_STATUS_REFUNDED => [
+                'label' => 'Refunded',
+                'class' => 'refunded',
+                'icon' => 'ri-refund-2-line',
+            ],
+            default => null,
         };
+
+        /*
+        |--------------------------------------------------------------------------
+        | Order Status
+        |--------------------------------------------------------------------------
+        */
+
+        $orderStatusOverview = match ($order->status) {
+            \App\Models\Order::STATUS_PENDING => [
+                'label' => 'Pending',
+                'class' => 'pending',
+                'icon' => 'ri-time-line',
+            ],
+            \App\Models\Order::STATUS_PAID => [
+                'label' => 'Paid',
+                'class' => 'paid',
+                'icon' => 'ri-checkbox-circle-line',
+            ],
+            \App\Models\Order::STATUS_PROCESSING => [
+                'label' => 'Processing',
+                'class' => 'processing',
+                'icon' => 'ri-loader-4-line',
+            ],
+            \App\Models\Order::STATUS_COMPLETED => [
+                'label' => 'Completed',
+                'class' => 'completed',
+                'icon' => 'ri-file-list-3-line',
+            ],
+            \App\Models\Order::STATUS_CANCELLED => [
+                'label' => 'Cancelled',
+                'class' => 'cancelled',
+                'icon' => 'ri-close-circle-line',
+            ],
+            \App\Models\Order::STATUS_FAILED => [
+                'label' => 'Failed',
+                'class' => 'failed',
+                'icon' => 'ri-error-warning-line',
+            ],
+            default => [
+                'label' => ucfirst($order->status),
+                'class' => 'pending',
+                'icon' => 'ri-information-line',
+            ],
+        };
+
+        /*
+        |--------------------------------------------------------------------------
+        | Displayed Order Status
+        |--------------------------------------------------------------------------
+        |
+        | Refund status takes visual priority over normal order status.
+        | The actual order->status remains unchanged.
+        |
+        */
+
+        $displayStatus = $refundStatusOverview ?? $orderStatusOverview;
+
+        /*
+        |--------------------------------------------------------------------------
+        | Payment Status
+        |--------------------------------------------------------------------------
+        */
 
         $paymentClass = match ($order->payment_status) {
             \App\Models\Order::PAYMENT_STATUS_PAID => 'paid',
@@ -39,14 +126,143 @@
             default => 'pending',
         };
 
-        $shipmentStatus = match ($order->status) {
-            \App\Models\Order::STATUS_COMPLETED => 'Completed',
-            \App\Models\Order::STATUS_CANCELLED => 'Cancelled',
-            \App\Models\Order::STATUS_FAILED => 'Not Available',
-            \App\Models\Order::STATUS_PROCESSING => 'Processing',
-            \App\Models\Order::STATUS_PAID => 'Not Shipped',
+        /*
+        |--------------------------------------------------------------------------
+        | Shipment Status
+        |--------------------------------------------------------------------------
+        */
+
+        $shipmentStatus = match ($order->shipment?->status) {
+            \App\Models\Shipment::STATUS_PENDING => 'Pending',
+            \App\Models\Shipment::STATUS_PROCESSING => 'Processing',
+            \App\Models\Shipment::STATUS_SHIPPED => 'Shipped',
+            \App\Models\Shipment::STATUS_CANCELLED => 'Cancelled',
             default => 'Not Shipped',
         };
+
+        /*
+        |--------------------------------------------------------------------------
+        | Shipment Status Overview
+        |--------------------------------------------------------------------------
+        */
+
+        $shipmentOverview = match ($order->shipment?->status) {
+            \App\Models\Shipment::STATUS_PENDING => [
+                'label' => 'Pending',
+                'class' => 'pending',
+                'icon' => 'ri-time-line',
+            ],
+            \App\Models\Shipment::STATUS_PROCESSING => [
+                'label' => 'Processing',
+                'class' => 'processing',
+                'icon' => 'ri-loader-4-line',
+            ],
+            \App\Models\Shipment::STATUS_SHIPPED => [
+                'label' => 'Shipped',
+                'class' => 'shipped',
+                'icon' => 'ri-truck-line',
+            ],
+            \App\Models\Shipment::STATUS_CANCELLED => [
+                'label' => 'Cancelled',
+                'class' => 'cancelled',
+                'icon' => 'ri-close-circle-line',
+            ],
+            default => [
+                'label' => 'Not Created',
+                'class' => 'pending',
+                'icon' => 'ri-truck-line',
+            ],
+        };
+
+        /*
+        |--------------------------------------------------------------------------
+        | Delivery Status Overview
+        |--------------------------------------------------------------------------
+        */
+
+        $deliveryOverview = match ($order->shipment?->delivery_status) {
+            \App\Models\Shipment::DELIVERY_STATUS_PENDING => [
+                'label' => 'Pending',
+                'class' => 'pending',
+                'icon' => 'ri-time-line',
+            ],
+            \App\Models\Shipment::DELIVERY_STATUS_IN_TRANSIT => [
+                'label' => 'In Transit',
+                'class' => 'in-transit',
+                'icon' => 'ri-truck-line',
+            ],
+            \App\Models\Shipment::DELIVERY_STATUS_OUT_FOR_DELIVERY => [
+                'label' => 'Out for Delivery',
+                'class' => 'out-for-delivery',
+                'icon' => 'ri-map-pin-time-line',
+            ],
+            \App\Models\Shipment::DELIVERY_STATUS_DELIVERED => [
+                'label' => 'Delivered',
+                'class' => 'delivered',
+                'icon' => 'ri-checkbox-circle-line',
+            ],
+            \App\Models\Shipment::DELIVERY_STATUS_FAILED => [
+                'label' => 'Failed',
+                'class' => 'failed',
+                'icon' => 'ri-error-warning-line',
+            ],
+            default => [
+                'label' => 'Not Shipped',
+                'class' => 'pending',
+                'icon' => 'ri-truck-line',
+            ],
+        };
+
+        /*
+        |--------------------------------------------------------------------------
+        | Payment Overview
+        |--------------------------------------------------------------------------
+        */
+
+        $paymentOverview = match ($order->payment_status) {
+            \App\Models\Order::PAYMENT_STATUS_PAID => [
+                'label' => 'Paid',
+                'class' => 'paid',
+                'icon' => 'ri-checkbox-circle-line',
+            ],
+            \App\Models\Order::PAYMENT_STATUS_PENDING => [
+                'label' => 'Pending',
+                'class' => 'pending',
+                'icon' => 'ri-time-line',
+            ],
+            \App\Models\Order::PAYMENT_STATUS_FAILED => [
+                'label' => 'Failed',
+                'class' => 'failed',
+                'icon' => 'ri-error-warning-line',
+            ],
+            \App\Models\Order::PAYMENT_STATUS_REFUNDED => [
+                'label' => 'Refunded',
+                'class' => 'refunded',
+                'icon' => 'ri-refund-2-line',
+            ],
+            default => [
+                'label' => ucfirst($order->payment_status),
+                'class' => 'pending',
+                'icon' => 'ri-information-line',
+            ],
+        };
+
+        /*
+        |--------------------------------------------------------------------------
+        | Shipment Availability
+        |--------------------------------------------------------------------------
+        */
+
+        $isPaymentPaid = $order->payment_status
+            === \App\Models\Order::PAYMENT_STATUS_PAID;
+
+        $hasShipment = $order->shipment !== null;
+
+        /*
+        |--------------------------------------------------------------------------
+        | Currency
+        |--------------------------------------------------------------------------
+        */
 
         $currency = strtoupper((string) $order->currency);
 
@@ -98,11 +314,11 @@
                     </div>
 
                     <span
-                        class="order-details-main-status order-details-main-status--{{ $statusClass }}"
+                        class="order-details-main-status order-details-main-status--{{ $displayStatus['class'] }}"
                     >
-                        <i></i>
+                        <i class="{{ $displayStatus['icon'] }}"></i>
 
-                        {{ ucfirst($order->status) }}
+                        {{ $displayStatus['label'] }}
                     </span>
 
                 </div>
@@ -134,6 +350,90 @@
             </div>
 
         </div>
+
+
+        {{-- ================================================================ --}}
+        {{-- STATUS OVERVIEW --}}
+        {{-- ================================================================ --}}
+
+        <section class="order-details-page__status-overview">
+
+            {{-- Order Status --}}
+
+            <div class="order-details-page__status-overview-item">
+
+                <span>
+                    Order Status
+                </span>
+
+                <strong
+                    class="order-details-page__status order-details-page__status--{{ $displayStatus['class'] }}"
+                >
+                    <i class="{{ $displayStatus['icon'] }}"></i>
+
+                    {{ $displayStatus['label'] }}
+                </strong>
+
+            </div>
+
+
+            {{-- Shipment Status --}}
+
+            <div class="order-details-page__status-overview-item">
+
+                <span>
+                    Shipment Status
+                </span>
+
+                <strong
+                    class="order-details-page__status order-details-page__status--{{ $shipmentOverview['class'] }}"
+                >
+                    <i class="{{ $shipmentOverview['icon'] }}"></i>
+
+                    {{ $shipmentOverview['label'] }}
+                </strong>
+
+            </div>
+
+
+            {{-- Delivery Status --}}
+
+            <div class="order-details-page__status-overview-item">
+
+                <span>
+                    Delivery Status
+                </span>
+
+                <strong
+                    class="order-details-page__status order-details-page__status--{{ $deliveryOverview['class'] }}"
+                >
+                    <i class="{{ $deliveryOverview['icon'] }}"></i>
+
+                    {{ $deliveryOverview['label'] }}
+                </strong>
+
+            </div>
+
+
+            {{-- Payment --}}
+
+            <div class="order-details-page__status-overview-item">
+
+                <span>
+                    Payment
+                </span>
+
+                <strong
+                    class="order-details-page__status order-details-page__status--{{ $paymentOverview['class'] }}"
+                >
+                    <i class="{{ $paymentOverview['icon'] }}"></i>
+
+                    {{ $paymentOverview['label'] }}
+                </strong>
+
+            </div>
+
+        </section>
 
 
         {{-- ================================================================ --}}
@@ -465,13 +765,37 @@
 
                         </div>
 
-                        <span class="order-shipment-status order-shipment-status--pending">
+                        @if ($hasShipment)
 
-                            <i></i>
+                            <span class="order-shipment-status order-shipment-status--pending">
 
-                            {{ $shipmentStatus }}
+                                <i></i>
 
-                        </span>
+                                {{ $shipmentStatus }}
+
+                            </span>
+
+                        @elseif ($isPaymentPaid)
+
+                            <span class="order-shipment-status order-shipment-status--pending">
+
+                                <i></i>
+
+                                Ready to Ship
+
+                            </span>
+
+                        @else
+
+                            <span class="order-shipment-status order-shipment-status--pending">
+
+                                <i></i>
+
+                                Payment Required
+
+                            </span>
+
+                        @endif
 
                     </div>
 
@@ -484,7 +808,7 @@
                             </span>
 
                             <strong>
-                                —
+                                {{ $order->shipment?->carrier ?: '—' }}
                             </strong>
 
                         </div>
@@ -496,7 +820,7 @@
                             </span>
 
                             <strong>
-                                —
+                                {{ $order->shipment?->tracking_number ?: '—' }}
                             </strong>
 
                         </div>
@@ -508,7 +832,10 @@
                             </span>
 
                             <strong>
-                                {{ $shipmentStatus }}
+                                {{ $order->shipment?->status
+                                    ? ucfirst(str_replace('_', ' ', $order->shipment->status))
+                                    : 'Not Created'
+                                }}
                             </strong>
 
                         </div>
@@ -520,7 +847,11 @@
                             </span>
 
                             <strong>
-                                —
+                                @if ($order->shipment?->delivery_status)
+                                    {{ ucfirst(str_replace('_', ' ', $order->shipment->delivery_status)) }}
+                                @else
+                                    Not Shipped
+                                @endif
                             </strong>
 
                         </div>
@@ -529,14 +860,39 @@
 
                     <div class="order-shipment-action">
 
-                        <a
-                            href="{{ route('ecommerce-shipments') }}"
-                            class="order-details-secondary-btn"
-                        >
-                            <i class="ri-truck-line"></i>
+                        @if ($isPaymentPaid && !$hasShipment)
 
-                            Manage Shipment
-                        </a>
+                            <a
+                                href="{{ route('ecommerce-shipments.create', ['order' => $order]) }}"
+                                class="order-details-secondary-btn order-details-secondary-btn--primary"
+                            >
+                                <i class="ri-truck-line"></i>
+
+                                Create Shipment
+                            </a>
+
+                        @elseif ($hasShipment)
+
+                            <a
+                                href="{{ route('ecommerce-shipments.show', ['shipment' => $order->shipment]) }}"
+                                class="order-details-secondary-btn"
+                            >
+                                <i class="ri-truck-line"></i>
+
+                                Manage Shipment
+                            </a>
+
+                        @else
+
+                            <span class="order-details-secondary-btn order-details-secondary-btn--disabled">
+
+                                <i class="ri-lock-line"></i>
+
+                                Payment Required
+
+                            </span>
+
+                        @endif
 
                     </div>
 
@@ -568,7 +924,7 @@
                     <div class="order-customer-profile">
 
                         <div class="order-customer-profile__avatar">
-                            {{ $customerInitials ?: '?' }}
+                            {{ $customerInitials }}
                         </div>
 
                         <div>
@@ -587,25 +943,33 @@
 
                     <div class="order-customer-contact">
 
-                        <div>
+                        @if ($order->email)
 
-                            <i class="ri-mail-line"></i>
+                            <div>
 
-                            <span>
-                                {{ $order->email }}
-                            </span>
+                                <i class="ri-mail-line"></i>
 
-                        </div>
+                                <span>
+                                    {{ $order->email }}
+                                </span>
 
-                        <div>
+                            </div>
 
-                            <i class="ri-phone-line"></i>
+                        @endif
 
-                            <span>
-                                {{ $order->phone }}
-                            </span>
+                        @if ($order->phone)
 
-                        </div>
+                            <div>
+
+                                <i class="ri-phone-line"></i>
+
+                                <span>
+                                    {{ $order->phone }}
+                                </span>
+
+                            </div>
+
+                        @endif
 
                     </div>
 
@@ -632,9 +996,13 @@
                             {{ $customerName }}
                         </strong>
 
-                        <span>
-                            {{ $order->address }}
-                        </span>
+                        @if ($order->address)
+
+                            <span>
+                                {{ $order->address }}
+                            </span>
+
+                        @endif
 
                         @if ($order->apartment)
 
@@ -645,11 +1013,15 @@
                         @endif
 
                         <span>
+
                             {{ $order->city }}
+
                             @if ($order->state)
                                 , {{ $order->state }}
                             @endif
+
                             {{ $order->postal_code }}
+
                         </span>
 
                         <span>
@@ -681,9 +1053,13 @@
                             {{ $customerName }}
                         </strong>
 
-                        <span>
-                            {{ $order->address }}
-                        </span>
+                        @if ($order->address)
+
+                            <span>
+                                {{ $order->address }}
+                            </span>
+
+                        @endif
 
                         @if ($order->apartment)
 
@@ -694,11 +1070,15 @@
                         @endif
 
                         <span>
+
                             {{ $order->city }}
+
                             @if ($order->state)
                                 , {{ $order->state }}
                             @endif
+
                             {{ $order->postal_code }}
+
                         </span>
 
                         <span>
@@ -732,8 +1112,9 @@
                                 Payment Status
                             </span>
 
-                            <span class="order-payment-status order-payment-status--{{ $paymentClass }}">
-
+                            <span
+                                class="order-payment-status order-payment-status--{{ $paymentClass }}"
+                            >
                                 <i></i>
 
                                 {{ ucfirst($order->payment_status) }}
@@ -797,6 +1178,47 @@
                     </div>
 
                 </div>
+
+
+                {{-- ======================================================== --}}
+                {{-- REFUND STATUS --}}
+                {{-- ======================================================== --}}
+
+                @if ($refundStatusOverview !== null)
+
+                    <div class="order-details-card">
+
+                        <div class="order-details-card__header">
+
+                            <div>
+
+                                <h2>
+                                    Refund
+                                </h2>
+
+                                <span>
+                                    Refund status for this order
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="order-refund-status">
+
+                            <div
+                                class="order-refund-status__badge order-refund-status__badge--{{ $refundStatusOverview['class'] }}"
+                            >
+                                <i class="{{ $refundStatusOverview['icon'] }}"></i>
+
+                                {{ $refundStatusOverview['label'] }}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                @endif
 
 
                 {{-- ======================================================== --}}
@@ -935,6 +1357,22 @@
 
                         </div>
 
+                        @if ($refundStatusOverview !== null)
+
+                            <div class="order-status-modal__warning">
+
+                                <i class="{{ $refundStatusOverview['icon'] }}"></i>
+
+                                <span>
+                                    This order currently has a
+                                    {{ strtolower($refundStatusOverview['label']) }}
+                                    refund status.
+                                </span>
+
+                            </div>
+
+                        @endif
+
                         <div
                             class="order-status-modal__warning"
                             data-status-warning
@@ -947,6 +1385,7 @@
                                 done when the order has not already been
                                 fulfilled.
                             </span>
+
                         </div>
 
                     </div>
@@ -984,9 +1423,12 @@
 @endsection
 
 @push('scripts')
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const orderPage = document.querySelector(".order-details-page");
+            const orderPage = document.querySelector(
+                ".order-details-page",
+            );
 
             if (!orderPage) {
                 return;
@@ -1032,9 +1474,12 @@
                 }
 
                 statusModal.removeAttribute("aria-hidden");
+
                 statusModal.classList.add("is-open");
 
-                document.body.classList.add("order-status-modal-open");
+                document.body.classList.add(
+                    "order-status-modal-open",
+                );
 
                 window.setTimeout(function () {
                     statusSelect?.focus();
@@ -1046,7 +1491,11 @@
                     return;
                 }
 
-                statusModal.setAttribute("aria-hidden", "true");
+                statusModal.setAttribute(
+                    "aria-hidden",
+                    "true",
+                );
+
                 statusModal.classList.remove("is-open");
 
                 document.body.classList.remove(
@@ -1063,9 +1512,12 @@
                     statusSelect.value !== "cancelled";
             };
 
-            printButton?.addEventListener("click", function () {
-                window.print();
-            });
+            printButton?.addEventListener(
+                "click",
+                function () {
+                    window.print();
+                },
+            );
 
             openStatusButton?.addEventListener(
                 "click",
@@ -1073,7 +1525,10 @@
             );
 
             closeStatusButtons.forEach(function (button) {
-                button.addEventListener("click", closeModal);
+                button.addEventListener(
+                    "click",
+                    closeModal,
+                );
             });
 
             statusSelect?.addEventListener(
@@ -1081,42 +1536,45 @@
                 updateWarning,
             );
 
-            statusForm?.addEventListener("submit", function () {
-                if (!statusSubmit) {
-                    return;
-                }
+            statusForm?.addEventListener(
+                "submit",
+                function (event) {
+                    if (
+                        statusSelect
+                        && statusSelect.value === currentStatus
+                    ) {
+                        event.preventDefault();
 
-                statusSubmit.disabled = true;
+                        closeModal();
 
-                statusSubmit.innerHTML =
-                    '<i class="ri-loader-4-line"></i> Updating...';
-            });
+                        return;
+                    }
 
-            document.addEventListener("keydown", function (event) {
-                if (
-                    event.key === "Escape" &&
-                    statusModal?.classList.contains("is-open")
-                ) {
-                    closeModal();
-                }
-            });
+                    if (!statusSubmit) {
+                        return;
+                    }
+
+                    statusSubmit.disabled = true;
+
+                    statusSubmit.innerHTML =
+                        '<i class="ri-loader-4-line"></i> Updating...';
+                },
+            );
+
+            document.addEventListener(
+                "keydown",
+                function (event) {
+                    if (
+                        event.key === "Escape"
+                        && statusModal?.classList.contains("is-open")
+                    ) {
+                        closeModal();
+                    }
+                },
+            );
 
             updateWarning();
-
-            /*
-             * Prevent unnecessary status update when the current
-             * status has not changed.
-             */
-            statusForm?.addEventListener("submit", function (event) {
-                if (
-                    statusSelect &&
-                    statusSelect.value === currentStatus
-                ) {
-                    event.preventDefault();
-
-                    closeModal();
-                }
-            });
         });
     </script>
+
 @endpush

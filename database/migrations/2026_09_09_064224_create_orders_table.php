@@ -29,6 +29,22 @@ return new class extends Migration
             $table->string('payment_status', 30)
                 ->default('pending');
 
+            /*
+             |--------------------------------------------------------------------------
+             | Refund Status
+             |--------------------------------------------------------------------------
+             |
+             | none     = No refund request
+             | pending  = Customer requested refund
+             | approved = Admin approved refund request
+             | rejected = Admin rejected refund request
+             | refunded = Stripe refund completed
+             |
+             */
+
+            $table->string('refund_status', 30)
+                ->default('none');
+
             $table->string('payment_gateway', 30)
                 ->nullable();
 
@@ -42,11 +58,27 @@ return new class extends Migration
             $table->string('currency', 3)
                 ->default('usd');
 
+            /*
+             |--------------------------------------------------------------------------
+             | Order Pricing
+             |--------------------------------------------------------------------------
+             */
+
             $table->decimal('subtotal', 12, 2)
                 ->default(0);
 
             $table->decimal('discount', 12, 2)
                 ->default(0);
+
+            /*
+             |--------------------------------------------------------------------------
+             | Final Order Shipping
+             |--------------------------------------------------------------------------
+             |
+             | Total shipping charged for this order.
+             | Shipping is non-refundable.
+             |
+             */
 
             $table->decimal('shipping', 12, 2)
                 ->default(0);
@@ -91,13 +123,31 @@ return new class extends Migration
 
             $table->string('postal_code', 20);
 
+            /*
+             |--------------------------------------------------------------------------
+             | Order Notes
+             |--------------------------------------------------------------------------
+             */
+
             $table->text('notes')
                 ->nullable();
+
+            /*
+             |--------------------------------------------------------------------------
+             | Payment Timestamp
+             |--------------------------------------------------------------------------
+             */
 
             $table->timestamp('paid_at')
                 ->nullable();
 
             $table->timestamps();
+
+            /*
+             |--------------------------------------------------------------------------
+             | Indexes
+             |--------------------------------------------------------------------------
+             */
 
             $table->index([
                 'user_id',
@@ -105,6 +155,8 @@ return new class extends Migration
             ]);
 
             $table->index('payment_status');
+
+            $table->index('refund_status');
 
             $table->index('stripe_payment_intent_id');
         });

@@ -60,24 +60,36 @@ final class CreateOrder
             */
 
             $items = new Collection();
+
             $subtotalCents = 0;
+
+            $shippingCents = 0;
 
             foreach ($cart->items as $cartItem) {
                 $product = $cartItem->product;
 
-                if ($product === null || !$product->isActive()) {
+                /*
+                |--------------------------------------------------------------------------
+                | Product Validation
+                |--------------------------------------------------------------------------
+                */
+
+                if (
+                    $product === null
+                    || !$product->isActive()
+                ) {
                     throw ValidationException::withMessages([
                         'cart' => 'A product in your cart is no longer available.',
                     ]);
                 }
-
-                $variant = $cartItem->variant;
 
                 /*
                 |--------------------------------------------------------------------------
                 | Variant Validation
                 |--------------------------------------------------------------------------
                 */
+
+                $variant = $cartItem->variant;
 
                 if ($variant !== null) {
                     if (
@@ -93,10 +105,6 @@ final class CreateOrder
                     |--------------------------------------------------------------------------
                     | Lock Variant
                     |--------------------------------------------------------------------------
-                    |
-                    | Re-read the variant with a row lock so stock cannot change
-                    | underneath this order creation transaction.
-                    |
                     */
 
                     $variant = $variant->newQuery()
@@ -104,7 +112,10 @@ final class CreateOrder
                         ->lockForUpdate()
                         ->first();
 
-                    if ($variant === null || !$variant->isActive()) {
+                    if (
+                        $variant === null
+                        || !$variant->isActive()
+                    ) {
                         throw ValidationException::withMessages([
                             'cart' => 'A selected product variant is no longer available.',
                         ]);
@@ -115,6 +126,12 @@ final class CreateOrder
                             'cart' => 'The selected product variant is invalid.',
                         ]);
                     }
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Validate Stock
+                    |--------------------------------------------------------------------------
+                    */
 
                     if ($variant->stock < 1) {
                         throw ValidationException::withMessages([
@@ -155,7 +172,7 @@ final class CreateOrder
 
                 /*
                 |--------------------------------------------------------------------------
-                | Determine Current Price
+                | Determine Current Unit Price
                 |--------------------------------------------------------------------------
                 */
 
@@ -164,7 +181,10 @@ final class CreateOrder
                     ?? $product->price
                 );
 
-                if (!is_finite($unitPrice) || $unitPrice < 0) {
+                if (
+                    !is_finite($unitPrice)
+                    || $unitPrice < 0
+                ) {
                     throw ValidationException::withMessages([
                         'cart' => sprintf(
                             'Invalid price for "%s".',
@@ -175,12 +195,8 @@ final class CreateOrder
 
                 /*
                 |--------------------------------------------------------------------------
-                | Convert To Cents
+                | Convert Unit Price To Cents
                 |--------------------------------------------------------------------------
-                |
-                | Money calculations are kept in integer cents to avoid
-                | floating-point rounding problems.
-                |
                 */
 
                 $unitPriceCents = (int) round(
@@ -196,10 +212,64 @@ final class CreateOrder
                     ]);
                 }
 
+                /*
+                |--------------------------------------------------------------------------
+                | Calculate Product Line Total
+                |--------------------------------------------------------------------------
+                */
+
                 $lineTotalCents =
                     $unitPriceCents * $quantity;
 
                 $subtotalCents += $lineTotalCents;
+
+                /*
+                |--------------------------------------------------------------------------
+                | Product Shipping Cost
+                |--------------------------------------------------------------------------
+                |
+                | Shipping is charged once per cart line.
+                |
+                | Example:
+                |
+                | Product × 5
+                | shipping_cost = $10
+                |
+                | Shipping = $10
+                |
+                | NOT:
+                |
+                | $10 × 5 = $50
+                |
+                */
+
+                $itemShippingCost = (float) (
+                    $product->shipping_cost ?? 0
+                );
+
+                if (
+                    !is_finite($itemShippingCost)
+                    || $itemShippingCost < 0
+                ) {
+                    throw ValidationException::withMessages([
+                        'cart' => sprintf(
+                            'Invalid shipping cost for "%s".',
+                            $product->name,
+                        ),
+                    ]);
+                }
+
+                $itemShippingCents = (int) round(
+                    $itemShippingCost * 100,
+                );
+
+                $shippingCents += $itemShippingCents;
+
+                /*
+                |--------------------------------------------------------------------------
+                | Prepare Order Item Data
+                |--------------------------------------------------------------------------
+                */
 
                 $items->push([
                     'cart_item' => $cartItem,
@@ -208,6 +278,7 @@ final class CreateOrder
                     'quantity' => $quantity,
                     'unit_price_cents' => $unitPriceCents,
                     'line_total_cents' => $lineTotalCents,
+                    'shipping_cost_cents' => $itemShippingCents,
                 ]);
             }
 
@@ -225,21 +296,29 @@ final class CreateOrder
 
             /*
             |--------------------------------------------------------------------------
-            | Checkout Totals
+            | Validate Shipping
             |--------------------------------------------------------------------------
             |
-            | These values come from PrepareCheckout, but we normalize them
-            | again here because this is the final server-side order creation
-            | boundary.
+            | Shipping is calculated directly from the current products.
             |
+            | We intentionally do NOT use:
+            |
+            | $totals['shipping']
+            |
+            | because order creation is the final server-side pricing boundary.
+            |
+            */
+
+            $calculatedShippingCents = $shippingCents;
+
+            /*
+            |--------------------------------------------------------------------------
+            | Checkout Discount & Tax
+            |--------------------------------------------------------------------------
             */
 
             $discountCents = $this->toCents(
                 $totals['discount'] ?? 0,
-            );
-
-            $shippingCents = $this->toCents(
-                $totals['shipping'] ?? 0,
             );
 
             $taxCents = $this->toCents(
@@ -248,8 +327,8 @@ final class CreateOrder
 
             if (
                 $discountCents < 0
-                || $shippingCents < 0
                 || $taxCents < 0
+                || $calculatedShippingCents < 0
             ) {
                 throw ValidationException::withMessages([
                     'cart' => 'Invalid checkout totals.',
@@ -275,7 +354,7 @@ final class CreateOrder
             $totalCents = max(
                 0,
                 $subtotalCents
-                + $shippingCents
+                + $calculatedShippingCents
                 + $taxCents
                 - $discountCents,
             );
@@ -325,7 +404,7 @@ final class CreateOrder
             );
 
             $shipping = $this->fromCents(
-                $shippingCents,
+                $calculatedShippingCents,
             );
 
             $tax = $this->fromCents(
@@ -427,15 +506,15 @@ final class CreateOrder
             | Create Order Items
             |--------------------------------------------------------------------------
             |
-            | Discount is allocated in cents rather than floating-point values.
-            | The final item receives the remainder so the exact discounted
-            | merchandise total always equals:
+            | Discount is allocated proportionally in cents.
             |
-            | subtotal - discount
+            | Shipping remains separate from line_total and is stored as
+            | the product shipping snapshot.
             |
             */
 
             $allocatedDiscountCents = 0;
+
             $itemCount = $items->count();
 
             foreach ($items as $index => $item) {
@@ -444,7 +523,7 @@ final class CreateOrder
 
                 /*
                 |--------------------------------------------------------------------------
-                | Proportional Discount Allocation
+                | Allocate Discount
                 |--------------------------------------------------------------------------
                 */
 
@@ -454,6 +533,12 @@ final class CreateOrder
                 ) {
                     $itemDiscountCents = 0;
                 } elseif ($index === $itemCount - 1) {
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Last Item Gets Remaining Discount
+                    |--------------------------------------------------------------------------
+                    */
+
                     $itemDiscountCents =
                         $discountCents
                         - $allocatedDiscountCents;
@@ -486,15 +571,10 @@ final class CreateOrder
 
                 /*
                 |--------------------------------------------------------------------------
-                | Store Exact Unit Price
+                | Discounted Unit Price
                 |--------------------------------------------------------------------------
                 |
-                | Because order_items.unit_price has 2 decimal places, an exact
-                | per-unit representation may not always be possible.
-                |
-                | CreateStripeCheckoutSession therefore uses line_total as the
-                | authoritative amount and splits Stripe quantities into exact
-                | cent values when required.
+                | Order item unit_price stores the discounted unit value.
                 |
                 */
 
@@ -535,6 +615,17 @@ final class CreateOrder
 
                 /*
                 |--------------------------------------------------------------------------
+                | Shipping Cost Snapshot
+                |--------------------------------------------------------------------------
+                */
+
+                $shippingCost =
+                    $this->fromCents(
+                        (int) $item['shipping_cost_cents'],
+                    );
+
+                /*
+                |--------------------------------------------------------------------------
                 | Create Order Item
                 |--------------------------------------------------------------------------
                 */
@@ -554,6 +645,8 @@ final class CreateOrder
 
                     'unit_price' => $discountedUnitPrice,
 
+                    'shipping_cost' => $shippingCost,
+
                     'line_total' => $discountedLineTotal,
                 ]);
             }
@@ -570,6 +663,30 @@ final class CreateOrder
             ) {
                 throw ValidationException::withMessages([
                     'cart' => 'Unable to calculate the order discount correctly.',
+                ]);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Final Shipping Validation
+            |--------------------------------------------------------------------------
+            |
+            | Verify the order-level shipping equals the sum of all
+            | order-item shipping snapshots.
+            |
+            */
+
+            $orderItemShippingCents = $items->sum(
+                static fn (array $item): int =>
+                (int) $item['shipping_cost_cents'],
+            );
+
+            if (
+                $orderItemShippingCents
+                !== $calculatedShippingCents
+            ) {
+                throw ValidationException::withMessages([
+                    'cart' => 'Unable to calculate the order shipping correctly.',
                 ]);
             }
 

@@ -1,15 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Models\Permission;
 use Illuminate\Database\Seeder;
 
-class PermissionSeeder extends Seeder
+final class PermissionSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $permissions = [
@@ -37,50 +36,6 @@ class PermissionSeeder extends Seeder
                 'name' => 'View Profile',
                 'slug' => 'view-profile',
                 'description' => 'Allow users to view and update their profile.',
-            ],
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Requests
-            |--------------------------------------------------------------------------
-            */
-
-            [
-                'name' => 'View Requests',
-                'slug' => 'view-requests',
-                'description' => 'Allow viewing registered requests.',
-            ],
-
-            [
-                'name' => 'Create Requests',
-                'slug' => 'create-requests',
-                'description' => 'Allow creating new requests.',
-            ],
-
-            [
-                'name' => 'View Request Details',
-                'slug' => 'view-request-details',
-                'description' => 'Allow viewing request details.',
-            ],
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Shipments
-            |--------------------------------------------------------------------------
-            */
-
-            [
-                'name' => 'View Shipments',
-                'slug' => 'view-shipments',
-                'description' => 'Allow viewing shipments.',
-            ],
-
-            [
-                'name' => 'View Shipment Details',
-                'slug' => 'view-shipment-details',
-                'description' => 'Allow viewing shipment details.',
             ],
 
 
@@ -235,15 +190,21 @@ class PermissionSeeder extends Seeder
             ],
 
             [
-                'name' => 'Manage Orders',
-                'slug' => 'manage-orders',
-                'description' => 'Allow managing ecommerce orders.',
+                'name' => 'Update Orders',
+                'slug' => 'update-orders',
+                'description' => 'Allow updating ecommerce orders.',
             ],
 
             [
-                'name' => 'Update Order Status',
-                'slug' => 'update-order-status',
-                'description' => 'Allow updating ecommerce order statuses.',
+                'name' => 'Cancel Orders',
+                'slug' => 'cancel-orders',
+                'description' => 'Allow cancelling ecommerce orders.',
+            ],
+
+            [
+                'name' => 'Refund Orders',
+                'slug' => 'refund-orders',
+                'description' => 'Allow refunding ecommerce orders.',
             ],
 
 
@@ -343,51 +304,8 @@ class PermissionSeeder extends Seeder
 
             /*
             |--------------------------------------------------------------------------
-            | ECOMMERCE - REPORTS
-            |--------------------------------------------------------------------------
-            */
-
-            [
-                'name' => 'View Ecommerce Reports',
-                'slug' => 'view-ecommerce-reports',
-                'description' => 'Allow viewing ecommerce reports.',
-            ],
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | ECOMMERCE - SETTINGS
-            |--------------------------------------------------------------------------
-            */
-
-            [
-                'name' => 'View Ecommerce Settings',
-                'slug' => 'view-ecommerce-settings',
-                'description' => 'Allow viewing ecommerce settings.',
-            ],
-
-            [
-                'name' => 'Edit Ecommerce Settings',
-                'slug' => 'edit-ecommerce-settings',
-                'description' => 'Allow editing ecommerce settings.',
-            ],
-
-
-            /*
-            |--------------------------------------------------------------------------
             | SMART BUY - CUSTOMER
             |--------------------------------------------------------------------------
-            |
-            | These slugs exactly match web.php:
-            |
-            | my-smart-buy
-            | my-smart-buy-details
-            | my-smart-buy-create
-            | my-smart-buy-confirmation
-            | my-smart-buy-quote
-            | my-smart-buy-payment
-            | my-smart-buy-tracking
-            |
             */
 
             [
@@ -406,12 +324,6 @@ class PermissionSeeder extends Seeder
                 'name' => 'Create My Smart Buy',
                 'slug' => 'my-smart-buy-create',
                 'description' => 'Allow customers to create Smart Buy requests.',
-            ],
-
-            [
-                'name' => 'View My Smart Buy Confirmation',
-                'slug' => 'my-smart-buy-confirmation',
-                'description' => 'Allow customers to view Smart Buy confirmation pages.',
             ],
 
             [
@@ -437,17 +349,6 @@ class PermissionSeeder extends Seeder
             |--------------------------------------------------------------------------
             | SMART BUY - ADMIN
             |--------------------------------------------------------------------------
-            |
-            | These slugs exactly match web.php:
-            |
-            | smart-buy
-            | smart-buy-details
-            | smart-buy-status
-            | smart-buy-quote
-            | smart-buy-quote-edit
-            | smart-buy-payment
-            | smart-buy-shipment
-            |
             */
 
             [
@@ -488,7 +389,7 @@ class PermissionSeeder extends Seeder
 
             [
                 'name' => 'Manage Smart Buy Shipment',
-                'slug' => 'smart-buy-shipment',
+                'slug' => 'manage-smart-buy-shipment',
                 'description' => 'Allow administrators to manage Smart Buy shipments.',
             ],
 
@@ -528,6 +429,12 @@ class PermissionSeeder extends Seeder
                 'name' => 'View Reports',
                 'slug' => 'view-reports',
                 'description' => 'Allow viewing central reports.',
+            ],
+
+            [
+                'name' => 'View Ecommerce Reports',
+                'slug' => 'view-ecommerce-reports',
+                'description' => 'Allow viewing ecommerce reports.',
             ],
 
             [
@@ -736,9 +643,9 @@ class PermissionSeeder extends Seeder
             ],
 
             [
-                'name' => 'Edit Settings',
-                'slug' => 'edit-settings',
-                'description' => 'Allow editing general settings.',
+                'name' => 'Update Settings',
+                'slug' => 'update-settings',
+                'description' => 'Allow updating general settings.',
             ],
 
             [
@@ -799,7 +706,6 @@ class PermissionSeeder extends Seeder
         */
 
         foreach ($permissions as $permission) {
-
             Permission::updateOrCreate(
                 [
                     'slug' => $permission['slug'],
@@ -809,7 +715,6 @@ class PermissionSeeder extends Seeder
                     'description' => $permission['description'],
                 ]
             );
-
         }
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\CustomerRegistration;
+use App\Http\Middleware\MaintenanceMode;
 use App\Http\Middleware\PermissionMiddleware;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Foundation\Application;
@@ -48,7 +50,6 @@ return Application::configure(
 
             'role' => RoleMiddleware::class,
 
-
             /*
             |--------------------------------------------------------------------------
             | Custom Permission Middleware
@@ -56,6 +57,22 @@ return Application::configure(
             */
 
             'permission' => PermissionMiddleware::class,
+
+            /*
+            |--------------------------------------------------------------------------
+            | Maintenance Mode Middleware
+            |--------------------------------------------------------------------------
+            */
+
+            'maintenance' => MaintenanceMode::class,
+
+            /*
+            |--------------------------------------------------------------------------
+            | Customer Registration
+            |--------------------------------------------------------------------------
+            */
+
+            'registration' => CustomerRegistration::class,
 
         ]);
 

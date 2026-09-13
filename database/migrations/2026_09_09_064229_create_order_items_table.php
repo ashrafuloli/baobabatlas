@@ -46,17 +46,55 @@ return new class extends Migration
 
             /*
              |--------------------------------------------------------------------------
-             | Pricing Snapshot
+             | Quantity
              |--------------------------------------------------------------------------
              */
 
             $table->unsignedInteger('quantity');
 
+            /*
+             |--------------------------------------------------------------------------
+             | Pricing Snapshot
+             |--------------------------------------------------------------------------
+             */
+
             $table->decimal('unit_price', 12, 2);
+
+            /*
+             |--------------------------------------------------------------------------
+             | Shipping Cost Snapshot
+             |--------------------------------------------------------------------------
+             |
+             | Product shipping cost at the time the order was created.
+             |
+             | This is charged once per order item line.
+             | It is NOT multiplied by quantity.
+             |
+             */
+
+            $table->decimal('shipping_cost', 12, 2)
+                ->default(0);
+
+            /*
+             |--------------------------------------------------------------------------
+             | Product Line Total
+             |--------------------------------------------------------------------------
+             |
+             | Product price × quantity.
+             |
+             | Shipping is stored separately in shipping_cost.
+             |
+             */
 
             $table->decimal('line_total', 12, 2);
 
             $table->timestamps();
+
+            /*
+             |--------------------------------------------------------------------------
+             | Indexes
+             |--------------------------------------------------------------------------
+             */
 
             $table->index('order_id');
 

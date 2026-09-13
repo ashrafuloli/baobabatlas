@@ -214,7 +214,7 @@
     flex-direction: column;
     gap: 30px;
     margin-left: 250px;
-    overflow-x: clip;
+    overflow-x: hidden;
 
     @include mq(lg) {
         padding: 20px;

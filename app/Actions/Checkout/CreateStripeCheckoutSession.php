@@ -15,6 +15,10 @@ final class CreateStripeCheckoutSession
     /**
      * Create or reuse a Stripe Checkout Session for an order.
      *
+     * OrderItem line_total is the authoritative merchandise amount.
+     * Order shipping is added once as a separate Stripe line item.
+     * Order tax is added once as a separate Stripe line item.
+     *
      * @throws ApiErrorException
      */
     public function execute(Order $order): Session
@@ -33,21 +37,29 @@ final class CreateStripeCheckoutSession
         |--------------------------------------------------------------------------
         */
 
-        if ($order->isPaid()) {
+        if ($order->status !== Order::STATUS_PENDING) {
             throw new RuntimeException(
-                'A Checkout Session cannot be created for a paid order.',
+                'A Checkout Session can only be created for a pending order.',
             );
         }
 
-        if ($order->isCancelled()) {
+        if ($order->payment_status !== Order::PAYMENT_STATUS_PENDING) {
             throw new RuntimeException(
-                'A Checkout Session cannot be created for a cancelled order.',
+                'A Checkout Session can only be created for a pending payment.',
             );
         }
 
-        if ($order->status === Order::STATUS_FAILED) {
+        /*
+        |--------------------------------------------------------------------------
+        | Load Order Items
+        |--------------------------------------------------------------------------
+        */
+
+        $order->loadMissing('items');
+
+        if ($order->items->isEmpty()) {
             throw new RuntimeException(
-                'A Checkout Session cannot be created for a failed order.',
+                'Cannot create Stripe Checkout Session for an empty order.',
             );
         }
 
@@ -104,7 +116,7 @@ final class CreateStripeCheckoutSession
             trim(
                 (string) (
                 $order->currency
-                    ?: 'usd'
+                    ?: setting('currency', 'USD')
                 ),
             ),
         );
@@ -120,25 +132,15 @@ final class CreateStripeCheckoutSession
 
         /*
         |--------------------------------------------------------------------------
-        | Validate Order Items
-        |--------------------------------------------------------------------------
-        */
-
-        if ($order->items->isEmpty()) {
-            throw new RuntimeException(
-                'Cannot create Stripe Checkout Session for an empty order.',
-            );
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Build Stripe Line Items
+        | Build Stripe Merchandise Line Items
         |--------------------------------------------------------------------------
         |
-        | line_total is the authoritative amount.
+        | OrderItem.line_total is authoritative.
         |
-        | We split an item into a maximum of two Stripe line items when
-        | quantity does not divide evenly into cents.
+        | Stripe requires integer amounts in the smallest currency unit.
+        | When line_total is not evenly divisible by quantity, the line
+        | item is split into two Stripe line items so the exact order
+        | amount is preserved.
         |
         */
 
@@ -164,9 +166,21 @@ final class CreateStripeCheckoutSession
                 );
             }
 
+            /*
+            |--------------------------------------------------------------------------
+            | Zero-Value Merchandise
+            |--------------------------------------------------------------------------
+            */
+
             if ($lineTotalCents === 0) {
                 continue;
             }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Calculate Per-Unit Stripe Amount
+            |--------------------------------------------------------------------------
+            */
 
             $baseCents = intdiv(
                 $lineTotalCents,
@@ -199,14 +213,11 @@ final class CreateStripeCheckoutSession
                 $lineItems[] = [
                     'price_data' => [
                         'currency' => $currency,
-
                         'product_data' => [
                             'name' => $item->product_name,
                         ],
-
                         'unit_amount' => $baseCents,
                     ],
-
                     'quantity' => $baseQuantity,
                 ];
 
@@ -226,14 +237,11 @@ final class CreateStripeCheckoutSession
                 $lineItems[] = [
                     'price_data' => [
                         'currency' => $currency,
-
                         'product_data' => [
                             'name' => $item->product_name,
                         ],
-
                         'unit_amount' => $remainderCents,
                     ],
-
                     'quantity' => $remainder,
                 ];
 
@@ -246,6 +254,12 @@ final class CreateStripeCheckoutSession
         |--------------------------------------------------------------------------
         | Shipping
         |--------------------------------------------------------------------------
+        |
+        | Order.shipping is the final customer-facing shipping amount.
+        |
+        | Shipping is added exactly once and is never multiplied by
+        | product quantity.
+        |
         */
 
         $shippingAmountCents = (int) round(
@@ -262,14 +276,11 @@ final class CreateStripeCheckoutSession
             $lineItems[] = [
                 'price_data' => [
                     'currency' => $currency,
-
                     'product_data' => [
                         'name' => 'Shipping',
                     ],
-
                     'unit_amount' => $shippingAmountCents,
                 ],
-
                 'quantity' => 1,
             ];
 
@@ -296,14 +307,11 @@ final class CreateStripeCheckoutSession
             $lineItems[] = [
                 'price_data' => [
                     'currency' => $currency,
-
                     'product_data' => [
                         'name' => 'Tax',
                     ],
-
                     'unit_amount' => $taxAmountCents,
                 ],
-
                 'quantity' => 1,
             ];
 
@@ -358,7 +366,11 @@ final class CreateStripeCheckoutSession
 
         if ($stripeTotalCents !== $orderTotalCents) {
             throw new RuntimeException(
-                'Stripe amount does not match the order total.',
+                sprintf(
+                    'Stripe amount does not match the order total. Stripe: %d cents, Order: %d cents.',
+                    $stripeTotalCents,
+                    $orderTotalCents,
+                ),
             );
         }
 
@@ -366,27 +378,19 @@ final class CreateStripeCheckoutSession
         |--------------------------------------------------------------------------
         | Idempotency Key
         |--------------------------------------------------------------------------
+        |
+        | A new Checkout Session request gets a unique idempotency key.
+        |
+        | Existing open sessions are reused above, so a unique key is only
+        | needed when Stripe requires a new Checkout Session.
+        |
         */
 
-        if ($existingSessionId !== '') {
-            $idempotencyKey = sprintf(
-                'ecommerce-order-%d-retry-%s',
-                $order->id,
-                substr(
-                    hash(
-                        'sha256',
-                        $existingSessionId,
-                    ),
-                    0,
-                    16,
-                ),
-            );
-        } else {
-            $idempotencyKey = sprintf(
-                'ecommerce-order-%d-initial',
-                $order->id,
-            );
-        }
+        $idempotencyKey = sprintf(
+            'ecommerce-order-%d-%s',
+            $order->id,
+            bin2hex(random_bytes(16)),
+        );
 
         /*
         |--------------------------------------------------------------------------
@@ -414,7 +418,8 @@ final class CreateStripeCheckoutSession
                     ) . '?session_id={CHECKOUT_SESSION_ID}',
 
                 'cancel_url' => route(
-                    'checkout',
+                    'my-orders.show',
+                    $order,
                 ),
 
                 'billing_address_collection' => 'auto',

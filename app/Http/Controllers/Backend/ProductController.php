@@ -44,8 +44,15 @@ final class ProductController extends Controller
         // Search
         if ($search = request('search')) {
             $query->where(function ($query) use ($search) {
-                $query->where('name', 'like', "%{$search}%")
-                    ->orWhere('sku', 'like', "%{$search}%");
+                $query->where(
+                    'name',
+                    'like',
+                    "%{$search}%",
+                )->orWhere(
+                    'sku',
+                    'like',
+                    "%{$search}%",
+                );
             });
         }
 
@@ -66,14 +73,24 @@ final class ProductController extends Controller
 
         // Category filter
         if ($category = request('category')) {
-            $query->whereHas('categories', function ($query) use ($category) {
-                $query->where('categories.id', $category);
+            $query->whereHas('categories', function ($query) use (
+                $category
+            ) {
+                $query->where(
+                    'categories.id',
+                    $category,
+                );
             });
         }
 
+        /*
+         * Latest created product first.
+         *
+         * created_at DESC ensures that the most recently
+         * created product appears at the top of the list.
+         */
         $products = $query
-            ->orderBy('sort_order')
-            ->orderBy('name')
+            ->latest('created_at')
             ->paginate(15)
             ->withQueryString();
 
@@ -89,7 +106,7 @@ final class ProductController extends Controller
             ->get();
 
         return view(
-            'backend.pages.ecommerce.admin.products.index',
+            'backend.pages.ecommerce.products.index',
             compact(
                 'products',
                 'brands',
@@ -126,7 +143,7 @@ final class ProductController extends Controller
             ->get();
 
         return view(
-            'backend.pages.ecommerce.admin.products.create',
+            'backend.pages.ecommerce.products.create',
             compact(
                 'brands',
                 'categories',
@@ -166,15 +183,22 @@ final class ProductController extends Controller
                     'source' => $validated['source'],
                     'thumbnail' => null,
                     'video_url' => $validated['video_url'] ?? null,
-                    'short_description' =>
+                    'short_description' => $this->normalizeRichText(
                         $validated['short_description'] ?? null,
-                    'description' =>
+                    ),
+                    'description' => $this->normalizeRichText(
                         $validated['description'] ?? null,
+                    ),
                     'price' => $validated['price'],
                     'compare_price' =>
                         $validated['compare_price'] ?? null,
                     'cost_price' =>
                         $validated['cost_price'] ?? null,
+
+                    // Product shipping cost
+                    'shipping_cost' =>
+                        $validated['shipping_cost'],
+
                     'sort_order' =>
                         $validated['sort_order'] ?? 0,
                     'status' => $request->boolean('status'),
@@ -235,7 +259,7 @@ final class ProductController extends Controller
         ]);
 
         return view(
-            'backend.pages.ecommerce.admin.products.details',
+            'backend.pages.ecommerce.products.details',
             compact('product'),
         );
     }
@@ -274,7 +298,7 @@ final class ProductController extends Controller
             ->get();
 
         return view(
-            'backend.pages.ecommerce.admin.products.edit',
+            'backend.pages.ecommerce.products.edit',
             compact(
                 'product',
                 'brands',
@@ -323,15 +347,22 @@ final class ProductController extends Controller
                     'sku' => $validated['sku'] ?? null,
                     'source' => $validated['source'],
                     'video_url' => $validated['video_url'] ?? null,
-                    'short_description' =>
+                    'short_description' => $this->normalizeRichText(
                         $validated['short_description'] ?? null,
-                    'description' =>
+                    ),
+                    'description' => $this->normalizeRichText(
                         $validated['description'] ?? null,
+                    ),
                     'price' => $validated['price'],
                     'compare_price' =>
                         $validated['compare_price'] ?? null,
                     'cost_price' =>
                         $validated['cost_price'] ?? null,
+
+                    // Product shipping cost
+                    'shipping_cost' =>
+                        $validated['shipping_cost'],
+
                     'sort_order' =>
                         $validated['sort_order'] ?? 0,
                     'status' => $request->boolean('status'),
@@ -519,6 +550,12 @@ final class ProductController extends Controller
                 'min:0',
             ],
 
+            'shipping_cost' => [
+                'required',
+                'numeric',
+                'min:0',
+            ],
+
             'sort_order' => [
                 'nullable',
                 'integer',
@@ -623,14 +660,6 @@ final class ProductController extends Controller
                 'boolean',
             ],
 
-            /*
-             * IMPORTANT:
-             * Generated variant attribute values.
-             *
-             * Example:
-             * variants[0][values][1] = 5
-             * variants[0][values][2] = 8
-             */
             'variants.*.values' => [
                 'required',
                 'array',
@@ -664,7 +693,8 @@ final class ProductController extends Controller
             ->unique()
             ->values();
 
-        $attributeValues = $validated['attribute_values'] ?? [];
+        $attributeValues =
+            $validated['attribute_values'] ?? [];
 
         foreach ($attributeValues as $attributeId => $valueIds) {
             $attributeId = (int) $attributeId;
@@ -693,7 +723,8 @@ final class ProductController extends Controller
         }
 
         foreach ($attributeIds as $attributeId) {
-            $values = $attributeValues[$attributeId] ?? [];
+            $values =
+                $attributeValues[$attributeId] ?? [];
 
             if (count($values) === 0) {
                 throw ValidationException::withMessages([
@@ -1209,7 +1240,10 @@ final class ProductController extends Controller
             [],
         );
 
-        if (!is_array($imageIds) || $imageIds === []) {
+        if (
+            !is_array($imageIds) ||
+            $imageIds === []
+        ) {
             return;
         }
 
@@ -1269,5 +1303,137 @@ final class ProductController extends Controller
                 unlink($fullPath);
             }
         }
+    }
+
+    private function normalizeRichText(
+        mixed $value,
+    ): ?string {
+        if ($value === null) {
+            return null;
+        }
+
+        $value = trim((string) $value);
+
+        if (
+            $value === '' ||
+            $value === '<p><br></p>'
+        ) {
+            return null;
+        }
+
+        $allowedTags = [
+            // Document
+            '<html>',
+            '<head>',
+            '<body>',
+            '<main>',
+            '<article>',
+            '<section>',
+            '<header>',
+            '<footer>',
+            '<aside>',
+            '<nav>',
+
+            // Headings
+            '<h1>',
+            '<h2>',
+            '<h3>',
+            '<h4>',
+            '<h5>',
+            '<h6>',
+
+            // Paragraph / text
+            '<p>',
+            '<br>',
+            '<hr>',
+            '<div>',
+            '<span>',
+
+            // Formatting
+            '<strong>',
+            '<b>',
+            '<em>',
+            '<i>',
+            '<u>',
+            '<s>',
+            '<strike>',
+            '<del>',
+            '<ins>',
+            '<mark>',
+            '<small>',
+            '<sub>',
+            '<sup>',
+
+            // Quotes
+            '<blockquote>',
+            '<q>',
+            '<cite>',
+
+            // Code
+            '<pre>',
+            '<code>',
+            '<kbd>',
+            '<samp>',
+            '<var>',
+
+            // Lists
+            '<ul>',
+            '<ol>',
+            '<li>',
+            '<dl>',
+            '<dt>',
+            '<dd>',
+
+            // Links
+            '<a>',
+
+            // Images / media
+            '<img>',
+            '<figure>',
+            '<figcaption>',
+            '<picture>',
+            '<source>',
+            '<video>',
+            '<audio>',
+            '<track>',
+
+            // Tables
+            '<table>',
+            '<caption>',
+            '<thead>',
+            '<tbody>',
+            '<tfoot>',
+            '<tr>',
+            '<th>',
+            '<td>',
+            '<colgroup>',
+            '<col>',
+
+            // Forms / embeds
+            '<details>',
+            '<summary>',
+            '<iframe>',
+
+            // WordPress/common content
+            '<abbr>',
+            '<address>',
+            '<bdi>',
+            '<bdo>',
+            '<data>',
+            '<time>',
+            '<wbr>',
+            '<ruby>',
+            '<rt>',
+            '<rp>',
+
+            // Misc
+            '<fieldset>',
+            '<legend>',
+        ];
+
+        return strip_tags(
+            $value,
+            implode('', $allowedTags),
+        );
     }
 }

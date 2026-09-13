@@ -7,6 +7,12 @@
 
         $cartQuantity = $cartItems->sum('quantity');
 
+        /*
+        |--------------------------------------------------------------------------
+        | Subtotal
+        |--------------------------------------------------------------------------
+        */
+
         $subtotal = $cartItems->sum(function ($cartItem) {
             $unitPrice = $cartItem->variant
                 ? $cartItem->variant->price
@@ -15,8 +21,23 @@
             return (float) $unitPrice * $cartItem->quantity;
         });
 
+        /*
+        |--------------------------------------------------------------------------
+        | Product Shipping
+        |--------------------------------------------------------------------------
+        |
+        | Shipping cost is product-level.
+        |
+        | Each cart line contributes its product shipping cost once.
+        | Quantity does NOT multiply the shipping cost.
+        |
+        */
+
+        $shipping = $cartItems->sum(function ($cartItem) {
+            return (float) ($cartItem->product->shipping_cost ?? 0);
+        });
+
         $discount = (float) ($discount ?? 0);
-        $shipping = (float) ($shipping ?? 0);
         $tax = (float) ($tax ?? 0);
 
         $total = max(
@@ -31,7 +52,10 @@
 
         <div class="container">
 
-            {{-- Breadcrumb --}}
+            {{-- ============================================================
+                Breadcrumb
+            ============================================================= --}}
+
             <div class="cart-breadcrumb">
 
                 <a href="{{ route('shop') }}">
@@ -49,7 +73,10 @@
             </div>
 
 
-            {{-- Page Header --}}
+            {{-- ============================================================
+                Page Header
+            ============================================================= --}}
+
             <div class="cart-page-header">
 
                 <div class="cart-page-header__content">
@@ -69,8 +96,10 @@
                 </div>
 
 
-                <a href="{{ route('shop') }}"
-                   class="cart-continue-btn">
+                <a
+                    href="{{ route('shop') }}"
+                    class="cart-continue-btn"
+                >
 
                     <i class="ri-arrow-left-line"></i>
 
@@ -83,14 +112,25 @@
             </div>
 
 
+            {{-- ============================================================
+                Cart With Items
+            ============================================================= --}}
+
             @if ($cartItems->isNotEmpty())
 
                 <div class="cart-page-grid">
 
-                    {{-- Cart Items --}}
+                    {{-- ====================================================
+                        Cart Items
+                    ===================================================== --}}
+
                     <div class="cart-items-wrapper">
 
                         <div class="cart-items-card">
+
+                            {{-- =================================================
+                                Cart Items Header
+                            ================================================== --}}
 
                             <div class="cart-items-card__header">
 
@@ -101,15 +141,22 @@
                                     </span>
 
                                     <h2 class="cart-product-count">
+
                                         {{ $cartQuantity }}
-                                        {{ $cartQuantity === 1 ? 'Product' : 'Products' }}
+
+                                        {{ $cartQuantity === 1
+                                            ? 'Product'
+                                            : 'Products' }}
+
                                     </h2>
 
                                 </div>
 
 
-                                <button type="button"
-                                        class="clear-cart-btn">
+                                <button
+                                    type="button"
+                                    class="clear-cart-btn"
+                                >
 
                                     <i class="ri-delete-bin-line"></i>
 
@@ -122,6 +169,10 @@
                             </div>
 
 
+                            {{-- =================================================
+                                Cart Items List
+                            ================================================== --}}
+
                             <div class="cart-items-list">
 
                                 @foreach ($cartItems as $cartItem)
@@ -130,41 +181,78 @@
                                         $product = $cartItem->product;
                                         $variant = $cartItem->variant;
 
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | Unit Price
+                                        |--------------------------------------------------------------------------
+                                        */
+
                                         $unitPrice = $variant
                                             ? (float) $variant->price
                                             : (float) $product->price;
+
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | Item Total
+                                        |--------------------------------------------------------------------------
+                                        */
 
                                         $itemTotal =
                                             $unitPrice *
                                             $cartItem->quantity;
 
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | Product Shipping Cost
+                                        |--------------------------------------------------------------------------
+                                        */
+
+                                        $itemShippingCost =
+                                            (float) ($product->shipping_cost ?? 0);
+
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | Product Image
+                                        |--------------------------------------------------------------------------
+                                        */
+
                                         $productImage = null;
 
                                         if ($variant) {
+
                                             $productImage =
                                                 $variant->image;
 
                                             if (!$productImage) {
+
                                                 $variantImage =
                                                     $variant->images->first();
 
                                                 if ($variantImage) {
+
                                                     $productImage =
                                                         $variantImage->image;
+
                                                 }
+
                                             }
+
                                         }
 
                                         if (!$productImage) {
+
                                             $productImage =
                                                 $product->images
                                                     ->whereNull('variant_id')
                                                     ->first()?->image;
+
                                         }
 
                                         if (!$productImage) {
+
                                             $productImage =
                                                 $product->thumbnail;
+
                                         }
 
                                         $productImageUrl = $productImage
@@ -173,13 +261,31 @@
                                                 'assets/img/products/placeholder.png'
                                             );
 
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | Product URL
+                                        |--------------------------------------------------------------------------
+                                        */
+
                                         $productUrl = route(
                                             'shop.details',
                                             $product->slug
                                         );
 
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | Category
+                                        |--------------------------------------------------------------------------
+                                        */
+
                                         $category =
                                             $product->categories->first();
+
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | Availability
+                                        |--------------------------------------------------------------------------
+                                        */
 
                                         $isProductAvailable =
                                             $product->isActive();
@@ -200,27 +306,40 @@
                                     @endphp
 
 
-                                    <div class="cart-item {{ !$isAvailable ? 'is-unavailable' : '' }}"
-                                         data-item-id="{{ $cartItem->id }}"
-                                         data-price="{{ number_format($unitPrice, 2, '.', '') }}"
-                                         data-update-url="{{ route('cart.items.update', $cartItem->id) }}"
-                                         data-remove-url="{{ route('cart.items.destroy', $cartItem->id) }}">
+                                    <div
+                                        class="cart-item {{ !$isAvailable ? 'is-unavailable' : '' }}"
+                                        data-item-id="{{ $cartItem->id }}"
+                                        data-price="{{ number_format($unitPrice, 2, '.', '') }}"
+                                        data-shipping-cost="{{ number_format($itemShippingCost, 2, '.', '') }}"
+                                        data-update-url="{{ route('cart.items.update', $cartItem->id) }}"
+                                        data-remove-url="{{ route('cart.items.destroy', $cartItem->id) }}"
+                                    >
 
-                                        {{-- Product Image --}}
+                                        {{-- ========================================
+                                            Product Image
+                                        ========================================= --}}
+
                                         <div class="cart-item__image">
 
                                             <a href="{{ $productUrl }}">
 
-                                                <img src="{{ $productImageUrl }}"
-                                                     alt="{{ $product->name }}">
+                                                <img
+                                                    src="{{ $productImageUrl }}"
+                                                    alt="{{ $product->name }}"
+                                                >
 
                                             </a>
 
                                         </div>
 
 
-                                        {{-- Product Content --}}
+                                        {{-- ========================================
+                                            Product Content
+                                        ========================================= --}}
+
                                         <div class="cart-item__content">
+
+                                            {{-- Category --}}
 
                                             @if ($category)
 
@@ -231,6 +350,8 @@
                                             @endif
 
 
+                                            {{-- Product Name --}}
+
                                             <h3>
 
                                                 <a href="{{ $productUrl }}">
@@ -240,7 +361,10 @@
                                             </h3>
 
 
-                                            {{-- Variant / SKU --}}
+                                            {{-- ====================================
+                                                Variant / SKU
+                                            ===================================== --}}
+
                                             @if ($variant)
 
                                                 <div class="cart-item__meta">
@@ -302,7 +426,10 @@
                                             @endif
 
 
-                                            {{-- Availability --}}
+                                            {{-- ====================================
+                                                Availability
+                                            ===================================== --}}
+
                                             @if (!$isAvailable)
 
                                                 <div class="cart-item__availability">
@@ -337,34 +464,45 @@
                                             @endif
 
 
-                                            {{-- Quantity + Price --}}
+                                            {{-- ====================================
+                                                Quantity + Price
+                                            ===================================== --}}
+
                                             <div class="cart-item__bottom">
+
+                                                {{-- Quantity --}}
 
                                                 <div class="quantity-control">
 
-                                                    <button type="button"
-                                                            class="quantity-btn quantity-minus"
-                                                            aria-label="Decrease quantity"
-                                                        {{ !$isAvailable ? 'disabled' : '' }}>
+                                                    <button
+                                                        type="button"
+                                                        class="quantity-btn quantity-minus"
+                                                        aria-label="Decrease quantity"
+                                                        {{ !$isAvailable ? 'disabled' : '' }}
+                                                    >
 
                                                         <i class="ri-subtract-line"></i>
 
                                                     </button>
 
 
-                                                    <input type="number"
-                                                           class="quantity-input"
-                                                           value="{{ $cartItem->quantity }}"
-                                                           min="1"
-                                                           max="{{ $variant ? max(1, $variant->stock) : 999 }}"
-                                                           readonly
-                                                           aria-label="Quantity">
+                                                    <input
+                                                        type="number"
+                                                        class="quantity-input"
+                                                        value="{{ $cartItem->quantity }}"
+                                                        min="1"
+                                                        max="{{ $variant ? max(1, $variant->stock) : 999 }}"
+                                                        readonly
+                                                        aria-label="Quantity"
+                                                    >
 
 
-                                                    <button type="button"
-                                                            class="quantity-btn quantity-plus"
-                                                            aria-label="Increase quantity"
-                                                        {{ !$isAvailable || ($variant && $cartItem->quantity >= $variant->stock) ? 'disabled' : '' }}>
+                                                    <button
+                                                        type="button"
+                                                        class="quantity-btn quantity-plus"
+                                                        aria-label="Increase quantity"
+                                                        {{ !$isAvailable || ($variant && $cartItem->quantity >= $variant->stock) ? 'disabled' : '' }}
+                                                    >
 
                                                         <i class="ri-add-line"></i>
 
@@ -372,6 +510,8 @@
 
                                                 </div>
 
+
+                                                {{-- Price --}}
 
                                                 <div class="cart-item__price">
 
@@ -381,6 +521,34 @@
                                                         each
 
                                                     </span>
+
+
+                                                    {{-- Product Shipping --}}
+
+                                                    @if ($itemShippingCost > 0)
+
+                                                        <span class="item-shipping">
+
+                                                            Shipping:
+                                                            ${{ number_format(
+                                                                $itemShippingCost,
+                                                                2
+                                                            ) }}
+
+                                                        </span>
+
+                                                    @else
+
+                                                        <span class="item-shipping">
+
+                                                            Free Shipping
+
+                                                        </span>
+
+                                                    @endif
+
+
+                                                    {{-- Item Total --}}
 
                                                     <strong class="item-total">
 
@@ -395,11 +563,16 @@
                                         </div>
 
 
-                                        {{-- Remove Item --}}
-                                        <button type="button"
-                                                class="cart-item-remove"
-                                                aria-label="Remove {{ $product->name }}"
-                                                data-remove-url="{{ route('cart.items.destroy', $cartItem->id) }}">
+                                        {{-- ========================================
+                                            Remove Item
+                                        ========================================= --}}
+
+                                        <button
+                                            type="button"
+                                            class="cart-item-remove"
+                                            aria-label="Remove {{ $product->name }}"
+                                            data-remove-url="{{ route('cart.items.destroy', $cartItem->id) }}"
+                                        >
 
                                             <i class="ri-delete-bin-line"></i>
 
@@ -412,11 +585,16 @@
                             </div>
 
 
-                            {{-- Cart Footer --}}
+                            {{-- =================================================
+                                Cart Footer
+                            ================================================== --}}
+
                             <div class="cart-items-card__footer">
 
-                                <a href="{{ route('shop') }}"
-                                   class="cart-footer-continue">
+                                <a
+                                    href="{{ route('shop') }}"
+                                    class="cart-footer-continue"
+                                >
 
                                     <i class="ri-arrow-left-line"></i>
 
@@ -442,10 +620,16 @@
                     </div>
 
 
-                    {{-- Cart Sidebar --}}
+                    {{-- ====================================================
+                        Cart Sidebar
+                    ===================================================== --}}
+
                     <aside class="cart-sidebar">
 
-                        {{-- Order Summary --}}
+                        {{-- =================================================
+                            Order Summary
+                        ================================================== --}}
+
                         <div class="cart-summary-card">
 
                             <div class="cart-summary-card__header">
@@ -461,7 +645,10 @@
                             </div>
 
 
-                            {{-- Promo Code --}}
+                            {{-- =================================================
+                                Promo Code
+                            ================================================== --}}
+
                             <div class="promo-code">
 
                                 <label for="promo-code">
@@ -484,10 +671,12 @@
                                         </div>
 
 
-                                        <button type="button"
-                                                class="remove-promo-btn"
-                                                aria-label="Remove promo code"
-                                                title="Remove promo code">
+                                        <button
+                                            type="button"
+                                            class="remove-promo-btn"
+                                            aria-label="Remove promo code"
+                                            title="Remove promo code"
+                                        >
 
                                             <i class="ri-close-line"></i>
 
@@ -499,17 +688,19 @@
 
                                     <div class="promo-code__field">
 
-                                        <input type="text"
-                                               id="promo-code"
-                                               placeholder="Enter code"
-                                               autocomplete="off"
-                                               maxlength="50">
+                                        <input
+                                            type="text"
+                                            id="promo-code"
+                                            placeholder="Enter code"
+                                            autocomplete="off"
+                                            maxlength="50"
+                                        >
 
-                                        <button type="button"
-                                                class="apply-promo-btn">
-
+                                        <button
+                                            type="button"
+                                            class="apply-promo-btn"
+                                        >
                                             Apply
-
                                         </button>
 
                                     </div>
@@ -519,8 +710,13 @@
                             </div>
 
 
-                            {{-- Summary --}}
+                            {{-- =================================================
+                                Summary
+                            ================================================== --}}
+
                             <div class="cart-summary-list">
+
+                                {{-- Subtotal --}}
 
                                 <div class="summary-row">
 
@@ -535,6 +731,8 @@
                                 </div>
 
 
+                                {{-- Shipping --}}
+
                                 <div class="summary-row">
 
                                     <span>
@@ -548,6 +746,8 @@
                                 </div>
 
 
+                                {{-- Discount --}}
+
                                 <div class="summary-row summary-discount">
 
                                     <span>
@@ -555,11 +755,18 @@
                                     </span>
 
                                     <strong class="summary-discount-value">
-                                        -${{ number_format($discount, 2) }}
+
+                                        -${{ number_format(
+                                            $discount,
+                                            2
+                                        ) }}
+
                                     </strong>
 
                                 </div>
 
+
+                                {{-- Tax --}}
 
                                 <div class="summary-row">
 
@@ -576,7 +783,10 @@
                             </div>
 
 
-                            {{-- Total --}}
+                            {{-- =================================================
+                                Total
+                            ================================================== --}}
+
                             <div class="cart-summary-total">
 
                                 <span>
@@ -590,10 +800,16 @@
                             </div>
 
 
+                            {{-- =================================================
+                                Checkout
+                            ================================================== --}}
+
                             @if ($cartItems->isNotEmpty())
 
-                                <a href="{{ route('checkout') }}"
-                                   class="checkout-btn">
+                                <a
+                                    href="{{ route('checkout') }}"
+                                    class="checkout-btn"
+                                >
 
                                     <span>
                                         Proceed to Checkout
@@ -619,7 +835,10 @@
                         </div>
 
 
-                        {{-- Cart Benefits --}}
+                        {{-- =================================================
+                            Cart Benefits
+                        ================================================== --}}
+
                         <div class="cart-benefits-card">
 
                             <div class="cart-benefit">
@@ -693,7 +912,10 @@
             @endif
 
 
-            {{-- Empty Cart --}}
+            {{-- ============================================================
+                Empty Cart
+            ============================================================= --}}
+
             <div class="cart-empty-state {{ $cartItems->isEmpty() ? 'is-visible' : '' }}">
 
                 <div class="cart-empty-state__icon">
@@ -713,8 +935,10 @@
                 </p>
 
 
-                <a href="{{ route('shop') }}"
-                   class="cart-continue-btn">
+                <a
+                    href="{{ route('shop') }}"
+                    class="cart-continue-btn"
+                >
 
                     Continue Shopping
 
@@ -730,13 +954,16 @@
 
 @endsection
 
+
 @push('scripts')
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
 
             const cartPage =
-                document.querySelector('.shopping-cart-page');
+                document.querySelector(
+                    '.shopping-cart-page'
+                );
 
 
             if (!cartPage) {
@@ -744,10 +971,18 @@
             }
 
 
+            /*
+            |--------------------------------------------------------------------------
+            | CSRF
+            |--------------------------------------------------------------------------
+            */
+
             const csrfToken =
                 document.querySelector(
                     'meta[name="csrf-token"]'
-                )?.getAttribute('content');
+                )?.getAttribute(
+                    'content'
+                );
 
 
             /*
@@ -834,8 +1069,26 @@
                 );
 
 
+            /*
+            |--------------------------------------------------------------------------
+            | Server-side Values
+            |--------------------------------------------------------------------------
+            */
+
             const hasAppliedCoupon =
                 @json($appliedCoupon !== null);
+
+
+            const initialDiscount =
+                Number(
+                    @json($discount)
+                ) || 0;
+
+
+            const initialTax =
+                Number(
+                    @json($tax)
+                ) || 0;
 
 
             /*
@@ -851,7 +1104,9 @@
 
 
                 if (!Number.isFinite(numericPrice)) {
+
                     return '$0.00';
+
                 }
 
 
@@ -871,10 +1126,6 @@
             |--------------------------------------------------------------------------
             | Generic Button Loading
             |--------------------------------------------------------------------------
-            |
-            | Important:
-            | disabled property AND disabled attribute are both handled.
-            |
             */
 
             const setButtonLoading = function (
@@ -1071,7 +1322,7 @@
 
                 /*
                 |--------------------------------------------------------------------------
-                | Minus
+                | Decrease
                 |--------------------------------------------------------------------------
                 |
                 | Quantity 1 remains enabled.
@@ -1101,7 +1352,7 @@
 
                 /*
                 |--------------------------------------------------------------------------
-                | Plus
+                | Increase
                 |--------------------------------------------------------------------------
                 */
 
@@ -1132,7 +1383,7 @@
 
                 /*
                 |--------------------------------------------------------------------------
-                | Restore Exact Icons
+                | Restore Icons
                 |--------------------------------------------------------------------------
                 */
 
@@ -1179,7 +1430,8 @@
 
                 if (
                     window.AppToast &&
-                    typeof window.AppToast.fire === 'function'
+                    typeof window.AppToast.fire ===
+                    'function'
                 ) {
 
                     window.AppToast.fire({
@@ -1196,7 +1448,9 @@
                     type === 'error'
                         ? 'error'
                         : 'log'
-                    ](message);
+                    ](
+                    message
+                );
 
             };
 
@@ -1211,6 +1465,13 @@
                 count
             ) {
 
+                const normalizedCount =
+                    Math.max(
+                        0,
+                        Number(count) || 0
+                    );
+
+
                 document
                     .querySelectorAll(
                         '[data-cart-count]'
@@ -1219,7 +1480,7 @@
                         function (element) {
 
                             element.textContent =
-                                count;
+                                normalizedCount;
 
                         }
                     );
@@ -1327,6 +1588,53 @@
 
             /*
             |--------------------------------------------------------------------------
+            | Calculate Product Shipping
+            |--------------------------------------------------------------------------
+            |
+            | IMPORTANT:
+            |
+            | Shipping is per cart line/product.
+            | Quantity does not multiply shipping.
+            |
+            */
+
+            const calculateShipping = function () {
+
+                const items =
+                    cartPage.querySelectorAll(
+                        '.cart-item'
+                    );
+
+
+                let shipping = 0;
+
+
+                items.forEach(
+                    function (item) {
+
+                        const shippingCost =
+                            Number(
+                                item.dataset.shippingCost
+                            ) || 0;
+
+
+                        shipping +=
+                            Math.max(
+                                0,
+                                shippingCost
+                            );
+
+                    }
+                );
+
+
+                return shipping;
+
+            };
+
+
+            /*
+            |--------------------------------------------------------------------------
             | Update Totals
             |--------------------------------------------------------------------------
             */
@@ -1350,7 +1658,7 @@
                         const price =
                             Number(
                                 item.dataset.price
-                            );
+                            ) || 0;
 
 
                         const quantityInput =
@@ -1403,6 +1711,59 @@
                 );
 
 
+                /*
+                |--------------------------------------------------------------------------
+                | Shipping
+                |--------------------------------------------------------------------------
+                */
+
+                const shipping =
+                    calculateShipping();
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Discount / Tax
+                |--------------------------------------------------------------------------
+                |
+                | These values are calculated by backend.
+                |
+                */
+
+                const discount =
+                    hasAppliedCoupon
+                        ? initialDiscount
+                        : 0;
+
+
+                const tax =
+                    hasAppliedCoupon
+                        ? initialTax
+                        : 0;
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Final Total
+                |--------------------------------------------------------------------------
+                */
+
+                const total =
+                    Math.max(
+                        0,
+                        subtotal +
+                        shipping +
+                        tax -
+                        discount
+                    );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Update Subtotal
+                |--------------------------------------------------------------------------
+                */
+
                 if (subtotalElement) {
 
                     subtotalElement.textContent =
@@ -1415,71 +1776,74 @@
 
                 /*
                 |--------------------------------------------------------------------------
-                | No Coupon
+                | Update Shipping
                 |--------------------------------------------------------------------------
                 */
 
-                if (!hasAppliedCoupon) {
+                if (shippingElement) {
 
-                    const shipping = 0;
-
-                    const tax = 0;
-
-                    const discount = 0;
-
-
-                    const total =
-                        Math.max(
-                            0,
-                            subtotal +
-                            shipping +
-                            tax -
-                            discount
+                    shippingElement.textContent =
+                        formatPrice(
+                            shipping
                         );
-
-
-                    if (discountElement) {
-
-                        discountElement.textContent =
-                            '-' +
-                            formatPrice(
-                                discount
-                            );
-
-                    }
-
-
-                    if (shippingElement) {
-
-                        shippingElement.textContent =
-                            formatPrice(
-                                shipping
-                            );
-
-                    }
-
-
-                    if (taxElement) {
-
-                        taxElement.textContent =
-                            formatPrice(
-                                tax
-                            );
-
-                    }
-
-
-                    if (totalElement) {
-
-                        totalElement.textContent =
-                            formatPrice(
-                                total
-                            );
-
-                    }
 
                 }
 
+
+                /*
+                |--------------------------------------------------------------------------
+                | Update Discount
+                |--------------------------------------------------------------------------
+                */
+
+                if (discountElement) {
+
+                    discountElement.textContent =
+                        '-' +
+                        formatPrice(
+                            discount
+                        );
+
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Update Tax
+                |--------------------------------------------------------------------------
+                */
+
+                if (taxElement) {
+
+                    taxElement.textContent =
+                        formatPrice(
+                            tax
+                        );
+
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Update Total
+                |--------------------------------------------------------------------------
+                */
+
+                if (totalElement) {
+
+                    totalElement.textContent =
+                        formatPrice(
+                            total
+                        );
+
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Product Count
+                |--------------------------------------------------------------------------
+                */
 
                 if (cartProductCount) {
 
@@ -1522,7 +1886,7 @@
 
                 const options = {
 
-                    method: method,
+                    method,
 
                     credentials:
                         'same-origin',
@@ -1574,7 +1938,7 @@
                     data =
                         await response.json();
 
-                } catch (error) {
+                } catch {
 
                     data = null;
 
@@ -1673,7 +2037,7 @@
                         '{{ route('cart.coupon.apply') }}',
                         'POST',
                         {
-                            code: code
+                            code
                         }
                     );
 
@@ -1688,13 +2052,6 @@
                     );
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | IMPORTANT:
-                    | Re-enable Apply button after error.
-                    |--------------------------------------------------------------------------
-                    */
-
                     setButtonLoading(
                         applyPromoButton,
                         false
@@ -1704,6 +2061,12 @@
 
             };
 
+
+            /*
+            |--------------------------------------------------------------------------
+            | Apply Coupon Click
+            |--------------------------------------------------------------------------
+            */
 
             if (applyPromoButton) {
 
@@ -1717,7 +2080,7 @@
 
             /*
             |--------------------------------------------------------------------------
-            | Promo Input Enter
+            | Coupon Enter
             |--------------------------------------------------------------------------
             */
 
@@ -1728,7 +2091,8 @@
                     function (event) {
 
                         if (
-                            event.key === 'Enter'
+                            event.key ===
+                            'Enter'
                         ) {
 
                             event.preventDefault();
@@ -1802,7 +2166,7 @@
 
             /*
             |--------------------------------------------------------------------------
-            | Update Cart Item Quantity
+            | Update Cart Quantity
             |--------------------------------------------------------------------------
             */
 
@@ -1904,7 +2268,7 @@
 
                     /*
                     |--------------------------------------------------------------------------
-                    | Coupon Applied
+                    | Coupon
                     |--------------------------------------------------------------------------
                     |
                     | Backend recalculates coupon.
@@ -1944,7 +2308,7 @@
 
                     /*
                     |--------------------------------------------------------------------------
-                    | Update Quantity Button Limits
+                    | Update Quantity State
                     |--------------------------------------------------------------------------
                     */
 
@@ -1957,6 +2321,10 @@
                     |--------------------------------------------------------------------------
                     | Update Totals
                     |--------------------------------------------------------------------------
+                    |
+                    | Shipping is recalculated from
+                    | data-shipping-cost.
+                    |
                     */
 
                     updateTotals();
@@ -2046,7 +2414,7 @@
 
                     /*
                     |--------------------------------------------------------------------------
-                    | Ignore Parallel Requests
+                    | Prevent Parallel Requests
                     |--------------------------------------------------------------------------
                     */
 
@@ -2171,7 +2539,7 @@
 
                     /*
                     |--------------------------------------------------------------------------
-                    | Increase Quantity
+                    | Increase
                     |--------------------------------------------------------------------------
                     */
 
@@ -2206,7 +2574,7 @@
 
                     /*
                     |--------------------------------------------------------------------------
-                    | Decrease Quantity
+                    | Decrease
                     |--------------------------------------------------------------------------
                     */
 
@@ -2458,7 +2826,7 @@
 
             /*
             |--------------------------------------------------------------------------
-            | Initial Quantity Button State
+            | Initial Quantity State
             |--------------------------------------------------------------------------
             */
 
@@ -2479,7 +2847,7 @@
 
             /*
             |--------------------------------------------------------------------------
-            | Initial Calculation
+            | Initial Totals
             |--------------------------------------------------------------------------
             */
 

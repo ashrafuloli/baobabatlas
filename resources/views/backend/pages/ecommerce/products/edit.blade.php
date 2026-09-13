@@ -2,6 +2,13 @@
 
 @section('title', 'Edit Product')
 
+@push('styles')
+    <link
+        href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css"
+        rel="stylesheet"
+    >
+@endpush
+
 @section('content')
     <div class="product-edit-page">
         <form
@@ -138,7 +145,9 @@
 
                             <div class="product-edit-page__grid product-edit-page__grid--2">
                                 <div class="product-edit-page__field">
-                                    <label for="sku">SKU</label>
+                                    <label for="sku">
+                                        SKU
+                                    </label>
 
                                     <input
                                         type="text"
@@ -186,15 +195,27 @@
 
                             <div class="product-edit-page__grid product-edit-page__grid--2">
                                 <div class="product-edit-page__field">
-                                    <label for="brand_id">Brand</label>
+                                    <label for="brand_id">
+                                        Brand
+                                    </label>
 
-                                    <select id="brand_id" name="brand_id">
-                                        <option value="">Select Brand</option>
+                                    <select
+                                        id="brand_id"
+                                        name="brand_id"
+                                    >
+                                        <option value="">
+                                            Select Brand
+                                        </option>
 
                                         @foreach ($brands as $brand)
                                             <option
                                                 value="{{ $brand->id }}"
-                                                @selected((string) old('brand_id', $product->brand_id) === (string) $brand->id)
+                                                @selected(
+                                                    (string) old(
+                                                        'brand_id',
+                                                        $product->brand_id
+                                                    ) === (string) $brand->id
+                                                )
                                             >
                                                 {{ $brand->name }}
                                             </option>
@@ -203,7 +224,9 @@
                                 </div>
 
                                 <div class="product-edit-page__field">
-                                    <label for="sort_order">Sort Order</label>
+                                    <label for="sort_order">
+                                        Sort Order
+                                    </label>
 
                                     <input
                                         type="number"
@@ -211,91 +234,113 @@
                                         name="sort_order"
                                         value="{{ old('sort_order', $product->sort_order) }}"
                                         min="0"
+                                        placeholder="0"
                                     >
                                 </div>
                             </div>
 
-                            <div class="product-edit-page__field">
-                                <label for="short_description">
-                                    Short Description
-                                </label>
-
-                                <textarea
-                                    id="short_description"
-                                    name="short_description"
-                                    rows="4"
-                                    placeholder="Write a short product description..."
-                                >{{ old('short_description', $product->short_description) }}</textarea>
-                            </div>
-
-                            <div class="product-edit-page__field">
-                                <label for="description">
-                                    Description
-                                </label>
-
-                                <textarea
-                                    id="description"
-                                    name="description"
-                                    rows="10"
-                                    placeholder="Write detailed product description..."
-                                    data-rich-editor
-                                >{{ old('description', $product->description) }}</textarea>
-                            </div>
-                        </div>
-                    </section>
-
-                    {{-- Categories --}}
-                    <section class="product-edit-page__card">
-                        <div class="product-edit-page__card-header">
-                            <div>
-                                <h2>Categories</h2>
-                                <p>Select the categories where this product belongs.</p>
-                            </div>
-
-                            <span class="product-edit-page__card-icon">
-                                <i class="ri-folder-line"></i>
-                            </span>
-                        </div>
-
-                        <div class="product-edit-page__card-body">
+                            {{-- Categories --}}
                             @php
-                                $selectedCategories = collect(
+                                $selectedCategoryIds = collect(
                                     old(
                                         'category_ids',
                                         $product->categories->pluck('id')->all(),
                                     ),
-                                )->map(fn ($id) => (string) $id)->all();
+                                )
+                                    ->map(fn ($id) => (string) $id)
+                                    ->all();
                             @endphp
 
-                            <div class="product-edit-page__category-grid">
-                                @foreach ($categories as $category)
-                                    <label class="product-edit-page__check-card">
-                                        <input
-                                            type="checkbox"
-                                            name="category_ids[]"
+                            <div class="product-edit-page__field">
+                                <label for="category_ids">
+                                    Categories
+                                </label>
+
+                                <select
+                                    id="category_ids"
+                                    name="category_ids[]"
+                                    multiple
+                                >
+                                    @foreach ($categories as $category)
+                                        <option
                                             value="{{ $category->id }}"
-                                            @checked(in_array((string) $category->id, $selectedCategories, true))
+                                            @selected(
+                                                in_array(
+                                                    (string) $category->id,
+                                                    $selectedCategoryIds,
+                                                    true
+                                                )
+                                            )
                                         >
+                                            {{ $category->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
 
-                                        <span class="product-edit-page__check-card-content">
-                                            <span class="product-edit-page__check-icon">
-                                                <i class="ri-folder-2-line"></i>
-                                            </span>
+                                <small>
+                                    Hold Ctrl or Command to select multiple categories.
+                                </small>
+                            </div>
 
-                                            <span>
-                                                <strong>{{ $category->name }}</strong>
+                            {{-- Short Description --}}
+                            <div class="product-edit-page__field">
 
-                                                @if ($category->parent)
-                                                    <small>
-                                                        {{ $category->parent->name }}
-                                                    </small>
-                                                @endif
-                                            </span>
+                                <div class="product-create-page__label-row">
 
-                                            <i class="ri-check-line product-edit-page__check-mark"></i>
-                                        </span>
+                                    <label for="short_description">
+                                        Short Description
                                     </label>
-                                @endforeach
+
+                                    <span class="product-create-page__field-hint">
+                                        Rich Text Editor
+                                    </span>
+
+                                </div>
+
+                                <div
+                                    class="product-create-page__quill"
+                                    data-quill-editor
+                                    data-placeholder="Write a short summary of this product..."
+                                ></div>
+
+                                <textarea
+                                    id="short_description"
+                                    name="short_description"
+                                    hidden
+                                    data-quill-source
+                                >{{ old('short_description', $product->short_description) }}</textarea>
+
+                            </div>
+
+
+                            {{-- Product Description --}}
+                            <div class="product-edit-page__field">
+
+                                <div class="product-create-page__label-row">
+
+                                    <label for="description">
+                                        Product Description
+                                    </label>
+
+                                    <span class="product-create-page__field-hint">
+                                        Rich Text Editor
+                                    </span>
+
+                                </div>
+
+                                <div
+                                    class="product-create-page__quill"
+                                    data-quill-editor
+                                    data-placeholder="Write your product description..."
+                                ></div>
+
+                                <textarea
+                                    id="description"
+                                    name="description"
+                                    hidden
+                                    data-quill-source
+                                >{{ old('description', $product->description) }}</textarea>
+
                             </div>
                         </div>
                     </section>
@@ -315,7 +360,9 @@
 
                         <div class="product-edit-page__card-body">
                             <div class="product-edit-page__field">
-                                <label>Product Thumbnail</label>
+                                <label>
+                                    Product Thumbnail
+                                </label>
 
                                 <div class="product-edit-page__thumbnail-upload">
                                     <div
@@ -362,7 +409,9 @@
                             </div>
 
                             <div class="product-edit-page__field">
-                                <label>Gallery Images</label>
+                                <label>
+                                    Gallery Images
+                                </label>
 
                                 <label
                                     for="gallery"
@@ -532,6 +581,30 @@
                                         >
                                     </div>
                                 </div>
+
+                                <div class="product-edit-page__field">
+                                    <label for="shipping_cost">
+                                        Shipping Cost
+                                    </label>
+
+                                    <div class="product-edit-page__price-input">
+                                        <span>$</span>
+
+                                        <input
+                                            type="number"
+                                            id="shipping_cost"
+                                            name="shipping_cost"
+                                            value="{{ old('shipping_cost', $product->shipping_cost ?? 0) }}"
+                                            min="0"
+                                            step="0.01"
+                                            placeholder="0.00"
+                                        >
+                                    </div>
+
+                                    <small>
+                                        Shipping charge for this product.
+                                    </small>
+                                </div>
                             </div>
                         </div>
                     </section>
@@ -541,7 +614,10 @@
                         <div class="product-edit-page__card-header">
                             <div>
                                 <h2>Options & Variants</h2>
-                                <p>Manage product options, variants, prices, stock and variant images.</p>
+                                <p>
+                                    Manage product options, variants, prices,
+                                    stock and variant images.
+                                </p>
                             </div>
 
                             <span class="product-edit-page__card-icon">
@@ -556,12 +632,17 @@
                                     old(
                                         'attribute_ids',
                                         $product->variants
-                                            ->flatMap(fn ($variant) => $variant->values->pluck('attribute_id'))
+                                            ->flatMap(
+                                                fn ($variant) => $variant->values
+                                                    ->pluck('attribute_id')
+                                            )
                                             ->unique()
                                             ->values()
                                             ->all(),
                                     ),
-                                )->map(fn ($id) => (string) $id)->all();
+                                )
+                                    ->map(fn ($id) => (string) $id)
+                                    ->all();
 
                                 $oldAttributeValues = old('attribute_values', []);
 
@@ -577,9 +658,12 @@
                                             'status' => $variant->status,
                                             'image' => $variant->image,
                                             'values' => $variant->values
-                                                ->mapWithKeys(fn ($value) => [
-                                                    $value->attribute_id => $value->attribute_value_id,
-                                                ])
+                                                ->mapWithKeys(
+                                                    fn ($value) => [
+                                                        $value->attribute_id =>
+                                                            $value->attribute_value_id,
+                                                    ]
+                                                )
                                                 ->all(),
                                         ];
                                     })->values()->all(),
@@ -626,7 +710,9 @@
                                                     <i class="ri-check-line"></i>
                                                 </span>
 
-                                                <strong>{{ $attribute->name }}</strong>
+                                                <strong>
+                                                    {{ $attribute->name }}
+                                                </strong>
                                             </span>
 
                                             <span>
@@ -661,9 +747,13 @@
 
                             <div class="product-edit-page__variant-toolbar">
                                 <div>
-                                    <h3>Variants</h3>
+                                    <h3>
+                                        Variants
+                                    </h3>
+
                                     <p>
-                                        Each variant can have its own price, stock, SKU and image.
+                                        Each variant can have its own price,
+                                        stock, SKU and image.
                                     </p>
                                 </div>
 
@@ -732,7 +822,10 @@
 
                                                 @if ($attribute && $value)
                                                     <span class="product-edit-page__variant-value">
-                                                        <strong>{{ $attribute->name }}:</strong>
+                                                        <strong>
+                                                            {{ $attribute->name }}:
+                                                        </strong>
+
                                                         {{ $value->label }}
 
                                                         <input
@@ -750,7 +843,9 @@
 
                                         <div class="product-edit-page__variant-grid">
                                             <div class="product-edit-page__field">
-                                                <label>SKU</label>
+                                                <label>
+                                                    SKU
+                                                </label>
 
                                                 <input
                                                     type="text"
@@ -762,7 +857,9 @@
                                             </div>
 
                                             <div class="product-edit-page__field">
-                                                <label>Price</label>
+                                                <label>
+                                                    Price
+                                                </label>
 
                                                 <div class="product-edit-page__price-input">
                                                     <span>$</span>
@@ -779,7 +876,9 @@
                                             </div>
 
                                             <div class="product-edit-page__field">
-                                                <label>Compare Price</label>
+                                                <label>
+                                                    Compare Price
+                                                </label>
 
                                                 <div class="product-edit-page__price-input">
                                                     <span>$</span>
@@ -796,7 +895,9 @@
                                             </div>
 
                                             <div class="product-edit-page__field">
-                                                <label>Stock</label>
+                                                <label>
+                                                    Stock
+                                                </label>
 
                                                 <input
                                                     type="number"
@@ -808,9 +909,13 @@
                                             </div>
 
                                             <div class="product-edit-page__field">
-                                                <label>Status</label>
+                                                <label>
+                                                    Status
+                                                </label>
 
-                                                <select name="variants[{{ $index }}][status]">
+                                                <select
+                                                    name="variants[{{ $index }}][status]"
+                                                >
                                                     <option
                                                         value="1"
                                                         @selected((bool) ($variant['status'] ?? true))
@@ -828,11 +933,14 @@
                                             </div>
                                         </div>
 
-                                        {{-- VARIANT IMAGE --}}
+                                        {{-- Variant Image --}}
                                         <div class="product-edit-page__variant-image-section">
                                             <div class="product-edit-page__variant-image-title">
                                                 <div>
-                                                    <strong>Variant Image</strong>
+                                                    <strong>
+                                                        Variant Image
+                                                    </strong>
+
                                                     <span>
                                                         Use a specific image for this variant.
                                                     </span>
@@ -908,7 +1016,9 @@
                             >
                                 <i class="ri-git-branch-line"></i>
 
-                                <strong>No variants yet</strong>
+                                <strong>
+                                    No variants yet
+                                </strong>
 
                                 <p>
                                     Select options and click Generate Variants.
@@ -933,9 +1043,13 @@
                         <div class="product-edit-page__card-body">
                             <div class="product-edit-page__field">
                                 <div class="product-edit-page__field-label-row">
-                                    <label for="meta_title">Meta Title</label>
+                                    <label for="meta_title">
+                                        Meta Title
+                                    </label>
 
-                                    <span data-meta-title-count>0 / 60</span>
+                                    <span data-meta-title-count>
+                                        0 / 60
+                                    </span>
                                 </div>
 
                                 <input
@@ -955,7 +1069,9 @@
                                         Meta Description
                                     </label>
 
-                                    <span data-meta-description-count>0 / 160</span>
+                                    <span data-meta-description-count>
+                                        0 / 160
+                                    </span>
                                 </div>
 
                                 <textarea
@@ -974,6 +1090,7 @@
                 {{-- Sidebar --}}
                 <aside class="product-edit-page__sidebar">
 
+                    {{-- Publish --}}
                     <section class="product-edit-page__card">
                         <div class="product-edit-page__card-header">
                             <div>
@@ -1029,6 +1146,7 @@
                         </div>
                     </section>
 
+                    {{-- Product Checklist --}}
                     <section class="product-edit-page__card">
                         <div class="product-edit-page__card-header">
                             <div>
@@ -1072,6 +1190,7 @@
                         </div>
                     </section>
 
+                    {{-- Actions --}}
                     <div class="product-edit-page__danger-zone">
                         <a
                             href="{{ route('admin-products') }}"
@@ -1096,6 +1215,8 @@
 @endsection
 
 @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const page = document.querySelector('.product-edit-page');
@@ -1105,16 +1226,10 @@
             }
 
             const form = page.querySelector('#product-edit-form');
-            const nameInput = page.querySelector('[data-product-name]');
-            const slugInput = page.querySelector('[data-product-slug]');
-            const thumbnailInput = page.querySelector('[data-thumbnail-input]');
-            const thumbnailPreview = page.querySelector('[data-thumbnail-preview]');
-            const galleryInput = page.querySelector('[data-gallery-input]');
-            const galleryPreview = page.querySelector('[data-gallery-preview]');
-            const variantsContainer = page.querySelector('[data-variants-container]');
-            const emptyVariants = page.querySelector('[data-empty-variants]');
-            const generateButton = page.querySelector('[data-generate-variants]');
 
+            /*
+             * HTML Escape.
+             */
             const escapeHtml = (value) => {
                 const div = document.createElement('div');
 
@@ -1123,6 +1238,9 @@
                 return div.innerHTML;
             };
 
+            /*
+             * Slugify.
+             */
             const slugify = (value) => {
                 return value
                     .toString()
@@ -1133,6 +1251,14 @@
                     .replace(/-+/g, '-');
             };
 
+            const nameInput = page.querySelector(
+                '[data-product-name]'
+            );
+
+            const slugInput = page.querySelector(
+                '[data-product-slug]'
+            );
+
             let slugManuallyChanged = false;
 
             slugInput?.addEventListener('input', () => {
@@ -1140,31 +1266,168 @@
             });
 
             nameInput?.addEventListener('input', () => {
-                if (!slugManuallyChanged) {
+                if (!slugManuallyChanged && slugInput) {
                     slugInput.value = slugify(nameInput.value);
                 }
             });
 
             /*
-             * Attribute toggles
+             * Quill 2 Rich Text Editors.
+             *
+             * Short Description + Product Description.
              */
-            page.querySelectorAll('[data-attribute-toggle]').forEach((toggle) => {
-                toggle.addEventListener('change', () => {
-                    const card = toggle.closest('[data-attribute-card]');
-
-                    if (!card) {
-                        return;
+            const quillToolbar = [
+                [
+                    {
+                        header: [1, 2, 3, false]
                     }
+                ],
 
-                    card.querySelectorAll('[data-attribute-value]').forEach((input) => {
-                        input.disabled = !toggle.checked;
-                    });
-                });
-            });
+                [
+                    'bold',
+                    'italic',
+                    'underline',
+                    'strike'
+                ],
+
+                [
+                    {
+                        color: []
+                    },
+                    {
+                        background: []
+                    }
+                ],
+
+                [
+                    {
+                        list: 'ordered'
+                    },
+                    {
+                        list: 'bullet'
+                    }
+                ],
+
+                [
+                    {
+                        align: []
+                    }
+                ],
+
+                [
+                    'blockquote',
+                    'code-block'
+                ],
+
+                [
+                    'link',
+                    'image'
+                ],
+
+                [
+                    'clean'
+                ]
+            ];
+
+            const quillEditors = [];
 
             /*
-             * Thumbnail preview
+             * Initialize Quill Editor.
              */
+            const initQuillEditor = (editorElement) => {
+                if (
+                    !editorElement ||
+                    typeof window.Quill === 'undefined'
+                ) {
+                    return null;
+                }
+
+                const sourceTextarea =
+                    editorElement.parentElement?.querySelector(
+                        '[data-quill-source]'
+                    );
+
+                if (!sourceTextarea) {
+                    return null;
+                }
+
+                const quill = new window.Quill(
+                    editorElement,
+                    {
+                        theme: 'snow',
+
+                        modules: {
+                            toolbar: quillToolbar
+                        },
+
+                        placeholder:
+                            editorElement.dataset.placeholder ?? ''
+                    }
+                );
+
+                /*
+                 * Load existing HTML content.
+                 */
+                const initialValue =
+                    sourceTextarea.value?.trim() ?? '';
+
+                if (initialValue) {
+                    quill.clipboard.dangerouslyPasteHTML(
+                        initialValue
+                    );
+                }
+
+                /*
+                 * Sync Quill HTML to textarea.
+                 */
+                const syncQuill = () => {
+                    const html =
+                        quill.root.innerHTML.trim();
+
+                    sourceTextarea.value =
+                        html === '<p><br></p>'
+                            ? ''
+                            : html;
+                };
+
+                quill.on(
+                    'text-change',
+                    syncQuill
+                );
+
+                /*
+                 * Initial sync.
+                 */
+                syncQuill();
+
+                quillEditors.push({
+                    quill,
+                    sourceTextarea
+                });
+
+                return quill;
+            };
+
+            /*
+             * Initialize all Quill editors.
+             */
+            page.querySelectorAll(
+                '[data-quill-editor]'
+            ).forEach(
+                initQuillEditor
+            );
+
+            /*
+             * Thumbnail Preview.
+             */
+            const thumbnailInput = page.querySelector(
+                '[data-thumbnail-input]'
+            );
+
+            const thumbnailPreview = page.querySelector(
+                '[data-thumbnail-preview]'
+            );
+
             thumbnailInput?.addEventListener('change', () => {
                 const [file] = thumbnailInput.files;
 
@@ -1188,18 +1451,30 @@
             });
 
             /*
-             * Gallery preview
+             * Gallery Preview.
              */
+            const galleryInput = page.querySelector(
+                '[data-gallery-input]'
+            );
+
+            const galleryPreview = page.querySelector(
+                '[data-gallery-preview]'
+            );
+
             galleryInput?.addEventListener('change', () => {
-                const files = Array.from(galleryInput.files ?? []);
+                const files = Array.from(
+                    galleryInput.files ?? []
+                );
 
                 files.forEach((file) => {
                     const reader = new FileReader();
 
                     reader.onload = (event) => {
-                        const item = document.createElement('div');
+                        const item =
+                            document.createElement('div');
 
-                        item.className = 'product-edit-page__gallery-item product-edit-page__gallery-item--new';
+                        item.className =
+                            'product-edit-page__gallery-item product-edit-page__gallery-item--new';
 
                         item.innerHTML = `
                             <img
@@ -1218,10 +1493,14 @@
 
                         galleryPreview?.appendChild(item);
 
-                        item.querySelector('[data-remove-new-gallery]')
-                            ?.addEventListener('click', () => {
+                        item.querySelector(
+                            '[data-remove-new-gallery]'
+                        )?.addEventListener(
+                            'click',
+                            () => {
                                 item.remove();
-                            });
+                            }
+                        );
                     };
 
                     reader.readAsDataURL(file);
@@ -1229,28 +1508,74 @@
             });
 
             /*
-             * Existing gallery image removal
+             * Existing Gallery Image Removal.
              */
-            page.querySelectorAll('[data-remove-existing-gallery]').forEach((button) => {
-                button.addEventListener('click', () => {
-                    const item = button.closest('[data-existing-gallery-item]');
-                    const input = item?.querySelector('[data-remove-gallery-input]');
+            page.querySelectorAll(
+                '[data-remove-existing-gallery]'
+            ).forEach((button) => {
+                button.addEventListener(
+                    'click',
+                    () => {
+                        const item =
+                            button.closest(
+                                '[data-existing-gallery-item]'
+                            );
 
-                    if (!item || !input) {
-                        return;
+                        const input =
+                            item?.querySelector(
+                                '[data-remove-gallery-input]'
+                            );
+
+                        if (!item || !input) {
+                            return;
+                        }
+
+                        input.value =
+                            item.dataset.imageId ?? '';
+
+                        item.classList.add(
+                            'is-removed'
+                        );
                     }
-
-                    input.value = item.dataset.imageId ?? '';
-                    item.classList.add('is-removed');
-                });
+                );
             });
 
             /*
-             * Build selected attributes.
+             * Attribute Toggles.
+             */
+            page.querySelectorAll(
+                '[data-attribute-toggle]'
+            ).forEach((toggle) => {
+                toggle.addEventListener(
+                    'change',
+                    () => {
+                        const card =
+                            toggle.closest(
+                                '[data-attribute-card]'
+                            );
+
+                        if (!card) {
+                            return;
+                        }
+
+                        card.querySelectorAll(
+                            '[data-attribute-value]'
+                        ).forEach((input) => {
+                            input.disabled =
+                                !toggle.checked;
+                        });
+                    }
+                );
+            });
+
+            /*
+             * Selected Attributes.
              */
             const getSelectedAttributes = () => {
                 return Array.from(
-                    page.querySelectorAll('[data-attribute-card]')
+                    page.querySelectorAll(
+                        '[data-attribute-card]'
+                    )
                 )
                     .filter((card) => {
                         return card.querySelector(
@@ -1258,37 +1583,52 @@
                         );
                     })
                     .map((card) => {
-                        const attributeId = card.dataset.attributeId;
-                        const toggle = card.querySelector(
-                            '[data-attribute-toggle]'
-                        );
+                        const attributeId =
+                            card.dataset.attributeId;
 
-                        const values = Array.from(
-                            card.querySelectorAll(
-                                '[data-attribute-value]:checked'
-                            )
-                        ).map((input) => ({
-                            id: input.value,
-                            label: input.dataset.valueLabel ?? '',
-                            attributeId,
-                            attributeName: input.dataset.attributeName ?? '',
-                        }));
+                        const toggle =
+                            card.querySelector(
+                                '[data-attribute-toggle]'
+                            );
+
+                        const values =
+                            Array.from(
+                                card.querySelectorAll(
+                                    '[data-attribute-value]:checked'
+                                )
+                            ).map((input) => ({
+                                id: input.value,
+
+                                label:
+                                    input.dataset.valueLabel ?? '',
+
+                                attributeId,
+
+                                attributeName:
+                                    input.dataset.attributeName ?? '',
+                            }));
 
                         return {
                             id: attributeId,
-                            name: toggle
-                                ?.closest('label')
-                                ?.querySelector('strong')
-                                ?.textContent
-                                ?.trim() ?? '',
+
+                            name:
+                                toggle
+                                    ?.closest('label')
+                                    ?.querySelector('strong')
+                                    ?.textContent
+                                    ?.trim() ?? '',
+
                             values,
                         };
                     })
-                    .filter((attribute) => attribute.values.length > 0);
+                    .filter(
+                        (attribute) =>
+                            attribute.values.length > 0
+                    );
             };
 
             /*
-             * Generate cartesian combinations.
+             * Cartesian Combinations.
              */
             const buildCombinations = (attributes) => {
                 if (!attributes.length) {
@@ -1298,36 +1638,52 @@
                 return attributes.reduce(
                     (combinations, attribute) => {
                         if (!combinations.length) {
-                            return attribute.values.map((value) => [value]);
+                            return attribute.values.map(
+                                (value) => [value]
+                            );
                         }
 
-                        return combinations.flatMap((combination) => {
-                            return attribute.values.map((value) => [
-                                ...combination,
-                                value,
-                            ]);
-                        });
+                        return combinations.flatMap(
+                            (combination) => {
+                                return attribute.values.map(
+                                    (value) => [
+                                        ...combination,
+                                        value,
+                                    ]
+                                );
+                            }
+                        );
                     },
                     []
                 );
             };
 
             /*
-             * Find existing variant by attribute value combination.
+             * Existing Variant Map.
              */
             const getExistingVariantMap = () => {
                 const map = new Map();
 
-                page.querySelectorAll('[data-variant-row]').forEach((row) => {
+                page.querySelectorAll(
+                    '[data-variant-row]'
+                ).forEach((row) => {
                     const values = Array.from(
-                        row.querySelectorAll('[data-variant-value]')
+                        row.querySelectorAll(
+                            '[data-variant-value]'
+                        )
                     )
-                        .map((input) => `${input.dataset.attributeId}:${input.dataset.valueId}`)
+                        .map(
+                            (input) =>
+                                `${input.dataset.attributeId}:${input.dataset.valueId}`
+                        )
                         .sort()
                         .join('|');
 
                     if (values) {
-                        map.set(values, row);
+                        map.set(
+                            values,
+                            row
+                        );
                     }
                 });
 
@@ -1335,155 +1691,220 @@
             };
 
             /*
-             * Variant image handler.
+             * Variant Image Handler.
              */
             const handleVariantImage = (row) => {
-                const input = row.querySelector('[data-variant-image-input]');
-                const preview = row.querySelector('[data-variant-image-preview]');
-                const removeButton = row.querySelector('[data-remove-variant-image]');
-                const removeInput = row.querySelector('[data-variant-remove-image]');
+                const input = row.querySelector(
+                    '[data-variant-image-input]'
+                );
+
+                const preview = row.querySelector(
+                    '[data-variant-image-preview]'
+                );
+
+                const removeButton = row.querySelector(
+                    '[data-remove-variant-image]'
+                );
+
+                const removeInput = row.querySelector(
+                    '[data-variant-remove-image]'
+                );
 
                 if (!input || !preview) {
                     return;
                 }
 
-                input.addEventListener('change', () => {
-                    const [file] = input.files;
+                input.addEventListener(
+                    'change',
+                    () => {
+                        const [file] = input.files;
 
-                    if (!file) {
-                        return;
+                        if (!file) {
+                            return;
+                        }
+
+                        const reader =
+                            new FileReader();
+
+                        reader.onload = (event) => {
+                            preview.innerHTML = `
+                                <img
+                                    src="${event.target.result}"
+                                    alt="Variant image preview"
+                                    data-variant-image-preview-image
+                                >
+                            `;
+
+                            if (removeInput) {
+                                removeInput.value = '0';
+                            }
+
+                            if (removeButton) {
+                                removeButton.disabled =
+                                    false;
+                            }
+                        };
+
+                        reader.readAsDataURL(file);
                     }
+                );
 
-                    const reader = new FileReader();
+                removeButton?.addEventListener(
+                    'click',
+                    () => {
+                        input.value = '';
 
-                    reader.onload = (event) => {
                         preview.innerHTML = `
-                            <img
-                                src="${event.target.result}"
-                                alt="Variant image preview"
-                                data-variant-image-preview-image
-                            >
+                            <div class="product-edit-page__empty-image">
+                                <i class="ri-image-add-line"></i>
+                                <span>No image</span>
+                            </div>
                         `;
 
                         if (removeInput) {
-                            removeInput.value = '0';
+                            removeInput.value = '1';
                         }
 
-                        if (removeButton) {
-                            removeButton.disabled = false;
-                        }
-                    };
-
-                    reader.readAsDataURL(file);
-                });
-
-                removeButton?.addEventListener('click', () => {
-                    input.value = '';
-
-                    preview.innerHTML = `
-                        <div class="product-edit-page__empty-image">
-                            <i class="ri-image-add-line"></i>
-                            <span>No image</span>
-                        </div>
-                    `;
-
-                    if (removeInput) {
-                        removeInput.value = '1';
+                        removeButton.disabled = true;
                     }
-
-                    removeButton.disabled = true;
-                });
+                );
             };
 
             /*
-             * Initialize variant image handlers.
+             * Initialize Variant Image Handlers.
              */
-            variantsContainer
-                ?.querySelectorAll('[data-variant-row]')
-                .forEach(handleVariantImage);
+            page.querySelectorAll(
+                '[data-variant-row]'
+            ).forEach(
+                handleVariantImage
+            );
+
+            const variantsContainer =
+                page.querySelector(
+                    '[data-variants-container]'
+                );
+
+            const emptyVariants =
+                page.querySelector(
+                    '[data-empty-variants]'
+                );
+
+            const generateButton =
+                page.querySelector(
+                    '[data-generate-variants]'
+                );
 
             /*
-             * Create a variant row.
+             * Create Variant Row.
              */
-            const createVariantRow = (combination, index, existingRow = null) => {
-                const existingId = existingRow?.querySelector(
-                    '[data-variant-id-input]'
-                )?.value ?? '';
+            const createVariantRow = (
+                combination,
+                index,
+                existingRow = null
+            ) => {
+                const existingId =
+                    existingRow?.querySelector(
+                        '[data-variant-id-input]'
+                    )?.value ?? '';
 
-                const existingSku = existingRow?.querySelector(
-                    '[data-variant-sku]'
-                )?.value ?? '';
+                const existingSku =
+                    existingRow?.querySelector(
+                        '[data-variant-sku]'
+                    )?.value ?? '';
 
-                const existingPrice = existingRow?.querySelector(
-                    'input[name$="[price]"]'
-                )?.value ?? '';
+                const existingPrice =
+                    existingRow?.querySelector(
+                        'input[name$="[price]"]'
+                    )?.value ?? '';
 
-                const existingComparePrice = existingRow?.querySelector(
-                    'input[name$="[compare_price]"]'
-                )?.value ?? '';
+                const existingComparePrice =
+                    existingRow?.querySelector(
+                        'input[name$="[compare_price]"]'
+                    )?.value ?? '';
 
-                const existingStock = existingRow?.querySelector(
-                    'input[name$="[stock]"]'
-                )?.value ?? '0';
+                const existingStock =
+                    existingRow?.querySelector(
+                        'input[name$="[stock]"]'
+                    )?.value ?? '0';
 
-                const existingStatus = existingRow?.querySelector(
-                    'select[name$="[status]"]'
-                )?.value ?? '1';
+                const existingStatus =
+                    existingRow?.querySelector(
+                        'select[name$="[status]"]'
+                    )?.value ?? '1';
 
-                const existingImage = existingRow?.querySelector(
-                    '[data-variant-image-preview-image]'
-                )?.getAttribute('src') ?? '';
+                const existingImage =
+                    existingRow?.querySelector(
+                        '[data-variant-image-preview-image]'
+                    )?.getAttribute('src') ?? '';
 
-                const existingRemoveImage = existingRow?.querySelector(
-                    '[data-variant-remove-image]'
-                )?.value ?? '0';
+                const existingRemoveImage =
+                    existingRow?.querySelector(
+                        '[data-variant-remove-image]'
+                    )?.value ?? '0';
 
-                const label = combination
-                    .map((item) => `${item.attributeName}: ${item.label}`)
-                    .join(' / ');
+                const label =
+                    combination
+                        .map(
+                            (item) =>
+                                `${item.attributeName}: ${item.label}`
+                        )
+                        .join(' / ');
 
-                const valueInputs = combination
-                    .map((item) => `
-                        <input
-                            type="hidden"
-                            name="variants[${index}][values][${item.attributeId}]"
-                            value="${escapeHtml(item.id)}"
-                            data-variant-value
-                            data-attribute-id="${escapeHtml(item.attributeId)}"
-                            data-value-id="${escapeHtml(item.id)}"
-                        >
-                    `)
-                    .join('');
+                const valueInputs =
+                    combination
+                        .map(
+                            (item) => `
+                                <input
+                                    type="hidden"
+                                    name="variants[${index}][values][${item.attributeId}]"
+                                    value="${escapeHtml(item.id)}"
+                                    data-variant-value
+                                    data-attribute-id="${escapeHtml(item.attributeId)}"
+                                    data-value-id="${escapeHtml(item.id)}"
+                                >
+                            `
+                        )
+                        .join('');
 
-                const valueBadges = combination
-                    .map((item) => `
-                        <span class="product-edit-page__variant-value">
-                            <strong>${escapeHtml(item.attributeName)}:</strong>
-                            ${escapeHtml(item.label)}
-                        </span>
-                    `)
-                    .join('');
+                const valueBadges =
+                    combination
+                        .map(
+                            (item) => `
+                                <span class="product-edit-page__variant-value">
+                                    <strong>
+                                        ${escapeHtml(item.attributeName)}:
+                                    </strong>
+                                    ${escapeHtml(item.label)}
+                                </span>
+                            `
+                        )
+                        .join('');
 
-                const imageMarkup = existingImage
-                    ? `
-                        <img
-                            src="${escapeHtml(existingImage)}"
-                            alt="Variant image"
-                            data-variant-image-preview-image
-                        >
-                    `
-                    : `
-                        <div class="product-edit-page__empty-image">
-                            <i class="ri-image-add-line"></i>
-                            <span>No image</span>
-                        </div>
-                    `;
+                const imageMarkup =
+                    existingImage
+                        ? `
+                            <img
+                                src="${escapeHtml(existingImage)}"
+                                alt="Variant image"
+                                data-variant-image-preview-image
+                            >
+                        `
+                        : `
+                            <div class="product-edit-page__empty-image">
+                                <i class="ri-image-add-line"></i>
+                                <span>No image</span>
+                            </div>
+                        `;
 
-                const row = document.createElement('div');
+                const row =
+                    document.createElement('div');
 
-                row.className = 'product-edit-page__variant-row';
+                row.className =
+                    'product-edit-page__variant-row';
+
                 row.dataset.variantRow = '';
-                row.dataset.variantId = existingId;
+                row.dataset.variantId =
+                    existingId;
 
                 row.innerHTML = `
                     <div class="product-edit-page__variant-heading">
@@ -1498,7 +1919,10 @@
                                 </strong>
 
                                 <small>
-                                    ${escapeHtml(existingSku || 'New variant')}
+                                    ${escapeHtml(
+                    existingSku ||
+                    'New variant'
+                )}
                                 </small>
                             </div>
                         </div>
@@ -1528,7 +1952,9 @@
 
                     <div class="product-edit-page__variant-grid">
                         <div class="product-edit-page__field">
-                            <label>SKU</label>
+                            <label>
+                                SKU
+                            </label>
 
                             <input
                                 type="text"
@@ -1540,7 +1966,9 @@
                         </div>
 
                         <div class="product-edit-page__field">
-                            <label>Price</label>
+                            <label>
+                                Price
+                            </label>
 
                             <div class="product-edit-page__price-input">
                                 <span>$</span>
@@ -1557,7 +1985,9 @@
                         </div>
 
                         <div class="product-edit-page__field">
-                            <label>Compare Price</label>
+                            <label>
+                                Compare Price
+                            </label>
 
                             <div class="product-edit-page__price-input">
                                 <span>$</span>
@@ -1574,7 +2004,9 @@
                         </div>
 
                         <div class="product-edit-page__field">
-                            <label>Stock</label>
+                            <label>
+                                Stock
+                            </label>
 
                             <input
                                 type="number"
@@ -1586,14 +2018,24 @@
                         </div>
 
                         <div class="product-edit-page__field">
-                            <label>Status</label>
+                            <label>
+                                Status
+                            </label>
 
-                            <select name="variants[${index}][status]">
-                                <option value="1" ${existingStatus === '1' ? 'selected' : ''}>
+                            <select
+                                name="variants[${index}][status]"
+                            >
+                                <option
+                                    value="1"
+                                    ${existingStatus === '1' ? 'selected' : ''}
+                                >
                                     Active
                                 </option>
 
-                                <option value="0" ${existingStatus === '0' ? 'selected' : ''}>
+                                <option
+                                    value="0"
+                                    ${existingStatus === '0' ? 'selected' : ''}
+                                >
                                     Inactive
                                 </option>
                             </select>
@@ -1603,7 +2045,10 @@
                     <div class="product-edit-page__variant-image-section">
                         <div class="product-edit-page__variant-image-title">
                             <div>
-                                <strong>Variant Image</strong>
+                                <strong>
+                                    Variant Image
+                                </strong>
+
                                 <span>
                                     Use a specific image for this variant.
                                 </span>
@@ -1661,161 +2106,279 @@
 
                 handleVariantImage(row);
 
-                row.querySelector('[data-remove-variant]')
-                    ?.addEventListener('click', () => {
+                row.querySelector(
+                    '[data-remove-variant]'
+                )?.addEventListener(
+                    'click',
+                    () => {
                         row.remove();
+
                         reindexVariants();
-                    });
+                    }
+                );
 
                 return row;
             };
 
             /*
-             * Re-index variant input names.
+             * Re-index Variant Inputs.
              */
             const reindexVariants = () => {
                 variantsContainer
-                    ?.querySelectorAll('[data-variant-row]')
-                    .forEach((row, index) => {
-                        row.querySelector(
-                            '.product-edit-page__variant-number'
-                        ).textContent = index + 1;
+                    ?.querySelectorAll(
+                        '[data-variant-row]'
+                    )
+                    .forEach(
+                        (row, index) => {
+                            const number =
+                                row.querySelector(
+                                    '.product-edit-page__variant-number'
+                                );
 
-                        row.querySelectorAll('[name]').forEach((input) => {
-                            input.name = input.name.replace(
-                                /variants\[\d+\]/,
-                                `variants[${index}]`
+                            if (number) {
+                                number.textContent =
+                                    index + 1;
+                            }
+
+                            row.querySelectorAll(
+                                '[name]'
+                            ).forEach(
+                                (input) => {
+                                    input.name =
+                                        input.name.replace(
+                                            /variants\[\d+\]/,
+                                            `variants[${index}]`
+                                        );
+                                }
                             );
-                        });
-                    });
-
-                if (emptyVariants) {
-                    emptyVariants.hidden = variantsContainer
-                        ?.querySelectorAll('[data-variant-row]').length > 0;
-                }
-            };
-
-            /*
-             * Remove variant events for initial rows.
-             */
-            page.querySelectorAll('[data-remove-variant]').forEach((button) => {
-                button.addEventListener('click', () => {
-                    button.closest('[data-variant-row]')?.remove();
-
-                    reindexVariants();
-                });
-            });
-
-            /*
-             * Generate variants.
-             */
-            generateButton?.addEventListener('click', () => {
-                const attributes = getSelectedAttributes();
-
-                if (!attributes.length) {
-                    alert('Please select at least one attribute and value.');
-
-                    return;
-                }
-
-                const combinations = buildCombinations(attributes);
-                const existingVariantMap = getExistingVariantMap();
-
-                variantsContainer.innerHTML = '';
-
-                combinations.forEach((combination, index) => {
-                    const key = combination
-                        .map((item) => `${item.attributeId}:${item.id}`)
-                        .sort()
-                        .join('|');
-
-                    const existingRow = existingVariantMap.get(key);
-
-                    const row = createVariantRow(
-                        combination,
-                        index,
-                        existingRow
+                        }
                     );
 
-                    variantsContainer.appendChild(row);
-                });
+                if (emptyVariants) {
+                    emptyVariants.hidden =
+                        (
+                            variantsContainer
+                                ?.querySelectorAll(
+                                    '[data-variant-row]'
+                                ).length ?? 0
+                        ) > 0;
+                }
+            };
 
-                reindexVariants();
+            /*
+             * Initial Variant Removal.
+             */
+            page.querySelectorAll(
+                '[data-remove-variant]'
+            ).forEach((button) => {
+                button.addEventListener(
+                    'click',
+                    () => {
+                        button
+                            .closest(
+                                '[data-variant-row]'
+                            )
+                            ?.remove();
+
+                        reindexVariants();
+                    }
+                );
             });
 
             /*
-             * SEO counters.
+             * Generate Variants.
              */
-            const updateCounter = (input, counter, max) => {
-                if (!input || !counter) {
-                    return;
-                }
+            generateButton?.addEventListener(
+                'click',
+                () => {
+                    const attributes =
+                        getSelectedAttributes();
 
-                counter.textContent = `${input.value.length} / ${max}`;
-            };
-
-            const metaTitle = page.querySelector('[data-meta-title]');
-            const metaTitleCount = page.querySelector('[data-meta-title-count]');
-            const metaDescription = page.querySelector('[data-meta-description]');
-            const metaDescriptionCount = page.querySelector(
-                '[data-meta-description-count]'
-            );
-
-            const updateSeoCounters = () => {
-                updateCounter(metaTitle, metaTitleCount, 60);
-                updateCounter(metaDescription, metaDescriptionCount, 160);
-            };
-
-            metaTitle?.addEventListener('input', updateSeoCounters);
-            metaDescription?.addEventListener('input', updateSeoCounters);
-
-            updateSeoCounters();
-
-            /*
-             * Form validation.
-             */
-            form?.addEventListener('submit', (event) => {
-                const rows = Array.from(
-                    variantsContainer?.querySelectorAll('[data-variant-row]') ?? []
-                );
-
-                for (const row of rows) {
-                    const valueInputs = Array.from(
-                        row.querySelectorAll('input[data-variant-value]')
-                    ).filter((input) => {
-                        return (
-                            input.value.trim() !== '' &&
-                            input.dataset.attributeId &&
-                            input.dataset.valueId
-                        );
-                    });
-
-                    if (!valueInputs.length) {
-                        event.preventDefault();
-
+                    if (!attributes.length) {
                         alert(
-                            'Each variant must have attribute values.'
+                            'Please select at least one attribute and value.'
                         );
 
                         return;
                     }
+
+                    const combinations =
+                        buildCombinations(
+                            attributes
+                        );
+
+                    const existingVariantMap =
+                        getExistingVariantMap();
+
+                    if (variantsContainer) {
+                        variantsContainer.innerHTML =
+                            '';
+                    }
+
+                    combinations.forEach(
+                        (
+                            combination,
+                            index
+                        ) => {
+                            const key =
+                                combination
+                                    .map(
+                                        (item) =>
+                                            `${item.attributeId}:${item.id}`
+                                    )
+                                    .sort()
+                                    .join('|');
+
+                            const existingRow =
+                                existingVariantMap.get(
+                                    key
+                                );
+
+                            const row =
+                                createVariantRow(
+                                    combination,
+                                    index,
+                                    existingRow
+                                );
+
+                            variantsContainer?.appendChild(
+                                row
+                            );
+                        }
+                    );
+
+                    reindexVariants();
                 }
-            });
+            );
 
             /*
-             * Rich editor fallback.
-             *
-             * If your project already initializes the editor globally,
-             * this section will simply do nothing.
+             * SEO Counters.
              */
-            const richEditor = page.querySelector('[data-rich-editor]');
+            const metaTitle =
+                page.querySelector(
+                    '[data-meta-title]'
+                );
 
-            if (richEditor && typeof window.ClassicEditor !== 'undefined') {
-                window.ClassicEditor
-                    .create(richEditor)
-                    .catch(() => {});
-            }
+            const metaTitleCount =
+                page.querySelector(
+                    '[data-meta-title-count]'
+                );
 
+            const metaDescription =
+                page.querySelector(
+                    '[data-meta-description]'
+                );
+
+            const metaDescriptionCount =
+                page.querySelector(
+                    '[data-meta-description-count]'
+                );
+
+            const updateCounter = (
+                input,
+                counter,
+                max
+            ) => {
+                if (!input || !counter) {
+                    return;
+                }
+
+                counter.textContent =
+                    `${input.value.length} / ${max}`;
+            };
+
+            const updateSeoCounters = () => {
+                updateCounter(
+                    metaTitle,
+                    metaTitleCount,
+                    60
+                );
+
+                updateCounter(
+                    metaDescription,
+                    metaDescriptionCount,
+                    160
+                );
+            };
+
+            metaTitle?.addEventListener(
+                'input',
+                updateSeoCounters
+            );
+
+            metaDescription?.addEventListener(
+                'input',
+                updateSeoCounters
+            );
+
+            updateSeoCounters();
+
+            /*
+             * Form Submit.
+             *
+             * Sync all Quill editors before submit.
+             */
+            form?.addEventListener(
+                'submit',
+                (event) => {
+                    quillEditors.forEach(
+                        ({
+                             quill,
+                             sourceTextarea
+                         }) => {
+                            const html =
+                                quill.root.innerHTML.trim();
+
+                            sourceTextarea.value =
+                                html === '<p><br></p>'
+                                    ? ''
+                                    : html;
+                        }
+                    );
+
+                    /*
+                     * Validate variants.
+                     */
+                    const rows =
+                        Array.from(
+                            variantsContainer
+                                ?.querySelectorAll(
+                                    '[data-variant-row]'
+                                ) ?? []
+                        );
+
+                    for (const row of rows) {
+                        const valueInputs =
+                            Array.from(
+                                row.querySelectorAll(
+                                    'input[data-variant-value]'
+                                )
+                            ).filter(
+                                (input) => {
+                                    return (
+                                        input.value.trim() !== '' &&
+                                        input.dataset.attributeId &&
+                                        input.dataset.valueId
+                                    );
+                                }
+                            );
+
+                        if (!valueInputs.length) {
+                            event.preventDefault();
+
+                            alert(
+                                'Each variant must have attribute values.'
+                            );
+
+                            return;
+                        }
+                    }
+                }
+            );
+
+            /*
+             * Initial Setup.
+             */
             reindexVariants();
         });
     </script>

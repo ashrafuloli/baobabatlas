@@ -5,8 +5,11 @@
     ================================================= --}}
     <div class="sidebar-logo">
 
-        <a href="{{route('home')}}">
-            <img src="{{ asset('logo.png') }}" alt="Baobab Atlas">
+        <a href="{{ route('home') }}">
+            <img
+                src="{{ setting('website_logo') ? asset(setting('website_logo')) : asset('logo.png') }}"
+                alt="{{ setting('website_name', config('app.name')) }}"
+            >
         </a>
 
         <div class="close-menu d-xl-none d-inline-flex">
@@ -62,46 +65,6 @@
             </li>
 
         </ul>
-
-
-        {{-- ============================================
-            CUSTOMER ECOMMERCE
-        ============================================= --}}
-        @if(
-            !auth()->user()->roles()->where('slug', 'admin')->exists() &&
-            (
-                auth()->user()->hasPermission('view-products') ||
-                auth()->user()->hasPermission('view-orders') ||
-                auth()->user()->hasPermission('view-cart') ||
-                auth()->user()->hasPermission('create-order')
-            )
-        )
-
-            <p class="menu-title">
-                Ecommerce
-            </p>
-
-            <ul>
-                {{-- SHOP --}}
-                @if(auth()->user()->hasPermission('view-orders'))
-                    <li class="{{ request()->routeIs('customer-orders') ? 'active' : '' }}">
-
-                        <a href="{{ route('customer-orders') }}">
-
-                            <i class="ri-shopping-cart-2-line"></i>
-
-                            <span>
-                                            My Orders
-                                        </span>
-
-                        </a>
-
-                    </li>
-                @endif
-            </ul>
-
-        @endif
-
 
         {{-- ============================================
             SMART BUY - CUSTOMER
@@ -300,7 +263,8 @@
                         'admin-inventory*',
                         'admin-attributes*',
                         'admin-coupons*',
-                        'admin-orders',
+                        'admin-orders*',
+                        'admin-refunds*',
                         'admin-order-details',
                         'admin-ecommerce-payments',
                         'ecommerce-shipments',
@@ -444,6 +408,26 @@
 
                                         <span>
                                             Orders
+                                        </span>
+
+                                    </a>
+
+                                </li>
+
+                            @endif
+
+
+                            {{-- ORDERS --}}
+                            @if(auth()->user()->hasPermission('view-orders'))
+
+                                <li class="{{ request()->routeIs(
+                                    'admin-refunds*'
+                                ) ? 'active' : '' }}">
+
+                                    <a href="{{ route('admin-refunds') }}">
+
+                                        <span>
+                                            Refund
                                         </span>
 
                                     </a>
@@ -944,7 +928,6 @@
 
                         <ul class="submenu">
 
-
                             {{-- GENERAL --}}
                             @if(auth()->user()->hasPermission('view-settings'))
 
@@ -963,27 +946,6 @@
                                 </li>
 
                             @endif
-
-
-                            {{-- ECOMMERCE --}}
-                            @if(auth()->user()->hasPermission('view-ecommerce-settings'))
-
-                                <li class="{{ request()->routeIs('settings-ecommerce')
-                                    ? 'active'
-                                    : '' }}">
-
-                                    <a href="{{ route('settings-ecommerce') }}">
-
-                                        <span>
-                                            Ecommerce
-                                        </span>
-
-                                    </a>
-
-                                </li>
-
-                            @endif
-
 
                             {{-- AUDIT LOGS --}}
                             @if(auth()->user()->hasPermission('view-audit-logs'))

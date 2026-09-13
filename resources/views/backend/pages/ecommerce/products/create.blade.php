@@ -2,6 +2,13 @@
 
 @section('title', 'Add Product')
 
+@push('styles')
+    <link
+        href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css"
+        rel="stylesheet"
+    >
+@endpush
+
 @section('content')
     <div class="product-create-page">
 
@@ -317,21 +324,39 @@
                             {{-- Short Description --}}
                             <div class="product-create-page__field">
 
-                                <label for="short_description">
-                                    Short Description
-                                </label>
+                                <div class="product-create-page__label-row">
 
-                                <textarea
-                                    id="short_description"
-                                    name="short_description"
-                                    rows="4"
-                                    placeholder="Write a short summary of this product..."
-                                >{{ old('short_description') }}</textarea>
+                                    <label for="short_description">
+                                        Short Description
+                                    </label>
+
+                                    <span class="product-create-page__field-hint">
+                                        Rich Text Editor
+                                    </span>
+
+                                </div>
+
+                                <div class="product-create-page__quill-field">
+
+                                    <div
+                                        class="product-create-page__quill-editor"
+                                        data-quill-editor="short-description"
+                                        data-placeholder="Write a short summary of this product..."
+                                    ></div>
+
+                                    <textarea
+                                        id="short_description"
+                                        name="short_description"
+                                        hidden
+                                        data-quill-source
+                                    >{{ old('short_description') }}</textarea>
+
+                                </div>
 
                             </div>
 
 
-                            {{-- Rich Text Description --}}
+                            {{-- Product Description --}}
                             <div class="product-create-page__field">
 
                                 <div class="product-create-page__label-row">
@@ -346,97 +371,19 @@
 
                                 </div>
 
-
-                                <div
-                                    class="product-create-page__rich-editor"
-                                    data-rich-editor
-                                >
-
-                                    <div class="product-create-page__rich-toolbar">
-
-                                        <button
-                                            type="button"
-                                            data-editor-action="bold"
-                                            title="Bold"
-                                        >
-                                            <i class="ri-bold"></i>
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            data-editor-action="italic"
-                                            title="Italic"
-                                        >
-                                            <i class="ri-italic"></i>
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            data-editor-action="underline"
-                                            title="Underline"
-                                        >
-                                            <i class="ri-underline"></i>
-                                        </button>
-
-                                        <span class="product-create-page__toolbar-divider"></span>
-
-                                        <button
-                                            type="button"
-                                            data-editor-action="heading"
-                                            title="Heading"
-                                        >
-                                            <i class="ri-heading"></i>
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            data-editor-action="unordered-list"
-                                            title="Bullet List"
-                                        >
-                                            <i class="ri-list-unordered"></i>
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            data-editor-action="ordered-list"
-                                            title="Numbered List"
-                                        >
-                                            <i class="ri-list-ordered"></i>
-                                        </button>
-
-                                        <span class="product-create-page__toolbar-divider"></span>
-
-                                        <button
-                                            type="button"
-                                            data-editor-action="link"
-                                            title="Add Link"
-                                        >
-                                            <i class="ri-link"></i>
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            data-editor-action="clear"
-                                            title="Clear Formatting"
-                                        >
-                                            <i class="ri-format-clear"></i>
-                                        </button>
-
-                                    </div>
-
+                                <div class="product-create-page__quill-field">
 
                                     <div
-                                        class="product-create-page__rich-content"
-                                        contenteditable="true"
-                                        data-rich-content
-                                    >{!! old('description') !!}</div>
-
+                                        class="product-create-page__quill-editor"
+                                        data-quill-editor="description"
+                                        data-placeholder="Write your product description..."
+                                    ></div>
 
                                     <textarea
                                         id="description"
                                         name="description"
-                                        data-rich-input
                                         hidden
+                                        data-quill-source
                                     >{{ old('description') }}</textarea>
 
                                 </div>
@@ -756,6 +703,35 @@
                                         >
 
                                     </div>
+
+                                </div>
+
+
+                                <div class="product-create-page__field">
+
+                                    <label for="shipping_cost">
+                                        Shipping Cost
+                                    </label>
+
+                                    <div class="product-create-page__input-prefix">
+
+                                        <span>$</span>
+
+                                        <input
+                                            type="number"
+                                            id="shipping_cost"
+                                            name="shipping_cost"
+                                            value="{{ old('shipping_cost', 0) }}"
+                                            min="0"
+                                            step="0.01"
+                                            placeholder="0.00"
+                                        >
+
+                                    </div>
+
+                                    <small>
+                                        Shipping charge for this product.
+                                    </small>
 
                                 </div>
 
@@ -1294,15 +1270,230 @@
 
 
 @push('scripts')
+
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const page = document.querySelector('.product-create-page');
+            const page = document.querySelector(
+                '.product-create-page',
+            );
 
             if (!page) {
                 return;
             }
 
-            const form = page.querySelector('#product-create-form');
+            const form = page.querySelector(
+                '#product-create-form',
+            );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Quill 2 Rich Text Editors
+            |--------------------------------------------------------------------------
+            |
+            | Short Description + Product Description.
+            |
+            */
+
+            const quillToolbar = [
+                [
+                    {
+                        header: [1, 2, 3, false],
+                    },
+                ],
+
+                [
+                    'bold',
+                    'italic',
+                    'underline',
+                    'strike',
+                ],
+
+                [
+                    {
+                        color: [],
+                    },
+                    {
+                        background: [],
+                    },
+                ],
+
+                [
+                    {
+                        list: 'ordered',
+                    },
+                    {
+                        list: 'bullet',
+                    },
+                ],
+
+                [
+                    {
+                        align: [],
+                    },
+                ],
+
+                [
+                    'blockquote',
+                    'code-block',
+                ],
+
+                [
+                    'link',
+                    'image',
+                ],
+
+                [
+                    'clean',
+                ],
+            ];
+
+
+            const quillEditors = [];
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Initialize Quill Editor
+            |--------------------------------------------------------------------------
+            */
+
+            const initQuillEditor = (editorElement) => {
+                if (
+                    !editorElement ||
+                    typeof window.Quill === 'undefined'
+                ) {
+                    return null;
+                }
+
+                const editorWrapper =
+                    editorElement.parentElement;
+
+                if (!editorWrapper) {
+                    return null;
+                }
+
+                const sourceTextarea =
+                    editorWrapper.querySelector(
+                        '[data-quill-source]',
+                    );
+
+                if (!sourceTextarea) {
+                    return null;
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Placeholder
+                |--------------------------------------------------------------------------
+                */
+
+                const placeholder =
+                    editorElement.dataset.placeholder ||
+                    (
+                        sourceTextarea.name === 'short_description'
+                            ? 'Write a short summary of this product...'
+                            : 'Write your product description...'
+                    );
+
+                /*
+                |--------------------------------------------------------------------------
+                | Create Quill
+                |--------------------------------------------------------------------------
+                */
+
+                const quill = new window.Quill(
+                    editorElement,
+                    {
+                        theme: 'snow',
+
+                        modules: {
+                            toolbar: quillToolbar,
+                        },
+
+                        placeholder,
+                    },
+                );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Load Existing HTML Content
+                |--------------------------------------------------------------------------
+                */
+
+                const initialValue =
+                    sourceTextarea.value?.trim() ?? '';
+
+                if (initialValue) {
+                    quill.clipboard.dangerouslyPasteHTML(
+                        initialValue,
+                    );
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Sync Quill HTML To Textarea
+                |--------------------------------------------------------------------------
+                */
+
+                const syncQuill = () => {
+                    const html =
+                        quill.root.innerHTML.trim();
+
+                    sourceTextarea.value =
+                        html === '<p><br></p>'
+                            ? ''
+                            : html;
+                };
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Quill Change Event
+                |--------------------------------------------------------------------------
+                */
+
+                quill.on(
+                    'text-change',
+                    syncQuill,
+                );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Initial Sync
+                |--------------------------------------------------------------------------
+                */
+
+                syncQuill();
+
+
+                quillEditors.push({
+                    quill,
+                    sourceTextarea,
+                });
+
+
+                return quill;
+            };
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Initialize All Quill Editors
+            |--------------------------------------------------------------------------
+            */
+
+            page.querySelectorAll(
+                '[data-quill-editor]',
+            ).forEach(
+                initQuillEditor,
+            );
 
 
             /*
@@ -1311,130 +1502,52 @@
             |--------------------------------------------------------------------------
             */
 
-            const nameInput = page.querySelector('#name');
-            const slugInput = page.querySelector('#slug');
+            const nameInput =
+                page.querySelector('#name');
 
-            if (nameInput && slugInput) {
-                let slugManuallyChanged = slugInput.value.trim() !== '';
+            const slugInput =
+                page.querySelector('#slug');
 
-                slugInput.addEventListener('input', () => {
-                    slugManuallyChanged = slugInput.value.trim() !== '';
-                });
+            if (
+                nameInput &&
+                slugInput
+            ) {
+                let slugManuallyChanged =
+                    slugInput.value.trim() !== '';
 
-                nameInput.addEventListener('input', () => {
-                    if (slugManuallyChanged) {
-                        return;
-                    }
-
-                    slugInput.value = nameInput.value
-                        .toLowerCase()
-                        .trim()
-                        .replace(/[^a-z0-9\s-]/g, '')
-                        .replace(/\s+/g, '-')
-                        .replace(/-+/g, '-');
-                });
-            }
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Rich Text Editor
-            |--------------------------------------------------------------------------
-            */
-
-            const richEditor = page.querySelector('[data-rich-editor]');
-
-            if (richEditor) {
-                const content = richEditor.querySelector('[data-rich-content]');
-                const input = richEditor.querySelector('[data-rich-input]');
-                const buttons = richEditor.querySelectorAll(
-                    '[data-editor-action]',
+                slugInput.addEventListener(
+                    'input',
+                    () => {
+                        slugManuallyChanged =
+                            slugInput.value.trim() !== '';
+                    },
                 );
 
-                const syncRichText = () => {
-                    if (content && input) {
-                        input.value = content.innerHTML.trim();
-                    }
-                };
-
-                buttons.forEach((button) => {
-                    button.addEventListener('click', () => {
-                        const action = button.dataset.editorAction;
-
-                        content.focus();
-
-                        switch (action) {
-                            case 'bold':
-                                document.execCommand('bold');
-                                break;
-
-                            case 'italic':
-                                document.execCommand('italic');
-                                break;
-
-                            case 'underline':
-                                document.execCommand('underline');
-                                break;
-
-                            case 'heading':
-                                document.execCommand(
-                                    'formatBlock',
-                                    false,
-                                    'h3',
-                                );
-                                break;
-
-                            case 'unordered-list':
-                                document.execCommand(
-                                    'insertUnorderedList',
-                                );
-                                break;
-
-                            case 'ordered-list':
-                                document.execCommand(
-                                    'insertOrderedList',
-                                );
-                                break;
-
-                            case 'link': {
-                                const url = window.prompt(
-                                    'Enter URL',
-                                    'https://',
-                                );
-
-                                if (url) {
-                                    document.execCommand(
-                                        'createLink',
-                                        false,
-                                        url,
-                                    );
-                                }
-
-                                break;
-                            }
-
-                            case 'clear':
-                                document.execCommand(
-                                    'removeFormat',
-                                );
-                                break;
-
-                            default:
-                                break;
+                nameInput.addEventListener(
+                    'input',
+                    () => {
+                        if (slugManuallyChanged) {
+                            return;
                         }
 
-                        syncRichText();
-                    });
-                });
-
-                content.addEventListener(
-                    'input',
-                    syncRichText,
+                        slugInput.value =
+                            nameInput.value
+                                .toLowerCase()
+                                .trim()
+                                .replace(
+                                    /[^a-z0-9\s-]/g,
+                                    '',
+                                )
+                                .replace(
+                                    /\s+/g,
+                                    '-',
+                                )
+                                .replace(
+                                    /-+/g,
+                                    '-',
+                                );
+                    },
                 );
-
-                if (form) {
-                    form.addEventListener('submit', syncRichText);
-                }
             }
 
 
@@ -1444,70 +1557,92 @@
             |--------------------------------------------------------------------------
             */
 
-            const thumbnailInput = page.querySelector('#thumbnail');
-            const thumbnailPreview = page.querySelector('#thumbnail-preview');
+            const thumbnailInput =
+                page.querySelector('#thumbnail');
 
-            if (thumbnailInput && thumbnailPreview) {
-                thumbnailInput.addEventListener('change', () => {
-                    const file = thumbnailInput.files?.[0];
+            const thumbnailPreview =
+                page.querySelector('#thumbnail-preview');
 
-                    if (!file) {
-                        return;
-                    }
+            if (
+                thumbnailInput &&
+                thumbnailPreview
+            ) {
+                thumbnailInput.addEventListener(
+                    'change',
+                    () => {
+                        const file =
+                            thumbnailInput.files?.[0];
 
-                    if (!file.type.startsWith('image/')) {
-                        thumbnailInput.value = '';
+                        if (!file) {
+                            return;
+                        }
 
-                        return;
-                    }
-
-                    const reader = new FileReader();
-
-                    reader.addEventListener('load', (event) => {
-                        thumbnailPreview.innerHTML = `
-                    <img
-                        src="${event.target.result}"
-                        alt="Product thumbnail preview"
-                    >
-
-                    <button
-                        type="button"
-                        class="product-create-page__remove-upload"
-                        data-remove-thumbnail
-                        title="Remove image"
-                    >
-                        <i class="ri-close-line"></i>
-                    </button>
-                `;
-
-                        const removeButton = thumbnailPreview.querySelector(
-                            '[data-remove-thumbnail]',
-                        );
-
-                        removeButton?.addEventListener('click', (clickEvent) => {
-                            clickEvent.preventDefault();
-                            clickEvent.stopPropagation();
-
+                        if (
+                            !file.type.startsWith(
+                                'image/',
+                            )
+                        ) {
                             thumbnailInput.value = '';
 
-                            thumbnailPreview.innerHTML = `
-                        <div class="product-create-page__upload-icon">
-                            <i class="ri-image-add-line"></i>
-                        </div>
+                            return;
+                        }
 
-                        <strong>
-                            Upload product image
-                        </strong>
+                        const reader =
+                            new FileReader();
 
-                        <span>
-                            JPG, PNG or WebP
-                        </span>
-                    `;
-                        });
-                    });
+                        reader.addEventListener(
+                            'load',
+                            (event) => {
+                                thumbnailPreview.innerHTML = `
+                                    <img
+                                        src="${event.target.result}"
+                                        alt="Product thumbnail preview"
+                                    >
 
-                    reader.readAsDataURL(file);
-                });
+                                    <button
+                                        type="button"
+                                        class="product-create-page__remove-upload"
+                                        data-remove-thumbnail
+                                        title="Remove image"
+                                    >
+                                        <i class="ri-close-line"></i>
+                                    </button>
+                                `;
+
+                                const removeButton =
+                                    thumbnailPreview.querySelector(
+                                        '[data-remove-thumbnail]',
+                                    );
+
+                                removeButton?.addEventListener(
+                                    'click',
+                                    (clickEvent) => {
+                                        clickEvent.preventDefault();
+                                        clickEvent.stopPropagation();
+
+                                        thumbnailInput.value = '';
+
+                                        thumbnailPreview.innerHTML = `
+                                            <div class="product-create-page__upload-icon">
+                                                <i class="ri-image-add-line"></i>
+                                            </div>
+
+                                            <strong>
+                                                Upload product image
+                                            </strong>
+
+                                            <span>
+                                                JPG, PNG or WebP
+                                            </span>
+                                        `;
+                                    },
+                                );
+                            },
+                        );
+
+                        reader.readAsDataURL(file);
+                    },
+                );
             }
 
 
@@ -1517,54 +1652,82 @@
             |--------------------------------------------------------------------------
             */
 
-            const galleryInput = page.querySelector('#gallery');
-            const galleryPreview = page.querySelector('#gallery-preview');
+            const galleryInput =
+                page.querySelector('#gallery');
 
-            if (galleryInput && galleryPreview) {
-                galleryInput.addEventListener('change', () => {
-                    galleryPreview.innerHTML = '';
+            const galleryPreview =
+                page.querySelector('#gallery-preview');
 
-                    const files = Array.from(
-                        galleryInput.files || [],
-                    );
+            if (
+                galleryInput &&
+                galleryPreview
+            ) {
+                galleryInput.addEventListener(
+                    'change',
+                    () => {
+                        galleryPreview.innerHTML = '';
 
-                    files.forEach((file, index) => {
-                        if (!file.type.startsWith('image/')) {
-                            return;
-                        }
+                        const files = Array.from(
+                            galleryInput.files || [],
+                        );
 
-                        const reader = new FileReader();
+                        files.forEach(
+                            (
+                                file,
+                                index,
+                            ) => {
+                                if (
+                                    !file.type.startsWith(
+                                        'image/',
+                                    )
+                                ) {
+                                    return;
+                                }
 
-                        reader.addEventListener('load', (event) => {
-                            const item = document.createElement('div');
+                                const reader =
+                                    new FileReader();
 
-                            item.className =
-                                'product-create-page__gallery-item';
+                                reader.addEventListener(
+                                    'load',
+                                    (event) => {
+                                        const item =
+                                            document.createElement(
+                                                'div',
+                                            );
 
-                            item.dataset.galleryIndex = String(index);
+                                        item.className =
+                                            'product-create-page__gallery-item';
 
-                            item.innerHTML = `
-                        <img
-                            src="${event.target.result}"
-                            alt="Gallery preview"
-                        >
+                                        item.dataset.galleryIndex =
+                                            String(index);
 
-                        <button
-                            type="button"
-                            class="product-create-page__remove-upload"
-                            data-remove-gallery="${index}"
-                            title="Remove image"
-                        >
-                            <i class="ri-close-line"></i>
-                        </button>
-                    `;
+                                        item.innerHTML = `
+                                            <img
+                                                src="${event.target.result}"
+                                                alt="Gallery preview"
+                                            >
 
-                            galleryPreview.appendChild(item);
-                        });
+                                            <button
+                                                type="button"
+                                                class="product-create-page__remove-upload"
+                                                data-remove-gallery="${index}"
+                                                title="Remove image"
+                                            >
+                                                <i class="ri-close-line"></i>
+                                            </button>
+                                        `;
 
-                        reader.readAsDataURL(file);
-                    });
-                });
+                                        galleryPreview.appendChild(
+                                            item,
+                                        );
+                                    },
+                                );
+
+                                reader.readAsDataURL(file);
+                            },
+                        );
+                    },
+                );
             }
 
 
@@ -1574,94 +1737,140 @@
             |--------------------------------------------------------------------------
             */
 
-            const attributeCards = page.querySelectorAll(
-                '[data-attribute-card]',
-            );
-
-            attributeCards.forEach((card) => {
-                const toggle = card.querySelector(
-                    '[data-attribute-toggle]',
+            const attributeCards =
+                page.querySelectorAll(
+                    '[data-attribute-card]',
                 );
 
-                const valuesContainer = card.querySelector(
-                    '[data-attribute-values]',
-                );
+            attributeCards.forEach(
+                (card) => {
+                    const toggle =
+                        card.querySelector(
+                            '[data-attribute-toggle]',
+                        );
 
-                const valueInputs = card.querySelectorAll(
-                    '[data-attribute-value]',
-                );
+                    const valuesContainer =
+                        card.querySelector(
+                            '[data-attribute-values]',
+                        );
 
-                const selectAllButton = card.querySelector(
-                    '[data-select-all]',
-                );
+                    const valueInputs =
+                        card.querySelectorAll(
+                            '[data-attribute-value]',
+                        );
 
-                if (!toggle || !valuesContainer) {
-                    return;
-                }
+                    const selectAllButton =
+                        card.querySelector(
+                            '[data-select-all]',
+                        );
 
-                const updateSelectAllButton = () => {
-                    if (!selectAllButton || !toggle.checked) {
+                    if (
+                        !toggle ||
+                        !valuesContainer
+                    ) {
                         return;
                     }
 
-                    const checkedCount = Array.from(valueInputs)
-                        .filter((input) => input.checked)
-                        .length;
 
-                    const totalCount = valueInputs.length;
+                    const updateSelectAllButton =
+                        () => {
+                            if (
+                                !selectAllButton ||
+                                !toggle.checked
+                            ) {
+                                return;
+                            }
 
-                    selectAllButton.textContent =
-                        totalCount > 0 &&
-                        checkedCount === totalCount
-                            ? 'Deselect All'
-                            : 'Select All';
-                };
+                            const checkedCount =
+                                Array.from(
+                                    valueInputs,
+                                ).filter(
+                                    (input) =>
+                                        input.checked,
+                                ).length;
 
-                const updateValuesState = () => {
-                    const enabled = toggle.checked;
+                            const totalCount =
+                                valueInputs.length;
 
-                    valuesContainer.hidden = !enabled;
+                            selectAllButton.textContent =
+                                totalCount > 0 &&
+                                checkedCount ===
+                                totalCount
+                                    ? 'Deselect All'
+                                    : 'Select All';
+                        };
 
-                    valueInputs.forEach((input) => {
-                        input.disabled = !enabled;
 
-                        if (!enabled) {
-                            input.checked = false;
-                        }
-                    });
+                    const updateValuesState =
+                        () => {
+                            const enabled =
+                                toggle.checked;
 
-                    updateSelectAllButton();
-                };
+                            valuesContainer.hidden =
+                                !enabled;
 
-                toggle.addEventListener(
-                    'change',
-                    updateValuesState,
-                );
+                            valueInputs.forEach(
+                                (input) => {
+                                    input.disabled =
+                                        !enabled;
 
-                valueInputs.forEach((input) => {
-                    input.addEventListener(
+                                    if (!enabled) {
+                                        input.checked =
+                                            false;
+                                    }
+                                },
+                            );
+
+                            updateSelectAllButton();
+                        };
+
+
+                    toggle.addEventListener(
                         'change',
-                        updateSelectAllButton,
+                        updateValuesState,
                     );
-                });
 
-                selectAllButton?.addEventListener('click', () => {
-                    if (!toggle.checked) {
-                        return;
-                    }
 
-                    const allChecked = Array.from(valueInputs)
-                        .every((input) => input.checked);
+                    valueInputs.forEach(
+                        (input) => {
+                            input.addEventListener(
+                                'change',
+                                updateSelectAllButton,
+                            );
+                        },
+                    );
 
-                    valueInputs.forEach((input) => {
-                        input.checked = !allChecked;
-                    });
 
-                    updateSelectAllButton();
-                });
+                    selectAllButton?.addEventListener(
+                        'click',
+                        () => {
+                            if (!toggle.checked) {
+                                return;
+                            }
 
-                updateValuesState();
-            });
+                            const allChecked =
+                                Array.from(
+                                    valueInputs,
+                                ).every(
+                                    (input) =>
+                                        input.checked,
+                                );
+
+                            valueInputs.forEach(
+                                (input) => {
+                                    input.checked =
+                                        !allChecked;
+                                },
+                            );
+
+                            updateSelectAllButton();
+                        },
+                    );
+
+
+                    updateValuesState();
+                },
+            );
 
 
             /*
@@ -1670,29 +1879,31 @@
             |--------------------------------------------------------------------------
             */
 
-            const generateButton = page.querySelector(
-                '#generate-variants',
-            );
+            const generateButton =
+                page.querySelector(
+                    '#generate-variants',
+                );
 
-            const variantsContainer = page.querySelector(
-                '#variants-container',
-            );
+            const variantsContainer =
+                page.querySelector(
+                    '#variants-container',
+                );
 
-            const variantsList = page.querySelector(
-                '#variants-list',
-            );
+            const variantsList =
+                page.querySelector(
+                    '#variants-list',
+                );
 
-            const variantCount = page.querySelector(
-                '#variant-count',
-            );
+            const variantCount =
+                page.querySelector(
+                    '#variant-count',
+                );
 
-            const defaultPrice = page.querySelector(
-                '#price',
-            );
+            const defaultPrice =
+                page.querySelector('#price');
 
-            const defaultComparePrice = page.querySelector(
-                '#compare_price',
-            );
+            const defaultComparePrice =
+                page.querySelector('#compare_price');
 
 
             /*
@@ -1706,151 +1917,196 @@
                 variantsContainer &&
                 variantsList
             ) {
-                generateButton.addEventListener('click', () => {
-                    const selectedAttributes = [];
+                generateButton.addEventListener(
+                    'click',
+                    () => {
+                        const selectedAttributes =
+                            [];
 
-                    attributeCards.forEach((card) => {
-                        const toggle = card.querySelector(
-                            '[data-attribute-toggle]',
-                        );
-
-                        if (!toggle?.checked) {
-                            return;
-                        }
-
-                        const attributeId = String(
-                            card.dataset.attributeId || '',
-                        ).trim();
-
-                        if (!attributeId) {
-                            return;
-                        }
-
-                        const selectedValues = Array.from(
-                            card.querySelectorAll(
-                                '[data-attribute-value]:checked',
-                            ),
-                        )
-                            .map((input) => {
-                                const valueId = String(
-                                    input.value || '',
-                                ).trim();
-
-                                const valueLabel = String(
-                                    input.dataset.valueLabel || '',
-                                ).trim();
-
-                                const valueAttributeId = String(
-                                    input.dataset.attributeId ||
-                                    attributeId,
-                                ).trim();
-
-                                const attributeName = String(
-                                    input.dataset.attributeName || '',
-                                ).trim();
+                        attributeCards.forEach(
+                            (card) => {
+                                const toggle =
+                                    card.querySelector(
+                                        '[data-attribute-toggle]',
+                                    );
 
                                 if (
-                                    !valueId ||
-                                    !valueAttributeId
+                                    !toggle?.checked
                                 ) {
-                                    return null;
+                                    return;
                                 }
 
-                                return {
-                                    id: valueId,
-                                    label: valueLabel,
-                                    attributeId: valueAttributeId,
-                                    attributeName,
-                                };
-                            })
-                            .filter(Boolean);
+                                const attributeId =
+                                    String(
+                                        card.dataset
+                                            .attributeId ||
+                                        '',
+                                    ).trim();
 
-                        if (selectedValues.length > 0) {
-                            selectedAttributes.push({
-                                attributeId,
-                                values: selectedValues,
-                            });
+                                if (!attributeId) {
+                                    return;
+                                }
+
+                                const selectedValues =
+                                    Array.from(
+                                        card.querySelectorAll(
+                                            '[data-attribute-value]:checked',
+                                        ),
+                                    )
+                                        .map(
+                                            (input) => {
+                                                const valueId =
+                                                    String(
+                                                        input.value ||
+                                                        '',
+                                                    ).trim();
+
+                                                const valueLabel =
+                                                    String(
+                                                        input.dataset
+                                                            .valueLabel ||
+                                                        '',
+                                                    ).trim();
+
+                                                const valueAttributeId =
+                                                    String(
+                                                        input.dataset
+                                                            .attributeId ||
+                                                        attributeId,
+                                                    ).trim();
+
+                                                const attributeName =
+                                                    String(
+                                                        input.dataset
+                                                            .attributeName ||
+                                                        '',
+                                                    ).trim();
+
+                                                if (
+                                                    !valueId ||
+                                                    !valueAttributeId
+                                                ) {
+                                                    return null;
+                                                }
+
+                                                return {
+                                                    id: valueId,
+                                                    label: valueLabel,
+                                                    attributeId:
+                                                    valueAttributeId,
+                                                    attributeName,
+                                                };
+                                            },
+                                        )
+                                        .filter(Boolean);
+
+                                if (
+                                    selectedValues.length >
+                                    0
+                                ) {
+                                    selectedAttributes.push(
+                                        {
+                                            attributeId,
+                                            values:
+                                            selectedValues,
+                                        },
+                                    );
+                                }
+                            },
+                        );
+
+
+                        if (
+                            selectedAttributes.length ===
+                            0
+                        ) {
+                            variantsContainer.hidden =
+                                true;
+
+                            window.alert(
+                                'Please select at least one option and one value before generating variants.',
+                            );
+
+                            return;
                         }
-                    });
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Validate Selected Attributes
-                    |--------------------------------------------------------------------------
-                    */
+                        const groups =
+                            selectedAttributes.map(
+                                (attribute) =>
+                                    attribute.values,
+                            );
 
-                    if (selectedAttributes.length === 0) {
-                        variantsContainer.hidden = true;
+                        const combinations =
+                            buildCombinations(
+                                groups,
+                            );
 
-                        window.alert(
-                            'Please select at least one option and one value before generating variants.',
+
+                        if (
+                            !combinations.length
+                        ) {
+                            variantsContainer.hidden =
+                                true;
+
+                            window.alert(
+                                'No valid variant combinations could be generated.',
+                            );
+
+                            return;
+                        }
+
+
+                        const invalidCombination =
+                            combinations.find(
+                                (combination) => {
+                                    return (
+                                        combination.length ===
+                                        0 ||
+                                        combination.some(
+                                            (item) => {
+                                                return (
+                                                    !item.id ||
+                                                    !item.attributeId
+                                                );
+                                            },
+                                        )
+                                    );
+                                },
+                            );
+
+
+                        if (
+                            invalidCombination
+                        ) {
+                            variantsContainer.hidden =
+                                true;
+
+                            window.alert(
+                                'One or more variant combinations are missing attribute values.',
+                            );
+
+                            return;
+                        }
+
+
+                        renderVariants(
+                            combinations,
                         );
 
-                        return;
-                    }
+                        variantsContainer.hidden =
+                            false;
 
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Build Combinations
-                    |--------------------------------------------------------------------------
-                    */
-
-                    const groups = selectedAttributes.map(
-                        (attribute) => attribute.values,
-                    );
-
-                    const combinations = buildCombinations(groups);
-
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Validate Combinations
-                    |--------------------------------------------------------------------------
-                    */
-
-                    if (!combinations.length) {
-                        variantsContainer.hidden = true;
-
-                        window.alert(
-                            'No valid variant combinations could be generated.',
+                        variantsContainer.scrollIntoView(
+                            {
+                                behavior:
+                                    'smooth',
+                                block:
+                                    'start',
+                            },
                         );
-
-                        return;
-                    }
-
-
-                    const invalidCombination = combinations.find(
-                        (combination) => {
-                            return combination.length === 0 ||
-                                combination.some((item) => {
-                                    return !item.id ||
-                                        !item.attributeId;
-                                });
-                        },
-                    );
-
-                    if (invalidCombination) {
-                        variantsContainer.hidden = true;
-
-                        window.alert(
-                            'One or more variant combinations are missing attribute values.',
-                        );
-
-                        return;
-                    }
-
-
-                    renderVariants(combinations);
-
-                    variantsContainer.hidden = false;
-
-                    variantsContainer.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start',
-                    });
-                });
+                    },
+                );
             }
 
 
@@ -1860,8 +2116,13 @@
             |--------------------------------------------------------------------------
             */
 
-            function buildCombinations(groups) {
-                if (!Array.isArray(groups) || !groups.length) {
+            function buildCombinations(
+                groups,
+            ) {
+                if (
+                    !Array.isArray(groups) ||
+                    !groups.length
+                ) {
                     return [];
                 }
 
@@ -1876,19 +2137,28 @@
                 }
 
                 return groups.reduce(
-                    (combinations, group) => {
-                        if (!combinations.length) {
-                            return group.map((item) => [item]);
+                    (
+                        combinations,
+                        group,
+                    ) => {
+                        if (
+                            !combinations.length
+                        ) {
+                            return group.map(
+                                (item) => [item],
+                            );
                         }
 
                         return combinations.flatMap(
                             (combination) => {
-                                return group.map((item) => {
-                                    return [
-                                        ...combination,
-                                        item,
-                                    ];
-                                });
+                                return group.map(
+                                    (item) => {
+                                        return [
+                                            ...combination,
+                                            item,
+                                        ];
+                                    },
+                                );
                             },
                         );
                     },
@@ -1903,201 +2173,243 @@
             |--------------------------------------------------------------------------
             */
 
-            function renderVariants(combinations) {
+            function renderVariants(
+                combinations,
+            ) {
                 if (!variantsList) {
                     return;
                 }
 
                 variantsList.innerHTML = '';
 
-                combinations.forEach((combination, index) => {
-                    const row = document.createElement('tr');
+                combinations.forEach(
+                    (
+                        combination,
+                        index,
+                    ) => {
+                        const row =
+                            document.createElement(
+                                'tr',
+                            );
 
-                    const variantLabel = combination
-                        .map((item) => item.label)
-                        .filter(Boolean)
-                        .join(' / ');
+                        const variantLabel =
+                            combination
+                                .map(
+                                    (item) =>
+                                        item.label,
+                                )
+                                .filter(Boolean)
+                                .join(' / ');
 
-                    row.dataset.variantIndex = String(index);
-
-                    const valueInputs = combination
-                        .map((item) => {
-                            const attributeId = String(
-                                item.attributeId || '',
-                            ).trim();
-
-                            const valueId = String(
-                                item.id || '',
-                            ).trim();
-
-                            if (!attributeId || !valueId) {
-                                return '';
-                            }
-
-                            return `
-                        <span>
-                            ${escapeHtml(item.attributeName || '')}:
-                            ${escapeHtml(item.label || '')}
-                        </span>
-
-                        <input
-                            type="hidden"
-                            name="variants[${index}][values][${escapeAttribute(attributeId)}]"
-                            value="${escapeAttribute(valueId)}"
-                            data-variant-value
-                            data-attribute-id="${escapeAttribute(attributeId)}"
-                            data-value-id="${escapeAttribute(valueId)}"
-                        >
-                    `;
-                        })
-                        .join('');
+                        row.dataset.variantIndex =
+                            String(index);
 
 
-                    row.innerHTML = `
-                <td>
-                    <div class="product-create-page__variant-name">
+                        const valueInputs =
+                            combination
+                                .map(
+                                    (item) => {
+                                        const attributeId =
+                                            String(
+                                                item.attributeId ||
+                                                '',
+                                            ).trim();
 
-                        <strong>
-                            ${escapeHtml(variantLabel)}
-                        </strong>
+                                        const valueId =
+                                            String(
+                                                item.id ||
+                                                '',
+                                            ).trim();
 
-                        <div class="product-create-page__variant-options">
-                            ${valueInputs}
-                        </div>
+                                        if (
+                                            !attributeId ||
+                                            !valueId
+                                        ) {
+                                            return '';
+                                        }
 
-                        <input
-                            type="hidden"
-                            name="variants[${index}][name]"
-                            value="${escapeAttribute(variantLabel)}"
-                        >
+                                        return `
+                                            <span>
+                                                ${escapeHtml(
+                                            item.attributeName ||
+                                            '',
+                                        )}:
+                                                ${escapeHtml(
+                                            item.label ||
+                                            '',
+                                        )}
+                                            </span>
 
-                    </div>
-                </td>
-
-
-                <td>
-                    <input
-                        type="text"
-                        name="variants[${index}][sku]"
-                        class="product-create-page__variant-input"
-                        placeholder="SKU"
-                        required
-                    >
-                </td>
-
-
-                <td>
-                    <div class="product-create-page__variant-price">
-
-                        <span>$</span>
-
-                        <input
-                            type="number"
-                            name="variants[${index}][price]"
-                            class="product-create-page__variant-input"
-                            min="0"
-                            step="0.01"
-                            value="${escapeAttribute(
-                        defaultPrice?.value || '',
-                    )}"
-                            placeholder="0.00"
-                            required
-                        >
-
-                    </div>
-                </td>
+                                            <input
+                                                type="hidden"
+                                                name="variants[${index}][values][${escapeAttribute(attributeId)}]"
+                                                value="${escapeAttribute(valueId)}"
+                                                data-variant-value
+                                                data-attribute-id="${escapeAttribute(attributeId)}"
+                                                data-value-id="${escapeAttribute(valueId)}"
+                                            >
+                                        `;
+                                    },
+                                )
+                                .join('');
 
 
-                <td>
-                    <div class="product-create-page__variant-price">
+                        row.innerHTML = `
+                            <td>
+                                <div class="product-create-page__variant-name">
 
-                        <span>$</span>
+                                    <strong>
+                                        ${escapeHtml(
+                            variantLabel,
+                        )}
+                                    </strong>
 
-                        <input
-                            type="number"
-                            name="variants[${index}][compare_price]"
-                            class="product-create-page__variant-input"
-                            min="0"
-                            step="0.01"
-                            value="${escapeAttribute(
-                        defaultComparePrice?.value || '',
-                    )}"
-                            placeholder="0.00"
-                        >
+                                    <div class="product-create-page__variant-options">
+                                        ${valueInputs}
+                                    </div>
 
-                    </div>
-                </td>
+                                    <input
+                                        type="hidden"
+                                        name="variants[${index}][name]"
+                                        value="${escapeAttribute(
+                            variantLabel,
+                        )}"
+                                    >
 
-
-                <td>
-                    <input
-                        type="number"
-                        name="variants[${index}][stock]"
-                        class="product-create-page__variant-input"
-                        min="0"
-                        step="1"
-                        value="0"
-                        placeholder="0"
-                        required
-                    >
-                </td>
+                                </div>
+                            </td>
 
 
-                <td>
-                    <label
-                        class="product-create-page__variant-image"
-                    >
-
-                        <input
-                            type="file"
-                            name="variants[${index}][image]"
-                            accept="image/jpeg,image/png,image/webp"
-                            hidden
-                            data-variant-image-input
-                        >
-
-                        <span
-                            data-variant-image-preview
-                        >
-                            <i class="ri-image-add-line"></i>
-                        </span>
-
-                    </label>
-                </td>
+                            <td>
+                                <input
+                                    type="text"
+                                    name="variants[${index}][sku]"
+                                    class="product-create-page__variant-input"
+                                    placeholder="SKU"
+                                    required
+                                >
+                            </td>
 
 
-                <td>
-                    <label class="product-create-page__variant-switch">
+                            <td>
+                                <div class="product-create-page__variant-price">
 
-                        <input
-                            type="checkbox"
-                            name="variants[${index}][status]"
-                            value="1"
-                            checked
-                        >
+                                    <span>$</span>
 
-                        <span></span>
+                                    <input
+                                        type="number"
+                                        name="variants[${index}][price]"
+                                        class="product-create-page__variant-input"
+                                        min="0"
+                                        step="0.01"
+                                        value="${escapeAttribute(
+                            defaultPrice?.value ||
+                            '',
+                        )}"
+                                        placeholder="0.00"
+                                        required
+                                    >
 
-                    </label>
-                </td>
+                                </div>
+                            </td>
 
 
-                <td>
-                    <button
-                        type="button"
-                        class="product-create-page__remove-variant"
-                        data-remove-variant
-                        title="Remove variant"
-                    >
-                        <i class="ri-delete-bin-line"></i>
-                    </button>
-                </td>
-            `;
+                            <td>
+                                <div class="product-create-page__variant-price">
 
-                    variantsList.appendChild(row);
+                                    <span>$</span>
 
-                    setupVariantImage(row);
-                });
+                                    <input
+                                        type="number"
+                                        name="variants[${index}][compare_price]"
+                                        class="product-create-page__variant-input"
+                                        min="0"
+                                        step="0.01"
+                                        value="${escapeAttribute(
+                            defaultComparePrice?.value ||
+                            '',
+                        )}"
+                                        placeholder="0.00"
+                                    >
+
+                                </div>
+                            </td>
+
+
+                            <td>
+                                <input
+                                    type="number"
+                                    name="variants[${index}][stock]"
+                                    class="product-create-page__variant-input"
+                                    min="0"
+                                    step="1"
+                                    value="0"
+                                    placeholder="0"
+                                    required
+                                >
+                            </td>
+
+
+                            <td>
+                                <label
+                                    class="product-create-page__variant-image"
+                                >
+
+                                    <input
+                                        type="file"
+                                        name="variants[${index}][image]"
+                                        accept="image/jpeg,image/png,image/webp"
+                                        hidden
+                                        data-variant-image-input
+                                    >
+
+                                    <span
+                                        data-variant-image-preview
+                                    >
+                                        <i class="ri-image-add-line"></i>
+                                    </span>
+
+                                </label>
+                            </td>
+
+
+                            <td>
+                                <label
+                                    class="product-create-page__variant-switch"
+                                >
+
+                                    <input
+                                        type="checkbox"
+                                        name="variants[${index}][status]"
+                                        value="1"
+                                        checked
+                                    >
+
+                                    <span></span>
+
+                                </label>
+                            </td>
+
+
+                            <td>
+                                <button
+                                    type="button"
+                                    class="product-create-page__remove-variant"
+                                    data-remove-variant
+                                    title="Remove variant"
+                                >
+                                    <i class="ri-delete-bin-line"></i>
+                                </button>
+                            </td>
+                        `;
+
+                        variantsList.appendChild(
+                            row,
+                        );
+
+                        setupVariantImage(row);
+                    },
+                );
 
                 updateVariantCount();
                 setupVariantRemoval();
@@ -2111,44 +2423,61 @@
             */
 
             function setupVariantImage(row) {
-                const input = row.querySelector(
-                    '[data-variant-image-input]',
-                );
+                const input =
+                    row.querySelector(
+                        '[data-variant-image-input]',
+                    );
 
-                const preview = row.querySelector(
-                    '[data-variant-image-preview]',
-                );
+                const preview =
+                    row.querySelector(
+                        '[data-variant-image-preview]',
+                    );
 
-                if (!input || !preview) {
+                if (
+                    !input ||
+                    !preview
+                ) {
                     return;
                 }
 
-                input.addEventListener('change', () => {
-                    const file = input.files?.[0];
+                input.addEventListener(
+                    'change',
+                    () => {
+                        const file =
+                            input.files?.[0];
 
-                    if (!file) {
-                        return;
-                    }
+                        if (!file) {
+                            return;
+                        }
 
-                    if (!file.type.startsWith('image/')) {
-                        input.value = '';
+                        if (
+                            !file.type.startsWith(
+                                'image/',
+                            )
+                        ) {
+                            input.value = '';
 
-                        return;
-                    }
+                            return;
+                        }
 
-                    const reader = new FileReader();
+                        const reader =
+                            new FileReader();
 
-                    reader.addEventListener('load', (event) => {
-                        preview.innerHTML = `
-                    <img
-                        src="${event.target.result}"
-                        alt="Variant image"
-                    >
-                `;
-                    });
+                        reader.addEventListener(
+                            'load',
+                            (event) => {
+                                preview.innerHTML = `
+                                    <img
+                                        src="${event.target.result}"
+                                        alt="Variant image"
+                                    >
+                                `;
+                            },
+                        );
 
-                    reader.readAsDataURL(file);
-                });
+                        reader.readAsDataURL(file);
+                    },
+                );
             }
 
 
@@ -2164,15 +2493,24 @@
                 }
 
                 variantsList
-                    .querySelectorAll('[data-remove-variant]')
-                    .forEach((button) => {
-                        button.addEventListener('click', () => {
-                            button.closest('tr')?.remove();
+                    .querySelectorAll(
+                        '[data-remove-variant]',
+                    )
+                    .forEach(
+                        (button) => {
+                            button.addEventListener(
+                                'click',
+                                () => {
+                                    button
+                                        .closest('tr')
+                                        ?.remove();
 
-                            reindexVariants();
-                            updateVariantCount();
-                        });
-                    });
+                                    reindexVariants();
+                                    updateVariantCount();
+                                },
+                            );
+                        },
+                    );
             }
 
 
@@ -2187,20 +2525,34 @@
                     return;
                 }
 
-                const rows = Array.from(
-                    variantsList.querySelectorAll('tr'),
-                );
+                const rows =
+                    Array.from(
+                        variantsList.querySelectorAll(
+                            'tr',
+                        ),
+                    );
 
-                rows.forEach((row, index) => {
-                    row.dataset.variantIndex = String(index);
+                rows.forEach(
+                    (
+                        row,
+                        index,
+                    ) => {
+                        row.dataset.variantIndex =
+                            String(index);
 
-                    row.querySelectorAll('[name]').forEach((input) => {
-                        input.name = input.name.replace(
-                            /variants\[\d+\]/,
-                            `variants[${index}]`,
+                        row.querySelectorAll(
+                            '[name]',
+                        ).forEach(
+                            (input) => {
+                                input.name =
+                                    input.name.replace(
+                                        /variants\[\d+\]/,
+                                        `variants[${index}]`,
+                                    );
+                            },
                         );
-                    });
-                });
+                    },
+                );
             }
 
 
@@ -2211,17 +2563,28 @@
             */
 
             function updateVariantCount() {
-                if (!variantCount || !variantsList) {
+                if (
+                    !variantCount ||
+                    !variantsList
+                ) {
                     return;
                 }
 
-                const count = variantsList.querySelectorAll('tr').length;
+                const count =
+                    variantsList.querySelectorAll(
+                        'tr',
+                    ).length;
 
                 variantCount.textContent =
-                    `${count} ${count === 1 ? 'Variant' : 'Variants'}`;
+                    `${count} ${
+                        count === 1
+                            ? 'Variant'
+                            : 'Variants'
+                    }`;
 
                 if (variantsContainer) {
-                    variantsContainer.hidden = count === 0;
+                    variantsContainer.hidden =
+                        count === 0;
                 }
             }
 
@@ -2247,20 +2610,34 @@
                 inputSelector,
                 countSelector,
             ) {
-                const input = page.querySelector(inputSelector);
-                const counter = page.querySelector(countSelector);
+                const input =
+                    page.querySelector(
+                        inputSelector,
+                    );
 
-                if (!input || !counter) {
+                const counter =
+                    page.querySelector(
+                        countSelector,
+                    );
+
+                if (
+                    !input ||
+                    !counter
+                ) {
                     return;
                 }
 
                 const update = () => {
-                    counter.textContent = String(
-                        input.value.length,
-                    );
+                    counter.textContent =
+                        String(
+                            input.value.length,
+                        );
                 };
 
-                input.addEventListener('input', update);
+                input.addEventListener(
+                    'input',
+                    update,
+                );
 
                 update();
             }
@@ -2268,85 +2645,111 @@
 
             /*
             |--------------------------------------------------------------------------
-            | Form Submit Validation
+            | Form Submit
             |--------------------------------------------------------------------------
             */
 
             if (form) {
-                form.addEventListener('submit', (event) => {
+                form.addEventListener(
+                    'submit',
+                    (event) => {
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Sync Rich Text
-                    |--------------------------------------------------------------------------
-                    */
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Sync All Quill Editors
+                        |--------------------------------------------------------------------------
+                        */
 
-                    if (richEditor) {
-                        const content =
-                            richEditor.querySelector(
-                                '[data-rich-content]',
+                        quillEditors.forEach(
+                            ({
+                                 quill,
+                                 sourceTextarea,
+                             }) => {
+                                if (
+                                    !quill ||
+                                    !sourceTextarea
+                                ) {
+                                    return;
+                                }
+
+                                const html =
+                                    quill.root.innerHTML.trim();
+
+                                sourceTextarea.value =
+                                    html === '<p><br></p>'
+                                        ? ''
+                                        : html;
+                            },
+                        );
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Reindex Variants
+                        |--------------------------------------------------------------------------
+                        */
+
+                        reindexVariants();
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Validate Variants
+                        |--------------------------------------------------------------------------
+                        */
+
+                        const variantRows =
+                            Array.from(
+                                variantsList?.querySelectorAll(
+                                    'tr',
+                                ) || [],
                             );
 
-                        const input =
-                            richEditor.querySelector(
-                                '[data-rich-input]',
-                            );
+                        for (
+                            const row of variantRows
+                            ) {
+                            const valueInputs =
+                                Array.from(
+                                    row.querySelectorAll(
+                                        'input[data-variant-value]',
+                                    ),
+                                ).filter(
+                                    (input) => {
+                                        return (
+                                            input.value.trim() !==
+                                            '' &&
+                                            input.dataset
+                                                .attributeId &&
+                                            input.dataset
+                                                .valueId
+                                        );
+                                    },
+                                );
 
-                        if (content && input) {
-                            input.value =
-                                content.innerHTML.trim();
+                            if (
+                                valueInputs.length ===
+                                0
+                            ) {
+                                event.preventDefault();
+
+                                window.alert(
+                                    'Each variant must have attribute values.',
+                                );
+
+                                row.scrollIntoView(
+                                    {
+                                        behavior:
+                                            'smooth',
+                                        block:
+                                            'center',
+                                    },
+                                );
+
+                                return;
+                            }
                         }
-                    }
-
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Reindex Variants
-                    |--------------------------------------------------------------------------
-                    */
-
-                    reindexVariants();
-
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Validate Variants
-                    |--------------------------------------------------------------------------
-                    */
-
-                    const variantRows = Array.from(
-                        variantsList?.querySelectorAll('tr') || [],
-                    );
-
-                    for (const row of variantRows) {
-                        const valueInputs = Array.from(
-                            row.querySelectorAll(
-                                'input[data-variant-value]',
-                            ),
-                        ).filter((input) => {
-                            return (
-                                input.value.trim() !== '' &&
-                                input.dataset.attributeId &&
-                                input.dataset.valueId
-                            );
-                        });
-
-                        if (valueInputs.length === 0) {
-                            event.preventDefault();
-
-                            window.alert(
-                                'Each variant must have attribute values.',
-                            );
-
-                            row.scrollIntoView({
-                                behavior: 'smooth',
-                                block: 'center',
-                            });
-
-                            return;
-                        }
-                    }
-                });
+                    },
+                );
             }
 
 
@@ -2358,11 +2761,26 @@
 
             function escapeHtml(value) {
                 return String(value)
-                    .replace(/&/g, '&amp;')
-                    .replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;')
-                    .replace(/"/g, '&quot;')
-                    .replace(/'/g, '&#039;');
+                    .replace(
+                        /&/g,
+                        '&amp;',
+                    )
+                    .replace(
+                        /</g,
+                        '&lt;',
+                    )
+                    .replace(
+                        />/g,
+                        '&gt;',
+                    )
+                    .replace(
+                        /"/g,
+                        '&quot;',
+                    )
+                    .replace(
+                        /'/g,
+                        '&#039;',
+                    );
             }
 
 
@@ -2371,4 +2789,5 @@
             }
         });
     </script>
+
 @endpush

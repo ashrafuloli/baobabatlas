@@ -7,9 +7,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 final class Order extends Model
 {
+    /*
+    |--------------------------------------------------------------------------
+    | Order Statuses
+    |--------------------------------------------------------------------------
+    */
+
     public const STATUS_PENDING = 'pending';
 
     public const STATUS_PAID = 'paid';
@@ -22,19 +29,57 @@ final class Order extends Model
 
     public const STATUS_FAILED = 'failed';
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Payment Statuses
+    |--------------------------------------------------------------------------
+    */
+
     public const PAYMENT_STATUS_PENDING = 'pending';
 
     public const PAYMENT_STATUS_PAID = 'paid';
 
     public const PAYMENT_STATUS_FAILED = 'failed';
 
+    /*
+     * Kept for backwards compatibility.
+     *
+     * Refund state is now controlled by refund_status
+     * because shipping is non-refundable.
+     */
     public const PAYMENT_STATUS_REFUNDED = 'refunded';
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Refund Statuses
+    |--------------------------------------------------------------------------
+    */
+
+    public const REFUND_STATUS_NONE = 'none';
+
+    public const REFUND_STATUS_PENDING = 'pending';
+
+    public const REFUND_STATUS_APPROVED = 'approved';
+
+    public const REFUND_STATUS_REJECTED = 'rejected';
+
+    public const REFUND_STATUS_REFUNDED = 'refunded';
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Mass Assignment
+    |--------------------------------------------------------------------------
+    */
 
     protected $fillable = [
         'user_id',
         'order_number',
         'status',
         'payment_status',
+        'refund_status',
         'payment_gateway',
         'stripe_checkout_session_id',
         'stripe_payment_intent_id',
@@ -58,6 +103,13 @@ final class Order extends Model
         'paid_at',
     ];
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Casts
+    |--------------------------------------------------------------------------
+    */
+
     protected function casts(): array
     {
         return [
@@ -71,6 +123,13 @@ final class Order extends Model
         ];
     }
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relationships
+    |--------------------------------------------------------------------------
+    */
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -80,6 +139,33 @@ final class Order extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
+
+    public function shipment(): HasOne
+    {
+        return $this->hasOne(Shipment::class);
+    }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(OrderMessage::class);
+    }
+
+    public function refundRequests(): HasMany
+    {
+        return $this->hasMany(RefundRequest::class);
+    }
+
+    public function refunds(): HasMany
+    {
+        return $this->hasMany(Refund::class);
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Order Status Helpers
+    |--------------------------------------------------------------------------
+    */
 
     public function isPending(): bool
     {
@@ -99,5 +185,41 @@ final class Order extends Model
     public function isCompleted(): bool
     {
         return $this->status === self::STATUS_COMPLETED;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Refund Status Helpers
+    |--------------------------------------------------------------------------
+    |
+    | refund_status is the single source of truth for the
+    | customer-facing and admin-facing refund state.
+    |
+    */
+
+    public function hasRefundPending(): bool
+    {
+        return $this->refund_status === self::REFUND_STATUS_PENDING;
+    }
+
+    public function isRefundPending(): bool
+    {
+        return $this->refund_status === self::REFUND_STATUS_PENDING;
+    }
+
+    public function isRefundApproved(): bool
+    {
+        return $this->refund_status === self::REFUND_STATUS_APPROVED;
+    }
+
+    public function isRefundRejected(): bool
+    {
+        return $this->refund_status === self::REFUND_STATUS_REJECTED;
+    }
+
+    public function isRefunded(): bool
+    {
+        return $this->refund_status === self::REFUND_STATUS_REFUNDED;
     }
 }

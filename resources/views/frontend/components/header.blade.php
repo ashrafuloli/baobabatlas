@@ -6,11 +6,19 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>
+        @yield('title', setting('website_name', config('app.name')))
+    </title>
 
     <!-- favicon -->
-    <link rel="shortcut icon" type="image/x-icon" href="{{asset('favicon.png')}}">
+    <link
+        rel="shortcut icon"
+        type="image/x-icon"
+        href="{{ setting('favicon') ? asset(setting('favicon')) : asset('favicon.png') }}"
+    >
+
+    <!-- csrf -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Vendors Css -->
     <link rel="stylesheet" href="{{asset('assets/vendor/animate/animate.min.css')}}">
@@ -34,8 +42,11 @@
         <div class="row align-items-center">
             <div class="col-xl-3 col-6">
                 <div class="logo-wrap">
-                    <a href="{{route('home')}}">
-                        <img src="{{asset('logo.png')}}" alt="logo">
+                    <a href="{{ route('home') }}">
+                        <img
+                            src="{{ setting('website_logo') ? asset(setting('website_logo')) : asset('logo.png') }}"
+                            alt="{{ setting('website_name', config('app.name')) }}"
+                        >
                     </a>
                 </div>
             </div>
@@ -63,7 +74,9 @@
                                 </form>
                             @else
                                 <a href="{{route('login')}}">login</a>
-                                <a href="{{route('register')}}">Register</a>
+                                @if (setting('customer_registration', '1') === '1')
+                                    <a href="{{route('register')}}">Register</a>
+                                @endif
                             @endif
                         </div>
                     </div>
@@ -104,7 +117,9 @@
                 </form>
             @else
                 <a href="{{route('login')}}" class="login">login</a>
-                <a href="{{route('register')}}" class="register">Register</a>
+                @if (setting('customer_registration', '1') === '1')
+                    <a href="{{route('register')}}" class="register">Register</a>
+                @endif
             @endif
         </div>
     </div>

@@ -241,6 +241,23 @@
         line-height: 1.6;
     }
 
+    &__item-shipping {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: $gray;
+        font-size: 14px;
+        line-height: 1.6;
+
+        svg {
+            width: 14px;
+        }
+
+        strong {
+            color: $heading-color;
+        }
+    }
+
     &__item-price {
         text-align: right;
 

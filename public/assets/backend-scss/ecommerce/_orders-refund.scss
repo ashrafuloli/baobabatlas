@@ -1,0 +1,898 @@
+@use "../common" as *;
+
+.admin-refunds-page {
+    width: 100%;
+    min-width: 0;
+
+    &__header {
+        margin-bottom: 28px;
+    }
+
+    &__header-content {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+    }
+
+    &__breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+
+        color: $body-color;
+        font-family: $body-fonts;
+        font-size: 13px;
+        font-weight: 500;
+        line-height: 1.4;
+
+        span:nth-child(2) {
+            color: $hr-color;
+        }
+    }
+
+    &__title {
+        margin: 0;
+        color: $heading-color;
+        font-family: $header-fonts;
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 1.3;
+    }
+
+    &__subtitle {
+        margin: 7px 0 0;
+        color: $body-color;
+        font-family: $body-fonts;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    &__stats {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    &__card {
+        overflow: hidden;
+        background: $white;
+        border: 1px solid $hr-color;
+        border-radius: 12px;
+    }
+
+    &__toolbar {
+        padding: 18px 20px;
+        border-bottom: 1px solid $hr-color;
+    }
+
+    &__pagination {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 18px 20px;
+        border-top: 1px solid $hr-color;
+    }
+
+    &__pagination-info {
+        color: $body-color;
+        font-family: $body-fonts;
+        font-size: 13px;
+        line-height: 1.5;
+
+        strong {
+            color: $heading-color;
+            font-weight: 600;
+        }
+    }
+
+    &__pagination-links {
+        .pagination {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .page-item {
+            margin: 0;
+        }
+
+        .page-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 34px;
+            height: 34px;
+            padding: 0 9px;
+            color: $body-color;
+            background: $white;
+            border: 1px solid $hr-color;
+            border-radius: 7px;
+            font-family: $body-fonts;
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1;
+            text-decoration: none;
+            transition: 0.2s ease;
+
+            &:hover {
+                color: $theme-color;
+                border-color: $theme-color;
+            }
+        }
+
+        .page-item.active .page-link {
+            color: $white;
+            background: $theme-color;
+            border-color: $theme-color;
+        }
+
+        .page-item.disabled .page-link {
+            color: $body-color;
+            cursor: not-allowed;
+            opacity: 0.55;
+        }
+    }
+}
+
+
+/*
+ * Statistics
+ */
+.admin-refunds-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+    padding: 18px;
+    background: $white;
+    border: 1px solid $hr-color;
+    border-radius: 12px;
+
+    &__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 42px;
+        width: 42px;
+        height: 42px;
+        color: $theme-color;
+        background: rgba($theme-color, 0.08);
+        border-radius: 10px;
+        font-size: 18px;
+    }
+
+    &__content {
+        min-width: 0;
+
+        span {
+            display: block;
+            margin-bottom: 4px;
+            overflow: hidden;
+            color: $body-color;
+            font-family: $body-fonts;
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 1.4;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        strong {
+            display: block;
+            color: $heading-color;
+            font-family: $header-fonts;
+            font-size: 20px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+    }
+
+    &--pending {
+        .admin-refunds-stat-card__icon {
+            color: $warning;
+            background: rgba($warning, 0.1);
+        }
+    }
+
+    &--approved {
+        .admin-refunds-stat-card__icon {
+            color: $success;
+            background: rgba($success, 0.1);
+        }
+    }
+
+    &--refunded {
+        .admin-refunds-stat-card__icon {
+            color: $info;
+            background: rgba($info, 0.1);
+        }
+    }
+
+    &--rejected {
+        .admin-refunds-stat-card__icon {
+            color: $danger;
+            background: rgba($danger, 0.1);
+        }
+    }
+}
+
+
+/*
+ * Filters
+ */
+.admin-refunds-filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    &__search {
+        position: relative;
+        flex: 1 1 auto;
+        min-width: 220px;
+
+        > i {
+            position: absolute;
+            top: 50%;
+            left: 14px;
+            z-index: 1;
+            color: $body-color;
+            font-size: 15px;
+            pointer-events: none;
+            transform: translateY(-50%);
+        }
+
+        input {
+            width: 100%;
+            height: 42px;
+            padding: 0 40px 0 40px;
+            color: $heading-color;
+            background: $white;
+            border: 1px solid $hr-color;
+            border-radius: 8px;
+            outline: none;
+            font-family: $body-fonts;
+            font-size: 13px;
+            transition: 0.2s ease;
+
+            &:focus {
+                border-color: $theme-color;
+            }
+
+            &::placeholder {
+                color: $body-color;
+            }
+        }
+    }
+
+    &__clear {
+        position: absolute;
+        top: 50%;
+        right: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 25px;
+        height: 25px;
+        padding: 0;
+        color: $body-color;
+        background: transparent;
+        border: 0;
+        border-radius: 50%;
+        cursor: pointer;
+        transform: translateY(-50%);
+        transition: 0.2s ease;
+
+        &:hover {
+            color: $danger;
+            background: rgba($danger, 0.08);
+        }
+    }
+
+    &__status {
+        position: relative;
+        flex: 0 0 170px;
+
+        select {
+            width: 100%;
+            height: 42px;
+            padding: 0 38px 0 13px;
+            color: $heading-color;
+            background: $white;
+            border: 1px solid $hr-color;
+            border-radius: 8px;
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            font-family: $body-fonts;
+            font-size: 13px;
+            transition: 0.2s ease;
+
+            &:focus {
+                border-color: $theme-color;
+            }
+        }
+
+        > i {
+            position: absolute;
+            top: 50%;
+            right: 13px;
+            color: $body-color;
+            font-size: 11px;
+            pointer-events: none;
+            transform: translateY(-50%);
+        }
+    }
+
+    &__button,
+    &__reset {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-height: 42px;
+        padding: 0 16px;
+        border-radius: 8px;
+        font-family: $body-fonts;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1;
+        text-decoration: none;
+        transition: 0.2s ease;
+        white-space: nowrap;
+    }
+
+    &__button {
+        color: $white;
+        background: $theme-color;
+        border: 1px solid $theme-color;
+        cursor: pointer;
+
+        &:hover {
+            opacity: 0.9;
+        }
+
+        &:disabled {
+            cursor: not-allowed;
+            opacity: 0.65;
+        }
+
+        &.is-submitting {
+            cursor: wait;
+        }
+    }
+
+    &__reset {
+        color: $body-color;
+        background: $light;
+        border: 1px solid $hr-color;
+
+        &:hover {
+            color: $danger;
+            border-color: $danger;
+        }
+    }
+}
+
+
+/*
+ * Table
+ */
+.admin-refunds-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+
+.admin-refunds-table {
+    width: 100%;
+    min-width: 1050px;
+    border-collapse: collapse;
+
+    thead {
+        background: $light;
+
+        th {
+            padding: 13px 16px;
+            color: $body-color;
+            border-bottom: 1px solid $hr-color;
+            font-family: $body-fonts;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            line-height: 1.4;
+            text-align: left;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+    }
+
+    tbody {
+        tr {
+            transition: background-color 0.2s ease;
+
+            &:hover {
+                background: rgba($theme-color, 0.025);
+            }
+
+            &:not(:last-child) {
+                td {
+                    border-bottom: 1px solid $hr-color;
+                }
+            }
+        }
+
+        td {
+            padding: 16px;
+            vertical-align: middle;
+        }
+    }
+
+    &__empty {
+        padding: 0 !important;
+    }
+}
+
+
+/*
+ * Request
+ */
+.admin-refunds-request {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    strong {
+        color: $heading-color;
+        font-family: $body-fonts;
+        font-size: 13px;
+        font-weight: 700;
+        line-height: 1.4;
+    }
+
+    span {
+        color: $body-color;
+        font-family: $body-fonts;
+        font-size: 11px;
+        line-height: 1.4;
+    }
+}
+
+
+/*
+ * Order
+ */
+.admin-refunds-order {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 3px;
+    text-decoration: none;
+
+    strong {
+        color: $theme-color;
+        font-family: $body-fonts;
+        font-size: 13px;
+        font-weight: 700;
+        line-height: 1.4;
+    }
+
+    span {
+        color: $body-color;
+        font-family: $body-fonts;
+        font-size: 11px;
+        line-height: 1.4;
+    }
+
+    &:hover {
+        strong {
+            text-decoration: underline;
+        }
+    }
+}
+
+
+/*
+ * Customer
+ */
+.admin-refunds-customer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 180px;
+
+    &__avatar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 34px;
+        width: 34px;
+        height: 34px;
+        color: $theme-color;
+        background: rgba($theme-color, 0.08);
+        border-radius: 50%;
+        font-family: $body-fonts;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        gap: 2px;
+
+        strong {
+            overflow: hidden;
+            color: $heading-color;
+            font-family: $body-fonts;
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.4;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        span {
+            overflow: hidden;
+            max-width: 190px;
+            color: $body-color;
+            font-family: $body-fonts;
+            font-size: 11px;
+            line-height: 1.4;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+}
+
+
+/*
+ * Amount
+ */
+.admin-refunds-amount {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    strong {
+        color: $heading-color;
+        font-family: $body-fonts;
+        font-size: 13px;
+        font-weight: 700;
+        line-height: 1.4;
+        white-space: nowrap;
+    }
+
+    span {
+        color: $body-color;
+        font-family: $body-fonts;
+        font-size: 10px;
+        line-height: 1.4;
+        white-space: nowrap;
+    }
+}
+
+
+/*
+ * Reason
+ */
+.admin-refunds-reason {
+    max-width: 145px;
+    overflow: hidden;
+    color: $body-color;
+    font-family: $body-fonts;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.5;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/*
+ * Status
+ */
+.admin-refunds-status-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+}
+
+.admin-refunds-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 9px;
+    border-radius: 999px;
+    font-family: $body-fonts;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+
+    &__dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+    }
+
+    &.is-pending {
+        color: $warning;
+        background: rgba($warning, 0.1);
+
+        .admin-refunds-status__dot {
+            background: $warning;
+        }
+    }
+
+    &.is-approved {
+        color: $success;
+        background: rgba($success, 0.1);
+
+        .admin-refunds-status__dot {
+            background: $success;
+        }
+    }
+
+    &.is-rejected {
+        color: $danger;
+        background: rgba($danger, 0.1);
+
+        .admin-refunds-status__dot {
+            background: $danger;
+        }
+    }
+
+    &.is-default {
+        color: $body-color;
+        background: rgba($body-color, 0.1);
+
+        .admin-refunds-status__dot {
+            background: $body-color;
+        }
+    }
+}
+
+.admin-refunds-refunded-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: $success;
+    font-family: $body-fonts;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+
+/*
+ * Date
+ */
+.admin-refunds-date {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    white-space: nowrap;
+
+    strong {
+        color: $heading-color;
+        font-family: $body-fonts;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.4;
+    }
+
+    span {
+        color: $body-color;
+        font-family: $body-fonts;
+        font-size: 11px;
+        line-height: 1.4;
+    }
+}
+
+
+/*
+ * View
+ */
+.admin-refunds-view {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 34px;
+    padding: 0 11px;
+    color: $theme-color;
+    background: rgba($theme-color, 0.07);
+    border: 1px solid transparent;
+    border-radius: 7px;
+    font-family: $body-fonts;
+    font-size: 11px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: 0.2s ease;
+    white-space: nowrap;
+
+    i {
+        font-size: 10px;
+        transition: 0.2s ease;
+    }
+
+    &:hover {
+        color: $white;
+        background: $theme-color;
+
+        i {
+            transform: translateX(2px);
+        }
+    }
+}
+
+
+/*
+ * Empty State
+ */
+.admin-refunds-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 320px;
+    padding: 40px 20px;
+    text-align: center;
+
+    &__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 58px;
+        height: 58px;
+        margin-bottom: 16px;
+        color: $body-color;
+        background: $light;
+        border-radius: 50%;
+        font-size: 22px;
+    }
+
+    h3 {
+        margin: 0 0 7px;
+        color: $heading-color;
+        font-family: $header-fonts;
+        font-size: 17px;
+        font-weight: 700;
+        line-height: 1.4;
+    }
+
+    p {
+        max-width: 380px;
+        margin: 0 0 18px;
+        color: $body-color;
+        font-family: $body-fonts;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 36px;
+        padding: 0 14px;
+        color: $theme-color;
+        background: rgba($theme-color, 0.07);
+        border-radius: 7px;
+        font-family: $body-fonts;
+        font-size: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: 0.2s ease;
+
+        &:hover {
+            color: $white;
+            background: $theme-color;
+        }
+    }
+}
+
+
+/*
+ * Responsive
+ */
+@include mq('xl') {
+    .admin-refunds-page {
+        &__stats {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+    }
+}
+
+@include mq('lg') {
+    .admin-refunds-filter {
+        flex-wrap: wrap;
+
+        &__search {
+            flex: 1 1 100%;
+        }
+
+        &__status {
+            flex: 1 1 180px;
+        }
+
+        &__button,
+        &__reset {
+            flex: 0 0 auto;
+        }
+    }
+}
+
+@include mq('md') {
+    .admin-refunds-page {
+        &__header {
+            margin-bottom: 22px;
+        }
+
+        &__stats {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        &__toolbar {
+            padding: 15px;
+        }
+
+        &__pagination {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 15px;
+        }
+    }
+
+    .admin-refunds-filter {
+        &__search {
+            min-width: 100%;
+        }
+
+        &__status {
+            flex: 1 1 100%;
+        }
+
+        &__button,
+        &__reset {
+            flex: 1 1 calc(50% - 5px);
+        }
+    }
+}
+
+@include mq('sm') {
+    .admin-refunds-page {
+        &__stats {
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        &__title {
+            font-size: 21px;
+        }
+
+        &__subtitle {
+            font-size: 13px;
+        }
+    }
+
+    .admin-refunds-stat-card {
+        padding: 15px;
+    }
+
+    .admin-refunds-filter {
+        &__button,
+        &__reset {
+            width: 100%;
+            flex: 1 1 100%;
+        }
+    }
+}

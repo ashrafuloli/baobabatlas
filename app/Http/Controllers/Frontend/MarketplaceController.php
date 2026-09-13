@@ -91,7 +91,7 @@ class MarketplaceController extends Controller
         $selectedCategorySlugs = array_values(
             array_filter(
                 $selectedCategorySlugs,
-                static fn($slug): bool => is_string($slug)
+                static fn ($slug): bool => is_string($slug)
                     && $slug !== ''
                     && $slug !== 'all',
             ),
@@ -161,7 +161,7 @@ class MarketplaceController extends Controller
         $selectedBrandIds = array_values(
             array_filter(
                 $selectedBrandIds,
-                static fn($id): bool => is_numeric($id),
+                static fn ($id): bool => is_numeric($id),
             ),
         );
 
@@ -192,6 +192,14 @@ class MarketplaceController extends Controller
         |--------------------------------------------------------------------------
         | Products
         |--------------------------------------------------------------------------
+        |
+        | shipping_cost is already included automatically because the
+        | Product query loads all product columns.
+        |
+        | Frontend views can use:
+        |
+        | $product->shipping_cost
+        |
         */
 
         $products = Product::query()
@@ -201,6 +209,7 @@ class MarketplaceController extends Controller
                 'variants',
             ])
             ->where('status', true)
+
             /*
             |--------------------------------------------------------------------------
             | Search
@@ -254,6 +263,7 @@ class MarketplaceController extends Controller
                     });
                 },
             )
+
             /*
             |--------------------------------------------------------------------------
             | Category Filter
@@ -274,6 +284,7 @@ class MarketplaceController extends Controller
                     );
                 },
             )
+
             /*
             |--------------------------------------------------------------------------
             | Brand Filter
@@ -289,6 +300,7 @@ class MarketplaceController extends Controller
                     );
                 },
             )
+
             /*
             |--------------------------------------------------------------------------
             | Minimum Price
@@ -298,7 +310,7 @@ class MarketplaceController extends Controller
             ->when(
                 $request->filled('min_price'),
                 function ($query) use ($request): void {
-                    $minPrice = (float)$request->input(
+                    $minPrice = (float) $request->input(
                         'min_price',
                     );
 
@@ -311,6 +323,7 @@ class MarketplaceController extends Controller
                     }
                 },
             )
+
             /*
             |--------------------------------------------------------------------------
             | Maximum Price
@@ -320,7 +333,7 @@ class MarketplaceController extends Controller
             ->when(
                 $request->filled('max_price'),
                 function ($query) use ($request): void {
-                    $maxPrice = (float)$request->input(
+                    $maxPrice = (float) $request->input(
                         'max_price',
                     );
 
@@ -333,6 +346,7 @@ class MarketplaceController extends Controller
                     }
                 },
             )
+
             /*
             |--------------------------------------------------------------------------
             | Attribute Filters
@@ -361,7 +375,7 @@ class MarketplaceController extends Controller
                         $valueSlugs = array_values(
                             array_filter(
                                 $valueSlugs,
-                                static fn($slug): bool => is_string($slug)
+                                static fn ($slug): bool => is_string($slug)
                                     && $slug !== '',
                             ),
                         );
@@ -408,6 +422,7 @@ class MarketplaceController extends Controller
                     }
                 },
             )
+
             /*
             |--------------------------------------------------------------------------
             | Sorting
@@ -441,6 +456,7 @@ class MarketplaceController extends Controller
                         ->orderBy('name');
                 },
             )
+
             /*
             |--------------------------------------------------------------------------
             | Pagination
@@ -456,11 +472,11 @@ class MarketplaceController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $maximumProductPrice = (float)Product::query()
+        $maximumProductPrice = (float) Product::query()
             ->where('status', true)
             ->max('price');
 
-        $priceMax = (int)ceil(
+        $priceMax = (int) ceil(
                 $maximumProductPrice / 1000,
             ) * 1000;
 
@@ -497,17 +513,20 @@ class MarketplaceController extends Controller
         $product->load([
             'brand',
             'categories',
+
             'images' => function ($query): void {
                 $query
                     ->orderByDesc('is_primary')
                     ->orderBy('sort_order');
             },
+
             'variants' => function ($query): void {
                 $query
                     ->where('status', true)
                     ->with([
                         'values.attribute',
                         'values.attributeValue',
+
                         'images' => function ($query): void {
                             $query
                                 ->orderByDesc('is_primary')
@@ -518,9 +537,28 @@ class MarketplaceController extends Controller
             },
         ]);
 
+        /*
+        |--------------------------------------------------------------------------
+        | Product Shipping Cost
+        |--------------------------------------------------------------------------
+        |
+        | The product itself already contains shipping_cost.
+        |
+        | Available in details view as:
+        |
+        | $product->shipping_cost
+        |
+        */
+
         $categoryIds = $product->categories
             ->pluck('id')
             ->values();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Related Products
+        |--------------------------------------------------------------------------
+        */
 
         $relatedProducts = Product::query()
             ->active()
@@ -528,12 +566,14 @@ class MarketplaceController extends Controller
             ->with([
                 'brand',
                 'categories',
+
                 'images' => function ($query): void {
                     $query
                         ->whereNull('variant_id')
                         ->orderByDesc('is_primary')
                         ->orderBy('sort_order');
                 },
+
                 'variants' => function ($query): void {
                     $query
                         ->where('status', true)
@@ -548,7 +588,7 @@ class MarketplaceController extends Controller
                         function ($query) use ($categoryIds): void {
                             $query->whereIn(
                                 'categories.id',
-                                $categoryIds
+                                $categoryIds,
                             );
                         },
                     );
@@ -558,6 +598,12 @@ class MarketplaceController extends Controller
             ->orderBy('name')
             ->limit(4)
             ->get();
+
+        /*
+        |--------------------------------------------------------------------------
+        | View
+        |--------------------------------------------------------------------------
+        */
 
         return view(
             'frontend.pages.shop.details',

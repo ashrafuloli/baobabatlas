@@ -19,11 +19,30 @@ final class CalculateCartCoupon
             'items.variant',
         ]);
 
-        $eligibleSubtotal = 0.0;
+        /*
+        |--------------------------------------------------------------------------
+        | Determine Product Restrictions
+        |--------------------------------------------------------------------------
+        */
 
-        $hasProductRestrictions = $coupon
+        $restrictedProductIds = $coupon
             ->products()
-            ->exists();
+            ->pluck('products.id');
+
+        $hasProductRestrictions = $restrictedProductIds->isNotEmpty();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Calculate Eligible Merchandise Subtotal
+        |--------------------------------------------------------------------------
+        |
+        | Coupon applies only to product merchandise.
+        |
+        | Shipping cost is intentionally excluded.
+        |
+        */
+
+        $eligibleSubtotalCents = 0;
 
         foreach ($cart->items as $item) {
             $product = $item->product;
@@ -32,65 +51,152 @@ final class CalculateCartCoupon
                 continue;
             }
 
+            /*
+            |--------------------------------------------------------------------------
+            | Product Restriction
+            |--------------------------------------------------------------------------
+            */
+
             if (
                 $hasProductRestrictions
-                && !$coupon->products()
-                    ->whereKey($product->id)
-                    ->exists()
+                && !$restrictedProductIds->contains(
+                    (int) $product->id,
+                )
             ) {
                 continue;
             }
 
-            $unitPrice = $item->variant
+            /*
+            |--------------------------------------------------------------------------
+            | Validate Quantity
+            |--------------------------------------------------------------------------
+            */
+
+            $quantity = (int) $item->quantity;
+
+            if ($quantity < 1) {
+                continue;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Unit Price
+            |--------------------------------------------------------------------------
+            */
+
+            $unitPrice = $item->variant !== null
                 ? (float) $item->variant->price
                 : (float) $product->price;
 
-            $eligibleSubtotal +=
-                $unitPrice * $item->quantity;
+            $unitPriceCents = (int) round(
+                $unitPrice * 100,
+            );
+
+            if ($unitPriceCents < 0) {
+                continue;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Eligible Merchandise Amount
+            |--------------------------------------------------------------------------
+            */
+
+            $eligibleSubtotalCents +=
+                $unitPriceCents * $quantity;
         }
 
-        if (
-            $eligibleSubtotal <
-            (float) $coupon->minimum_amount
-        ) {
+        $eligibleSubtotal = round(
+            $eligibleSubtotalCents / 100,
+            2,
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Minimum Order Amount
+        |--------------------------------------------------------------------------
+        |
+        | Minimum amount is checked against eligible merchandise only.
+        | Shipping is NOT included.
+        |
+        */
+
+        $minimumAmount = max(
+            0.0,
+            (float) $coupon->minimum_amount,
+        );
+
+        if ($eligibleSubtotal < $minimumAmount) {
             throw ValidationException::withMessages([
                 'code' => sprintf(
                     'Minimum order amount for this promo code is $%s.',
                     number_format(
-                        (float) $coupon->minimum_amount,
-                        2
-                    )
+                        $minimumAmount,
+                        2,
+                    ),
                 ),
             ]);
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | Calculate Discount
+        |--------------------------------------------------------------------------
+        */
+
         if ($coupon->discount_type === 'percentage') {
-            $discount =
-                $eligibleSubtotal
+            $discount = $eligibleSubtotal
                 * ((float) $coupon->discount_value / 100);
 
             /*
-             * 0 means no maximum discount limit.
-             */
+            |--------------------------------------------------------------------------
+            | Maximum Discount
+            |--------------------------------------------------------------------------
+            |
+            | A null or zero maximum means unlimited.
+            |
+            */
+
             if (
                 $coupon->maximum_discount !== null
                 && (float) $coupon->maximum_discount > 0
             ) {
                 $discount = min(
                     $discount,
-                    (float) $coupon->maximum_discount
+                    (float) $coupon->maximum_discount,
                 );
             }
         } else {
+            /*
+            |--------------------------------------------------------------------------
+            | Fixed Discount
+            |--------------------------------------------------------------------------
+            */
+
             $discount = min(
-                (float) $coupon->discount_value,
-                $eligibleSubtotal
+                max(
+                    0.0,
+                    (float) $coupon->discount_value,
+                ),
+                $eligibleSubtotal,
             );
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | Final Discount
+        |--------------------------------------------------------------------------
+        */
+
         return round(
-            max(0, $discount),
-            2
+            max(
+                0.0,
+                min(
+                    $discount,
+                    $eligibleSubtotal,
+                ),
+            ),
+            2,
         );
     }
 }

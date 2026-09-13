@@ -22,7 +22,7 @@ final class CouponController extends Controller
             ->paginate(15);
 
         return view(
-            'backend.pages.ecommerce.admin.coupons.index',
+            'backend.pages.ecommerce.coupons.index',
             compact('coupons')
         );
     }
@@ -41,7 +41,7 @@ final class CouponController extends Controller
             ]);
 
         return view(
-            'backend.pages.ecommerce.admin.coupons.create',
+            'backend.pages.ecommerce.coupons.create',
             compact('products')
         );
     }
@@ -91,7 +91,7 @@ final class CouponController extends Controller
             ->all();
 
         return view(
-            'backend.pages.ecommerce.admin.coupons.edit',
+            'backend.pages.ecommerce.coupons.edit',
             compact(
                 'coupon',
                 'products',

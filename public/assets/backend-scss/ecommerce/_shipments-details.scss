@@ -1,1346 +1,1038 @@
 @use "../common" as *;
 
-
-/*
-|--------------------------------------------------------------------------
-| Shipment Details Page
-|--------------------------------------------------------------------------
-*/
-
 .shipment-details-page {
-
     width: 100%;
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Header
-|--------------------------------------------------------------------------
-*/
-
-.shipment-details-page__header {
-
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 25px;
-    margin-bottom: 22px;
-
-}
-
-
-.shipment-details-page__eyebrow {
-
-    display: block;
-    margin-bottom: 5px;
-    color: $theme-color;
-    font-size: 14px;
-    line-height: 1.4;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Back
-|--------------------------------------------------------------------------
-*/
-
-.shipment-details-back {
-
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 15px;
+    min-height: 100%;
     color: $body-color;
-    font-size: 14px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: 0.2s;
+    font-family: $body-fonts;
 
+    // =========================================================
+    // Header
+    // =========================================================
 
-    i {
-
-        font-size: 17px;
-
+    &__header {
+        margin-bottom: 20px;
+        padding: 18px 22px;
+        border: 1px solid $hr-color;
+        border-radius: 10px;
+        background: $white;
     }
 
+    &__breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        margin-bottom: 16px;
+        color: $body-color;
+        font-size: 14px;
 
-    &:hover {
+        > i {
+            color: $body-color;
+            font-size: 16px;
+        }
+    }
 
+    &__breadcrumb-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: $body-color;
+        text-decoration: none;
+
+        @include transition(0.2s);
+
+        &:hover {
+            color: $theme-color;
+        }
+
+        i {
+            font-size: 16px;
+        }
+    }
+
+    &__header-main {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    &__title-area {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        min-width: 0;
+    }
+
+    &__title-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 44px;
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+        background: rgba($theme-color, 0.08);
         color: $theme-color;
 
+        i {
+            font-size: 21px;
+        }
     }
 
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Title
-|--------------------------------------------------------------------------
-*/
-
-.shipment-details-title {
-
-    display: flex;
-    align-items: center;
-    gap: 15px;
-
-
-    h1 {
-
-        margin: 0 0 5px;
+    &__title {
+        margin: 0 0 3px;
         color: $heading-color;
+        font-family: $header-fonts;
         font-size: 24px;
+        font-weight: 600;
         line-height: 1.3;
-        font-weight: $head-fw;
-
     }
 
-
-    p {
-
+    &__subtitle {
         margin: 0;
         color: $body-color;
         font-size: 14px;
         line-height: 1.5;
 
+        a {
+            color: $heading-color;
+            font-weight: 600;
+            text-decoration: none;
+
+            &:hover {
+                color: $theme-color;
+            }
+        }
     }
 
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Main Status
-|--------------------------------------------------------------------------
-*/
-
-.shipment-main-status {
-
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    min-height: 30px;
-    padding: 5px 11px;
-    border-radius: 20px;
-    font-size: 14px;
-    line-height: 1.3;
-    font-weight: 600;
-    white-space: nowrap;
-
-
-    i {
-
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        background: currentColor;
-
+    &__header-actions {
+        flex: 0 0 auto;
     }
 
+    &__secondary-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-height: 41px;
+        padding: 0 15px;
+        border: 1px solid $hr-color;
+        border-radius: 7px;
+        background: $white;
+        color: $body-color;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
 
-    &--processing {
+        @include transition(0.25s);
 
-        background: argb($info, 0.10);
-        color: #087f99;
-
-    }
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Header Actions
-|--------------------------------------------------------------------------
-*/
-
-.shipment-details-page__actions {
-
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-}
-
-
-.shipment-action-btn {
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-    min-height: 42px;
-    padding: 0 14px;
-    border: 1px solid $gray;
-    border-radius: 8px;
-    background: #fff;
-    color: $body-color;
-    font-size: 14px;
-    font-weight: 600;
-    text-decoration: none;
-    white-space: nowrap;
-    transition: 0.2s;
-
-
-    i {
-
-        font-size: 17px;
-
-    }
-
-
-    &:hover {
-
-        border-color: argb($theme-color, 0.35);
-        color: $theme-color;
-
-    }
-
-
-    &--primary {
-
-        border-color: $theme-color;
-        background: $theme-color;
-        color: #fff;
-
-
-        &:hover {
-
-            border-color: $theme-color;
-            background: $theme-color;
-            color: #fff;
-            opacity: 0.92;
-
+        i {
+            font-size: 17px;
         }
 
+        &:hover {
+            border-color: $theme-color;
+            color: $theme-color;
+        }
     }
 
-}
+    // =========================================================
+    // Main Grid
+    // =========================================================
 
-
-/*
-|--------------------------------------------------------------------------
-| Summary
-|--------------------------------------------------------------------------
-*/
-
-.shipment-summary {
-
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    margin-bottom: 20px;
-    border: 1px solid $gray;
-    border-radius: 11px;
-    background: #fff;
-
-}
-
-
-.shipment-summary__item {
-
-    padding: 17px 18px;
-    border-right: 1px solid argb($gray, 0.7);
-
-
-    &:last-child {
-
-        border-right: 0;
-
+    &__grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 375px;
+        align-items: start;
+        gap: 20px;
     }
 
+    &__main,
+    &__sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        min-width: 0;
+    }
 
-    span {
+    // =========================================================
+    // Card
+    // =========================================================
 
+    &__card {
+        overflow: hidden;
+        border: 1px solid $hr-color;
+        border-radius: 9px;
+        background: $white;
+    }
+
+    &__card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 18px 20px;
+        border-bottom: 1px solid $hr-color;
+    }
+
+    &__section-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 39px;
+        width: 39px;
+        height: 39px;
+        border-radius: 8px;
+        background: rgba($success, 0.08);
+        color: $success;
+
+        i {
+            font-size: 19px;
+        }
+
+        &--update {
+            background: rgba($theme-color, 0.08);
+            color: $theme-color;
+        }
+    }
+
+    &__card-title {
+        margin: 0 0 2px;
+        color: $heading-color;
+        font-family: $header-fonts;
+        font-size: 17px;
+        font-weight: 600;
+        line-height: 1.4;
+    }
+
+    &__card-subtitle {
+        margin: 0;
+        color: $body-color;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+    &__card-body {
+        padding: 20px;
+    }
+
+    // =========================================================
+    // Information
+    // =========================================================
+
+    &__info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0;
+    }
+
+    &__info-item {
+        min-width: 0;
+        padding: 14px 18px;
+        border-bottom: 1px solid $hr-color;
+
+        &:nth-last-child(-n + 2) {
+            border-bottom: 0;
+        }
+
+        &:nth-child(odd) {
+            border-right: 1px solid $hr-color;
+        }
+    }
+
+    &__info-label {
         display: block;
-        margin-bottom: 5px;
+        margin-bottom: 6px;
+        color: $body-color;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+    &__info-value {
+        display: block;
+        overflow: hidden;
+        color: $heading-color;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.4;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    // =========================================================
+    // Status
+    // =========================================================
+
+    &__status {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        min-height: 29px;
+        padding: 4px 9px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.3;
+        white-space: nowrap;
+
+        i {
+            font-size: 15px;
+        }
+
+        &--pending {
+            background: rgba($warning, 0.1);
+            color: $warning;
+        }
+
+        &--processing {
+            background: rgba($info, 0.1);
+            color: $info;
+        }
+
+        &--shipped,
+        &--in-transit,
+        &--out-for-delivery {
+            background: rgba($theme-color-2, 0.1);
+            color: $theme-color-2;
+        }
+
+        &--delivered {
+            background: rgba($success, 0.1);
+            color: $success;
+        }
+
+        &--cancelled,
+        &--failed {
+            background: rgba($danger, 0.09);
+            color: $danger;
+        }
+    }
+
+    // =========================================================
+    // Update Form
+    // =========================================================
+
+    &__status-form {
+        padding: 20px;
+    }
+
+    &__form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    &__form-group {
+        min-width: 0;
+    }
+
+    &__form-label {
+        display: block;
+        margin-bottom: 7px;
+        color: $heading-color;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.4;
+
+        span {
+            color: $danger;
+        }
+    }
+
+    &__select {
+        position: relative;
+
+        select {
+            width: 100%;
+            height: 44px;
+            padding: 0 38px 0 13px;
+            border: 1px solid $hr-color;
+            border-radius: 7px;
+            outline: none;
+            background: $white;
+            color: $body-color;
+            font-family: $body-fonts;
+            font-size: 14px;
+            cursor: pointer;
+            appearance: none;
+
+            @include transition(0.25s);
+
+            &:focus {
+                border-color: $theme-color;
+                box-shadow: 0 0 0 3px rgba($theme-color, 0.07);
+            }
+        }
+
+        > i {
+            position: absolute;
+            top: 50%;
+            right: 12px;
+            color: $body-color;
+            font-size: 17px;
+            pointer-events: none;
+            transform: translateY(-50%);
+        }
+    }
+
+    &__status-preview {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 18px;
+        padding: 12px 14px;
+        border: 1px solid rgba($theme-color, 0.12);
+        border-radius: 7px;
+        background: rgba($theme-color, 0.04);
+        opacity: 0.65;
+
+        @include transition(0.25s);
+
+        &.is-active {
+            opacity: 1;
+        }
+    }
+
+    &__preview-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 34px;
+        width: 34px;
+        height: 34px;
+        border-radius: 7px;
+        background: rgba($theme-color, 0.09);
+        color: $theme-color;
+
+        i {
+            font-size: 17px;
+        }
+    }
+
+    &__status-preview > div:last-child {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+    }
+
+    &__status-preview strong {
+        color: $heading-color;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    &__status-preview span {
+        color: $body-color;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+    &__form-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 9px;
+        margin-top: 18px;
+        padding-top: 18px;
+        border-top: 1px solid $hr-color;
+    }
+
+    &__cancel-btn,
+    &__save-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-height: 42px;
+        padding: 0 16px;
+        border-radius: 7px;
+        font-family: $body-fonts;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+        cursor: pointer;
+
+        @include transition(0.25s);
+
+        i {
+            font-size: 17px;
+        }
+    }
+
+    &__cancel-btn {
+        border: 1px solid $hr-color;
+        background: $white;
+        color: $body-color;
+
+        &:hover {
+            border-color: $danger;
+            color: $danger;
+        }
+    }
+
+    &__save-btn {
+        border: 1px solid $theme-color;
+        background: $theme-color;
+        color: $white;
+
+        &:hover:not(:disabled) {
+            border-color: $theme-color-2;
+            background: $theme-color-2;
+        }
+
+        &:disabled {
+            cursor: not-allowed;
+            opacity: 0.55;
+        }
+    }
+
+    // =========================================================
+    // Notes
+    // =========================================================
+
+    &__notes {
+        padding: 20px;
+        color: $body-color;
+        font-size: 14px;
+        line-height: 1.7;
+        white-space: pre-line;
+    }
+
+    // =========================================================
+    // Order Items
+    // =========================================================
+
+    &__items {
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 16px 20px;
+        border-bottom: 1px solid $hr-color;
+
+        &:last-child {
+            border-bottom: 0;
+        }
+    }
+
+    &__item-image {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 62px;
+        width: 62px;
+        height: 62px;
+        overflow: hidden;
+        border: 1px solid $hr-color;
+        border-radius: 7px;
+        background: $light;
+        color: $body-color;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        i {
+            font-size: 22px;
+        }
+    }
+
+    &__item-info {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        min-width: 0;
+        flex: 1;
+    }
+
+    &__item-name {
+        overflow: hidden;
+        color: $heading-color;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.4;
+        text-decoration: none;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        &:hover {
+            color: $theme-color;
+        }
+    }
+
+    &__item-sku {
+        color: $body-color;
+        font-size: 14px;
+    }
+
+    &__item-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        color: $body-color;
+        font-size: 14px;
+    }
+
+    &__item-price {
+        flex: 0 0 auto;
+        color: $heading-color;
+        font-size: 14px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    &__items-empty {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-height: 150px;
         color: $body-color;
         font-size: 14px;
 
-    }
-
-
-    strong,
-    a {
-
-        display: block;
-        color: $heading-color;
-        font-size: 16px;
-        line-height: 1.4;
-        font-weight: 700;
-        text-decoration: none;
-
-    }
-
-
-    a {
-
-        color: $theme-color;
-
-
-        &:hover {
-
-            text-decoration: underline;
-
+        i {
+            font-size: 18px;
         }
-
     }
 
-}
+    // =========================================================
+    // Summary
+    // =========================================================
 
+    &__summary {
+        padding: 18px 20px;
+    }
 
-.shipment-summary__success {
-
-    color: $success !important;
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Main Grid
-|--------------------------------------------------------------------------
-*/
-
-.shipment-details-grid {
-
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 330px;
-    align-items: start;
-    gap: 20px;
-
-}
-
-
-.shipment-details-main,
-.shipment-details-sidebar {
-
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Card
-|--------------------------------------------------------------------------
-*/
-
-.shipment-details-card {
-
-    overflow: hidden;
-    border: 1px solid $gray;
-    border-radius: 11px;
-    background: #fff;
-
-
-    &__header {
-
+    &__summary-row {
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 15px;
-        padding: 16px 18px;
-        border-bottom: 1px solid argb($gray, 0.7);
-
-
-        h2 {
-
-            margin: 0;
-            color: $heading-color;
-            font-size: 18px;
-            line-height: 1.4;
-            font-weight: 700;
-
-        }
-
-
-        > div > span {
-
-            display: block;
-            margin-top: 3px;
-            color: $body-color;
-            font-size: 14px;
-
-        }
-
-    }
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Shipment Information
-|--------------------------------------------------------------------------
-*/
-
-.shipment-info-grid {
-
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-
-}
-
-
-.shipment-info-item {
-
-    padding: 16px 18px;
-    border-right: 1px solid argb($gray, 0.6);
-    border-bottom: 1px solid argb($gray, 0.6);
-
-
-    &:nth-child(even) {
-
-        border-right: 0;
-
-    }
-
-
-    &:nth-last-child(-n + 2) {
-
-        border-bottom: 0;
-
-    }
-
-
-    > span:first-child {
-
-        display: block;
-        margin-bottom: 5px;
-        color: $body-color;
-        font-size: 14px;
-
-    }
-
-
-    > strong {
-
-        display: block;
-        color: $heading-color;
-        font-size: 14px;
-        line-height: 1.4;
-        font-weight: 600;
-
-    }
-
-
-    > a {
-
-        color: $theme-color;
-        font-size: 14px;
-        font-weight: 600;
-        text-decoration: none;
-
-
-        &:hover {
-
-            text-decoration: underline;
-
-        }
-
-    }
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Status
-|--------------------------------------------------------------------------
-*/
-
-.shipment-status {
-
-    display: inline-flex !important;
-    align-items: center;
-    gap: 6px;
-    width: fit-content;
-    min-height: 27px;
-    padding: 4px 9px;
-    border-radius: 20px;
-    font-size: 14px !important;
-    line-height: 1.3;
-    font-weight: 600 !important;
-
-
-    i {
-
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background: currentColor;
-
-    }
-
-
-    &--processing {
-
-        background: argb($info, 0.10);
-        color: #087f99;
-
-    }
-
-
-    &--pending {
-
-        background: argb($warning, 0.12);
-        color: #947000;
-
-    }
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Tracking
-|--------------------------------------------------------------------------
-*/
-
-.shipment-tracking {
-
-    padding: 20px 20px 20px 28px;
-
-}
-
-
-.shipment-tracking__item {
-
-    position: relative;
-    display: flex;
-    gap: 13px;
-    min-height: 82px;
-
-
-    &:not(:last-child)::before {
-
-        content: "";
-        position: absolute;
-        top: 30px;
-        left: 13px;
-        width: 1px;
-        height: calc(100% - 5px);
-        background: $gray;
-
-    }
-
-
-    &--completed:not(:last-child)::before {
-
-        background: $success;
-
-    }
-
-
-    &--active:not(:last-child)::before {
-
-        background: $gray;
-
-    }
-
-}
-
-
-.shipment-tracking__indicator {
-
-    position: relative;
-    z-index: 2;
-    width: 28px;
-    height: 28px;
-    flex: 0 0 28px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid $gray;
-    border-radius: 50%;
-    background: #fff;
-    color: #999;
-    font-size: 14px;
-
-
-    .shipment-tracking__item--completed & {
-
-        border-color: $success;
-        background: $success;
-        color: #fff;
-
-    }
-
-
-    .shipment-tracking__item--active & {
-
-        border-color: $theme-color;
-        background: $theme-color;
-        color: #fff;
-
-    }
-
-}
-
-
-.shipment-tracking__content {
-
-    padding-bottom: 20px;
-
-
-    strong {
-
-        display: block;
-        margin-bottom: 3px;
-        color: $heading-color;
-        font-size: 14px;
-        line-height: 1.4;
-        font-weight: 600;
-
-    }
-
-
-    span {
-
-        display: block;
-        margin-bottom: 4px;
-        color: $body-color;
-        font-size: 14px;
-        line-height: 1.5;
-
-    }
-
-
-    small {
-
-        display: block;
-        color: #888;
-        font-size: 14px;
-
-    }
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Address
-|--------------------------------------------------------------------------
-*/
-
-.shipment-address {
-
-    display: flex;
-    align-items: flex-start;
-    gap: 13px;
-    padding: 18px;
-
-}
-
-
-.shipment-address__icon {
-
-    width: 42px;
-    height: 42px;
-    flex: 0 0 42px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 9px;
-    background: argb($theme-color, 0.08);
-    color: $theme-color;
-    font-size: 19px;
-
-}
-
-
-.shipment-address__content {
-
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-
-
-    strong {
-
-        margin-bottom: 2px;
-        color: $heading-color;
-        font-size: 14px;
-        font-weight: 600;
-
-    }
-
-
-    span {
-
-        color: $body-color;
-        font-size: 14px;
-        line-height: 1.5;
-
-    }
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Items Table
-|--------------------------------------------------------------------------
-*/
-
-.shipment-items-table-wrapper {
-
-    width: 100%;
-    overflow-x: auto;
-
-}
-
-
-.shipment-items-table {
-
-    width: 100%;
-    min-width: 650px;
-    border-collapse: collapse;
-
-
-    th,
-    td {
-
-        padding: 14px 18px;
-        border-bottom: 1px solid argb($gray, 0.65);
-        text-align: left;
-        vertical-align: middle;
-        font-size: 14px;
-
-    }
-
-
-    th {
-
-        background: $light;
-        color: $body-color;
-        font-weight: 600;
-        white-space: nowrap;
-
-    }
-
-
-    td {
-
-        color: $body-color;
-
-    }
-
-
-    tbody tr:last-child td {
-
-        border-bottom: 0;
-
-    }
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Product
-|--------------------------------------------------------------------------
-*/
-
-.shipment-product {
-
-    display: flex;
-    align-items: center;
-    gap: 11px;
-    min-width: 280px;
-
-
-    &__image {
-
-        width: 52px;
-        height: 52px;
-        flex: 0 0 52px;
-        overflow: hidden;
-        border: 1px solid $gray;
-        border-radius: 8px;
-        background: #f7f7f7;
-
-
-        img {
-
-            width: 100%;
-            height: 100%;
-            display: block;
-            object-fit: cover;
-
-        }
-
-    }
-
-
-    strong {
-
-        display: block;
-        margin-bottom: 3px;
-        color: $heading-color;
-        font-size: 14px;
-        font-weight: 600;
-
-    }
-
-
-    span {
-
-        display: block;
-        color: $body-color;
-        font-size: 14px;
-
-    }
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Quantity
-|--------------------------------------------------------------------------
-*/
-
-.shipment-quantity {
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 32px;
-    height: 30px;
-    padding: 0 8px;
-    border: 1px solid $gray;
-    border-radius: 6px;
-    color: $heading-color;
-    font-size: 14px;
-    font-weight: 600;
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Customer
-|--------------------------------------------------------------------------
-*/
-
-.shipment-customer {
-
-    display: flex;
-    align-items: center;
-    gap: 11px;
-    padding: 17px 18px;
-
-
-    &__avatar {
-
-        width: 48px;
-        height: 48px;
-        flex: 0 0 48px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        background: argb($theme-color, 0.08);
-        color: $theme-color;
-        font-size: 14px;
-        font-weight: 700;
-
-    }
-
-
-    strong {
-
-        display: block;
-        margin-bottom: 3px;
-        color: $heading-color;
-        font-size: 14px;
-        font-weight: 600;
-
-    }
-
-
-    span {
-
-        display: block;
-        color: $body-color;
-        font-size: 14px;
-
-    }
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Customer Contact
-|--------------------------------------------------------------------------
-*/
-
-.shipment-customer-contact {
-
-    padding: 0 18px 17px;
-
-
-    > div {
-
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding-top: 11px;
-        margin-top: 11px;
-        border-top: 1px solid argb($gray, 0.6);
-
-
-        i {
-
-            color: $theme-color;
-            font-size: 17px;
-
-        }
-
+        padding: 8px 0;
 
         span {
+            color: $body-color;
+            font-size: 14px;
+        }
 
+        strong,
+        a {
+            color: $heading-color;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: $theme-color;
+        }
+    }
+
+    &__summary-divider {
+        height: 1px;
+        margin: 10px 0;
+        background: $hr-color;
+    }
+
+    &__summary-total {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        padding-top: 5px;
+
+        span,
+        strong {
+            color: $heading-color;
+            font-size: 16px;
+            font-weight: 600;
+        }
+    }
+
+    // =========================================================
+    // Customer
+    // =========================================================
+
+    &__customer {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding: 18px 20px;
+    }
+
+    &__avatar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 42px;
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: rgba($theme-color, 0.08);
+        color: $theme-color;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    &__customer-info {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        min-width: 0;
+
+        strong {
+            color: $heading-color;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
             overflow: hidden;
             color: $body-color;
             font-size: 14px;
             text-overflow: ellipsis;
             white-space: nowrap;
 
+            i {
+                flex: 0 0 auto;
+                font-size: 15px;
+            }
         }
-
     }
 
-}
+    // =========================================================
+    // Address
+    // =========================================================
 
-
-/*
-|--------------------------------------------------------------------------
-| Carrier
-|--------------------------------------------------------------------------
-*/
-
-.shipment-carrier-box {
-
-    display: flex;
-    align-items: center;
-    gap: 11px;
-    padding: 17px 18px;
-
-
-    &__icon {
-
-        width: 44px;
-        height: 44px;
-        flex: 0 0 44px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 9px;
-        background: argb($theme-color, 0.08);
-        color: $theme-color;
-        font-size: 19px;
-
-    }
-
-
-    strong {
-
-        display: block;
-        margin-bottom: 3px;
-        color: $heading-color;
-        font-size: 14px;
-        font-weight: 600;
-
-    }
-
-
-    span {
-
-        display: block;
+    &__address {
+        padding: 18px 20px;
         color: $body-color;
         font-size: 14px;
-
+        line-height: 1.7;
     }
 
-}
+    // =========================================================
+    // XL
+    // =========================================================
 
+    @include mq('xl') {
+        &__grid {
+            grid-template-columns: minmax(0, 1fr) 330px;
+        }
+    }
 
-.shipment-carrier-details {
+    // =========================================================
+    // LG
+    // =========================================================
 
-    padding: 0 18px 17px;
+    @include mq('lg') {
+        &__grid {
+            grid-template-columns: 1fr;
+        }
 
+        &__sidebar {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            align-items: start;
+        }
+    }
 
-    > div {
+    // =========================================================
+    // MD
+    // =========================================================
 
-        padding-top: 11px;
-        margin-top: 11px;
-        border-top: 1px solid argb($gray, 0.6);
+    @include mq('md') {
+        &__header-main {
+            align-items: flex-start;
+        }
 
+        &__title {
+            font-size: 22px;
+        }
 
-        span {
+        &__info-grid {
+            grid-template-columns: 1fr;
+        }
 
+        &__info-item {
+            border-right: 0 !important;
+
+            &:nth-last-child(-n + 2) {
+                border-bottom: 1px solid $hr-color;
+            }
+
+            &:last-child {
+                border-bottom: 0;
+            }
+        }
+
+        &__form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    // =========================================================
+    // SM
+    // =========================================================
+
+    @include mq('sm') {
+        &__header {
+            padding: 16px;
+            border-radius: 8px;
+        }
+
+        &__header-main {
+            flex-direction: column;
+        }
+
+        &__title-area {
+            width: 100%;
+        }
+
+        &__header-actions {
+            width: 100%;
+        }
+
+        &__secondary-btn {
+            width: 100%;
+        }
+
+        &__title {
+            font-size: 20px;
+        }
+
+        &__title-icon {
+            flex-basis: 39px;
+            width: 39px;
+            height: 39px;
+        }
+
+        &__sidebar {
+            grid-template-columns: 1fr;
+        }
+
+        &__card-header {
+            padding: 16px;
+        }
+
+        &__card-body,
+        &__status-form,
+        &__summary,
+        &__customer,
+        &__address,
+        &__notes {
+            padding: 16px;
+        }
+
+        &__item {
+            align-items: flex-start;
+            padding: 15px 16px;
+        }
+
+        &__item-price {
+            margin-left: auto;
+        }
+
+        &__form-actions {
+            flex-direction: column-reverse;
+            align-items: stretch;
+        }
+
+        &__cancel-btn,
+        &__save-btn {
+            width: 100%;
+        }
+    }
+
+    // =========================================================
+    // XS
+    // =========================================================
+
+    @include mq('xs') {
+        &__breadcrumb {
+            margin-bottom: 12px;
+        }
+
+        &__card-title {
+            font-size: 16px;
+        }
+
+        &__card-subtitle {
+            line-height: 1.4;
+        }
+
+        &__item {
+            flex-wrap: wrap;
+        }
+
+        &__item-info {
+            flex-basis: calc(100% - 75px);
+        }
+
+        &__item-price {
+            width: 100%;
+            margin-left: 75px;
+        }
+
+        &__status-preview {
+            align-items: flex-start;
+        }
+    }
+
+    &__status-overview {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        background: $white;
+        border: 1px solid $hr-color;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        overflow: hidden;
+    }
+
+    &__status-overview-item {
+        min-width: 0;
+        padding: 18px 20px;
+        border-right: 1px solid $hr-color;
+
+        &:last-child {
+            border-right: 0;
+        }
+
+        > span {
             display: block;
-            margin-bottom: 4px;
+            margin-bottom: 8px;
             color: $body-color;
             font-size: 14px;
-
+            font-weight: 400;
+            line-height: 1.4;
         }
 
-
-        strong {
-
-            display: block;
-            color: $heading-color;
-            font-size: 14px;
+        > strong {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 15px;
             font-weight: 600;
+            line-height: 1.4;
 
+            i {
+                font-size: 16px;
+                line-height: 1;
+            }
+        }
+    }
+
+    &__status {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.3;
+
+        i {
+            font-size: 15px;
         }
 
-    }
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Quick Actions
-|--------------------------------------------------------------------------
-*/
-
-.shipment-quick-actions {
-
-    display: flex;
-    flex-direction: column;
-    padding: 7px 0;
-
-}
-
-
-.shipment-quick-action {
-
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    padding: 11px 18px;
-    color: $body-color;
-    font-size: 14px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: 0.2s;
-
-
-    i {
-
-        width: 20px;
-        color: $theme-color;
-        font-size: 17px;
-        text-align: center;
-
-    }
-
-
-    &:hover {
-
-        background: argb($theme-color, 0.04);
-        color: $theme-color;
-
-    }
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Note
-|--------------------------------------------------------------------------
-*/
-
-.shipment-note {
-
-    display: flex;
-    align-items: flex-start;
-    gap: 9px;
-    padding: 17px 18px;
-
-
-    i {
-
-        margin-top: 2px;
-        color: $theme-color;
-        font-size: 17px;
-
-    }
-
-
-    p {
-
-        margin: 0;
-        color: $body-color;
-        font-size: 14px;
-        line-height: 1.6;
-
-    }
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Responsive XL
-|--------------------------------------------------------------------------
-*/
-
-@include mq(xl) {
-
-    .shipment-details-grid {
-
-        grid-template-columns: minmax(0, 1fr) 300px;
-
-    }
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Responsive LG
-|--------------------------------------------------------------------------
-*/
-
-@include mq(lg) {
-
-    .shipment-details-grid {
-
-        grid-template-columns: 1fr;
-
-    }
-
-
-    .shipment-details-sidebar {
-
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-
-    }
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Responsive MD
-|--------------------------------------------------------------------------
-*/
-
-@include mq(md) {
-
-    .shipment-details-page__header {
-
-        align-items: flex-start;
-        flex-direction: column;
-
-    }
-
-
-    .shipment-details-page__actions {
-
-        width: 100%;
-
-    }
-
-
-    .shipment-action-btn {
-
-        flex: 1;
-
-    }
-
-
-    .shipment-details-title {
-
-        align-items: flex-start;
-        flex-direction: column;
-
-    }
-
-
-    .shipment-summary {
-
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-
-    }
-
-
-    .shipment-summary__item {
-
-        border-right: 0;
-        border-bottom: 1px solid argb($gray, 0.7);
-
-
-        &:nth-child(odd) {
-
-            border-right: 1px solid argb($gray, 0.7);
-
+        &--pending {
+            background: rgba($warning, 0.1);
+            color: $warning;
         }
 
-
-        &:nth-last-child(-n + 2) {
-
-            border-bottom: 0;
-
+        &--processing {
+            background: rgba($info, 0.1);
+            color: $info;
         }
 
-    }
-
-
-    .shipment-details-sidebar {
-
-        grid-template-columns: 1fr;
-
-    }
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Responsive XS
-|--------------------------------------------------------------------------
-*/
-
-@include mq(xs) {
-
-    .shipment-details-title h1 {
-
-        font-size: 24px;
-
-    }
-
-
-    .shipment-summary {
-
-        grid-template-columns: 1fr;
-
-    }
-
-
-    .shipment-summary__item {
-
-        border-right: 0 !important;
-        border-bottom: 1px solid argb($gray, 0.7);
-
-
-        &:last-child {
-
-            border-bottom: 0;
-
+        &--shipped {
+            background: rgba($theme-color, 0.1);
+            color: $theme-color;
         }
 
-    }
-
-
-    .shipment-details-page__actions {
-
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-
-    }
-
-
-    .shipment-action-btn {
-
-        width: 100%;
-        padding: 0 9px;
-
-    }
-
-
-    .shipment-details-card__header {
-
-        padding: 14px;
-
-    }
-
-
-    .shipment-info-grid {
-
-        grid-template-columns: 1fr;
-
-    }
-
-
-    .shipment-info-item {
-
-        border-right: 0 !important;
-
-
-        &:last-child {
-
-            border-bottom: 0;
-
+        &--in-transit {
+            background: rgba($info, 0.1);
+            color: $info;
         }
 
+        &--out-for-delivery {
+            background: rgba($warning, 0.1);
+            color: $warning;
+        }
+
+        &--delivered {
+            background: rgba($success, 0.1);
+            color: $success;
+        }
+
+        &--completed {
+            background: rgba($success, 0.1);
+            color: $success;
+        }
+
+        &--cancelled,
+        &--failed {
+            background: rgba($danger, 0.1);
+            color: $danger;
+        }
+
+        &--paid {
+            background: rgba($success, 0.1);
+            color: $success;
+        }
     }
 
+    @include mq("md") {
+        &__status-overview {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
 
-    .shipment-tracking {
+        &__status-overview-item {
+            border-right: 1px solid $hr-color;
+            border-bottom: 1px solid $hr-color;
 
-        padding: 18px 14px 18px 18px;
+            &:nth-child(2n) {
+                border-right: 0;
+            }
 
+            &:nth-last-child(-n + 2) {
+                border-bottom: 0;
+            }
+        }
     }
 
+    @include mq("sm") {
+        &__status-overview {
+            grid-template-columns: 1fr;
+        }
 
-    .shipment-address {
+        &__status-overview-item {
+            padding: 15px 16px;
+            border-right: 0;
+            border-bottom: 1px solid $hr-color;
 
-        padding: 14px;
+            &:nth-child(2n) {
+                border-right: 0;
+            }
 
+            &:nth-last-child(-n + 2) {
+                border-bottom: 1px solid $hr-color;
+            }
+
+            &:last-child {
+                border-bottom: 0;
+            }
+        }
     }
-
-
-    .shipment-customer {
-
-        padding: 14px;
-
-    }
-
-
-    .shipment-customer-contact {
-
-        padding: 0 14px 14px;
-
-    }
-
-
-    .shipment-carrier-box {
-
-        padding: 14px;
-
-    }
-
-
-    .shipment-carrier-details {
-
-        padding: 0 14px 14px;
-
-    }
-
-
-    .shipment-note {
-
-        padding: 14px;
-
-    }
-
 }

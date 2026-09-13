@@ -189,12 +189,22 @@ final class CompleteOrder
             |--------------------------------------------------------------------------
             | Lock & Validate Variants
             |--------------------------------------------------------------------------
+            |
+            | The order item already contains the historical shipping_cost
+            | snapshot. We intentionally do not recalculate or modify it here.
+            |
             */
 
             $variants = [];
 
             foreach ($order->items as $item) {
                 $quantity = (int) $item->quantity;
+
+                /*
+                |--------------------------------------------------------------------------
+                | Validate Quantity
+                |--------------------------------------------------------------------------
+                */
 
                 if ($quantity < 1) {
                     Log::error(
@@ -321,41 +331,28 @@ final class CompleteOrder
 
                 /*
                 |--------------------------------------------------------------------------
-                | Validate Stock
+                | Aggregate Variant Quantity
                 |--------------------------------------------------------------------------
+                |
+                | Normally a variant appears only once in an order.
+                | Aggregating here makes stock deduction safe even if duplicate
+                | order item rows somehow exist.
+                |
                 */
 
-                $currentStock = (int) $variant->stock;
-
-                if ($currentStock < $quantity) {
-                    Log::warning(
-                        'CompleteOrder insufficient stock.',
-                        [
-                            'order_id' => $order->id,
-                            'order_item_id' => $item->id,
-                            'variant_id' => $variant->id,
-                            'current_stock' => $currentStock,
-                            'requested_quantity' => $quantity,
-                        ],
-                    );
-
-                    throw ValidationException::withMessages([
-                        'order' => sprintf(
-                            'Insufficient stock for "%s".',
-                            $item->product_name,
-                        ),
-                    ]);
+                if (isset($variants[$variant->id])) {
+                    $variants[$variant->id]['quantity'] += $quantity;
+                } else {
+                    $variants[$variant->id] = [
+                        'model' => $variant,
+                        'quantity' => $quantity,
+                    ];
                 }
-
-                $variants[$variant->id] = [
-                    'model' => $variant,
-                    'quantity' => $quantity,
-                ];
             }
 
             /*
             |--------------------------------------------------------------------------
-            | Reduce Variant Stock
+            | Validate & Reduce Variant Stock
             |--------------------------------------------------------------------------
             */
 
@@ -364,14 +361,52 @@ final class CompleteOrder
                 $variant = $variantData['model'];
 
                 $quantity = (int) $variantData['quantity'];
-                $stockBefore = (int) $variant->stock;
+
+                $currentStock = (int) $variant->stock;
+
+                /*
+                |--------------------------------------------------------------------------
+                | Validate Stock
+                |--------------------------------------------------------------------------
+                */
+
+                if ($currentStock < $quantity) {
+                    Log::warning(
+                        'CompleteOrder insufficient stock.',
+                        [
+                            'order_id' => $order->id,
+                            'variant_id' => $variant->id,
+                            'current_stock' => $currentStock,
+                            'requested_quantity' => $quantity,
+                        ],
+                    );
+
+                    throw ValidationException::withMessages([
+                        'order' => sprintf(
+                            'Insufficient stock for the variant in "%s".',
+                            $order->items
+                                ->firstWhere(
+                                    'variant_id',
+                                    $variant->id,
+                                )
+                                ?->product_name
+                            ?? 'this product',
+                        ),
+                    ]);
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | Reduce Stock
+                |--------------------------------------------------------------------------
+                */
 
                 Log::info(
                     'CompleteOrder reducing variant stock.',
                     [
                         'order_id' => $order->id,
                         'variant_id' => $variant->id,
-                        'stock_before' => $stockBefore,
+                        'stock_before' => $currentStock,
                         'quantity' => $quantity,
                     ],
                 );
@@ -388,7 +423,7 @@ final class CompleteOrder
                     [
                         'order_id' => $order->id,
                         'variant_id' => $variant->id,
-                        'stock_before' => $stockBefore,
+                        'stock_before' => $currentStock,
                         'quantity' => $quantity,
                         'stock_after' => (int) $variant->stock,
                     ],
@@ -417,10 +452,15 @@ final class CompleteOrder
 
             $order->update([
                 'status' => Order::STATUS_PAID,
+
                 'payment_status' => Order::PAYMENT_STATUS_PAID,
+
                 'payment_gateway' => 'stripe',
+
                 'stripe_checkout_session_id' => $sessionId,
+
                 'stripe_payment_intent_id' => $paymentIntentId,
+
                 'paid_at' => $order->paid_at ?? now(),
             ]);
 
@@ -429,7 +469,8 @@ final class CompleteOrder
                 [
                     'order_id' => $order->id,
                     'order_number' => $order->order_number,
-                    'payment_status' => Order::PAYMENT_STATUS_PAID,
+                    'payment_status' =>
+                        Order::PAYMENT_STATUS_PAID,
                     'stripe_checkout_session_id' => $sessionId,
                     'stripe_payment_intent_id' => $paymentIntentId,
                 ],
@@ -509,6 +550,8 @@ final class CompleteOrder
                     'status' => $completedOrder->status,
                     'payment_status' =>
                         $completedOrder->payment_status,
+                    'shipping' =>
+                        (float) $completedOrder->shipping,
                 ],
             );
 

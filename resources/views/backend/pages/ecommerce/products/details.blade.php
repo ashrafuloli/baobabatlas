@@ -246,6 +246,14 @@
                                 </strong>
                             </div>
 
+                            <div class="product-details-page__price-box">
+                                <span>Shipping Cost</span>
+
+                                <strong>
+                                    {{ number_format((float) ($product->shipping_cost ?? 0), 2) }}
+                                </strong>
+                            </div>
+
                             @if (
                                 $product->compare_price !== null &&
                                 (float) $product->compare_price > (float) $product->price

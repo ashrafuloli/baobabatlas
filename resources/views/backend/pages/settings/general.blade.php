@@ -25,7 +25,6 @@
 
                 </div>
 
-
                 {{-- Header Controls --}}
                 <div class="settings-header-actions">
 
@@ -37,26 +36,25 @@
                         aria-label="Toggle theme"
                     >
 
-                    <span class="theme-icon light-icon">
-                        <i class="ri-sun-line"></i>
-                    </span>
+                        <span class="theme-icon light-icon">
+                            <i class="ri-sun-line"></i>
+                        </span>
 
                         <span class="theme-icon dark-icon">
-                        <i class="ri-moon-line"></i>
-                    </span>
+                            <i class="ri-moon-line"></i>
+                        </span>
 
                         <span class="theme-toggle-text">
-                        <span class="light-text">
-                            Light
-                        </span>
+                            <span class="light-text">
+                                Light
+                            </span>
 
-                        <span class="dark-text">
-                            Dark
+                            <span class="dark-text">
+                                Dark
+                            </span>
                         </span>
-                    </span>
 
                     </button>
-
 
                     {{-- Language --}}
                     <div class="language-dropdown">
@@ -70,13 +68,12 @@
                             <i class="ri-global-line"></i>
 
                             <span>
-                            English
-                        </span>
+                                English
+                            </span>
 
                             <i class="ri-arrow-down-s-line"></i>
 
                         </button>
-
 
                         <div
                             class="language-menu"
@@ -89,14 +86,13 @@
                                 data-language="en"
                             >
 
-                            <span class="language-name">
-                                English
-                            </span>
+                                <span class="language-name">
+                                    English
+                                </span>
 
                                 <i class="ri-check-line"></i>
 
                             </button>
-
 
                             <button
                                 type="button"
@@ -104,14 +100,13 @@
                                 data-language="fr"
                             >
 
-                            <span class="language-name">
-                                Français
-                            </span>
+                                <span class="language-name">
+                                    Français
+                                </span>
 
                                 <i class="ri-check-line"></i>
 
                             </button>
-
 
                             <button
                                 type="button"
@@ -119,9 +114,9 @@
                                 data-language="pt"
                             >
 
-                            <span class="language-name">
-                                Português
-                            </span>
+                                <span class="language-name">
+                                    Português
+                                </span>
 
                                 <i class="ri-check-line"></i>
 
@@ -138,22 +133,21 @@
         </div>
 
 
-        {{-- =========================================================
-            Settings Form
-        ========================================================= --}}
         <form
-            action="#"
+            action="{{ route('settings.update') }}"
             method="POST"
-            enctype="multipart/form-data"
             class="settings-form"
+            enctype="multipart/form-data"
         >
 
             @csrf
 
+            @method('PUT')
+
 
             {{-- =====================================================
                 Website Information
-            ===================================================== --}}
+            ====================================================== --}}
             <div class="settings-card">
 
                 <div class="settings-card-header">
@@ -197,7 +191,10 @@
                                 id="website_name"
                                 name="website_name"
                                 class="form-control"
-                                value="{{ old('website_name', 'Baobab Atlas') }}"
+                                value="{{ old(
+                                    'website_name',
+                                    $settings['website_name'] ?? ''
+                                ) }}"
                                 placeholder="Enter website name"
                             >
 
@@ -216,7 +213,10 @@
                                 id="website_url"
                                 name="website_url"
                                 class="form-control"
-                                value="{{ old('website_url', url('/')) }}"
+                                value="{{ old(
+                                    'website_url',
+                                    $settings['website_url'] ?? url('/')
+                                ) }}"
                                 placeholder="https://example.com"
                             >
 
@@ -236,9 +236,9 @@
                                 name="website_tagline"
                                 class="form-control"
                                 value="{{ old(
-                                'website_tagline',
-                                'Connecting Guinea to the World'
-                            ) }}"
+                                    'website_tagline',
+                                    $settings['website_tagline'] ?? ''
+                                ) }}"
                                 placeholder="Enter website tagline"
                             >
 
@@ -253,7 +253,7 @@
 
             {{-- =====================================================
                 Branding
-            ===================================================== --}}
+            ====================================================== --}}
             <div class="settings-card">
 
                 <div class="settings-card-header">
@@ -297,10 +297,20 @@
 
                                 <div class="upload-preview logo-preview">
 
-                                    <img
-                                        src="{{ asset('logo.png') }}"
-                                        alt="Website Logo"
-                                    >
+                                    @if (!empty($settings['website_logo']))
+
+                                        <img
+                                            src="{{ asset($settings['website_logo']) }}"
+                                            alt="{{ $settings['website_name'] ?? 'Website Logo' }}"
+                                        >
+
+                                    @else
+
+                                        <span>
+                                            No Logo
+                                        </span>
+
+                                    @endif
 
                                 </div>
 
@@ -312,8 +322,8 @@
                                     </strong>
 
                                     <span>
-                                    PNG, JPG or SVG
-                                </span>
+                                        PNG, JPG or SVG
+                                    </span>
 
                                     <label
                                         for="website_logo"
@@ -352,10 +362,20 @@
 
                                 <div class="upload-preview favicon-preview">
 
-                                    <img
-                                        src="{{ asset('favicon.ico') }}"
-                                        alt="Website Favicon"
-                                    >
+                                    @if (!empty($settings['favicon']))
+
+                                        <img
+                                            src="{{ asset($settings['favicon']) }}"
+                                            alt="Website Favicon"
+                                        >
+
+                                    @else
+
+                                        <span>
+                                            No Favicon
+                                        </span>
+
+                                    @endif
 
                                 </div>
 
@@ -367,11 +387,11 @@
                                     </strong>
 
                                     <span>
-                                    ICO, PNG or SVG
-                                </span>
+                                        ICO or PNG
+                                    </span>
 
                                     <label
-                                        for="website_favicon"
+                                        for="favicon"
                                         class="upload-button"
                                     >
 
@@ -383,9 +403,9 @@
 
                                     <input
                                         type="file"
-                                        id="website_favicon"
-                                        name="website_favicon"
-                                        accept=".ico,.png,.svg"
+                                        id="favicon"
+                                        name="favicon"
+                                        accept=".ico,.png"
                                         hidden
                                     >
 
@@ -403,8 +423,8 @@
 
 
             {{-- =====================================================
-                Contact Information
-            ===================================================== --}}
+                Store Settings
+            ====================================================== --}}
             <div class="settings-card">
 
                 <div class="settings-card-header">
@@ -412,17 +432,17 @@
                     <div class="settings-card-heading">
 
                         <div class="settings-card-icon">
-                            <i class="ri-contacts-line"></i>
+                            <i class="ri-store-2-line"></i>
                         </div>
 
                         <div>
 
                             <h2>
-                                Contact Information
+                                Store Settings
                             </h2>
 
                             <p>
-                                Manage your business contact information.
+                                Configure the basic settings for your online store.
                             </p>
 
                         </div>
@@ -436,202 +456,19 @@
 
                     <div class="settings-grid">
 
-                        {{-- Email --}}
-                        <div class="form-group">
-
-                            <label for="contact_email">
-                                Contact Email
-                            </label>
-
-                            <input
-                                type="email"
-                                id="contact_email"
-                                name="contact_email"
-                                class="form-control"
-                                value="{{ old('contact_email') }}"
-                                placeholder="contact@example.com"
-                            >
-
-                        </div>
-
-
-                        {{-- Phone --}}
-                        <div class="form-group">
-
-                            <label for="contact_phone">
-                                Phone Number
-                            </label>
-
-                            <input
-                                type="text"
-                                id="contact_phone"
-                                name="contact_phone"
-                                class="form-control"
-                                value="{{ old('contact_phone') }}"
-                                placeholder="+224 000 000 000"
-                            >
-
-                        </div>
-
-
-                        {{-- Address --}}
-                        <div class="form-group full-width">
-
-                            <label for="contact_address">
-                                Address
-                            </label>
-
-                            <textarea
-                                id="contact_address"
-                                name="contact_address"
-                                class="form-control"
-                                rows="3"
-                                placeholder="Enter business address"
-                            >{{ old('contact_address') }}</textarea>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            {{-- =====================================================
-                Regional Settings
-            ===================================================== --}}
-            <div class="settings-card">
-
-                <div class="settings-card-header">
-
-                    <div class="settings-card-heading">
-
-                        <div class="settings-card-icon">
-                            <i class="ri-earth-line"></i>
-                        </div>
-
-                        <div>
-
-                            <h2>
-                                Regional Settings
-                            </h2>
-
-                            <p>
-                                Configure timezone, date and currency preferences.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <div class="settings-card-body">
-
-                    <div class="settings-grid">
-
-                        {{-- Timezone --}}
-                        <div class="form-group">
-
-                            <label for="timezone">
-                                Timezone
-                            </label>
-
-                            <select
-                                id="timezone"
-                                name="timezone"
-                                class="form-control"
-                            >
-
-                                <option value="UTC">
-                                    UTC
-                                </option>
-
-                                <option value="Africa/Conakry">
-                                    Africa / Conakry
-                                </option>
-
-                                <option value="Africa/Accra">
-                                    Africa / Accra
-                                </option>
-
-                                <option value="Africa/Lagos">
-                                    Africa / Lagos
-                                </option>
-
-                                <option value="Africa/Dakar">
-                                    Africa / Dakar
-                                </option>
-
-                            </select>
-
-                        </div>
-
-
-                        {{-- Date Format --}}
-                        <div class="form-group">
-
-                            <label for="date_format">
-                                Date Format
-                            </label>
-
-                            <select
-                                id="date_format"
-                                name="date_format"
-                                class="form-control"
-                            >
-
-                                <option value="Y-m-d">
-                                    YYYY-MM-DD
-                                </option>
-
-                                <option value="d/m/Y">
-                                    DD/MM/YYYY
-                                </option>
-
-                                <option value="m/d/Y">
-                                    MM/DD/YYYY
-                                </option>
-
-                            </select>
-
-                        </div>
-
-
-                        {{-- Time Format --}}
-                        <div class="form-group">
-
-                            <label for="time_format">
-                                Time Format
-                            </label>
-
-                            <select
-                                id="time_format"
-                                name="time_format"
-                                class="form-control"
-                            >
-
-                                <option value="12">
-                                    12 Hour
-                                </option>
-
-                                <option value="24">
-                                    24 Hour
-                                </option>
-
-                            </select>
-
-                        </div>
-
-
-                        {{-- Currency --}}
+                        {{-- Default Currency --}}
                         <div class="form-group">
 
                             <label for="currency">
-                                Default Currency
+                                Currency
                             </label>
+
+                            @php
+                                $currentCurrency = old(
+                                    'currency',
+                                    $settings['currency'] ?? 'USD'
+                                );
+                            @endphp
 
                             <select
                                 id="currency"
@@ -639,19 +476,97 @@
                                 class="form-control"
                             >
 
-                                <option value="USD">
+                                <option
+                                    value="USD"
+                                    @selected($currentCurrency === 'USD')
+                                >
                                     USD — US Dollar
                                 </option>
 
-                                <option value="GNF">
-                                    GNF — Guinean Franc
-                                </option>
-
-                                <option value="EUR">
+                                <option
+                                    value="EUR"
+                                    @selected($currentCurrency === 'EUR')
+                                >
                                     EUR — Euro
                                 </option>
 
+                                <option
+                                    value="GBP"
+                                    @selected($currentCurrency === 'GBP')
+                                >
+                                    GBP — British Pound
+                                </option>
+
+                                <option
+                                    value="GNF"
+                                    @selected($currentCurrency === 'GNF')
+                                >
+                                    GNF — Guinean Franc
+                                </option>
+
                             </select>
+
+                        </div>
+
+
+                        {{-- Currency Position --}}
+                        <div class="form-group">
+
+                            <label for="currency_position">
+                                Currency Position
+                            </label>
+
+                            @php
+                                $currencyPosition = old(
+                                    'currency_position',
+                                    $settings['currency_position'] ?? 'before'
+                                );
+                            @endphp
+
+                            <select
+                                id="currency_position"
+                                name="currency_position"
+                                class="form-control"
+                            >
+
+                                <option
+                                    value="before"
+                                    @selected($currencyPosition === 'before')
+                                >
+                                    Before Price — $100
+                                </option>
+
+                                <option
+                                    value="after"
+                                    @selected($currencyPosition === 'after')
+                                >
+                                    After Price — 100$
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        {{-- Products Per Page --}}
+                        <div class="form-group">
+
+                            <label for="products_per_page">
+                                Products Per Page
+                            </label>
+
+                            <input
+                                type="number"
+                                id="products_per_page"
+                                name="products_per_page"
+                                class="form-control"
+                                value="{{ old(
+                                    'products_per_page',
+                                    $settings['products_per_page'] ?? 12
+                                ) }}"
+                                min="1"
+                                max="100"
+                            >
 
                         </div>
 
@@ -661,10 +576,9 @@
 
             </div>
 
-
             {{-- =====================================================
                 System Preferences
-            ===================================================== --}}
+            ====================================================== --}}
             <div class="settings-card">
 
                 <div class="settings-card-header">
@@ -696,39 +610,6 @@
 
                     <div class="preference-list">
 
-
-                        {{-- Website Status --}}
-                        <div class="preference-item">
-
-                            <div class="preference-content">
-
-                                <h3>
-                                    Website Status
-                                </h3>
-
-                                <p>
-                                    Allow customers to access the website.
-                                </p>
-
-                            </div>
-
-
-                            <label class="switch">
-
-                                <input
-                                    type="checkbox"
-                                    name="website_status"
-                                    value="1"
-                                    checked
-                                >
-
-                                <span class="slider"></span>
-
-                            </label>
-
-                        </div>
-
-
                         {{-- Maintenance --}}
                         <div class="preference-item">
 
@@ -748,9 +629,21 @@
                             <label class="switch">
 
                                 <input
+                                    type="hidden"
+                                    name="maintenance_mode"
+                                    value="0"
+                                >
+
+                                <input
                                     type="checkbox"
                                     name="maintenance_mode"
                                     value="1"
+                                    @checked(
+                                        old(
+                                            'maintenance_mode',
+                                            $settings['maintenance_mode'] ?? '0'
+                                        ) === '1'
+                                    )
                                 >
 
                                 <span class="slider"></span>
@@ -779,10 +672,21 @@
                             <label class="switch">
 
                                 <input
+                                    type="hidden"
+                                    name="customer_registration"
+                                    value="0"
+                                >
+
+                                <input
                                     type="checkbox"
                                     name="customer_registration"
                                     value="1"
-                                    checked
+                                    @checked(
+                                        old(
+                                            'customer_registration',
+                                            $settings['customer_registration'] ?? '1'
+                                        ) === '1'
+                                    )
                                 >
 
                                 <span class="slider"></span>
@@ -799,19 +703,16 @@
 
 
             {{-- =====================================================
-                Save Actions
-            ===================================================== --}}
+                Actions
+            ====================================================== --}}
             <div class="settings-actions">
 
                 <button
                     type="reset"
                     class="cancel-button"
                 >
-
                     Cancel
-
                 </button>
-
 
                 <button
                     type="submit"
@@ -830,10 +731,10 @@
 
     </div>
 
+@endsection
 
-    {{-- =========================================================
-        Theme & Language JS
-    ========================================================= --}}
+
+@push('scripts')
     <script>
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -969,5 +870,4 @@
         });
 
     </script>
-
-@endsection
+@endpush

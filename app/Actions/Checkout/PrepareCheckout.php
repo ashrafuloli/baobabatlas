@@ -17,6 +17,9 @@ final class PrepareCheckout
     /**
      * Prepare and validate the authenticated user's cart for checkout.
      *
+     * Shipping is calculated once per cart line using the product's
+     * customer-facing shipping_cost. Quantity does not multiply shipping.
+     *
      * @return array{
      *     cart: Cart,
      *     items: Collection<int, CartItem>,
@@ -68,21 +71,28 @@ final class PrepareCheckout
         */
 
         $currency = strtolower(
-            (string) config('app.currency', 'usd'),
+            (string) setting('currency', 'USD'),
         );
 
         /*
         |--------------------------------------------------------------------------
-        | Validate Cart & Calculate Subtotal
+        | Validate Cart & Calculate Subtotal / Shipping
         |--------------------------------------------------------------------------
         */
 
         $subtotal = 0.0;
+        $shipping = 0.0;
         $totalQuantity = 0;
 
         foreach ($cart->items as $item) {
             $product = $item->product;
             $variant = $item->variant;
+
+            /*
+            |--------------------------------------------------------------------------
+            | Validate Product
+            |--------------------------------------------------------------------------
+            */
 
             if ($product === null || !$product->isActive()) {
                 throw ValidationException::withMessages([
@@ -93,9 +103,32 @@ final class PrepareCheckout
                 ]);
             }
 
+            /*
+            |--------------------------------------------------------------------------
+            | Validate Quantity
+            |--------------------------------------------------------------------------
+            */
+
+            $quantity = (int) $item->quantity;
+
+            if ($quantity < 1) {
+                throw ValidationException::withMessages([
+                    'cart' => sprintf(
+                        'Invalid quantity for "%s".',
+                        $product->name,
+                    ),
+                ]);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Validate Variant
+            |--------------------------------------------------------------------------
+            */
+
             if ($variant !== null) {
                 if (
-                    $variant->product_id !== $product->id
+                    (int) $variant->product_id !== (int) $product->id
                     || !$variant->isActive()
                 ) {
                     throw ValidationException::withMessages([
@@ -106,7 +139,7 @@ final class PrepareCheckout
                     ]);
                 }
 
-                if ($variant->stock < 1) {
+                if ((int) $variant->stock < 1) {
                     throw ValidationException::withMessages([
                         'cart' => sprintf(
                             '"%s" is currently out of stock.',
@@ -115,25 +148,63 @@ final class PrepareCheckout
                     ]);
                 }
 
-                if ($item->quantity > $variant->stock) {
+                if ($quantity > (int) $variant->stock) {
                     throw ValidationException::withMessages([
                         'cart' => sprintf(
                             'Only %d item(s) of "%s" are available.',
-                            $variant->stock,
+                            (int) $variant->stock,
                             $product->name,
                         ),
                     ]);
                 }
             }
 
+            /*
+            |--------------------------------------------------------------------------
+            | Unit Price
+            |--------------------------------------------------------------------------
+            */
+
             $unitPrice = $variant !== null
                 ? (float) $variant->price
                 : (float) $product->price;
 
             $itemTotal = round(
-                $unitPrice * $item->quantity,
+                $unitPrice * $quantity,
                 2,
             );
+
+            /*
+            |--------------------------------------------------------------------------
+            | Product Shipping Cost
+            |--------------------------------------------------------------------------
+            |
+            | Shipping is charged once per cart line.
+            |
+            | Example:
+            | Product A
+            | Quantity: 5
+            | Shipping: $10
+            |
+            | Shipping remains $10, NOT $50.
+            |
+            */
+
+            $shippingCost = max(
+                0.0,
+                (float) ($product->shipping_cost ?? 0),
+            );
+
+            $shippingCost = round(
+                $shippingCost,
+                2,
+            );
+
+            /*
+            |--------------------------------------------------------------------------
+            | Checkout Attributes
+            |--------------------------------------------------------------------------
+            */
 
             $item->setAttribute(
                 'checkout_unit_price',
@@ -145,11 +216,31 @@ final class PrepareCheckout
                 $itemTotal,
             );
 
+            $item->setAttribute(
+                'checkout_shipping_cost',
+                $shippingCost,
+            );
+
+            /*
+            |--------------------------------------------------------------------------
+            | Accumulate Totals
+            |--------------------------------------------------------------------------
+            */
+
             $subtotal += $itemTotal;
-            $totalQuantity += $item->quantity;
+
+            /*
+            | Important:
+            | Shipping is per cart line, not per quantity.
+            */
+            $shipping += $shippingCost;
+
+            $totalQuantity += $quantity;
         }
 
         $subtotal = round($subtotal, 2);
+
+        $shipping = round($shipping, 2);
 
         /*
         |--------------------------------------------------------------------------
@@ -256,11 +347,10 @@ final class PrepareCheckout
 
         /*
         |--------------------------------------------------------------------------
-        | Shipping & Tax
+        | Tax
         |--------------------------------------------------------------------------
         */
 
-        $shipping = 0.0;
         $tax = 0.0;
 
         /*
