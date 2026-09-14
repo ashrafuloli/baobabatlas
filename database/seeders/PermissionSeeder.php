@@ -204,7 +204,7 @@ final class PermissionSeeder extends Seeder
             [
                 'name' => 'Refund Orders',
                 'slug' => 'refund-orders',
-                'description' => 'Allow refunding ecommerce orders.',
+                'description' => 'Allow processing ecommerce order refunds.',
             ],
 
 
@@ -683,7 +683,6 @@ final class PermissionSeeder extends Seeder
                 'slug' => 'view-audit-log-details',
                 'description' => 'Allow viewing individual audit log details.',
             ],
-
         ];
 
 
@@ -713,7 +712,7 @@ final class PermissionSeeder extends Seeder
                 [
                     'name' => $permission['name'],
                     'description' => $permission['description'],
-                ]
+                ],
             );
         }
     }

@@ -17,6 +17,15 @@ final class GeneralSettingsController extends Controller
     public function index(): View
     {
         $settings = Setting::query()
+            ->whereIn('key', [
+                'website_name',
+                'website_url',
+                'website_tagline',
+                'website_logo',
+                'favicon',
+                'maintenance_mode',
+                'customer_registration',
+            ])
             ->pluck('value', 'key');
 
         return view(
@@ -26,29 +35,37 @@ final class GeneralSettingsController extends Controller
     }
 
     public function update(
-        GeneralSettingsRequest $request
+        GeneralSettingsRequest $request,
     ): RedirectResponse {
         $validated = $request->validated();
 
         DB::transaction(function () use ($request, $validated): void {
+            /*
+            |--------------------------------------------------------------------------
+            | Website Information
+            |--------------------------------------------------------------------------
+            */
+
             $settings = [
                 'website_name' => $validated['website_name'],
                 'website_url' => $validated['website_url'],
                 'website_tagline' => $validated['website_tagline'] ?? '',
 
-                'currency' => $validated['currency'],
-                'currency_position' => $validated['currency_position'],
-                'products_per_page' => (string) $validated['products_per_page'],
+                /*
+                |--------------------------------------------------------------------------
+                | System Preferences
+                |--------------------------------------------------------------------------
+                */
 
-                'shipping_method' => $validated['shipping_method'],
-                'free_shipping_threshold' => (string) $validated['free_shipping_threshold'],
-                'processing_time' => $validated['processing_time'],
-
-                'maintenance_mode' => $request->boolean('maintenance_mode')
+                'maintenance_mode' => $request->boolean(
+                    'maintenance_mode'
+                )
                     ? '1'
                     : '0',
 
-                'customer_registration' => $request->boolean('customer_registration')
+                'customer_registration' => $request->boolean(
+                    'customer_registration'
+                )
                     ? '1'
                     : '0',
             ];
@@ -56,7 +73,7 @@ final class GeneralSettingsController extends Controller
             foreach ($settings as $key => $value) {
                 Setting::query()->updateOrCreate(
                     ['key' => $key],
-                    ['value' => $value]
+                    ['value' => $value],
                 );
             }
 
@@ -66,7 +83,7 @@ final class GeneralSettingsController extends Controller
                 File::makeDirectory(
                     $uploadPath,
                     0755,
-                    true
+                    true,
                 );
             }
 
@@ -82,8 +99,9 @@ final class GeneralSettingsController extends Controller
                     ->value('value');
 
                 if (
-                    $oldLogo &&
-                    File::exists(public_path($oldLogo))
+                    is_string($oldLogo)
+                    && $oldLogo !== ''
+                    && File::exists(public_path($oldLogo))
                 ) {
                     File::delete(public_path($oldLogo));
                 }
@@ -99,14 +117,14 @@ final class GeneralSettingsController extends Controller
 
                 $logo->move(
                     $uploadPath,
-                    $logoName
+                    $logoName,
                 );
 
                 Setting::query()->updateOrCreate(
                     ['key' => 'website_logo'],
                     [
                         'value' => 'uploads/website/' . $logoName,
-                    ]
+                    ],
                 );
             }
 
@@ -122,8 +140,9 @@ final class GeneralSettingsController extends Controller
                     ->value('value');
 
                 if (
-                    $oldFavicon &&
-                    File::exists(public_path($oldFavicon))
+                    is_string($oldFavicon)
+                    && $oldFavicon !== ''
+                    && File::exists(public_path($oldFavicon))
                 ) {
                     File::delete(public_path($oldFavicon));
                 }
@@ -139,21 +158,21 @@ final class GeneralSettingsController extends Controller
 
                 $favicon->move(
                     $uploadPath,
-                    $faviconName
+                    $faviconName,
                 );
 
                 Setting::query()->updateOrCreate(
                     ['key' => 'favicon'],
                     [
                         'value' => 'uploads/website/' . $faviconName,
-                    ]
+                    ],
                 );
             }
         });
 
         return back()->with(
             'success',
-            'General settings updated successfully.'
+            'General settings updated successfully.',
         );
     }
 }

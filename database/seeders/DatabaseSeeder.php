@@ -46,10 +46,10 @@ class DatabaseSeeder extends Seeder
             |--------------------------------------------------------------------------
             */
 
-            BrandSeeder::class,
-            CategorySeeder::class,
-            AttributeSeeder::class,
-            ProductSeeder::class,
+//            BrandSeeder::class,
+//            CategorySeeder::class,
+//            AttributeSeeder::class,
+//            ProductSeeder::class,
 
             /*
             |--------------------------------------------------------------------------
@@ -57,14 +57,14 @@ class DatabaseSeeder extends Seeder
             |--------------------------------------------------------------------------
             */
 
-            EcommerceReportSeeder::class,
+//            EcommerceReportSeeder::class,
 
             /*
             |--------------------------------------------------------------------------
             | Smart buy Report Demo Data
             |--------------------------------------------------------------------------
             */
-            SmartBuySeeder::class,
+//            SmartBuySeeder::class,
         ]);
     }
 }

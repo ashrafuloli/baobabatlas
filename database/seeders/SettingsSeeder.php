@@ -19,10 +19,6 @@ final class SettingsSeeder extends Seeder
             'website_logo' => 'uploads/website/logo.png',
             'favicon' => 'uploads/website/favicon.png',
 
-            'currency' => 'USD',
-            'currency_position' => 'before',
-            'products_per_page' => '12',
-
             'maintenance_mode' => '0',
             'customer_registration' => '1',
         ];

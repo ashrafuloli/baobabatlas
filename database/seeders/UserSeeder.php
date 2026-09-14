@@ -50,7 +50,7 @@ final class UserSeeder extends Seeder
                 'password' => Hash::make('12345678'),
                 'status' => 'active',
                 'email_verified_at' => now(),
-            ]
+            ],
         );
 
 
@@ -73,10 +73,10 @@ final class UserSeeder extends Seeder
 
         $allPermissionIds = Permission::query()
             ->pluck('id')
-            ->toArray();
+            ->all();
 
         $adminRole->permissions()->sync(
-            $allPermissionIds
+            $allPermissionIds,
         );
 
 
@@ -98,7 +98,7 @@ final class UserSeeder extends Seeder
                 'password' => Hash::make('12345678'),
                 'status' => 'active',
                 'email_verified_at' => now(),
-            ]
+            ],
         );
 
 
@@ -164,17 +164,6 @@ final class UserSeeder extends Seeder
 
             /*
             |--------------------------------------------------------------------------
-            | Requests
-            |--------------------------------------------------------------------------
-            */
-
-            'view-requests',
-            'create-requests',
-            'view-request-details',
-
-
-            /*
-            |--------------------------------------------------------------------------
             | Ecommerce - Products
             |--------------------------------------------------------------------------
             */
@@ -214,40 +203,11 @@ final class UserSeeder extends Seeder
 
             /*
             |--------------------------------------------------------------------------
-            | Ecommerce - Payments
+            | General Payments
             |--------------------------------------------------------------------------
             */
 
             'view-payments',
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Ecommerce - Shipments
-            |--------------------------------------------------------------------------
-            */
-
-            'view-ecommerce-shipments',
-            'view-ecommerce-shipment-details',
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Ecommerce - Tracking
-            |--------------------------------------------------------------------------
-            */
-
-            'view-ecommerce-tracking',
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | General Shipments
-            |--------------------------------------------------------------------------
-            */
-
-            'view-shipments',
-            'view-shipment-details',
 
 
             /*
@@ -278,11 +238,9 @@ final class UserSeeder extends Seeder
             'my-smart-buy',
             'my-smart-buy-details',
             'my-smart-buy-create',
-            'my-smart-buy-confirmation',
             'my-smart-buy-quote',
             'my-smart-buy-payment',
             'my-smart-buy-tracking',
-
         ];
 
 
@@ -293,7 +251,7 @@ final class UserSeeder extends Seeder
         */
 
         $clientPermissions = array_values(
-            array_unique($clientPermissions)
+            array_unique($clientPermissions),
         );
 
 
@@ -306,7 +264,7 @@ final class UserSeeder extends Seeder
         $clientPermissionIds = Permission::query()
             ->whereIn('slug', $clientPermissions)
             ->pluck('id')
-            ->toArray();
+            ->all();
 
 
         /*
@@ -316,7 +274,7 @@ final class UserSeeder extends Seeder
         */
 
         $clientRole->permissions()->sync(
-            $clientPermissionIds
+            $clientPermissionIds,
         );
     }
 }

@@ -16,6 +16,12 @@ final class GeneralSettingsRequest extends FormRequest
     public function rules(): array
     {
         return [
+            /*
+            |--------------------------------------------------------------------------
+            | Website Information
+            |--------------------------------------------------------------------------
+            */
+
             'website_name' => [
                 'required',
                 'string',
@@ -34,6 +40,12 @@ final class GeneralSettingsRequest extends FormRequest
                 'max:255',
             ],
 
+            /*
+            |--------------------------------------------------------------------------
+            | Branding
+            |--------------------------------------------------------------------------
+            */
+
             'website_logo' => [
                 'nullable',
                 'image',
@@ -48,41 +60,11 @@ final class GeneralSettingsRequest extends FormRequest
                 'max:1024',
             ],
 
-            'currency' => [
-                'required',
-                'string',
-                'max:10',
-            ],
-
-            'currency_position' => [
-                'required',
-                'in:before,after',
-            ],
-
-            'products_per_page' => [
-                'required',
-                'integer',
-                'min:1',
-                'max:100',
-            ],
-
-            'shipping_method' => [
-                'required',
-                'string',
-                'max:100',
-            ],
-
-            'free_shipping_threshold' => [
-                'required',
-                'numeric',
-                'min:0',
-            ],
-
-            'processing_time' => [
-                'required',
-                'string',
-                'max:100',
-            ],
+            /*
+            |--------------------------------------------------------------------------
+            | System Preferences
+            |--------------------------------------------------------------------------
+            */
 
             'maintenance_mode' => [
                 'nullable',

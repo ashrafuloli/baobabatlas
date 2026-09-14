@@ -787,15 +787,12 @@
                 ========================================= --}}
                 @if(
                     auth()->user()->hasPermission('view-settings') ||
-                    auth()->user()->hasPermission('view-ecommerce-settings') ||
-                    auth()->user()->hasPermission('view-audit-logs')
+                    auth()->user()->hasPermission('view-ecommerce-settings')
                 )
 
                     <li class="has-submenu {{ request()->routeIs(
                         'settings',
-                        'settings-ecommerce',
-                        'settings-audit-logs',
-                        'settings-audit-log-details'
+                        'settings-ecommerce'
                     ) ? 'active open' : '' }}">
 
                         <a href="javascript:void(0);">
@@ -830,27 +827,6 @@
                                 </li>
 
                             @endif
-
-                            {{-- AUDIT LOGS --}}
-                            @if(auth()->user()->hasPermission('view-audit-logs'))
-
-                                <li class="{{ request()->routeIs(
-                                    'settings-audit-logs',
-                                    'settings-audit-log-details'
-                                ) ? 'active' : '' }}">
-
-                                    <a href="{{ route('settings-audit-logs') }}">
-
-                                        <span>
-                                            Audit Logs
-                                        </span>
-
-                                    </a>
-
-                                </li>
-
-                            @endif
-
                         </ul>
 
                     </li>
