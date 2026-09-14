@@ -10,6 +10,7 @@
 
             {{-- Breadcrumb --}}
             <div class="my-orders-page__breadcrumb">
+
                 <a href="{{ url('/') }}">
                     Shop
                 </a>
@@ -19,6 +20,7 @@
                 <span>
                     My Orders
                 </span>
+
             </div>
 
 
@@ -85,6 +87,7 @@
                                 aria-haspopup="listbox"
                             >
                                 <span class="status-select-value">
+
                                     <span class="status-label">
                                         Status:
                                     </span>
@@ -92,9 +95,11 @@
                                     <strong>
                                         All Orders
                                     </strong>
+
                                 </span>
 
                                 <i class="ri-arrow-down-s-line"></i>
+
                             </button>
 
 
@@ -113,6 +118,7 @@
                                     All Orders
                                 </button>
 
+
                                 <button
                                     type="button"
                                     class="status-option"
@@ -122,6 +128,18 @@
                                 >
                                     Pending
                                 </button>
+
+
+                                <button
+                                    type="button"
+                                    class="status-option"
+                                    data-value="paid"
+                                    role="option"
+                                    aria-selected="false"
+                                >
+                                    Paid
+                                </button>
+
 
                                 <button
                                     type="button"
@@ -133,6 +151,51 @@
                                     Processing
                                 </button>
 
+
+                                <button
+                                    type="button"
+                                    class="status-option"
+                                    data-value="shipped"
+                                    role="option"
+                                    aria-selected="false"
+                                >
+                                    Shipped
+                                </button>
+
+
+                                <button
+                                    type="button"
+                                    class="status-option"
+                                    data-value="in_transit"
+                                    role="option"
+                                    aria-selected="false"
+                                >
+                                    In Transit
+                                </button>
+
+
+                                <button
+                                    type="button"
+                                    class="status-option"
+                                    data-value="out_for_delivery"
+                                    role="option"
+                                    aria-selected="false"
+                                >
+                                    Out for Delivery
+                                </button>
+
+
+                                <button
+                                    type="button"
+                                    class="status-option"
+                                    data-value="delivered"
+                                    role="option"
+                                    aria-selected="false"
+                                >
+                                    Delivered
+                                </button>
+
+
                                 <button
                                     type="button"
                                     class="status-option"
@@ -140,8 +203,9 @@
                                     role="option"
                                     aria-selected="false"
                                 >
-                                    Delivered
+                                    Completed
                                 </button>
+
 
                                 <button
                                     type="button"
@@ -153,6 +217,18 @@
                                     Cancelled
                                 </button>
 
+
+                                <button
+                                    type="button"
+                                    class="status-option"
+                                    data-value="failed"
+                                    role="option"
+                                    aria-selected="false"
+                                >
+                                    Failed
+                                </button>
+
+
                                 <button
                                     type="button"
                                     class="status-option"
@@ -162,6 +238,7 @@
                                 >
                                     Refund Requested
                                 </button>
+
 
                                 <button
                                     type="button"
@@ -173,6 +250,7 @@
                                     Refund Approved
                                 </button>
 
+
                                 <button
                                     type="button"
                                     class="status-option"
@@ -182,6 +260,7 @@
                                 >
                                     Refund Rejected
                                 </button>
+
 
                                 <button
                                     type="button"
@@ -231,8 +310,11 @@
 
 
                     <span class="my-orders-page__order-count">
+
                         {{ $orders->total() }}
+
                         {{ $orders->total() === 1 ? 'Order' : 'Orders' }}
+
                     </span>
 
                 </div>
@@ -247,31 +329,87 @@
                              |--------------------------------------------------------------------------
                              | Order Status
                              |--------------------------------------------------------------------------
+                             |
+                             | The order status now follows the complete delivery lifecycle:
+                             |
+                             | pending
+                             | paid
+                             | processing
+                             | shipped
+                             | in_transit
+                             | out_for_delivery
+                             | delivered
+                             | completed
+                             | cancelled
+                             | failed
+                             |
                              */
 
                             $orderStatus = match ($order->status) {
+                                \App\Models\Order::STATUS_PAID => 'paid',
+
+                                \App\Models\Order::STATUS_PROCESSING => 'processing',
+
+                                \App\Models\Order::STATUS_SHIPPED => 'shipped',
+
+                                \App\Models\Order::STATUS_IN_TRANSIT => 'in_transit',
+
+                                \App\Models\Order::STATUS_OUT_FOR_DELIVERY => 'out_for_delivery',
+
+                                \App\Models\Order::STATUS_DELIVERED => 'delivered',
+
                                 \App\Models\Order::STATUS_COMPLETED => 'completed',
 
-                                \App\Models\Order::STATUS_CANCELLED,
-                                \App\Models\Order::STATUS_FAILED => 'cancelled',
+                                \App\Models\Order::STATUS_CANCELLED => 'cancelled',
 
-                                \App\Models\Order::STATUS_PROCESSING,
-                                \App\Models\Order::STATUS_PAID => 'processing',
+                                \App\Models\Order::STATUS_FAILED => 'failed',
 
                                 default => 'pending',
                             };
 
+
                             $orderStatusLabel = match ($orderStatus) {
-                                'completed' => 'Delivered',
+                                'paid' => 'Paid',
+
                                 'processing' => 'Processing',
+
+                                'shipped' => 'Shipped',
+
+                                'in_transit' => 'In Transit',
+
+                                'out_for_delivery' => 'Out for Delivery',
+
+                                'delivered' => 'Delivered',
+
+                                'completed' => 'Completed',
+
                                 'cancelled' => 'Cancelled',
+
+                                'failed' => 'Failed',
+
                                 default => 'Pending',
                             };
 
+
                             $orderStatusIcon = match ($orderStatus) {
-                                'completed' => 'ri-checkbox-circle-fill',
+                                'paid' => 'ri-checkbox-circle-line',
+
                                 'processing' => 'ri-loader-4-line',
+
+                                'shipped' => 'ri-box-3-line',
+
+                                'in_transit' => 'ri-truck-line',
+
+                                'out_for_delivery' => 'ri-map-pin-time-line',
+
+                                'delivered' => 'ri-checkbox-circle-fill',
+
+                                'completed' => 'ri-checkbox-circle-fill',
+
                                 'cancelled' => 'ri-close-circle-line',
+
+                                'failed' => 'ri-error-warning-line',
+
                                 default => 'ri-time-line',
                             };
 
@@ -285,6 +423,7 @@
                             $refundStatus = $order->refund_status
                                 ?? \App\Models\Order::REFUND_STATUS_NONE;
 
+
                             $refundStatusFilter = match ($refundStatus) {
                                 \App\Models\Order::REFUND_STATUS_PENDING => 'refund_pending',
 
@@ -296,6 +435,7 @@
 
                                 default => null,
                             };
+
 
                             $refundStatusLabel = match ($refundStatus) {
                                 \App\Models\Order::REFUND_STATUS_PENDING => 'Refund Requested',
@@ -309,6 +449,7 @@
                                 default => null,
                             };
 
+
                             $refundStatusIcon = match ($refundStatus) {
                                 \App\Models\Order::REFUND_STATUS_PENDING => 'ri-time-line',
 
@@ -320,6 +461,7 @@
 
                                 default => null,
                             };
+
 
                             $refundStatusClass = match ($refundStatus) {
                                 \App\Models\Order::REFUND_STATUS_PENDING => 'pending',
@@ -341,17 +483,48 @@
                              */
 
                             $deliveryIcon = match ($orderStatus) {
-                                'completed' => 'ri-map-pin-line',
-                                'processing' => 'ri-time-line',
+                                'paid' => 'ri-checkbox-circle-line',
+
+                                'processing' => 'ri-loader-4-line',
+
+                                'shipped' => 'ri-box-3-line',
+
+                                'in_transit' => 'ri-truck-line',
+
+                                'out_for_delivery' => 'ri-map-pin-time-line',
+
+                                'delivered' => 'ri-map-pin-line',
+
+                                'completed' => 'ri-checkbox-circle-fill',
+
                                 'cancelled' => 'ri-close-circle-line',
+
+                                'failed' => 'ri-error-warning-line',
+
                                 default => 'ri-time-line',
                             };
 
+
                             $deliveryText = match ($orderStatus) {
-                                'completed' => 'Order completed',
+                                'paid' => 'Payment received',
+
                                 'processing' => 'Preparing your order',
+
+                                'shipped' => 'Your order has been shipped',
+
+                                'in_transit' => 'Your order is in transit',
+
+                                'out_for_delivery' => 'Your order is out for delivery',
+
+                                'delivered' => 'Your order has been delivered',
+
+                                'completed' => 'Order completed',
+
                                 'cancelled' => 'Order cancelled',
-                                default => 'Order is being processed',
+
+                                'failed' => 'There was an issue with your order',
+
+                                default => 'Order is awaiting processing',
                             };
                         @endphp
 
@@ -541,31 +714,43 @@
                                         <i class="{{ $refundStatusIcon }}"></i>
 
                                         <div>
+
                                             <strong>
                                                 {{ $refundStatusLabel }}
                                             </strong>
 
                                             <span>
+
                                                 @switch($refundStatus)
 
                                                     @case(\App\Models\Order::REFUND_STATUS_PENDING)
+
                                                         Your refund request is under review.
+
                                                         @break
 
                                                     @case(\App\Models\Order::REFUND_STATUS_APPROVED)
+
                                                         Your refund request has been approved and is being processed.
+
                                                         @break
 
                                                     @case(\App\Models\Order::REFUND_STATUS_REJECTED)
+
                                                         Your refund request was rejected. View order details for more information.
+
                                                         @break
 
                                                     @case(\App\Models\Order::REFUND_STATUS_REFUNDED)
+
                                                         Your refund has been successfully processed.
+
                                                         @break
 
                                                 @endswitch
+
                                             </span>
+
                                         </div>
 
                                     </div>
@@ -660,15 +845,7 @@
 
 
                 {{-- Pagination --}}
-                @if($orders->hasPages())
-
-                    <div class="my-orders-page__pagination">
-
-                        {{ $orders->links() }}
-
-                    </div>
-
-                @endif
+                {{ $orders->links('frontend.components.pagination') }}
 
             </div>
 
@@ -690,9 +867,11 @@
 
 
                 <a href="{{ route('shop') }}">
+
                     Browse Products
 
                     <i class="ri-arrow-right-line"></i>
+
                 </a>
 
             </div>
@@ -714,15 +893,21 @@
                 return;
             }
 
+
             const searchInput = ordersPage.querySelector(
                 ".my-orders-page__search-input",
             );
 
-            const statusSelect = ordersPage.querySelector(".status-select");
+
+            const statusSelect = ordersPage.querySelector(
+                ".status-select",
+            );
+
 
             const statusTrigger = statusSelect?.querySelector(
                 ".status-select-trigger",
             );
+
 
             const statusOptions = statusSelect
                 ? Array.from(
@@ -730,13 +915,16 @@
                 )
                 : [];
 
+
             const statusValue = statusSelect?.querySelector(
                 ".status-select-value strong",
             );
 
+
             const statusInput = statusSelect?.querySelector(
                 ".status-input",
             );
+
 
             const orderCards = Array.from(
                 ordersPage.querySelectorAll(
@@ -744,23 +932,36 @@
                 ),
             );
 
+
             const filterEmpty = ordersPage.querySelector(
                 ".my-orders-page__empty--filter",
             );
+
 
             const resetButton = ordersPage.querySelector(
                 ".my-orders-page__empty--filter .my-orders-page__reset-btn",
             );
 
 
+            const refundStatuses = [
+                "refund_pending",
+                "refund_approved",
+                "refund_rejected",
+                "refunded",
+            ];
+
+
             const filterOrders = function () {
+
                 const searchValue = searchInput
                     ? searchInput.value.trim().toLowerCase()
                     : "";
 
+
                 const selectedStatus = statusInput
                     ? statusInput.value
                     : "all";
+
 
                 let visibleOrders = 0;
 
@@ -771,12 +972,15 @@
                         orderCard.dataset.order || ""
                     ).toLowerCase();
 
+
                     const orderText =
                         orderCard.textContent.toLowerCase();
+
 
                     const orderStatus = (
                         orderCard.dataset.status || ""
                     ).toLowerCase();
+
 
                     const refundStatus = (
                         orderCard.dataset.refundStatus || ""
@@ -784,20 +988,20 @@
 
 
                     const matchesSearch =
-                        searchValue === "" ||
-                        orderNumber.includes(searchValue) ||
-                        orderText.includes(searchValue);
+                        searchValue === ""
+                        || orderNumber.includes(searchValue)
+                        || orderText.includes(searchValue);
 
 
                     let matchesStatus = true;
 
+
                     if (selectedStatus !== "all") {
 
                         if (
-                            selectedStatus === "refund_pending"
-                            || selectedStatus === "refund_approved"
-                            || selectedStatus === "refund_rejected"
-                            || selectedStatus === "refunded"
+                            refundStatuses.includes(
+                                selectedStatus,
+                            )
                         ) {
                             matchesStatus =
                                 refundStatus === selectedStatus;
@@ -824,9 +1028,12 @@
 
 
                 if (filterEmpty) {
+
                     filterEmpty.hidden =
                         visibleOrders !== 0;
+
                 }
+
             };
 
 
@@ -836,13 +1043,19 @@
                     return;
                 }
 
-                statusSelect.classList.remove("is-open");
+
+                statusSelect.classList.remove(
+                    "is-open",
+                );
+
 
                 if (statusTrigger) {
+
                     statusTrigger.setAttribute(
                         "aria-expanded",
                         "false",
                     );
+
                 }
 
             };
@@ -854,9 +1067,11 @@
                     searchInput.value = "";
                 }
 
+
                 if (statusInput) {
                     statusInput.value = "all";
                 }
+
 
                 if (statusValue) {
                     statusValue.textContent = "All Orders";
@@ -888,6 +1103,7 @@
                 closeStatusDropdown();
 
                 filterOrders();
+
             };
 
 
@@ -953,17 +1169,22 @@
                         const value =
                             option.dataset.value || "all";
 
+
                         const text =
                             option.textContent.trim();
 
 
                         if (statusInput) {
+
                             statusInput.value = value;
+
                         }
 
 
                         if (statusValue) {
+
                             statusValue.textContent = text;
+
                         }
 
 
@@ -1006,8 +1227,8 @@
                 function (event) {
 
                     if (
-                        statusSelect &&
-                        !statusSelect.contains(
+                        statusSelect
+                        && !statusSelect.contains(
                             event.target,
                         )
                     ) {
@@ -1029,6 +1250,7 @@
 
 
             filterOrders();
+
         });
     </script>
 

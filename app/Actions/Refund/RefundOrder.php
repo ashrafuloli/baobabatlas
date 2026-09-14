@@ -20,11 +20,18 @@ final class RefundOrder
     ): Refund {
         $refund = DB::transaction(
             function () use ($refundRequest): Refund {
+                /*
+                 * Lock the refund request to prevent concurrent
+                 * refund processing.
+                 */
                 $refundRequest = RefundRequest::query()
                     ->whereKey($refundRequest->id)
                     ->lockForUpdate()
                     ->firstOrFail();
 
+                /*
+                 * Only approved refund requests can be processed.
+                 */
                 if (
                     $refundRequest->status
                     !== RefundRequest::STATUS_APPROVED
@@ -34,20 +41,37 @@ final class RefundOrder
                     );
                 }
 
+                /*
+                 * Lock the order to prevent concurrent refund
+                 * operations against the same payment.
+                 */
                 $order = Order::query()
                     ->whereKey($refundRequest->order_id)
                     ->lockForUpdate()
                     ->firstOrFail();
 
+                /*
+                 * =========================================================
+                 * Validate Payment
+                 * =========================================================
+                 *
+                 * Refund processing depends only on payment status.
+                 *
+                 * Order status does not restrict the refund.
+                 */
                 if (
                     $order->payment_status
                     !== Order::PAYMENT_STATUS_PAID
                 ) {
                     throw new RuntimeException(
-                        'This order is not eligible for a Stripe refund.',
+                        'This order is not eligible for a Stripe refund because the payment has not been completed.',
                     );
                 }
 
+                /*
+                 * Stripe Payment Intent is required to create
+                 * the refund.
+                 */
                 if (
                     ! filled($order->stripe_payment_intent_id)
                 ) {
@@ -56,6 +80,14 @@ final class RefundOrder
                     );
                 }
 
+                /*
+                 * =========================================================
+                 * Check Existing Refund
+                 * =========================================================
+                 *
+                 * One local Refund record is associated with one
+                 * RefundRequest.
+                 */
                 $existingRefund = Refund::query()
                     ->where(
                         'refund_request_id',
@@ -65,25 +97,35 @@ final class RefundOrder
                     ->first();
 
                 if ($existingRefund !== null) {
+                    /*
+                     * Refund already succeeded.
+                     */
                     if ($existingRefund->isSucceeded()) {
                         return $existingRefund;
                     }
 
                     /*
-                     * If Stripe already returned a refund ID,
-                     * do not create another Stripe refund.
+                     * Stripe already returned a refund ID.
+                     *
+                     * Never create another Stripe refund.
                      */
                     if (filled($existingRefund->stripe_refund_id)) {
                         return $existingRefund;
                     }
 
                     /*
-                     * A pending/failed local refund without a Stripe ID
-                     * can safely be retried using the same idempotency key
-                     * and the same amount stored in the Refund record.
+                     * Existing pending/failed refund without a Stripe ID
+                     * can be retried outside this transaction using the
+                     * same persisted idempotency key and amount.
                      */
                     return $existingRefund;
                 }
+
+                /*
+                 * =========================================================
+                 * Calculate Refundable Amount
+                 * =========================================================
+                 */
 
                 $successfulRefundedAmount = (float) $order->refunds()
                     ->where(
@@ -92,6 +134,9 @@ final class RefundOrder
                     )
                     ->sum('amount');
 
+                /*
+                 * Shipping charges are non-refundable.
+                 */
                 $remainingRefundableAmount = max(
                     0,
                     round(
@@ -108,6 +153,9 @@ final class RefundOrder
                     );
                 }
 
+                /*
+                 * Never refund more than the remaining refundable amount.
+                 */
                 $requestedRefundAmount = min(
                     round(
                         (float) $refundRequest->amount,
@@ -116,6 +164,9 @@ final class RefundOrder
                     $remainingRefundableAmount,
                 );
 
+                /*
+                 * Apply any admin-approved deduction.
+                 */
                 $deductionAmount = max(
                     0,
                     round(
@@ -124,12 +175,18 @@ final class RefundOrder
                     ),
                 );
 
-                if ($deductionAmount > $requestedRefundAmount) {
+                if (
+                    $deductionAmount
+                    > $requestedRefundAmount
+                ) {
                     throw new RuntimeException(
                         'The deduction amount cannot exceed the refundable amount.',
                     );
                 }
 
+                /*
+                 * Final amount that will actually be sent to Stripe.
+                 */
                 $finalRefundAmount = round(
                     $requestedRefundAmount
                     - $deductionAmount,
@@ -143,10 +200,22 @@ final class RefundOrder
                 }
 
                 /*
-                 * Create the local refund record BEFORE contacting Stripe.
+                 * =========================================================
+                 * Create Local Refund Record
+                 * =========================================================
                  *
-                 * This permanently associates this refund operation with
-                 * one Stripe idempotency key and one refund amount.
+                 * The refund record is created BEFORE communicating
+                 * with Stripe.
+                 *
+                 * This permanently stores:
+                 *
+                 * - refund amount
+                 * - currency
+                 * - Stripe idempotency key
+                 * - refund request relationship
+                 *
+                 * The same idempotency key will be used if the Stripe
+                 * request needs to be retried.
                  */
                 return Refund::query()->create([
                     'order_id' => $order->id,
@@ -163,21 +232,40 @@ final class RefundOrder
         );
 
         /*
-         * Stripe has already successfully processed this refund.
+         * =============================================================
+         * Already Successfully Refunded
+         * =============================================================
          */
+
         if ($refund->isSucceeded()) {
             return $refund->fresh();
         }
 
         /*
-         * If Stripe already returned an object for this refund,
-         * never create another refund operation.
+         * =============================================================
+         * Stripe Refund Already Exists
+         * =============================================================
+         *
+         * If Stripe has already returned a refund ID, never create
+         * another refund.
          */
         if (filled($refund->stripe_refund_id)) {
             return $refund->fresh();
         }
 
+        /*
+         * =============================================================
+         * Load Order
+         * =============================================================
+         */
+
         $order = $refund->order()->firstOrFail();
+
+        /*
+         * =============================================================
+         * Stripe Configuration
+         * =============================================================
+         */
 
         $stripeSecret = config('services.stripe.secret');
 
@@ -196,6 +284,12 @@ final class RefundOrder
 
         $stripe = new StripeClient($stripeSecret);
 
+        /*
+         * =============================================================
+         * Create Stripe Refund
+         * =============================================================
+         */
+
         try {
             $stripeRefund = $stripe->refunds->create(
                 [
@@ -209,8 +303,11 @@ final class RefundOrder
                 [
                     /*
                      * IMPORTANT:
-                     * This key is generated once and persisted
-                     * with the Refund record.
+                     *
+                     * The idempotency key was generated once and
+                     * persisted in the Refund record.
+                     *
+                     * Retries must use the exact same key.
                      */
                     'idempotency_key' =>
                         $refund->stripe_idempotency_key,
@@ -219,7 +316,9 @@ final class RefundOrder
         } catch (ApiErrorException $exception) {
             report($exception);
 
-            $this->markAsFailed($refund->id);
+            $this->markAsFailed(
+                $refund->id,
+            );
 
             throw new RuntimeException(
                 'Stripe refund failed: '
@@ -227,6 +326,12 @@ final class RefundOrder
                 previous: $exception,
             );
         }
+
+        /*
+         * =============================================================
+         * Store Stripe Result
+         * =============================================================
+         */
 
         return DB::transaction(
             function () use (
@@ -239,8 +344,8 @@ final class RefundOrder
                     ->firstOrFail();
 
                 /*
-                 * Another request may have completed the refund while
-                 * this request was communicating with Stripe.
+                 * Another request may have completed this refund while
+                 * the current request was communicating with Stripe.
                  */
                 if (
                     $refund->isSucceeded()
@@ -249,11 +354,19 @@ final class RefundOrder
                     return $refund;
                 }
 
+                /*
+                 * Store Stripe's refund ID and current status.
+                 */
                 $refund->update([
                     'stripe_refund_id' => $stripeRefund->id,
                     'status' => $stripeRefund->status,
                 ]);
 
+                /*
+                 * Stripe successfully refunded the payment.
+                 *
+                 * At this point the Order is marked as refunded.
+                 */
                 if (
                     $stripeRefund->status
                     === Refund::STATUS_SUCCEEDED
@@ -273,8 +386,12 @@ final class RefundOrder
         );
     }
 
-    private function markAsFailed(int $refundId): void
-    {
+    /**
+     * Mark a local refund as failed.
+     */
+    private function markAsFailed(
+        int $refundId,
+    ): void {
         DB::transaction(
             function () use ($refundId): void {
                 Refund::query()

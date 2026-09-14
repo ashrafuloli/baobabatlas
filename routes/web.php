@@ -8,7 +8,9 @@ use App\Http\Controllers\Backend\AttributeController;
 use App\Http\Controllers\Backend\BrandController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\CouponController;
+use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\EcommercePaymentController;
+use App\Http\Controllers\Backend\EcommerceReportController;
 use App\Http\Controllers\Backend\GeneralSettingsController;
 use App\Http\Controllers\Backend\InventoryController;
 use App\Http\Controllers\Backend\PermissionController;
@@ -191,35 +193,6 @@ Route::middleware('maintenance')->group(function (): void {
         )->name('checkout.success');
 
     });
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Categories
-    |--------------------------------------------------------------------------
-    */
-
-    Route::view(
-        '/categories',
-        'frontend.pages.categories.index'
-    )->name('categories');
-
-    Route::view(
-        '/categories/{category}',
-        'frontend.pages.categories.details'
-    )->name('category-details');
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Smart Buy
-    |--------------------------------------------------------------------------
-    */
-
-    Route::view(
-        '/smart-buy',
-        'frontend.pages.smart-buy.index'
-    )->name('smart-buy-public');
 
 
     /*
@@ -424,7 +397,6 @@ Route::middleware('auth')
             ->middleware('throttle:6,1')
             ->name('verification.send');
 
-
         /*
         |--------------------------------------------------------------------------
         | Dashboard
@@ -433,21 +405,12 @@ Route::middleware('auth')
 
         Route::get(
             '/dashboard',
-            function () {
-
-                $user = auth()->user();
-
-                if ($user->roles()->where('slug', 'admin')->exists()) {
-                    return redirect()->route('admin-dashboard');
-                }
-
-                return view(
-                    'backend.pages.dashboard.customer'
-                );
-
-            }
+            [DashboardController::class, 'customer'],
         )
-            ->middleware('permission:view-dashboard')
+            ->middleware([
+                'auth',
+                'permission:view-dashboard',
+            ])
             ->name('dashboard');
 
 
@@ -459,13 +422,12 @@ Route::middleware('auth')
 
         Route::get(
             '/admin/dashboard',
-            function () {
-                return view(
-                    'backend.pages.dashboard.admin'
-                );
-            }
+            [DashboardController::class, 'admin'],
         )
-            ->middleware('role:admin')
+            ->middleware([
+                'auth',
+                'role:admin',
+            ])
             ->name('admin-dashboard');
 
 
@@ -736,13 +698,6 @@ Route::middleware('auth')
                 )
                     ->middleware('permission:manage-smart-buy-shipment')
                     ->name('smart-buy.shipment.store');
-
-                Route::get(
-                    '/shipment/{shipment}',
-                    [SmartBuyShipmentController::class, 'show']
-                )
-                    ->middleware('permission:manage-smart-buy-shipment')
-                    ->name('smart-buy.shipment.show');
 
                 Route::get(
                     '/shipment/{shipment}/edit',
@@ -1043,6 +998,13 @@ Route::middleware('auth')
                             ->middleware('permission:view-order-details')
                             ->name('admin-order-details');
 
+                        Route::get(
+                            '/admin-orders/{order}/print',
+                            [AdminOrderController::class, 'print'],
+                        )
+                            ->middleware('permission:view-order-details')
+                            ->name('admin-orders.print');
+
                         Route::patch(
                             '/admin-orders/{order}/status',
                             [AdminOrderController::class, 'updateStatus'],
@@ -1220,19 +1182,45 @@ Route::middleware('auth')
                 Route::prefix('reports')
                     ->group(function (): void {
 
-                        Route::view(
-                            '/',
-                            'backend.pages.reports.index'
-                        )
-                            ->middleware('permission:view-reports')
-                            ->name('reports');
-
-                        Route::view(
+                        Route::get(
                             '/ecommerce',
-                            'backend.pages.reports.ecommerce'
+                            [
+                                EcommerceReportController::class,
+                                'index',
+                            ],
                         )
                             ->middleware('permission:view-ecommerce-reports')
                             ->name('reports.ecommerce');
+
+                        Route::get(
+                            '/ecommerce/export/daily',
+                            [
+                                EcommerceReportController::class,
+                                'exportDaily',
+                            ],
+                        )
+                            ->middleware('permission:view-ecommerce-reports')
+                            ->name('reports.ecommerce.export.daily');
+
+                        Route::get(
+                            '/ecommerce/export/products',
+                            [
+                                EcommerceReportController::class,
+                                'exportProducts',
+                            ],
+                        )
+                            ->middleware('permission:view-ecommerce-reports')
+                            ->name('reports.ecommerce.export.products');
+
+                        Route::get(
+                            '/ecommerce/export/categories',
+                            [
+                                EcommerceReportController::class,
+                                'exportCategories',
+                            ],
+                        )
+                            ->middleware('permission:view-ecommerce-reports')
+                            ->name('reports.ecommerce.export.categories');
 
                         Route::get('/smart-buy', [
                             SmartBuyReportController::class, 'index',

@@ -327,15 +327,19 @@
 
             <div class="order-details-page__actions">
 
-                <button
-                    type="button"
+                <a
+                    href="{{ route('admin-orders.print', [
+                        'order' => $order,
+                    ]) }}"
+                    target="_blank"
+                    rel="noopener"
                     class="order-details-action-btn"
-                    data-print-order
                 >
                     <i class="ri-printer-line"></i>
 
                     Print
-                </button>
+                </a>
+
 
                 <button
                     type="button"
@@ -1434,10 +1438,6 @@
                 return;
             }
 
-            const printButton = orderPage.querySelector(
-                "[data-print-order]",
-            );
-
             const openStatusButton = orderPage.querySelector(
                 "[data-open-status-modal]",
             );
@@ -1511,13 +1511,6 @@
                 statusWarning.hidden =
                     statusSelect.value !== "cancelled";
             };
-
-            printButton?.addEventListener(
-                "click",
-                function () {
-                    window.print();
-                },
-            );
 
             openStatusButton?.addEventListener(
                 "click",

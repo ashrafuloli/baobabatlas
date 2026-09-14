@@ -1,926 +1,822 @@
 @extends('backend.layouts.backend')
 
-@section('title', 'Ecommerce Reports')
+@section('title', 'E-commerce Report')
 
 @section('content')
+    <div class="ecommerce-report-page">
+        <div class="ecommerce-report-page__header">
+            <div class="ecommerce-report-page__heading">
+                <span class="ecommerce-report-page__eyebrow">
+                    Sales Analytics
+                </span>
 
-    <div class="page-content ecommerce-reports-page">
-
-        {{-- ==================================================
-            PAGE HEADER
-        ================================================== --}}
-        <div class="page-header">
-
-            <div class="page-header-content">
-
-            <span class="page-subtitle">
-                Reports
-            </span>
-
-                <h1>
-                    Ecommerce Reports
+                <h1 class="ecommerce-report-page__title">
+                    E-commerce Report
                 </h1>
 
-                <p>
-                    Analyze ecommerce sales, orders, customers and product performance.
+                <p class="ecommerce-report-page__description">
+                    Track orders, sales, products, and categories across
+                    your selected date range.
                 </p>
-
             </div>
-
-
-            <div class="page-header-actions">
-
-                <a
-                    href="{{ route('reports') }}"
-                    class="btn btn-outline"
-                >
-                    <i class="fa-regular fa-arrow-left"></i>
-
-                    <span>
-                    Reports
-                </span>
-                </a>
-
-
-                <div class="report-date-filter">
-
-                    <i class="fa-regular fa-calendar"></i>
-
-                    <select
-                        name="period"
-                        class="form-control"
-                    >
-                        <option value="30">
-                            Last 30 Days
-                        </option>
-
-                        <option value="7">
-                            Last 7 Days
-                        </option>
-
-                        <option value="90">
-                            Last 90 Days
-                        </option>
-
-                        <option value="year">
-                            This Year
-                        </option>
-                    </select>
-
-                </div>
-
-            </div>
-
         </div>
 
-
-        {{-- ==================================================
-            STATISTICS
-        ================================================== --}}
-        <div class="report-stat-grid">
-
-            {{-- Sales --}}
-            <div class="report-stat-card">
-
-                <div class="stat-top">
-
-                    <div class="stat-icon sales">
-                        <i class="fa-regular fa-chart-line"></i>
-                    </div>
-
-                    <span class="stat-change positive">
-                    +12.8%
-                </span>
-
-                </div>
-
-                <div class="stat-content">
-
-                <span class="stat-label">
-                    Total Sales
-                </span>
-
-                    <h3>
-                        $18,450.00
-                    </h3>
-
-                    <p>
-                        Compared with previous period
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            {{-- Orders --}}
-            <div class="report-stat-card">
-
-                <div class="stat-top">
-
-                    <div class="stat-icon orders">
-                        <i class="fa-regular fa-cart-shopping"></i>
-                    </div>
-
-                    <span class="stat-change positive">
-                    +8.4%
-                </span>
-
-                </div>
-
-                <div class="stat-content">
-
-                <span class="stat-label">
-                    Total Orders
-                </span>
-
-                    <h3>
-                        326
-                    </h3>
-
-                    <p>
-                        Orders placed
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            {{-- Average Order --}}
-            <div class="report-stat-card">
-
-                <div class="stat-top">
-
-                    <div class="stat-icon average">
-                        <i class="fa-regular fa-receipt"></i>
-                    </div>
-
-                    <span class="stat-change positive">
-                    +4.1%
-                </span>
-
-                </div>
-
-                <div class="stat-content">
-
-                <span class="stat-label">
-                    Average Order Value
-                </span>
-
-                    <h3>
-                        $56.60
-                    </h3>
-
-                    <p>
-                        Average revenue per order
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            {{-- Customers --}}
-            <div class="report-stat-card">
-
-                <div class="stat-top">
-
-                    <div class="stat-icon customers">
-                        <i class="fa-regular fa-users"></i>
-                    </div>
-
-                    <span class="stat-change positive">
-                    +6.7%
-                </span>
-
-                </div>
-
-                <div class="stat-content">
-
-                <span class="stat-label">
-                    Customers
-                </span>
-
-                    <h3>
-                        284
-                    </h3>
-
-                    <p>
-                        Active ecommerce customers
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        {{-- ==================================================
-            SALES OVERVIEW
-        ================================================== --}}
-        <div class="reports-grid">
-
-
-            {{-- Sales Chart --}}
-            <div class="dashboard-card sales-chart-card">
-
-                <div class="dashboard-card-header">
-
-                    <div class="card-header-content">
-
-                        <h2>
-                            Sales Overview
-                        </h2>
-
-                        <p>
-                            Ecommerce revenue over the selected period.
-                        </p>
-
-                    </div>
-
-
-                    <div class="chart-total">
-
-                    <span>
-                        Total Sales
+        {{-- Date Filter --}}
+        <section class="ecommerce-report-page__filters">
+            <div class="ecommerce-report-page__section-heading">
+                <div>
+                    <span class="ecommerce-report-page__section-label">
+                        Report Period
                     </span>
 
-                        <strong>
-                            $18,450
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <div class="sales-chart">
-
-                    <div class="chart-y-axis">
-
-                    <span>
-                        $20k
-                    </span>
-
-                        <span>
-                        $15k
-                    </span>
-
-                        <span>
-                        $10k
-                    </span>
-
-                        <span>
-                        $5k
-                    </span>
-
-                        <span>
-                        $0
-                    </span>
-
-                    </div>
-
-
-                    <div class="chart-area">
-
-                        <div class="chart-grid-lines">
-
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                            <span></span>
-
-                        </div>
-
-
-                        <div class="chart-bars">
-
-                            <div class="chart-bar-wrap">
-
-                                <div
-                                    class="chart-bar"
-                                    style="height: 38%;"
-                                ></div>
-
-                                <span>
-                                01
-                            </span>
-
-                            </div>
-
-
-                            <div class="chart-bar-wrap">
-
-                                <div
-                                    class="chart-bar"
-                                    style="height: 52%;"
-                                ></div>
-
-                                <span>
-                                05
-                            </span>
-
-                            </div>
-
-
-                            <div class="chart-bar-wrap">
-
-                                <div
-                                    class="chart-bar"
-                                    style="height: 45%;"
-                                ></div>
-
-                                <span>
-                                10
-                            </span>
-
-                            </div>
-
-
-                            <div class="chart-bar-wrap">
-
-                                <div
-                                    class="chart-bar"
-                                    style="height: 64%;"
-                                ></div>
-
-                                <span>
-                                15
-                            </span>
-
-                            </div>
-
-
-                            <div class="chart-bar-wrap">
-
-                                <div
-                                    class="chart-bar"
-                                    style="height: 58%;"
-                                ></div>
-
-                                <span>
-                                20
-                            </span>
-
-                            </div>
-
-
-                            <div class="chart-bar-wrap">
-
-                                <div
-                                    class="chart-bar"
-                                    style="height: 73%;"
-                                ></div>
-
-                                <span>
-                                25
-                            </span>
-
-                            </div>
-
-
-                            <div class="chart-bar-wrap">
-
-                                <div
-                                    class="chart-bar"
-                                    style="height: 86%;"
-                                ></div>
-
-                                <span>
-                                30
-                            </span>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            {{-- Order Status --}}
-            <div class="dashboard-card order-status-card">
-
-                <div class="dashboard-card-header">
-
-                    <div class="card-header-content">
-
-                        <h2>
-                            Order Status
-                        </h2>
-
-                        <p>
-                            Current ecommerce orders.
-                        </p>
-
-                    </div>
-
-                    <div class="chart-total">
-
-                    <span>
-                        Total Orders
-                    </span>
-
-                        <strong>326</strong>
-
-                    </div>
-
-                </div>
-
-
-                <div class="order-status-content">
-
-                    <div class="status-item">
-
-                        <div class="status-item-info">
-                            <span class="status-dot processing"></span>
-
-                            <span>
-                Processing
-            </span>
-                        </div>
-
-                        <strong>
-                            48
-                        </strong>
-
-                    </div>
-
-                    <div class="status-progress">
-        <span
-            class="processing"
-            style="width: 15%;"
-        ></span>
-                    </div>
-
-
-                    <div class="status-item">
-
-                        <div class="status-item-info">
-                            <span class="status-dot shipped"></span>
-
-                            <span>
-                Shipped
-            </span>
-                        </div>
-
-                        <strong>
-                            72
-                        </strong>
-
-                    </div>
-
-                    <div class="status-progress">
-        <span
-            class="shipped"
-            style="width: 22%;"
-        ></span>
-                    </div>
-
-
-                    <div class="status-item">
-
-                        <div class="status-item-info">
-                            <span class="status-dot delivered"></span>
-
-                            <span>
-                Delivered
-            </span>
-                        </div>
-
-                        <strong>
-                            192
-                        </strong>
-
-                    </div>
-
-                    <div class="status-progress">
-        <span
-            class="delivered"
-            style="width: 59%;"
-        ></span>
-                    </div>
-
-
-                    <div class="status-item">
-
-                        <div class="status-item-info">
-                            <span class="status-dot cancelled"></span>
-
-                            <span>
-                Cancelled
-            </span>
-                        </div>
-
-                        <strong>
-                            14
-                        </strong>
-
-                    </div>
-
-                    <div class="status-progress">
-        <span
-            class="cancelled"
-            style="width: 4%;"
-        ></span>
-                    </div>
-
-                </div>
-            </div>
-
-        </div>
-
-
-        {{-- ==================================================
-            PRODUCT & CUSTOMER PERFORMANCE
-        ================================================== --}}
-        <div class="reports-grid secondary-grid">
-
-
-            {{-- Top Products --}}
-            <div class="dashboard-card">
-
-                <div class="dashboard-card-header">
-
-                    <div class="card-header-content">
-
-                        <h2>
-                            Top Products
-                        </h2>
-
-                        <p>
-                            Best performing products by sales.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="product-list">
-
-
-                    <div class="product-row">
-
-                        <div class="product-rank">
-                            01
-                        </div>
-
-                        <div class="product-info">
-
-                            <strong>
-                                Premium Shipping Box
-                            </strong>
-
-                            <span>
-                            128 units sold
-                        </span>
-
-                        </div>
-
-                        <strong class="product-sales">
-                            $4,820
-                        </strong>
-
-                    </div>
-
-
-                    <div class="product-row">
-
-                        <div class="product-rank">
-                            02
-                        </div>
-
-                        <div class="product-info">
-
-                            <strong>
-                                International Parcel Pack
-                            </strong>
-
-                            <span>
-                            96 units sold
-                        </span>
-
-                        </div>
-
-                        <strong class="product-sales">
-                            $3,740
-                        </strong>
-
-                    </div>
-
-
-                    <div class="product-row">
-
-                        <div class="product-rank">
-                            03
-                        </div>
-
-                        <div class="product-info">
-
-                            <strong>
-                                Express Delivery Package
-                            </strong>
-
-                            <span>
-                            82 units sold
-                        </span>
-
-                        </div>
-
-                        <strong class="product-sales">
-                            $3,120
-                        </strong>
-
-                    </div>
-
-
-                    <div class="product-row">
-
-                        <div class="product-rank">
-                            04
-                        </div>
-
-                        <div class="product-info">
-
-                            <strong>
-                                Standard Parcel Package
-                            </strong>
-
-                            <span>
-                            64 units sold
-                        </span>
-
-                        </div>
-
-                        <strong class="product-sales">
-                            $2,480
-                        </strong>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            {{-- Customer Performance --}}
-            <div class="dashboard-card">
-
-                <div class="dashboard-card-header">
-
-                    <div class="card-header-content">
-
-                        <h2>
-                            Customer Performance
-                        </h2>
-
-                        <p>
-                            Customer activity and revenue.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="customer-report-list">
-
-
-                    <div class="customer-report-row">
-
-                        <div class="customer-avatar">
-                            JD
-                        </div>
-
-                        <div class="customer-report-info">
-
-                            <strong>
-                                John Doe
-                            </strong>
-
-                            <span>
-                            18 orders
-                        </span>
-
-                        </div>
-
-                        <strong>
-                            $1,840
-                        </strong>
-
-                    </div>
-
-
-                    <div class="customer-report-row">
-
-                        <div class="customer-avatar">
-                            SS
-                        </div>
-
-                        <div class="customer-report-info">
-
-                            <strong>
-                                Sarah Smith
-                            </strong>
-
-                            <span>
-                            15 orders
-                        </span>
-
-                        </div>
-
-                        <strong>
-                            $1,620
-                        </strong>
-
-                    </div>
-
-
-                    <div class="customer-report-row">
-
-                        <div class="customer-avatar">
-                            MB
-                        </div>
-
-                        <div class="customer-report-info">
-
-                            <strong>
-                                Michael Brown
-                            </strong>
-
-                            <span>
-                            12 orders
-                        </span>
-
-                        </div>
-
-                        <strong>
-                            $1,280
-                        </strong>
-
-                    </div>
-
-
-                    <div class="customer-report-row">
-
-                        <div class="customer-avatar">
-                            EW
-                        </div>
-
-                        <div class="customer-report-info">
-
-                            <strong>
-                                Emma Wilson
-                            </strong>
-
-                            <span>
-                            10 orders
-                        </span>
-
-                        </div>
-
-                        <strong>
-                            $1,140
-                        </strong>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        {{-- ==================================================
-            PAYMENT SUMMARY
-        ================================================== --}}
-        <div class="dashboard-card payment-summary-card">
-
-            <div class="dashboard-card-header">
-
-                <div class="card-header-content">
-
-                    <h2>
-                        Ecommerce Payment Summary
+                    <h2 class="ecommerce-report-page__section-title">
+                        Date Filter
                     </h2>
+                </div>
+            </div>
 
-                    <p>
-                        Overview of ecommerce payment performance.
-                    </p>
+            <form
+                method="GET"
+                action="{{ route('reports.ecommerce') }}"
+                class="ecommerce-report-page__filter-form"
+                data-ecommerce-report-form
+            >
+                <div class="ecommerce-report-page__quick-filters">
+                    <button
+                        type="button"
+                        class="ecommerce-report-page__quick-filter"
+                        data-period="today"
+                    >
+                        Today
+                    </button>
 
+                    <button
+                        type="button"
+                        class="ecommerce-report-page__quick-filter"
+                        data-period="yesterday"
+                    >
+                        Yesterday
+                    </button>
+
+                    <button
+                        type="button"
+                        class="ecommerce-report-page__quick-filter"
+                        data-period="7"
+                    >
+                        Last 7 Days
+                    </button>
+
+                    <button
+                        type="button"
+                        class="ecommerce-report-page__quick-filter"
+                        data-period="30"
+                    >
+                        Last 30 Days
+                    </button>
+
+                    <button
+                        type="button"
+                        class="ecommerce-report-page__quick-filter"
+                        data-period="month"
+                    >
+                        This Month
+                    </button>
                 </div>
 
+                <div class="ecommerce-report-page__custom-filter">
+                    <div class="ecommerce-report-page__field">
+                        <label for="ecommerce-date-from">
+                            From
+                        </label>
+
+                        <div class="ecommerce-report-page__input">
+                            <i class="ri-calendar-line"></i>
+
+                            <input
+                                id="ecommerce-date-from"
+                                type="date"
+                                name="date_from"
+                                value="{{ $dateFrom->format('Y-m-d') }}"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="ecommerce-report-page__field">
+                        <label for="ecommerce-date-to">
+                            To
+                        </label>
+
+                        <div class="ecommerce-report-page__input">
+                            <i class="ri-calendar-line"></i>
+
+                            <input
+                                id="ecommerce-date-to"
+                                type="date"
+                                name="date_to"
+                                value="{{ $dateTo->format('Y-m-d') }}"
+                            >
+                        </div>
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="ecommerce-report-page__apply"
+                    >
+                        <i class="ri-filter-3-line"></i>
+                        <span>Apply Filter</span>
+                    </button>
+
+                    <a
+                        href="{{ route('reports.ecommerce') }}"
+                        class="ecommerce-report-page__reset"
+                    >
+                        <i class="ri-refresh-line"></i>
+                        <span>Reset</span>
+                    </a>
+                </div>
+            </form>
+        </section>
+
+        {{-- Summary --}}
+        <section class="ecommerce-report-page__summary">
+            <div class="ecommerce-report-page__section-heading">
+                <div>
+                    <span class="ecommerce-report-page__section-label">
+                        Overview
+                    </span>
+
+                    <h2 class="ecommerce-report-page__section-title">
+                        Summary
+                    </h2>
+                </div>
+
+                <span class="ecommerce-report-page__date-range">
+                    {{ $dateFrom->format('M d, Y') }}
+                    -
+                    {{ $dateTo->format('M d, Y') }}
+                </span>
+            </div>
+
+            <div class="ecommerce-report-page__summary-grid">
+                <article class="ecommerce-report-page__summary-card">
+                    <div class="ecommerce-report-page__summary-icon">
+                        <i class="ri-shopping-bag-3-line"></i>
+                    </div>
+
+                    <div class="ecommerce-report-page__summary-content">
+                        <span>Total Orders</span>
+
+                        <strong>
+                            {{ number_format(
+                                $report['summary']['total_orders']
+                            ) }}
+                        </strong>
+                    </div>
+                </article>
+
+                <article class="ecommerce-report-page__summary-card">
+                    <div class="ecommerce-report-page__summary-icon">
+                        <i class="ri-money-dollar-circle-line"></i>
+                    </div>
+
+                    <div class="ecommerce-report-page__summary-content">
+                        <span>Total Sales</span>
+
+                        <strong>
+                            ${{ number_format(
+                                (float) $report['summary']['total_sales'],
+                                2
+                            ) }}
+                        </strong>
+                    </div>
+                </article>
+
+                <article class="ecommerce-report-page__summary-card">
+                    <div class="ecommerce-report-page__summary-icon">
+                        <i class="ri-checkbox-circle-line"></i>
+                    </div>
+
+                    <div class="ecommerce-report-page__summary-content">
+                        <span>Paid</span>
+
+                        <strong>
+                            ${{ number_format(
+                                (float) $report['summary']['paid_amount'],
+                                2
+                            ) }}
+                        </strong>
+                    </div>
+                </article>
+
+                <article class="ecommerce-report-page__summary-card">
+                    <div class="ecommerce-report-page__summary-icon">
+                        <i class="ri-time-line"></i>
+                    </div>
+
+                    <div class="ecommerce-report-page__summary-content">
+                        <span>Outstanding</span>
+
+                        <strong>
+                            ${{ number_format(
+                                (float) $report['summary']['outstanding_amount'],
+                                2
+                            ) }}
+                        </strong>
+                    </div>
+                </article>
+
+                <article class="ecommerce-report-page__summary-card">
+                    <div class="ecommerce-report-page__summary-icon">
+                        <i class="ri-refund-2-line"></i>
+                    </div>
+
+                    <div class="ecommerce-report-page__summary-content">
+                        <span>Refunded</span>
+
+                        <strong>
+                            ${{ number_format(
+                                (float) $report['summary']['refunded_amount'],
+                                2
+                            ) }}
+                        </strong>
+                    </div>
+                </article>
+
+                <article class="ecommerce-report-page__summary-card">
+                    <div class="ecommerce-report-page__summary-icon">
+                        <i class="ri-bar-chart-box-line"></i>
+                    </div>
+
+                    <div class="ecommerce-report-page__summary-content">
+                        <span>Average Order Value</span>
+
+                        <strong>
+                            ${{ number_format(
+                                (float) $report['summary']['average_order_value'],
+                                2
+                            ) }}
+                        </strong>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        {{-- Daily Sales --}}
+        <section class="ecommerce-report-page__report-section">
+            <div class="ecommerce-report-page__section-heading">
+                <div>
+            <span class="ecommerce-report-page__section-label">
+                Performance
+            </span>
+
+                    <h2 class="ecommerce-report-page__section-title">
+                        Daily Sales Report
+                    </h2>
+                </div>
 
                 <a
-                    href="{{ route('payments-ecommerce') }}"
-                    class="view-report-link"
+                    href="{{ route('reports.ecommerce.export.daily', [
+                'date_from' => $dateFrom->format('Y-m-d'),
+                'date_to' => $dateTo->format('Y-m-d'),
+                'status' => $status,
+            ]) }}"
+                    class="ecommerce-report-page__section-export"
                 >
-                    View Payments
+                    <i class="ri-download-2-line"></i>
+                    <span>Export CSV</span>
+                </a>
+            </div>
 
-                    <i class="fa-regular fa-arrow-right"></i>
+            {{-- Status Filters --}}
+            <div class="ecommerce-report-page__status-filters">
+                <a
+                    href="{{ route('reports.ecommerce', [
+                'date_from' => $dateFrom->format('Y-m-d'),
+                'date_to' => $dateTo->format('Y-m-d'),
+            ]) }}"
+                    class="
+                ecommerce-report-page__status-filter
+                {{ $status === null ? 'is-active' : '' }}
+            "
+                >
+                    All
                 </a>
 
+                <a
+                    href="{{ route('reports.ecommerce', [
+                'date_from' => $dateFrom->format('Y-m-d'),
+                'date_to' => $dateTo->format('Y-m-d'),
+                'status' => 'completed',
+            ]) }}"
+                    class="
+                ecommerce-report-page__status-filter
+                {{ $status === 'completed' ? 'is-active' : '' }}
+            "
+                >
+                    Completed
+                </a>
+
+                <a
+                    href="{{ route('reports.ecommerce', [
+                'date_from' => $dateFrom->format('Y-m-d'),
+                'date_to' => $dateTo->format('Y-m-d'),
+                'status' => 'pending',
+            ]) }}"
+                    class="
+                ecommerce-report-page__status-filter
+                {{ $status === 'pending' ? 'is-active' : '' }}
+            "
+                >
+                    Pending
+                </a>
+
+                <a
+                    href="{{ route('reports.ecommerce', [
+                'date_from' => $dateFrom->format('Y-m-d'),
+                'date_to' => $dateTo->format('Y-m-d'),
+                'status' => 'processing',
+            ]) }}"
+                    class="
+                ecommerce-report-page__status-filter
+                {{ $status === 'processing' ? 'is-active' : '' }}
+            "
+                >
+                    Processing
+                </a>
+
+                <a
+                    href="{{ route('reports.ecommerce', [
+                'date_from' => $dateFrom->format('Y-m-d'),
+                'date_to' => $dateTo->format('Y-m-d'),
+                'status' => 'cancelled',
+            ]) }}"
+                    class="
+                ecommerce-report-page__status-filter
+                {{ $status === 'cancelled' ? 'is-active' : '' }}
+            "
+                >
+                    Cancelled
+                </a>
             </div>
 
+            <div class="ecommerce-report-page__table-card">
+                <div class="ecommerce-report-page__table-wrapper">
+                    <table class="ecommerce-report-page__table">
+                        <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Order</th>
+                            <th>Sales</th>
+                            <th>Paid</th>
+                            <th>Outstanding</th>
+                            <th>Refunded</th>
+                            <th>Print</th>
+                        </tr>
+                        </thead>
 
-            <div class="payment-summary-grid">
+                        <tbody>
+                        @forelse ($report['daily_sales'] as $row)
+                            <tr>
+                                {{-- Date --}}
+                                <td>
+                            <span
+                                class="ecommerce-report-page__date"
+                            >
+                                {{ \Carbon\CarbonImmutable::parse(
+                                    $row['date']
+                                )->format('M d, Y') }}
+                            </span>
+                                </td>
 
+                                {{-- Order --}}
+                                <td>
+                                    <a
+                                        href="{{ route(
+                                    'admin-order-details',
+                                    ['order' => $row['order_id']]
+                                ) }}"
+                                        class="ecommerce-report-page__order-link"
+                                        title="View {{ $row['order_number'] }}"
+                                    >
+                                        {{ $row['order_number'] }}
+                                    </a>
+                                </td>
 
-                <div class="payment-summary-item">
+                                {{-- Sales --}}
+                                <td>
+                                    <strong>
+                                        ${{ number_format(
+                                    (float) $row['sales'],
+                                    2
+                                ) }}
+                                    </strong>
+                                </td>
 
-                <span class="summary-icon paid">
-                    <i class="fa-regular fa-circle-check"></i>
-                </span>
+                                {{-- Paid --}}
+                                <td>
+                                    ${{ number_format(
+                                (float) $row['paid_amount'],
+                                2
+                            ) }}
+                                </td>
 
-                    <div>
+                                {{-- Outstanding --}}
+                                <td>
+                                    ${{ number_format(
+                                (float) $row['outstanding_amount'],
+                                2
+                            ) }}
+                                </td>
 
-                    <span>
-                        Successful
+                                {{-- Refunded --}}
+                                <td>
+                                    ${{ number_format(
+                                (float) $row['refunded_amount'],
+                                2
+                            ) }}
+                                </td>
+
+                                {{-- Print --}}
+                                <td>
+                                    <button
+                                        type="button"
+                                        class="ecommerce-report-page__print-button"
+                                        data-print-order
+                                        data-print-url="{{ route(
+                                    'admin-orders.print',
+                                    ['order' => $row['order_id']]
+                                ) }}"
+                                        title="Print {{ $row['order_number'] }}"
+                                    >
+                                        <i class="ri-printer-line"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td
+                                    colspan="7"
+                                    class="ecommerce-report-page__empty"
+                                >
+                                    <i class="ri-bar-chart-2-line"></i>
+
+                                    <strong>
+                                        No sales data found
+                                    </strong>
+
+                                    <span>
+                                There are no orders for the
+                                selected filters.
+                            </span>
+                                </td>
+                            </tr>
+                        @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        {{-- Product Sales --}}
+        <section class="ecommerce-report-page__report-section">
+            <div class="ecommerce-report-page__section-heading">
+                <div>
+                    <span class="ecommerce-report-page__section-label">
+                        Products
                     </span>
 
-                        <strong>
-                            311
-                        </strong>
-
-                    </div>
-
+                    <h2 class="ecommerce-report-page__section-title">
+                        Product Sales
+                    </h2>
                 </div>
 
-
-                <div class="payment-summary-item">
-
-                <span class="summary-icon pending">
-                    <i class="fa-regular fa-clock"></i>
-                </span>
-
-                    <div>
-
-                    <span>
-                        Pending
-                    </span>
-
-                        <strong>
-                            9
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <div class="payment-summary-item">
-
-                <span class="summary-icon failed">
-                    <i class="fa-regular fa-circle-xmark"></i>
-                </span>
-
-                    <div>
-
-                    <span>
-                        Failed
-                    </span>
-
-                        <strong>
-                            15
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <div class="payment-summary-item">
-
-                <span class="summary-icon revenue">
-                    <i class="fa-regular fa-money-bill-wave"></i>
-                </span>
-
-                    <div>
-
-                    <span>
-                        Collected
-                    </span>
-
-                        <strong>
-                            $18,450
-                        </strong>
-
-                    </div>
-
-                </div>
-
+                <a
+                    href="{{ route('reports.ecommerce.export.products', [
+                        'date_from' => $dateFrom->format('Y-m-d'),
+                        'date_to' => $dateTo->format('Y-m-d'),
+                        'status' => $status,
+                    ]) }}"
+                    class="ecommerce-report-page__section-export"
+                >
+                    <i class="ri-download-2-line"></i>
+                    <span>Export CSV</span>
+                </a>
             </div>
 
-        </div>
+            <div class="ecommerce-report-page__table-card">
+                <div class="ecommerce-report-page__table-wrapper">
+                    <table class="ecommerce-report-page__table">
+                        <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Orders</th>
+                            <th>Units Sold</th>
+                            <th>Revenue</th>
+                        </tr>
+                        </thead>
 
+                        <tbody>
+                        @forelse ($report['product_sales'] as $row)
+                            <tr>
+                                <td>
+                                    <span
+                                        class="ecommerce-report-page__product-name"
+                                    >
+                                        {{ $row['product_name'] }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    {{ number_format($row['orders']) }}
+                                </td>
+
+                                <td>
+                                    {{ number_format($row['units_sold']) }}
+                                </td>
+
+                                <td>
+                                    <strong>
+                                        ${{ number_format(
+                                            (float) $row['revenue'],
+                                            2
+                                        ) }}
+                                    </strong>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td
+                                    colspan="4"
+                                    class="ecommerce-report-page__empty"
+                                >
+                                    <i class="ri-shopping-bag-line"></i>
+
+                                    <strong>
+                                        No product sales
+                                    </strong>
+
+                                    <span>
+                                        No product sales found for
+                                        this period.
+                                    </span>
+                                </td>
+                            </tr>
+                        @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        {{-- Category Sales --}}
+        <section class="ecommerce-report-page__report-section">
+            <div class="ecommerce-report-page__section-heading">
+                <div>
+                    <span class="ecommerce-report-page__section-label">
+                        Categories
+                    </span>
+
+                    <h2 class="ecommerce-report-page__section-title">
+                        Category Sales
+                    </h2>
+                </div>
+
+                <a
+                    href="{{ route('reports.ecommerce.export.categories', [
+                        'date_from' => $dateFrom->format('Y-m-d'),
+                        'date_to' => $dateTo->format('Y-m-d'),
+                        'status' => $status,
+                    ]) }}"
+                    class="ecommerce-report-page__section-export"
+                >
+                    <i class="ri-download-2-line"></i>
+                    <span>Export CSV</span>
+                </a>
+            </div>
+
+            <div class="ecommerce-report-page__table-card">
+                <div class="ecommerce-report-page__table-wrapper">
+                    <table class="ecommerce-report-page__table">
+                        <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Orders</th>
+                            <th>Units Sold</th>
+                            <th>Revenue</th>
+                            <th>Share</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        @forelse ($report['category_sales'] as $row)
+                            <tr>
+                                <td>
+                                    <span
+                                        class="ecommerce-report-page__product-name"
+                                    >
+                                        {{ $row['category_name'] }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    {{ number_format($row['orders']) }}
+                                </td>
+
+                                <td>
+                                    {{ number_format($row['units_sold']) }}
+                                </td>
+
+                                <td>
+                                    <strong>
+                                        ${{ number_format(
+                                            (float) $row['revenue'],
+                                            2
+                                        ) }}
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    <span
+                                        class="ecommerce-report-page__percentage"
+                                    >
+                                        {{ number_format(
+                                            (float) $row['sales_percentage'],
+                                            2
+                                        ) }}%
+                                    </span>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td
+                                    colspan="5"
+                                    class="ecommerce-report-page__empty"
+                                >
+                                    <i class="ri-price-tag-3-line"></i>
+
+                                    <strong>
+                                        No category sales
+                                    </strong>
+
+                                    <span>
+                                        No category sales found for
+                                        this period.
+                                    </span>
+                                </td>
+                            </tr>
+                        @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
     </div>
 
+    <script>
+        (() => {
+            const page = document.querySelector(
+                '.ecommerce-report-page'
+            );
+
+            if (!page) {
+                return;
+            }
+
+            const form = page.querySelector(
+                '[data-ecommerce-report-form]'
+            );
+
+            if (!form) {
+                return;
+            }
+
+            const fromInput = form.querySelector(
+                'input[name="date_from"]'
+            );
+
+            const toInput = form.querySelector(
+                'input[name="date_to"]'
+            );
+
+            const quickFilters = form.querySelectorAll(
+                '[data-period]'
+            );
+
+            if (!fromInput || !toInput) {
+                return;
+            }
+
+            const formatDate = (date) => {
+                const year = date.getFullYear();
+
+                const month = String(
+                    date.getMonth() + 1
+                ).padStart(2, '0');
+
+                const day = String(
+                    date.getDate()
+                ).padStart(2, '0');
+
+                return `${year}-${month}-${day}`;
+            };
+
+            const submitPeriod = (period) => {
+                const today = new Date();
+
+                let fromDate = new Date(today);
+                let toDate = new Date(today);
+
+                if (period === 'yesterday') {
+                    fromDate.setDate(
+                        today.getDate() - 1
+                    );
+
+                    toDate = new Date(fromDate);
+                }
+
+                if (period === '7') {
+                    fromDate.setDate(
+                        today.getDate() - 6
+                    );
+                }
+
+                if (period === '30') {
+                    fromDate.setDate(
+                        today.getDate() - 29
+                    );
+                }
+
+                if (period === 'month') {
+                    fromDate = new Date(
+                        today.getFullYear(),
+                        today.getMonth(),
+                        1
+                    );
+                }
+
+                fromInput.value = formatDate(
+                    fromDate
+                );
+
+                toInput.value = formatDate(
+                    toDate
+                );
+
+                form.submit();
+            };
+
+            quickFilters.forEach((button) => {
+                button.addEventListener(
+                    'click',
+                    () => {
+                        const period = button.dataset.period;
+
+                        if (!period) {
+                            return;
+                        }
+
+                        submitPeriod(period);
+                    }
+                );
+            });
+
+            /*
+             * Open the existing admin order details page
+             * and trigger the browser print dialog.
+             */
+            const printButtons = page.querySelectorAll(
+                '[data-print-order]'
+            );
+
+            printButtons.forEach((button) => {
+                button.addEventListener(
+                    'click',
+                    () => {
+                        const url = button.dataset.printUrl;
+
+                        if (!url) {
+                            return;
+                        }
+
+                        const printWindow = window.open(
+                            url,
+                            '_blank'
+                        );
+
+                        if (!printWindow) {
+                            return;
+                        }
+
+                        printWindow.addEventListener(
+                            'load',
+                            () => {
+                                printWindow.focus();
+                                printWindow.print();
+                            }
+                        );
+                    }
+                );
+            });
+        })();
+    </script>
 @endsection

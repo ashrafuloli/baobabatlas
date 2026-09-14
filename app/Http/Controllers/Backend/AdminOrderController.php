@@ -300,4 +300,19 @@ final class AdminOrderController extends Controller
                 'Order cancelled successfully.',
             );
     }
+
+    public function print(Order $order): View
+    {
+        $order->load([
+            'items',
+            'user',
+        ]);
+
+        return view(
+            'backend.pages.ecommerce.orders.print',
+            [
+                'order' => $order,
+            ],
+        );
+    }
 }

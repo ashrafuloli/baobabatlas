@@ -24,6 +24,12 @@ final class ApproveRefundRequest
                 ->lockForUpdate()
                 ->firstOrFail();
 
+            /*
+             * =========================================================
+             * Validate Refund Request
+             * =========================================================
+             */
+
             if (
                 $refundRequest->status
                 !== RefundRequest::STATUS_PENDING
@@ -32,6 +38,12 @@ final class ApproveRefundRequest
                     'refund' => 'This refund request has already been processed.',
                 ]);
             }
+
+            /*
+             * =========================================================
+             * Lock Order
+             * =========================================================
+             */
 
             $order = Order::query()
                 ->whereKey($refundRequest->order_id)
@@ -42,6 +54,10 @@ final class ApproveRefundRequest
              * =========================================================
              * Validate Payment
              * =========================================================
+             *
+             * Refund approval depends only on payment status.
+             *
+             * Order status does not restrict refund approval.
              */
 
             if (
@@ -50,28 +66,6 @@ final class ApproveRefundRequest
             ) {
                 throw ValidationException::withMessages([
                     'refund' => 'Only paid orders can be approved for a refund.',
-                ]);
-            }
-
-            /*
-             * =========================================================
-             * Validate Order Status
-             * =========================================================
-             */
-
-            if (
-                ! in_array(
-                    $order->status,
-                    [
-                        Order::STATUS_PAID,
-                        Order::STATUS_PROCESSING,
-                        Order::STATUS_COMPLETED,
-                    ],
-                    true,
-                )
-            ) {
-                throw ValidationException::withMessages([
-                    'refund' => 'This order is not eligible for refund approval.',
                 ]);
             }
 
@@ -89,14 +83,26 @@ final class ApproveRefundRequest
 
             /*
              * =========================================================
-             * Cancel Order + Update Refund Status
+             * Update Order Refund Status
              * =========================================================
+             *
+             * The order can be in any status as long as the payment
+             * has been successfully completed.
+             *
+             * Once the refund request is approved, the order is
+             * cancelled and marked as refund approved.
              */
 
             $order->update([
                 'status' => Order::STATUS_CANCELLED,
                 'refund_status' => Order::REFUND_STATUS_APPROVED,
             ]);
+
+            /*
+             * =========================================================
+             * Return Fresh Refund Request
+             * =========================================================
+             */
 
             return $refundRequest->fresh([
                 'order',

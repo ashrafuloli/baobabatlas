@@ -738,26 +738,6 @@
 
                         <ul class="submenu">
 
-
-                            @if(auth()->user()->hasPermission('view-reports'))
-
-                                <li class="{{ request()->routeIs('reports')
-                                    ? 'active'
-                                    : '' }}">
-
-                                    <a href="{{ route('reports') }}">
-
-                                        <span>
-                                            Overview
-                                        </span>
-
-                                    </a>
-
-                                </li>
-
-                            @endif
-
-
                             @if(auth()->user()->hasPermission('view-ecommerce-reports'))
 
                                 <li class="{{ request()->routeIs('reports.ecommerce')

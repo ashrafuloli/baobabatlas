@@ -5,62 +5,163 @@
 @section('contents')
 
     @php
-        $status = match ($order->status) {
-            \App\Models\Order::STATUS_COMPLETED => 'completed',
+        /*
+         |--------------------------------------------------------------------------
+         | Order Status
+         |--------------------------------------------------------------------------
+         */
 
-            \App\Models\Order::STATUS_CANCELLED,
-            \App\Models\Order::STATUS_FAILED => 'cancelled',
+        $orderStatus = $order->status;
 
-            \App\Models\Order::STATUS_PROCESSING,
-            \App\Models\Order::STATUS_PAID => 'processing',
+        $shipment = $order->shipment;
 
-            default => 'pending',
+        $shipmentStatus = $shipment?->status;
+
+        $deliveryStatus = $shipment?->delivery_status;
+
+
+        /*
+         |--------------------------------------------------------------------------
+         | Customer-Facing Status
+         |--------------------------------------------------------------------------
+         |
+         | Order status is the primary source.
+         |
+         | Shipment delivery status is used when it provides a more specific
+         | delivery stage.
+         |
+         */
+
+        $status = match (true) {
+            $orderStatus === \App\Models\Order::STATUS_FAILED
+                => 'failed',
+
+            $orderStatus === \App\Models\Order::STATUS_CANCELLED
+                => 'cancelled',
+
+            $deliveryStatus === \App\Models\Shipment::DELIVERY_STATUS_DELIVERED
+                => 'delivered',
+
+            $orderStatus === \App\Models\Order::STATUS_COMPLETED
+                => 'completed',
+
+            $orderStatus === \App\Models\Order::STATUS_DELIVERED
+                => 'delivered',
+
+            $deliveryStatus === \App\Models\Shipment::DELIVERY_STATUS_OUT_FOR_DELIVERY
+                => 'out_for_delivery',
+
+            $orderStatus === \App\Models\Order::STATUS_OUT_FOR_DELIVERY
+                => 'out_for_delivery',
+
+            $deliveryStatus === \App\Models\Shipment::DELIVERY_STATUS_IN_TRANSIT
+                => 'in_transit',
+
+            $orderStatus === \App\Models\Order::STATUS_IN_TRANSIT
+                => 'in_transit',
+
+            $orderStatus === \App\Models\Order::STATUS_SHIPPED
+                => 'shipped',
+
+            $shipmentStatus === \App\Models\Order::SHIPMENT_STATUS_SHIPPED
+                => 'shipped',
+
+            $orderStatus === \App\Models\Order::STATUS_PROCESSING
+                => 'processing',
+
+            $shipmentStatus === \App\Models\Order::SHIPMENT_STATUS_PREPARING
+                => 'processing',
+
+            $orderStatus === \App\Models\Order::STATUS_PAID
+                => 'paid',
+
+            default
+                => 'pending',
         };
 
+
+        /*
+         |--------------------------------------------------------------------------
+         | Status Label
+         |--------------------------------------------------------------------------
+         */
+
         $statusLabel = match ($status) {
-            'completed' => 'Delivered',
+            'paid' => 'Paid',
             'processing' => 'Processing',
+            'shipped' => 'Shipped',
+            'in_transit' => 'In Transit',
+            'out_for_delivery' => 'Out for Delivery',
+            'delivered' => 'Delivered',
+            'completed' => 'Completed',
             'cancelled' => 'Cancelled',
+            'failed' => 'Failed',
             default => 'Pending',
         };
 
+
+        /*
+         |--------------------------------------------------------------------------
+         | Status Icon
+         |--------------------------------------------------------------------------
+         */
+
         $statusIcon = match ($status) {
-            'completed' => 'ri-checkbox-circle-fill',
+            'paid' => 'ri-checkbox-circle-line',
             'processing' => 'ri-loader-4-line',
+            'shipped' => 'ri-box-3-line',
+            'in_transit' => 'ri-truck-line',
+            'out_for_delivery' => 'ri-map-pin-time-line',
+            'delivered' => 'ri-checkbox-circle-fill',
+            'completed' => 'ri-checkbox-circle-fill',
             'cancelled' => 'ri-close-circle-line',
+            'failed' => 'ri-error-warning-line',
             default => 'ri-time-line',
         };
 
 
         /*
-         * Payment
+         |--------------------------------------------------------------------------
+         | Payment
+         |--------------------------------------------------------------------------
          */
+
         $canContinuePayment =
-            $order->status === \App\Models\Order::STATUS_PENDING
-            && $order->payment_status === \App\Models\Order::PAYMENT_STATUS_PENDING;
+            $orderStatus === \App\Models\Order::STATUS_PENDING
+            && $order->payment_status
+                === \App\Models\Order::PAYMENT_STATUS_PENDING;
 
 
         /*
-         * Cancel
+         |--------------------------------------------------------------------------
+         | Cancel
+         |--------------------------------------------------------------------------
          */
+
         $canCancelOrder =
-            $order->status === \App\Models\Order::STATUS_PENDING
-            && $order->payment_status === \App\Models\Order::PAYMENT_STATUS_PENDING;
+            $orderStatus === \App\Models\Order::STATUS_PENDING
+            && $order->payment_status
+                === \App\Models\Order::PAYMENT_STATUS_PENDING;
 
 
         /*
-         * Refund eligibility.
-         *
-         * Refund is available only for paid orders
-         * that are paid, processing or completed.
+         |--------------------------------------------------------------------------
+         | Refund Eligibility
+         |--------------------------------------------------------------------------
          */
+
         $canRequestRefund =
-            $order->payment_status === \App\Models\Order::PAYMENT_STATUS_PAID
+            $order->payment_status
+                === \App\Models\Order::PAYMENT_STATUS_PAID
             && in_array(
-                $order->status,
+                $orderStatus,
                 [
                     \App\Models\Order::STATUS_PAID,
                     \App\Models\Order::STATUS_PROCESSING,
+                    \App\Models\Order::STATUS_SHIPPED,
+                    \App\Models\Order::STATUS_IN_TRANSIT,
+                    \App\Models\Order::STATUS_OUT_FOR_DELIVERY,
+                    \App\Models\Order::STATUS_DELIVERED,
                     \App\Models\Order::STATUS_COMPLETED,
                 ],
                 true,
@@ -68,10 +169,11 @@
 
 
         /*
-         * Full order refund.
-         *
-         * Shipping is non-refundable.
+         |--------------------------------------------------------------------------
+         | Refund Amount
+         |--------------------------------------------------------------------------
          */
+
         $refundAmount = max(
             0,
             round(
@@ -83,12 +185,11 @@
 
 
         /*
-         * Always use the latest refund request
-         * for the visible customer-facing state.
-         *
-         * This prevents an old rejected request from
-         * overriding a newer pending/approved request.
+         |--------------------------------------------------------------------------
+         | Latest Refund Request
+         |--------------------------------------------------------------------------
          */
+
         $latestRefundRequest = $order->refundRequests
             ->sortByDesc('created_at')
             ->first();
@@ -97,27 +198,30 @@
 
 
         /*
-         * Successful Stripe refund.
-         *
-         * This state always takes priority over
-         * refund request status.
+         |--------------------------------------------------------------------------
+         | Successful Refund
+         |--------------------------------------------------------------------------
          */
+
         $hasSuccessfulRefund = $order->refunds->contains(
             fn ($refund): bool =>
                 $refund->status
-                === \App\Models\Refund::STATUS_SUCCEEDED
+                === \App\Models\Refund::STATUS_SUCCEEDED,
         );
 
 
         $isRefunded =
             $hasSuccessfulRefund
             || $order->payment_status
-            === \App\Models\Order::PAYMENT_STATUS_REFUNDED;
+                === \App\Models\Order::PAYMENT_STATUS_REFUNDED;
 
 
         /*
-         * Current refund request state.
+         |--------------------------------------------------------------------------
+         | Refund Request State
+         |--------------------------------------------------------------------------
          */
+
         $hasPendingRefundRequest =
             $latestRefundStatus
             === \App\Models\RefundRequest::STATUS_PENDING;
@@ -132,20 +236,55 @@
 
 
         /*
-         * Customer can submit a new request when:
-         *
-         * - Order is refundable
-         * - No successful refund exists
-         * - Latest request is not pending
-         * - Latest request is not approved
-         *
-         * Therefore a rejected request can be submitted again.
+         |--------------------------------------------------------------------------
+         | New Refund Request Eligibility
+         |--------------------------------------------------------------------------
          */
+
         $canSubmitNewRefundRequest =
             $canRequestRefund
             && ! $isRefunded
             && ! $hasPendingRefundRequest
             && ! $hasApprovedRefundRequest;
+
+
+        /*
+         |--------------------------------------------------------------------------
+         | Delivery Information
+         |--------------------------------------------------------------------------
+         */
+
+        $hasShipment = $shipment !== null;
+
+        $trackingNumber = $shipment?->tracking_number;
+        $carrier = $shipment?->carrier;
+        $trackingUrl = $shipment?->tracking_url;
+
+        $estimatedDeliveryAt = $shipment?->estimated_delivery_at;
+        $deliveredAt = $shipment?->delivered_at;
+
+
+        /*
+         |--------------------------------------------------------------------------
+         | Delivery Status Label
+         |--------------------------------------------------------------------------
+         */
+
+        $deliveryStatusLabel = match ($deliveryStatus) {
+            \App\Models\Shipment::DELIVERY_STATUS_IN_TRANSIT
+                => 'In Transit',
+
+            \App\Models\Shipment::DELIVERY_STATUS_OUT_FOR_DELIVERY
+                => 'Out for Delivery',
+
+            \App\Models\Shipment::DELIVERY_STATUS_DELIVERED
+                => 'Delivered',
+
+            \App\Models\Shipment::DELIVERY_STATUS_FAILED
+                => 'Delivery Failed',
+
+            default => null,
+        };
     @endphp
 
 
@@ -207,7 +346,9 @@
                     class="order-details-page__status order-details-page__status--{{ $status }}"
                 >
                     <i class="{{ $statusIcon }}"></i>
+
                     {{ $statusLabel }}
+
                 </span>
 
             </div>
@@ -253,6 +394,7 @@
                                 class="order-details-page__continue-payment"
                             >
                                 <i class="ri-bank-card-line"></i>
+
                                 Continue to Payment
                             </a>
 
@@ -275,6 +417,7 @@
                                     class="order-details-page__cancel-order"
                                 >
                                     <i class="ri-close-circle-line"></i>
+
                                     Cancel Order
                                 </button>
 
@@ -337,6 +480,7 @@
 
                                     $category = $item->product?->categories?->first()?->name;
                                 @endphp
+
 
                                 <div class="order-details-page__item">
 
@@ -436,6 +580,142 @@
                     </section>
 
 
+                    {{-- Delivery Tracking --}}
+                    @if($hasShipment)
+
+                        <section class="order-details-page__card">
+
+                            <div class="order-details-page__card-header">
+
+                                <div>
+
+                                    <span class="order-details-page__section-label">
+                                        DELIVERY
+                                    </span>
+
+                                    <h2>
+                                        Shipping & Tracking
+                                    </h2>
+
+                                </div>
+
+                                <i class="ri-truck-line"></i>
+
+                            </div>
+
+
+                            <div class="order-details-page__delivery">
+
+                                @if($deliveryStatusLabel)
+
+                                    <div class="order-details-page__delivery-status">
+
+                                        <span>
+                                            Delivery Status
+                                        </span>
+
+                                        <strong>
+                                            {{ $deliveryStatusLabel }}
+                                        </strong>
+
+                                    </div>
+
+                                @endif
+
+
+                                @if($carrier)
+
+                                    <div class="order-details-page__delivery-row">
+
+                                        <span>
+                                            Carrier
+                                        </span>
+
+                                        <strong>
+                                            {{ $carrier }}
+                                        </strong>
+
+                                    </div>
+
+                                @endif
+
+
+                                @if($trackingNumber)
+
+                                    <div class="order-details-page__delivery-row">
+
+                                        <span>
+                                            Tracking Number
+                                        </span>
+
+                                        <strong>
+                                            {{ $trackingNumber }}
+                                        </strong>
+
+                                    </div>
+
+                                @endif
+
+
+                                @if($estimatedDeliveryAt)
+
+                                    <div class="order-details-page__delivery-row">
+
+                                        <span>
+                                            Estimated Delivery
+                                        </span>
+
+                                        <strong>
+                                            {{ $estimatedDeliveryAt->format('M j, Y') }}
+                                        </strong>
+
+                                    </div>
+
+                                @endif
+
+
+                                @if($deliveredAt)
+
+                                    <div class="order-details-page__delivery-row">
+
+                                        <span>
+                                            Delivered On
+                                        </span>
+
+                                        <strong>
+                                            {{ $deliveredAt->format('M j, Y h:i A') }}
+                                        </strong>
+
+                                    </div>
+
+                                @endif
+
+
+                                @if($trackingUrl && $trackingNumber)
+
+                                    <div class="order-details-page__delivery-action">
+
+                                        <a
+                                            href="{{ $trackingUrl }}"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            <i class="ri-external-link-line"></i>
+
+                                            Track Shipment
+                                        </a>
+
+                                    </div>
+
+                                @endif
+
+                            </div>
+
+                        </section>
+
+                    @endif
+
+
                     {{-- Refund --}}
                     @if($canRequestRefund)
 
@@ -490,7 +770,6 @@
                                     </span>
 
 
-                                    {{-- Refunded --}}
                                     @if($isRefunded)
 
                                         <h2>
@@ -504,8 +783,6 @@
                                             payment method.
                                         </p>
 
-
-                                        {{-- Approved --}}
                                     @elseif($hasApprovedRefundRequest)
 
                                         <h2>
@@ -518,8 +795,6 @@
                                             being processed.
                                         </p>
 
-
-                                        {{-- Pending --}}
                                     @elseif($hasPendingRefundRequest)
 
                                         <h2>
@@ -532,8 +807,6 @@
                                             your request and update its status.
                                         </p>
 
-
-                                        {{-- Rejected --}}
                                     @elseif($hasRejectedRefundRequest)
 
                                         <h2>
@@ -547,8 +820,6 @@
                                             necessary.
                                         </p>
 
-
-                                        {{-- No Request --}}
                                     @else
 
                                         <h2>
@@ -564,7 +835,6 @@
                                     @endif
 
 
-                                    {{-- Refund Amount --}}
                                     <div class="order-details-page__refund-amount">
 
                                         <span>
@@ -589,7 +859,6 @@
                                     @endif
 
 
-                                    {{-- Rejection Details --}}
                                     @if(
                                         $hasRejectedRefundRequest
                                         && $latestRefundRequest
@@ -607,6 +876,7 @@
                                                 <span>
                                                     Previous Request
                                                 </span>
+
                                             </div>
 
 
@@ -650,7 +920,6 @@
                                     @endif
 
 
-                                    {{-- Approved Details --}}
                                     @if(
                                         $hasApprovedRefundRequest
                                         && $latestRefundRequest
@@ -668,6 +937,7 @@
                                                 <span>
                                                     Approved Request
                                                 </span>
+
                                             </div>
 
 
@@ -719,10 +989,8 @@
                             </div>
 
 
-                            {{-- Refund Action --}}
                             <div class="order-details-page__refund-action">
 
-                                {{-- Successfully Refunded --}}
                                 @if($isRefunded)
 
                                     <span
@@ -730,11 +998,10 @@
                                         order-details-page__refund-status--success"
                                     >
                                         <i class="ri-checkbox-circle-line"></i>
+
                                         Refunded
                                     </span>
 
-
-                                    {{-- Pending --}}
                                 @elseif($hasPendingRefundRequest)
 
                                     <span
@@ -742,11 +1009,10 @@
                                         order-details-page__refund-status--pending"
                                     >
                                         <i class="ri-time-line"></i>
+
                                         Refund Request Pending
                                     </span>
 
-
-                                    {{-- Approved --}}
                                 @elseif($hasApprovedRefundRequest)
 
                                     <span
@@ -754,11 +1020,10 @@
                                         order-details-page__refund-status--approved"
                                     >
                                         <i class="ri-checkbox-circle-line"></i>
+
                                         Refund Approved
                                     </span>
 
-
-                                    {{-- Rejected --}}
                                 @elseif($hasRejectedRefundRequest)
 
                                     <div
@@ -770,6 +1035,7 @@
                                             order-details-page__refund-status--rejected"
                                         >
                                             <i class="ri-close-circle-line"></i>
+
                                             Request Rejected
                                         </span>
 
@@ -784,6 +1050,7 @@
                                                 data-refund-amount="{{ number_format($refundAmount, 2, '.', '') }}"
                                             >
                                                 <i class="ri-refresh-line"></i>
+
                                                 Request Again
                                             </button>
 
@@ -791,8 +1058,6 @@
 
                                     </div>
 
-
-                                    {{-- New Request --}}
                                 @elseif($canSubmitNewRefundRequest)
 
                                     <button
@@ -803,6 +1068,7 @@
                                         data-refund-amount="{{ number_format($refundAmount, 2, '.', '') }}"
                                     >
                                         <i class="ri-refund-2-line"></i>
+
                                         Request Refund
                                     </button>
 
@@ -856,7 +1122,9 @@
 
                             @endif
 
+
                             <span>
+
                                 {{ $order->city }}
 
                                 @if($order->state)
@@ -864,11 +1132,14 @@
                                 @endif
 
                                 {{ $order->postal_code }}
+
                             </span>
+
 
                             <span>
                                 {{ $order->country }}
                             </span>
+
 
                             <span>
                                 {{ $order->phone }}
@@ -1144,8 +1415,11 @@
 
 
                 <a href="{{ route('shop') }}">
+
                     Continue Shopping
+
                     <i class="ri-arrow-right-line"></i>
+
                 </a>
 
             </div>
@@ -1253,7 +1527,6 @@
                 >
                     @csrf
 
-
                     <div class="order-details-page__refund-field">
 
                         <label for="refund-reason">
@@ -1357,6 +1630,7 @@
                             class="order-details-page__refund-submit"
                         >
                             <i class="ri-send-plane-line"></i>
+
                             Submit Request
                         </button>
 
@@ -1374,11 +1648,14 @@
 
 
 @push('scripts')
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+
             const page = document.querySelector(
                 '.order-details-page'
             );
+
 
             if (!page) {
                 return;
@@ -1392,24 +1669,33 @@
                 '[data-cancel-order]'
             );
 
+
             if (cancelForm) {
+
                 cancelForm.addEventListener(
                     'submit',
                     function () {
+
                         const button = this.querySelector(
                             'button[type="submit"]'
                         );
 
+
                         if (button) {
+
                             button.disabled = true;
+
 
                             button.innerHTML = `
                                 <i class="ri-loader-4-line ri-spin"></i>
                                 Cancelling...
                             `;
+
                         }
+
                     }
                 );
+
             }
 
 
@@ -1420,9 +1706,11 @@
                 '[data-refund-modal]'
             );
 
+
             const refundButtons = page.querySelectorAll(
                 '[data-refund-order]'
             );
+
 
             const refundForm = page.querySelector(
                 '[data-refund-form]'
@@ -1442,17 +1730,15 @@
                 '[name="reason"]'
             );
 
-            const messageInput = refundForm.querySelector(
-                '[name="message"]'
-            );
-
 
             /*
              * Open modal
              */
             function openRefundModal(button) {
+
                 const orderNumber =
                     button.dataset.orderNumber || '';
+
 
                 const refundAmount =
                     Number(
@@ -1465,6 +1751,7 @@
                         '[data-refund-order-number]'
                     );
 
+
                 const amountElement =
                     refundModal.querySelector(
                         '[data-refund-modal-amount]'
@@ -1472,12 +1759,15 @@
 
 
                 if (orderNumberElement) {
+
                     orderNumberElement.textContent =
                         `#${orderNumber}`;
+
                 }
 
 
                 if (amountElement) {
+
                     amountElement.textContent =
                         `$${refundAmount.toLocaleString(
                             'en-US',
@@ -1486,12 +1776,10 @@
                                 maximumFractionDigits: 2,
                             }
                         )}`;
+
                 }
 
 
-                /*
-                 * Reset form whenever modal opens.
-                 */
                 refundForm.reset();
 
 
@@ -1499,10 +1787,12 @@
                     'is-open'
                 );
 
+
                 refundModal.setAttribute(
                     'aria-hidden',
                     'false'
                 );
+
 
                 document.body.classList.add(
                     'order-details-page--modal-open'
@@ -1510,10 +1800,13 @@
 
 
                 window.setTimeout(function () {
+
                     if (reasonInput) {
                         reasonInput.focus();
                     }
+
                 }, 50);
+
             }
 
 
@@ -1521,36 +1814,37 @@
              * Close modal
              */
             function closeRefundModal() {
+
                 refundModal.classList.remove(
                     'is-open'
                 );
+
 
                 refundModal.setAttribute(
                     'aria-hidden',
                     'true'
                 );
 
+
                 document.body.classList.remove(
                     'order-details-page--modal-open'
                 );
+
             }
 
 
             /*
-             * Refund buttons.
-             *
-             * This supports both:
-             *
-             * Request Refund
-             * Request Again
+             * Refund buttons
              */
             refundButtons.forEach(function (button) {
+
                 button.addEventListener(
                     'click',
                     function () {
                         openRefundModal(this);
                     }
                 );
+
             });
 
 
@@ -1560,10 +1854,12 @@
             refundModal
                 .querySelectorAll('[data-refund-close]')
                 .forEach(function (element) {
+
                     element.addEventListener(
                         'click',
                         closeRefundModal
                     );
+
                 });
 
 
@@ -1573,6 +1869,7 @@
             document.addEventListener(
                 'keydown',
                 function (event) {
+
                     if (
                         event.key === 'Escape'
                         && refundModal.classList.contains(
@@ -1581,6 +1878,7 @@
                     ) {
                         closeRefundModal();
                     }
+
                 }
             );
 
@@ -1591,6 +1889,7 @@
             refundForm.addEventListener(
                 'submit',
                 function (event) {
+
                     event.preventDefault();
 
 
@@ -1598,6 +1897,7 @@
                         !reasonInput
                         || !reasonInput.value
                     ) {
+
                         if (reasonInput) {
                             reasonInput.focus();
                         }
@@ -1608,15 +1908,18 @@
                             && typeof window.AppToast.fire
                             === 'function'
                         ) {
+
                             window.AppToast.fire({
                                 icon: 'error',
                                 title:
                                     'Please select a refund reason.',
                             });
+
                         }
 
 
                         return;
+
                     }
 
 
@@ -1627,24 +1930,26 @@
 
 
                     if (submitButton) {
+
                         submitButton.disabled = true;
+
 
                         submitButton.innerHTML = `
                             <i class="ri-loader-4-line ri-spin"></i>
                             Submitting...
                         `;
+
                     }
 
 
-                    /*
-                     * Native form submit prevents
-                     * this submit listener from firing again.
-                     */
                     HTMLFormElement.prototype.submit.call(
                         refundForm
                     );
+
                 }
             );
+
         });
     </script>
+
 @endpush

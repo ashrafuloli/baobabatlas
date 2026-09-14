@@ -21,6 +21,7 @@ final class OrderController extends Controller
             ->with([
                 'items.product.categories',
                 'items.variant.values.attribute',
+                'shipment',
             ])
             ->withCount('items')
             ->latest('id')
@@ -51,6 +52,7 @@ final class OrderController extends Controller
             'refundRequests.approver',
             'refundRequests.refund',
             'refunds',
+            'shipment',
         ]);
 
         return view(

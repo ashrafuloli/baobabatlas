@@ -498,37 +498,7 @@
 
 
             {{-- Pagination --}}
-            @if ($refundRequests->hasPages())
-                <div class="admin-refunds-page__pagination">
-
-                    <div class="admin-refunds-page__pagination-info">
-                        Showing
-
-                        <strong>
-                            {{ $refundRequests->firstItem() ?? 0 }}
-                        </strong>
-
-                        to
-
-                        <strong>
-                            {{ $refundRequests->lastItem() ?? 0 }}
-                        </strong>
-
-                        of
-
-                        <strong>
-                            {{ $refundRequests->total() }}
-                        </strong>
-
-                        requests
-                    </div>
-
-                    <div class="admin-refunds-page__pagination-links">
-                        {{ $refundRequests->links() }}
-                    </div>
-
-                </div>
-            @endif
+            {{ $refundRequests->links('backend.components.pagination') }}
 
         </div>
 

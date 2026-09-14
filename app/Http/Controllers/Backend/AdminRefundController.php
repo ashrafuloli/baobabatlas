@@ -27,8 +27,9 @@ final class AdminRefundController extends Controller
     /**
      * Display all refund requests.
      */
-    public function index(Request $request): View
-    {
+    public function index(
+        Request $request,
+    ): View {
         $query = RefundRequest::query()
             ->with([
                 'order.user',
@@ -42,45 +43,49 @@ final class AdminRefundController extends Controller
                 (string) $request->input('search'),
             );
 
-            $query->where(function (Builder $builder) use (
-                $search,
-            ): void {
-                $builder
-                    ->whereHas(
-                        'order',
-                        function (
-                            Builder $orderQuery,
-                        ) use ($search): void {
-                            $orderQuery->where(function (
-                                Builder $query,
+            $query->where(
+                function (Builder $builder) use (
+                    $search,
+                ): void {
+                    $builder
+                        ->whereHas(
+                            'order',
+                            function (
+                                Builder $orderQuery,
                             ) use ($search): void {
-                                $query
-                                    ->where(
-                                        'order_number',
-                                        'like',
-                                        "%{$search}%",
-                                    )
-                                    ->orWhere(
-                                        'email',
-                                        'like',
-                                        "%{$search}%",
-                                    );
-                            });
-                        },
-                    )
-                    ->orWhereHas(
-                        'requester',
-                        function (
-                            Builder $userQuery,
-                        ) use ($search): void {
-                            $userQuery->where(
-                                'name',
-                                'like',
-                                "%{$search}%",
-                            );
-                        },
-                    );
-            });
+                                $orderQuery->where(
+                                    function (
+                                        Builder $query,
+                                    ) use ($search): void {
+                                        $query
+                                            ->where(
+                                                'order_number',
+                                                'like',
+                                                "%{$search}%",
+                                            )
+                                            ->orWhere(
+                                                'email',
+                                                'like',
+                                                "%{$search}%",
+                                            );
+                                    },
+                                );
+                            },
+                        )
+                        ->orWhereHas(
+                            'requester',
+                            function (
+                                Builder $userQuery,
+                            ) use ($search): void {
+                                $userQuery->where(
+                                    'name',
+                                    'like',
+                                    "%{$search}%",
+                                );
+                            },
+                        );
+                },
+            );
         }
 
         if ($request->filled('status')) {
@@ -187,6 +192,10 @@ final class AdminRefundController extends Controller
                         ->lockForUpdate()
                         ->firstOrFail();
 
+                    /*
+                     * Deduction can only be changed after approval
+                     * and before the Stripe refund is created.
+                     */
                     if (
                         $refundRequest->status
                         !== RefundRequest::STATUS_APPROVED
@@ -196,9 +205,13 @@ final class AdminRefundController extends Controller
                         );
                     }
 
+                    /*
+                     * Once a Refund record exists, the refund amount
+                     * is permanently locked for Stripe processing.
+                     */
                     if ($refundRequest->refund()->exists()) {
                         throw new RuntimeException(
-                            'The refund has already been processed.',
+                            'The refund has already been created and cannot be modified.',
                         );
                     }
 
@@ -216,6 +229,14 @@ final class AdminRefundController extends Controller
                         2,
                     );
 
+                    if ($deductionAmount < 0) {
+                        throw ValidationException::withMessages([
+                            'deduction_amount' => [
+                                'The deduction amount cannot be negative.',
+                            ],
+                        ]);
+                    }
+
                     if ($deductionAmount > $refundAmount) {
                         throw ValidationException::withMessages([
                             'deduction_amount' => [
@@ -231,10 +252,9 @@ final class AdminRefundController extends Controller
 
                     $refundRequest->update([
                         'deduction_amount' => $deductionAmount,
-                        'deduction_reason' =>
-                            $request->validated(
-                                'deduction_reason',
-                            ),
+                        'deduction_reason' => $request->validated(
+                            'deduction_reason',
+                        ),
                     ]);
                 },
             );
@@ -277,8 +297,8 @@ final class AdminRefundController extends Controller
     ): RedirectResponse {
         try {
             $approveRefundRequest->execute(
-                $refundRequest,
-                (int) auth()->id(),
+                refundRequest: $refundRequest,
+                approvedBy: (int) auth()->id(),
             );
 
             return redirect()
@@ -388,7 +408,8 @@ final class AdminRefundController extends Controller
                     ->with(
                         'warning',
                         'The Stripe refund was created with status: '
-                        . ucfirst($refund->status),
+                        . ucfirst($refund->status)
+                        . '.',
                     ),
             };
         } catch (

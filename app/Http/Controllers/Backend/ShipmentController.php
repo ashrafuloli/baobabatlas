@@ -35,7 +35,7 @@ final class ShipmentController extends Controller
                 $search !== '',
                 function (Builder $query) use ($search): void {
                     $query->where(function (Builder $query) use (
-                        $search
+                        $search,
                     ): void {
                         $query
                             ->where(
@@ -51,7 +51,7 @@ final class ShipmentController extends Controller
                             ->orWhereHas(
                                 'order',
                                 function (Builder $query) use (
-                                    $search
+                                    $search,
                                 ): void {
                                     $query
                                         ->where(
@@ -88,7 +88,7 @@ final class ShipmentController extends Controller
             ->when(
                 $deliveryStatus !== '',
                 function (Builder $query) use (
-                    $deliveryStatus
+                    $deliveryStatus,
                 ): void {
                     $query->where(
                         'delivery_status',
@@ -266,20 +266,32 @@ final class ShipmentController extends Controller
             $deliveryStatus,
         ): void {
             /*
-             * Lock shipment row.
+             * ============================================================
+             * LOCK SHIPMENT
+             * ============================================================
              */
+
             $lockedShipment = Shipment::query()
                 ->whereKey($shipment->id)
                 ->lockForUpdate()
                 ->firstOrFail();
 
             /*
-             * Lock related order row.
+             * ============================================================
+             * LOCK RELATED ORDER
+             * ============================================================
              */
+
             $order = Order::query()
                 ->whereKey($lockedShipment->order_id)
                 ->lockForUpdate()
                 ->firstOrFail();
+
+            /*
+             * ============================================================
+             * SHIPMENT DATA
+             * ============================================================
+             */
 
             $data = [
                 'status' => $status,
@@ -287,8 +299,11 @@ final class ShipmentController extends Controller
             ];
 
             /*
-             * Shipment started.
+             * ============================================================
+             * SHIPPED DATE
+             * ============================================================
              */
+
             if (
                 $status === Shipment::STATUS_SHIPPED
                 && $lockedShipment->shipped_at === null
@@ -297,7 +312,8 @@ final class ShipmentController extends Controller
             }
 
             /*
-             * Shipment moved back from shipped.
+             * Keep existing shipped date when moving
+             * between shipment states.
              */
             if (
                 $status !== Shipment::STATUS_SHIPPED
@@ -308,8 +324,11 @@ final class ShipmentController extends Controller
             }
 
             /*
-             * Delivery completed.
+             * ============================================================
+             * DELIVERED DATE
+             * ============================================================
              */
+
             if (
                 $deliveryStatus
                 === Shipment::DELIVERY_STATUS_DELIVERED
@@ -319,7 +338,7 @@ final class ShipmentController extends Controller
             }
 
             /*
-             * Delivery is no longer completed.
+             * Clear delivered date if delivery moves backwards.
              */
             if (
                 $deliveryStatus
@@ -329,16 +348,20 @@ final class ShipmentController extends Controller
             }
 
             /*
-             * Update shipment.
+             * ============================================================
+             * UPDATE SHIPMENT
+             * ============================================================
              */
+
             $lockedShipment->update($data);
 
             /*
              * ============================================================
-             * UPDATE RELATED ORDER STATUS
+             * RESOLVE ORDER STATUS
              * ============================================================
              *
-             * Delivery status has the highest priority.
+             * The shipment status and delivery status are used
+             * to synchronize the related order status.
              */
 
             $orderStatus = $this->resolveOrderStatus(
@@ -346,6 +369,12 @@ final class ShipmentController extends Controller
                 $deliveryStatus,
                 $order,
             );
+
+            /*
+             * ============================================================
+             * UPDATE ORDER
+             * ============================================================
+             */
 
             if (
                 $orderStatus !== null
@@ -379,8 +408,11 @@ final class ShipmentController extends Controller
         Order $order,
     ): ?string {
         /*
-         * Cancelled shipment => cancelled order.
+         * ============================================================
+         * CANCELLED
+         * ============================================================
          */
+
         if (
             $shipmentStatus === Shipment::STATUS_CANCELLED
         ) {
@@ -388,19 +420,56 @@ final class ShipmentController extends Controller
         }
 
         /*
-         * Delivered => completed order.
+         * ============================================================
+         * DELIVERED
+         * ============================================================
+         *
+         * Delivery completed means the order has reached
+         * the delivered stage.
          */
+
         if (
             $deliveryStatus
             === Shipment::DELIVERY_STATUS_DELIVERED
         ) {
-            return Order::STATUS_COMPLETED;
+            return Order::STATUS_DELIVERED;
         }
 
         /*
-         * Failed delivery should keep the order processing
-         * so admin can retry/resolve the shipment.
+         * ============================================================
+         * OUT FOR DELIVERY
+         * ============================================================
          */
+
+        if (
+            $deliveryStatus
+            === Shipment::DELIVERY_STATUS_OUT_FOR_DELIVERY
+        ) {
+            return Order::STATUS_OUT_FOR_DELIVERY;
+        }
+
+        /*
+         * ============================================================
+         * IN TRANSIT
+         * ============================================================
+         */
+
+        if (
+            $deliveryStatus
+            === Shipment::DELIVERY_STATUS_IN_TRANSIT
+        ) {
+            return Order::STATUS_IN_TRANSIT;
+        }
+
+        /*
+         * ============================================================
+         * DELIVERY FAILED
+         * ============================================================
+         *
+         * Failed delivery should not mark the order as failed.
+         * The shipment can still be retried or resolved.
+         */
+
         if (
             $deliveryStatus
             === Shipment::DELIVERY_STATUS_FAILED
@@ -409,23 +478,37 @@ final class ShipmentController extends Controller
         }
 
         /*
-         * Shipment is in progress.
+         * ============================================================
+         * SHIPPED
+         * ============================================================
          */
+
+        if (
+            $shipmentStatus === Shipment::STATUS_SHIPPED
+        ) {
+            return Order::STATUS_SHIPPED;
+        }
+
+        /*
+         * ============================================================
+         * SHIPMENT PROCESSING
+         * ============================================================
+         */
+
         if (
             $shipmentStatus === Shipment::STATUS_PROCESSING
-            || $shipmentStatus === Shipment::STATUS_SHIPPED
-            || $deliveryStatus === Shipment::DELIVERY_STATUS_IN_TRANSIT
-            || $deliveryStatus === Shipment::DELIVERY_STATUS_OUT_FOR_DELIVERY
         ) {
             return Order::STATUS_PROCESSING;
         }
 
         /*
-         * Shipment is pending.
+         * ============================================================
+         * SHIPMENT PENDING
+         * ============================================================
          *
-         * If the order is already processing/completed/cancelled,
-         * don't automatically move it backwards.
+         * Don't move a later order state backwards.
          */
+
         if (
             $shipmentStatus === Shipment::STATUS_PENDING
             && $deliveryStatus === Shipment::DELIVERY_STATUS_PENDING
@@ -437,6 +520,10 @@ final class ShipmentController extends Controller
                 return Order::STATUS_PAID;
             }
         }
+
+        /*
+         * No order status change required.
+         */
 
         return null;
     }

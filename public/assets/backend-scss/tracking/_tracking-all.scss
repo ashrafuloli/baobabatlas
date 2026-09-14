@@ -381,17 +381,20 @@
     }
 
     .shipment-progress-line {
-        position: absolute;
-        top: 23px;
-        left: 8.33%;
-        width: 83.34%;
-        height: 2px;
+        position: relative;
+        width: 100%;
+        height: 10px;
         background: $hr-color;
         overflow: hidden;
+        border-radius: 10px;
+        margin: 0 0 30px;
     }
 
     .shipment-progress-line__active {
+        position: absolute;
+        left: 0;
         height: 100%;
+        border-radius: 10px;
         background: $theme-color;
 
         @include transition(0.5s);

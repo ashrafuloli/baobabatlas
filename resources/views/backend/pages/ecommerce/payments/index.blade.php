@@ -468,11 +468,9 @@
                     </table>
                 </div>
 
-                @if ($payments->hasPages())
-                    <div class="ecommerce-payments-page__pagination">
-                        {{ $payments->links() }}
-                    </div>
-                @endif
+                {{-- Pagination --}}
+                {{ $payments->links('backend.components.pagination') }}
+
             @else
                 <div class="ecommerce-payments-page__empty">
                     <div class="ecommerce-payments-page__empty-icon">

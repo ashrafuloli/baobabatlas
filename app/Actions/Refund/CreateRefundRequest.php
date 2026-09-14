@@ -45,34 +45,16 @@ final class CreateRefundRequest
                 }
 
                 /*
-                 * The order must have a successful payment.
+                 * Refund eligibility is based only on payment status.
+                 *
+                 * Order status does not restrict refund requests.
                  */
                 if (
                     $order->payment_status
                     !== Order::PAYMENT_STATUS_PAID
                 ) {
                     throw new RuntimeException(
-                        'This order is not eligible for a refund.',
-                    );
-                }
-
-                /*
-                 * Refunds are available only for paid,
-                 * processing, or completed orders.
-                 */
-                if (
-                    ! in_array(
-                        $order->status,
-                        [
-                            Order::STATUS_PAID,
-                            Order::STATUS_PROCESSING,
-                            Order::STATUS_COMPLETED,
-                        ],
-                        true,
-                    )
-                ) {
-                    throw new RuntimeException(
-                        'This order is not eligible for a refund.',
+                        'This order is not eligible for a refund because the payment has not been completed.',
                     );
                 }
 
@@ -81,7 +63,10 @@ final class CreateRefundRequest
                  * successfully refunded.
                  */
                 $alreadyRefunded = (float) $order->refunds()
-                    ->where('status', Refund::STATUS_SUCCEEDED)
+                    ->where(
+                        'status',
+                        Refund::STATUS_SUCCEEDED,
+                    )
                     ->sum('amount');
 
                 /*

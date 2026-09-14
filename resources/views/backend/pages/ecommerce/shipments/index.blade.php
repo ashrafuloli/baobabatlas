@@ -503,29 +503,8 @@
                 </div>
 
                 {{-- Pagination --}}
-                @if($shipments->hasPages())
-                    <div class="shipments-page__pagination">
-                        <div class="shipments-page__pagination-info">
-                            Showing
-                            <strong>
-                                {{ $shipments->firstItem() ?? 0 }}
-                            </strong>
-                            to
-                            <strong>
-                                {{ $shipments->lastItem() ?? 0 }}
-                            </strong>
-                            of
-                            <strong>
-                                {{ $shipments->total() }}
-                            </strong>
-                            shipments
-                        </div>
 
-                        <div class="shipments-page__pagination-links">
-                            {{ $shipments->links() }}
-                        </div>
-                    </div>
-                @endif
+                {{ $shipments->links('backend.components.pagination') }}
 
             </div>
 

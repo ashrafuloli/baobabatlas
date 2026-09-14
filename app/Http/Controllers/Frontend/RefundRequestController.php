@@ -27,6 +27,25 @@ final class RefundRequestController extends Controller
                 );
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | Refund Eligibility
+        |--------------------------------------------------------------------------
+        |
+        | Refund is allowed when the payment has been successfully paid.
+        | Order status does not control refund eligibility.
+        |
+        */
+
+        if ($order->payment_status !== Order::PAYMENT_STATUS_PAID) {
+            return redirect()
+                ->back()
+                ->with(
+                    'error',
+                    'A refund can only be requested for a paid order.'
+                );
+        }
+
         try {
             $createRefundRequest->execute(
                 order: $order,
@@ -36,7 +55,10 @@ final class RefundRequestController extends Controller
         } catch (Throwable $exception) {
             return redirect()
                 ->back()
-                ->with('error', $exception->getMessage());
+                ->with(
+                    'error',
+                    $exception->getMessage()
+                );
         }
 
         return redirect()

@@ -1,1109 +1,446 @@
 @extends('backend.layouts.backend')
 
-@section('title', 'Dashboard')
+@section('title', 'My Dashboard')
 
 @section('content')
+    <div class="customer-dashboard-page">
+        <div class="customer-dashboard-page__container">
 
-    <div class="customer-dashboard">
-
-        {{--=================================
-        Dashboard Header
-        =================================--}}
-        <div class="customer-dashboard__header">
-
-            <div class="customer-dashboard__header-content">
-
-                <span class="customer-dashboard__eyebrow">
-                    My Dashboard
-                </span>
-
-                <h1>
-                    Welcome back, Demo Client!
-                </h1>
-
-                <p>
-                    Manage your orders, Smart Buy requests, payments, and shipments.
-                </p>
-
-            </div>
-
-
-            <div class="customer-dashboard__date">
-
-                <i class="ri-calendar-line"></i>
-
-                <span>
-                    August 15, 2026
-                </span>
-
-            </div>
-
-        </div>
-
-
-        {{--=================================
-        Statistics
-        =================================--}}
-        <div class="customer-dashboard__stats">
-
-
-            {{-- Orders --}}
-            <div class="customer-stat-card">
-
-                <div class="customer-stat-card__icon ecommerce">
-
-                    <i class="ri-shopping-bag-3-line"></i>
-
-                </div>
-
-
-                <div class="customer-stat-card__content">
-
-                    <span>
-                        My Orders
+            {{-- Welcome --}}
+            <section class="customer-dashboard-page__welcome">
+                <div class="customer-dashboard-page__welcome-content">
+                    <span class="customer-dashboard-page__eyebrow">
+                        My Dashboard
                     </span>
 
-                    <h3>
-                        12
-                    </h3>
-
-                    <small>
-                        2 active orders
-                    </small>
-
-                </div>
-
-            </div>
-
-
-            {{-- Smart Buy --}}
-            <div class="customer-stat-card">
-
-                <div class="customer-stat-card__icon smart-buy">
-
-                    <i class="ri-global-line"></i>
-
-                </div>
-
-
-                <div class="customer-stat-card__content">
-
-                    <span>
-                        Smart Buy Requests
-                    </span>
-
-                    <h3>
-                        4
-                    </h3>
-
-                    <small>
-                        1 needs your action
-                    </small>
-
-                </div>
-
-            </div>
-
-
-            {{-- Pending Payments --}}
-            <div class="customer-stat-card">
-
-                <div class="customer-stat-card__icon payment">
-
-                    <i class="ri-bank-card-line"></i>
-
-                </div>
-
-
-                <div class="customer-stat-card__content">
-
-                    <span>
-                        Pending Payments
-                    </span>
-
-                    <h3>
-                        2
-                    </h3>
-
-                    <small>
-                        Requires attention
-                    </small>
-
-                </div>
-
-            </div>
-
-
-            {{-- Active Shipments --}}
-            <div class="customer-stat-card">
-
-                <div class="customer-stat-card__icon shipment">
-
-                    <i class="ri-truck-line"></i>
-
-                </div>
-
-
-                <div class="customer-stat-card__content">
-
-                    <span>
-                        Active Shipments
-                    </span>
-
-                    <h3>
-                        3
-                    </h3>
-
-                    <small>
-                        Currently in transit
-                    </small>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        {{--=================================
-        Quick Actions
-        =================================--}}
-        <div class="customer-dashboard__quick-actions">
-
-
-            {{-- Shop Now --}}
-            <a href="#" class="customer-action-card">
-
-                <div class="customer-action-card__icon ecommerce">
-
-                    <i class="ri-store-2-line"></i>
-
-                </div>
-
-
-                <div class="customer-action-card__content">
-
-                    <strong>
-                        Shop Now
-                    </strong>
-
-                    <span>
-                        Explore our products
-                    </span>
-
-                </div>
-
-
-                <div class="customer-action-card__arrow">
-
-                    <i class="ri-arrow-right-line"></i>
-
-                </div>
-
-            </a>
-
-
-            {{-- Start Smart Buy --}}
-            <a href="#" class="customer-action-card">
-
-                <div class="customer-action-card__icon smart-buy">
-
-                    <i class="ri-global-line"></i>
-
-                </div>
-
-
-                <div class="customer-action-card__content">
-
-                    <strong>
-                        Start Smart Buy
-                    </strong>
-
-                    <span>
-                        Find it anywhere, we buy it
-                    </span>
-
-                </div>
-
-
-                <div class="customer-action-card__arrow">
-
-                    <i class="ri-arrow-right-line"></i>
-
-                </div>
-
-            </a>
-
-
-            {{-- Track Shipment --}}
-            <a href="#" class="customer-action-card">
-
-                <div class="customer-action-card__icon shipment">
-
-                    <i class="ri-map-pin-line"></i>
-
-                </div>
-
-
-                <div class="customer-action-card__content">
-
-                    <strong>
-                        Track Shipment
-                    </strong>
-
-                    <span>
-                        Check your delivery status
-                    </span>
-
-                </div>
-
-
-                <div class="customer-action-card__arrow">
-
-                    <i class="ri-arrow-right-line"></i>
-
-                </div>
-
-            </a>
-
-        </div>
-
-
-        {{--=================================
-        Main Dashboard Grid
-        =================================--}}
-        <div class="customer-dashboard__grid">
-
-
-            {{-- Recent Orders --}}
-            <div class="customer-dashboard-card">
-
-                <div class="customer-dashboard-card__header">
-
-                    <div>
-
-                        <h4>
-                            Recent Orders
-                        </h4>
-
-                        <p>
-                            Your latest ecommerce orders.
-                        </p>
-
-                    </div>
-
-
-                    <a href="#">
-
-                        <span>
-                            View All
-                        </span>
-
-                        <i class="ri-arrow-right-line"></i>
-
-                    </a>
-
-                </div>
-
-
-                <div class="customer-table-wrapper">
-
-                    <table class="customer-table">
-
-                        <thead>
-
-                        <tr>
-
-                            <th>
-                                Order
-                            </th>
-
-                            <th>
-                                Date
-                            </th>
-
-                            <th>
-                                Amount
-                            </th>
-
-                            <th>
-                                Status
-                            </th>
-
-                        </tr>
-
-                        </thead>
-
-
-                        <tbody>
-
-
-                        <tr>
-
-                            <td>
-
-                                <strong>
-                                    #BA-10248
-                                </strong>
-
-                            </td>
-
-
-                            <td>
-                                Aug 15, 2026
-                            </td>
-
-
-                            <td>
-
-                                <strong>
-                                    $245.00
-                                </strong>
-
-                            </td>
-
-
-                            <td>
-
-                                <span class="customer-status success">
-
-                                    <i class="ri-checkbox-circle-fill"></i>
-
-                                    Completed
-
-                                </span>
-
-                            </td>
-
-                        </tr>
-
-
-                        <tr>
-
-                            <td>
-
-                                <strong>
-                                    #BA-10247
-                                </strong>
-
-                            </td>
-
-
-                            <td>
-                                Aug 14, 2026
-                            </td>
-
-
-                            <td>
-
-                                <strong>
-                                    $128.50
-                                </strong>
-
-                            </td>
-
-
-                            <td>
-
-                                <span class="customer-status warning">
-
-                                    <i class="ri-time-line"></i>
-
-                                    Processing
-
-                                </span>
-
-                            </td>
-
-                        </tr>
-
-
-                        <tr>
-
-                            <td>
-
-                                <strong>
-                                    #BA-10246
-                                </strong>
-
-                            </td>
-
-
-                            <td>
-                                Aug 12, 2026
-                            </td>
-
-
-                            <td>
-
-                                <strong>
-                                    $560.00
-                                </strong>
-
-                            </td>
-
-
-                            <td>
-
-                                <span class="customer-status info">
-
-                                    <i class="ri-truck-line"></i>
-
-                                    Shipped
-
-                                </span>
-
-                            </td>
-
-                        </tr>
-
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
-
-
-            {{-- My Smart Buy --}}
-            <div class="customer-dashboard-card">
-
-                <div class="customer-dashboard-card__header">
-
-                    <div>
-
-                        <h4>
-                            My Smart Buy
-                        </h4>
-
-                        <p>
-                            Your latest product requests.
-                        </p>
-
-                    </div>
-
-
-                    <a href="#">
-
-                        <span>
-                            View All
-                        </span>
-
-                        <i class="ri-arrow-right-line"></i>
-
-                    </a>
-
-                </div>
-
-
-                <div class="customer-request-list">
-
-
-                    {{-- Request Item --}}
-                    <div class="customer-request-item">
-
-                        <div class="customer-request-item__icon">
-
-                            <i class="ri-shopping-bag-line"></i>
-
-                        </div>
-
-
-                        <div class="customer-request-item__content">
-
-                            <strong>
-                                Nike Air Max 270
-                            </strong>
-
-                            <span>
-                                SB-000125 · Aug 15
-                            </span>
-
-                        </div>
-
-
-                        <span class="customer-status warning">
-                            Quote Ready
-                        </span>
-
-                    </div>
-
-
-                    {{-- Request Item --}}
-                    <div class="customer-request-item">
-
-                        <div class="customer-request-item__icon">
-
-                            <i class="ri-smartphone-line"></i>
-
-                        </div>
-
-
-                        <div class="customer-request-item__content">
-
-                            <strong>
-                                iPhone 16 Pro
-                            </strong>
-
-                            <span>
-                                SB-000124 · Aug 13
-                            </span>
-
-                        </div>
-
-
-                        <span class="customer-status info">
-                            Processing
-                        </span>
-
-                    </div>
-
-
-                    {{-- Request Item --}}
-                    <div class="customer-request-item">
-
-                        <div class="customer-request-item__icon">
-
-                            <i class="ri-t-shirt-line"></i>
-
-                        </div>
-
-
-                        <div class="customer-request-item__content">
-
-                            <strong>
-                                Zara Jacket
-                            </strong>
-
-                            <span>
-                                SB-000123 · Aug 10
-                            </span>
-
-                        </div>
-
-
-                        <span class="customer-status success">
-                            Purchased
-                        </span>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        {{--=================================
-        Active Shipments
-        =================================--}}
-        <div class="customer-dashboard__section">
-
-            <div class="customer-dashboard__section-header">
-
-                <div>
-
-                    <h4>
-                        Active Shipments
-                    </h4>
-
-                    <p>
-                        Track your current deliveries.
+                    <h1 class="customer-dashboard-page__title">
+                        Welcome back, {{ $user->name }}
+                    </h1>
+
+                    <p class="customer-dashboard-page__description">
+                        Manage your orders, track your purchases, and view
+                        your account activity from one place.
                     </p>
-
                 </div>
 
-
-                <a href="#">
-
-                    <span>
-                        View All
-                    </span>
-
-                    <i class="ri-arrow-right-line"></i>
-
-                </a>
-
-            </div>
-
-
-            <div class="customer-shipment-grid">
-
-
-                {{-- Ecommerce Shipment --}}
-                <div class="customer-shipment-card">
-
-                    <div class="customer-shipment-card__header">
-
-                        <div class="customer-shipment-card__icon ecommerce">
-
-                            <i class="ri-shopping-bag-3-line"></i>
-
-                        </div>
-
-
-                        <div class="customer-shipment-card__title">
-
-                            <h5>
-                                Ecommerce Order
-                            </h5>
-
-                            <span>
-                                #BA-10246
-                            </span>
-
-                        </div>
-
-
-                        <span class="customer-status info">
-                            In Transit
-                        </span>
-
-                    </div>
-
-
-                    <div class="customer-shipment-card__route">
-
-                        <div class="customer-shipment-card__location">
-
-                            <span>
-                                From
-                            </span>
-
-                            <strong>
-                                United States
-                            </strong>
-
-                        </div>
-
-
-                        <div class="customer-shipment-card__route-line">
-
-                            <i class="ri-truck-line"></i>
-
-                        </div>
-
-
-                        <div class="customer-shipment-card__location destination">
-
-                            <span>
-                                To
-                            </span>
-
-                            <strong>
-                                Guinea
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="customer-progress">
-
-                        <div class="customer-progress__top">
-
-                            <span>
-                                Shipment Progress
-                            </span>
-
-                            <strong>
-                                65%
-                            </strong>
-
-                        </div>
-
-
-                        <div class="customer-progress__bar">
-
-                            <span style="width: 65%;"></span>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="customer-shipment-card__footer">
-
-                        <span>
-
-                            Tracking:
-
-                            <strong>
-                                BAE-845291
-                            </strong>
-
-                        </span>
-
-
-                        <a href="#">
-
-                            Track
-
-                            <i class="ri-arrow-right-line"></i>
-
-                        </a>
-
-                    </div>
-
+                <div class="customer-dashboard-page__welcome-icon">
+                    <i class="ri-dashboard-line"></i>
                 </div>
+            </section>
 
 
-                {{-- Smart Buy Shipment --}}
-                <div class="customer-shipment-card">
+            {{-- Statistics --}}
+            <section class="customer-dashboard-page__stats">
+                <article class="customer-dashboard-page__stat-card">
+                    <div class="customer-dashboard-page__stat-icon">
+                        <i class="ri-shopping-bag-3-line"></i>
+                    </div>
 
-                    <div class="customer-shipment-card__header">
-
-                        <div class="customer-shipment-card__icon smart-buy">
-
-                            <i class="ri-global-line"></i>
-
-                        </div>
-
-
-                        <div class="customer-shipment-card__title">
-
-                            <h5>
-                                Smart Buy
-                            </h5>
-
-                            <span>
-                                SB-000123
-                            </span>
-
-                        </div>
-
-
-                        <span class="customer-status info">
-                            In Transit
+                    <div class="customer-dashboard-page__stat-content">
+                        <span class="customer-dashboard-page__stat-label">
+                            Total Orders
                         </span>
 
-                    </div>
-
-
-                    <div class="customer-shipment-card__route">
-
-                        <div class="customer-shipment-card__location">
-
-                            <span>
-                                From
-                            </span>
-
-                            <strong>
-                                Turkey
-                            </strong>
-
-                        </div>
-
-
-                        <div class="customer-shipment-card__route-line">
-
-                            <i class="ri-truck-line"></i>
-
-                        </div>
-
-
-                        <div class="customer-shipment-card__location destination">
-
-                            <span>
-                                To
-                            </span>
-
-                            <strong>
-                                Guinea
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="customer-progress">
-
-                        <div class="customer-progress__top">
-
-                            <span>
-                                Shipment Progress
-                            </span>
-
-                            <strong>
-                                42%
-                            </strong>
-
-                        </div>
-
-
-                        <div class="customer-progress__bar">
-
-                            <span style="width: 42%;"></span>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="customer-shipment-card__footer">
-
-                        <span>
-
-                            Tracking:
-
-                            <strong>
-                                SBX-582014
-                            </strong>
-
-                        </span>
-
-
-                        <a href="#">
-
-                            Track
-
-                            <i class="ri-arrow-right-line"></i>
-
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        {{--=================================
-        Bottom Dashboard Grid
-        =================================--}}
-        <div class="customer-dashboard__bottom-grid">
-
-
-            {{-- Pending Payments --}}
-            <div class="customer-dashboard-card">
-
-                <div class="customer-dashboard-card__header">
-
-                    <div>
-
-                        <h4>
-                            Pending Payments
-                        </h4>
-
-                        <p>
-                            Payments that require your attention.
-                        </p>
-
-                    </div>
-
-
-                    <a href="#">
-
-                        <span>
-                            View All
-                        </span>
-
-                        <i class="ri-arrow-right-line"></i>
-
-                    </a>
-
-                </div>
-
-
-                <div class="customer-payment-list">
-
-
-                    {{-- Payment Item --}}
-                    <div class="customer-payment-item">
-
-                        <div class="customer-payment-item__icon">
-
-                            <i class="ri-bank-card-line"></i>
-
-                        </div>
-
-
-                        <div class="customer-payment-item__content">
-
-                            <strong>
-                                Smart Buy Quote
-                            </strong>
-
-                            <span>
-                                SB-000125
-                            </span>
-
-                        </div>
-
-
-                        <div class="customer-payment-item__amount">
-
-                            <strong>
-                                $385.00
-                            </strong>
-
-                            <a href="#">
-                                Pay Now
-                            </a>
-
-                        </div>
-
-                    </div>
-
-
-                    {{-- Payment Item --}}
-                    <div class="customer-payment-item">
-
-                        <div class="customer-payment-item__icon">
-
-                            <i class="ri-bank-card-line"></i>
-
-                        </div>
-
-
-                        <div class="customer-payment-item__content">
-
-                            <strong>
-                                Ecommerce Order
-                            </strong>
-
-                            <span>
-                                #BA-10247
-                            </span>
-
-                        </div>
-
-
-                        <div class="customer-payment-item__amount">
-
-                            <strong>
-                                $128.50
-                            </strong>
-
-                            <a href="#">
-                                Pay Now
-                            </a>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            {{-- Account --}}
-            <div class="customer-dashboard-card">
-
-                <div class="customer-dashboard-card__header">
-
-                    <div>
-
-                        <h4>
-                            Account
-                        </h4>
-
-                        <p>
-                            Manage your account information.
-                        </p>
-
-                    </div>
-
-
-                    <a href="#">
-
-                        <span>
-                            Profile
-                        </span>
-
-                        <i class="ri-arrow-right-line"></i>
-
-                    </a>
-
-                </div>
-
-
-                <div class="customer-account-summary">
-
-                    <div class="customer-account-summary__avatar">
-                        DC
-                    </div>
-
-
-                    <div class="customer-account-summary__content">
-
-                        <strong>
-                            Demo Client
+                        <strong class="customer-dashboard-page__stat-value">
+                            {{ number_format($stats['total_orders']) }}
                         </strong>
+                    </div>
+                </article>
 
-                        <span>
-                            client@gmail.com
-                        </span>
 
-                        <span>
-                            Guinea
-                        </span>
-
+                <article class="customer-dashboard-page__stat-card">
+                    <div class="customer-dashboard-page__stat-icon">
+                        <i class="ri-checkbox-circle-line"></i>
                     </div>
 
-                </div>
-
-
-                <div class="customer-account-links">
-
-                    <a href="#">
-
-                        <span>
-
-                            <i class="ri-user-line"></i>
-
-                            My Profile
-
+                    <div class="customer-dashboard-page__stat-content">
+                        <span class="customer-dashboard-page__stat-label">
+                            Completed
                         </span>
 
-                        <i class="ri-arrow-right-s-line"></i>
+                        <strong class="customer-dashboard-page__stat-value">
+                            {{ number_format($stats['completed_orders']) }}
+                        </strong>
+                    </div>
+                </article>
 
-                    </a>
 
+                <article class="customer-dashboard-page__stat-card">
+                    <div class="customer-dashboard-page__stat-icon">
+                        <i class="ri-time-line"></i>
+                    </div>
 
-                    <a href="#">
-
-                        <span>
-
-                            <i class="ri-notification-3-line"></i>
-
-                            Notifications
-
+                    <div class="customer-dashboard-page__stat-content">
+                        <span class="customer-dashboard-page__stat-label">
+                            Pending
                         </span>
 
-                        <i class="ri-arrow-right-s-line"></i>
+                        <strong class="customer-dashboard-page__stat-value">
+                            {{ number_format($stats['pending_orders']) }}
+                        </strong>
+                    </div>
+                </article>
 
-                    </a>
 
+                <article class="customer-dashboard-page__stat-card">
+                    <div class="customer-dashboard-page__stat-icon">
+                        <i class="ri-wallet-3-line"></i>
+                    </div>
 
-                    <a href="#">
-
-                        <span>
-
-                            <i class="ri-settings-3-line"></i>
-
-                            Account Settings
-
+                    <div class="customer-dashboard-page__stat-content">
+                        <span class="customer-dashboard-page__stat-label">
+                            Total Spent
                         </span>
 
-                        <i class="ri-arrow-right-s-line"></i>
+                        <strong class="customer-dashboard-page__stat-value">
+                            ${{ number_format($stats['total_spent'], 2) }}
+                        </strong>
+                    </div>
+                </article>
+            </section>
 
-                    </a>
 
-                </div>
+            {{-- Main Content --}}
+            <div class="customer-dashboard-page__grid">
+
+                {{-- Recent Orders --}}
+                <section class="customer-dashboard-page__orders">
+                    <div class="customer-dashboard-page__section-header">
+                        <div>
+                            <span class="customer-dashboard-page__section-eyebrow">
+                                Order Activity
+                            </span>
+
+                            <h2 class="customer-dashboard-page__section-title">
+                                Recent Orders
+                            </h2>
+                        </div>
+
+                        <a
+                            href="{{ route('my-orders') }}"
+                            class="customer-dashboard-page__view-link"
+                        >
+                            View All
+                            <i class="ri-arrow-right-line"></i>
+                        </a>
+                    </div>
+
+
+                    @if ($recentOrders->isNotEmpty())
+                        <div class="customer-dashboard-page__table-wrapper">
+                            <table class="customer-dashboard-page__table">
+                                <thead>
+                                <tr>
+                                    <th>Order</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Payment</th>
+                                    <th>Total</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                @foreach ($recentOrders as $order)
+                                    <tr>
+                                        <td>
+                                            <span class="customer-dashboard-page__order-number">
+                                                #{{ $order->order_number }}
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <span class="customer-dashboard-page__date">
+                                                {{ $order->created_at->format('M d, Y') }}
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <span
+                                                class="customer-dashboard-page__badge customer-dashboard-page__badge--{{ $order->status }}"
+                                            >
+                                                {{ ucfirst(str_replace('_', ' ', $order->status)) }}
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <span
+                                                class="customer-dashboard-page__badge customer-dashboard-page__badge--payment-{{ $order->payment_status }}"
+                                            >
+                                                {{ ucfirst(str_replace('_', ' ', $order->payment_status)) }}
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <strong class="customer-dashboard-page__order-total">
+                                                {{ $order->currency }}
+                                                {{ number_format((float) $order->total, 2) }}
+                                            </strong>
+                                        </td>
+
+                                        <td>
+                                            <a
+                                                href="{{ route('my-orders.show', $order->order_number) }}"
+                                                class="customer-dashboard-page__order-link"
+                                                aria-label="View order {{ $order->order_number }}"
+                                            >
+                                                <i class="ri-arrow-right-line"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="customer-dashboard-page__empty">
+                            <div class="customer-dashboard-page__empty-icon">
+                                <i class="ri-shopping-bag-3-line"></i>
+                            </div>
+
+                            <h3 class="customer-dashboard-page__empty-title">
+                                No orders yet
+                            </h3>
+
+                            <p class="customer-dashboard-page__empty-text">
+                                You haven't placed any orders yet.
+                            </p>
+
+                            <a
+                                href="{{ route('shop') }}"
+                                class="customer-dashboard-page__primary-button"
+                            >
+                                Start Shopping
+                                <i class="ri-arrow-right-line"></i>
+                            </a>
+                        </div>
+                    @endif
+                </section>
+
+
+                {{-- Quick Actions --}}
+                <aside class="customer-dashboard-page__sidebar">
+                    <div class="customer-dashboard-page__section-header">
+                        <div>
+                            <span class="customer-dashboard-page__section-eyebrow">
+                                Quick Access
+                            </span>
+
+                            <h2 class="customer-dashboard-page__section-title">
+                                Quick Actions
+                            </h2>
+                        </div>
+                    </div>
+
+                    <div class="customer-dashboard-page__actions">
+                        <a
+                            href="{{ route('my-smart-buy') }}"
+                            class="customer-dashboard-page__action"
+                        >
+                            <span class="customer-dashboard-page__action-icon">
+                                <i class="ri-shopping-basket-2-line"></i>
+                            </span>
+
+                            <span class="customer-dashboard-page__action-content">
+                                <strong>My Smart Buy</strong>
+                                <small>Manage your Smart Buy requests</small>
+                            </span>
+
+                            <i class="ri-arrow-right-s-line"></i>
+                        </a>
+
+                        <a
+                            href="{{ route('my-orders') }}"
+                            class="customer-dashboard-page__action"
+                        >
+                            <span class="customer-dashboard-page__action-icon">
+                                <i class="ri-shopping-bag-3-line"></i>
+                            </span>
+
+                            <span class="customer-dashboard-page__action-content">
+                                <strong>My Orders</strong>
+                                <small>View your order history</small>
+                            </span>
+
+                            <i class="ri-arrow-right-s-line"></i>
+                        </a>
+
+
+                        <a
+                            href="{{ route('shop') }}"
+                            class="customer-dashboard-page__action"
+                        >
+                            <span class="customer-dashboard-page__action-icon">
+                                <i class="ri-store-2-line"></i>
+                            </span>
+
+                            <span class="customer-dashboard-page__action-content">
+                                <strong>Continue Shopping</strong>
+                                <small>Explore our latest products</small>
+                            </span>
+
+                            <i class="ri-arrow-right-s-line"></i>
+                        </a>
+
+
+                        <a
+                            href="{{ route('profile') }}"
+                            class="customer-dashboard-page__action"
+                        >
+                            <span class="customer-dashboard-page__action-icon">
+                                <i class="ri-user-settings-line"></i>
+                            </span>
+
+                            <span class="customer-dashboard-page__action-content">
+                                <strong>Account Settings</strong>
+                                <small>Manage your profile</small>
+                            </span>
+
+                            <i class="ri-arrow-right-s-line"></i>
+                        </a>
+                    </div>
+                </aside>
+
+
+                {{-- Recent My Requests --}}
+                <section class="customer-dashboard-page__requests">
+                    <div class="customer-dashboard-page__section-header">
+                        <div>
+                            <span class="customer-dashboard-page__section-eyebrow">
+                                Smart Buy Activity
+                            </span>
+
+                            <h2 class="customer-dashboard-page__section-title">
+                                Recent My Requests
+                            </h2>
+                        </div>
+
+                        <a
+                            href="{{ route('my-smart-buy') }}"
+                            class="customer-dashboard-page__view-link"
+                        >
+                            View All
+                            <i class="ri-arrow-right-line"></i>
+                        </a>
+                    </div>
+
+
+                    @if ($recentSmartBuyRequests->isNotEmpty())
+                        <div class="customer-dashboard-page__table-wrapper">
+                            <table class="customer-dashboard-page__table">
+                                <thead>
+                                <tr>
+                                    <th>Request</th>
+                                    <th>Date</th>
+                                    <th>Items</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                @foreach ($recentSmartBuyRequests as $request)
+                                    <tr>
+                                        <td>
+                                            <span class="customer-dashboard-page__order-number">
+                                                #{{ $request->request_number }}
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <span class="customer-dashboard-page__date">
+                                                {{ $request->created_at->format('M d, Y') }}
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <span class="customer-dashboard-page__request-items">
+                                                {{ $request->items_count }}
+                                                {{ $request->items_count === 1 ? 'Item' : 'Items' }}
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <span
+                                                class="customer-dashboard-page__badge customer-dashboard-page__badge--{{ $request->status }}"
+                                            >
+                                                {{ ucfirst(str_replace('_', ' ', $request->status)) }}
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <a
+                                                href="{{ route('my-smart-buy.details', $request->id) }}"
+                                                class="customer-dashboard-page__order-link"
+                                                aria-label="View request {{ $request->request_number }}"
+                                            >
+                                                <i class="ri-arrow-right-line"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="customer-dashboard-page__empty">
+                            <div class="customer-dashboard-page__empty-icon">
+                                <i class="ri-shopping-basket-2-line"></i>
+                            </div>
+
+                            <h3 class="customer-dashboard-page__empty-title">
+                                No Smart Buy requests yet
+                            </h3>
+
+                            <p class="customer-dashboard-page__empty-text">
+                                Your recent Smart Buy requests will appear here.
+                            </p>
+
+                            <a
+                                href="{{ route('my-smart-buy') }}"
+                                class="customer-dashboard-page__primary-button"
+                            >
+                                Create Smart Buy Request
+                                <i class="ri-arrow-right-line"></i>
+                            </a>
+                        </div>
+                    @endif
+                </section>
 
             </div>
 
         </div>
-
     </div>
-
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dashboard = document.querySelector(
+                '.customer-dashboard-page'
+            );
+
+            if (!dashboard) {
+                return;
+            }
+
+            const actionLinks = dashboard.querySelectorAll(
+                '.customer-dashboard-page__action'
+            );
+
+            actionLinks.forEach((link) => {
+                link.addEventListener('mouseenter', () => {
+                    link.classList.add(
+                        'customer-dashboard-page__action--active'
+                    );
+                });
+
+                link.addEventListener('mouseleave', () => {
+                    link.classList.remove(
+                        'customer-dashboard-page__action--active'
+                    );
+                });
+            });
+        });
+    </script>
+@endpush

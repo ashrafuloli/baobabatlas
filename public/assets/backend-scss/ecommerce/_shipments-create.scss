@@ -266,7 +266,7 @@
         @include transition(0.25s);
 
         &:hover {
-            border-color: darken($hr-color, 7%);
+            border-color: argb($hr-color, 0.7);
         }
 
         &:focus {

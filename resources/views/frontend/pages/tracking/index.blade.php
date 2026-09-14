@@ -6,7 +6,7 @@
 
         {{-- ==========================================================
         | Hero
-        ========================================================== --}}
+        =========================================================== --}}
 
         <div
             class="c-hero-section"
@@ -34,9 +34,7 @@
                                 <li>
 
                                     <span class="arrow">
-
                                         <i class="ri-arrow-right-line"></i>
-
                                     </span>
 
                                 </li>
@@ -69,7 +67,7 @@
 
         {{-- ==========================================================
         | Tracking Search
-        ========================================================== --}}
+        =========================================================== --}}
 
         <section class="tracking-section">
 
@@ -92,7 +90,9 @@
                         </div>
 
 
-                        {{-- Error Message --}}
+                        {{-- ==================================================
+                        | Error Message
+                        ================================================== --}}
 
                         @if(session('error'))
 
@@ -109,7 +109,28 @@
                         @endif
 
 
-                        {{-- Tracking Form --}}
+                        {{-- ==================================================
+                        | Success Message
+                        ================================================== --}}
+
+                        @if(session('success'))
+
+                            <div class="tracking-alert tracking-alert--success">
+
+                                <i class="ri-checkbox-circle-line"></i>
+
+                                <span>
+                                    {{ session('success') }}
+                                </span>
+
+                            </div>
+
+                        @endif
+
+
+                        {{-- ==================================================
+                        | Tracking Form
+                        ================================================== --}}
 
                         <form
                             class="tracking-form"
@@ -125,14 +146,20 @@
 
                                 <input
                                     type="text"
-                                    name="request_number"
-                                    id="requestNumber"
-                                    value="{{ old('request_number', $smartBuy?->request_number) }}"
-                                    placeholder="Enter your Smart Buy number"
+                                    name="tracking_number"
+                                    id="trackingNumber"
+                                    value="{{ old('tracking_number', old('request_number')) }}"
+                                    placeholder="Enter your order or Smart Buy number"
                                     autocomplete="off"
+                                    maxlength="255"
+                                    required
                                 >
 
-                                @if($smartBuy && $shipment)
+
+                                @if(
+                                    isset($trackingType)
+                                    && $trackingType
+                                )
 
                                     <button
                                         type="button"
@@ -166,20 +193,48 @@
                         </form>
 
 
-                        @error('request_number')
+                        {{-- ==================================================
+                        | Validation Error
+                        ================================================== --}}
+
+                        @error('tracking_number')
 
                         <div class="tracking-validation-error">
 
-                            {{ $message }}
+                            <i class="ri-error-warning-line"></i>
+
+                            <span>
+                                    {{ $message }}
+                                </span>
 
                         </div>
 
                         @enderror
 
 
-                        {{-- Search Again / Reset --}}
+                        @error('request_number')
 
-                        @if($smartBuy && $shipment)
+                        <div class="tracking-validation-error">
+
+                            <i class="ri-error-warning-line"></i>
+
+                            <span>
+                                    {{ $message }}
+                                </span>
+
+                        </div>
+
+                        @enderror
+
+
+                        {{-- ==================================================
+                        | Search Again
+                        ================================================== --}}
+
+                        @if(
+                            isset($trackingType)
+                            && $trackingType
+                        )
 
                             <div class="tracking-search-actions">
 
@@ -222,14 +277,905 @@
 
 
         {{-- ==========================================================
-        | Tracking Result
-        ========================================================== --}}
+        | E-commerce Order Tracking
+        =========================================================== --}}
 
-        @if($smartBuy && $shipment)
+        @if(
+            isset($trackingType)
+            && $trackingType === 'order'
+            && isset($order)
+            && $order
+        )
 
             @php
 
-                $shipmentSteps = [
+                /*
+                |--------------------------------------------------------------------------
+                | Order Shipment
+                |--------------------------------------------------------------------------
+                */
+
+                $orderShipment = $orderShipment ?? $order->shipment;
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Current Order Status
+                |--------------------------------------------------------------------------
+                |
+                | IMPORTANT:
+                |
+                | E-commerce tracking is controlled ONLY by Order::status.
+                |
+                | Shipment status and delivery status do not override the
+                | order progress.
+                |
+                */
+
+                $currentOrderStatus = strtolower(
+                    trim((string) $order->status)
+                );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Order Progress Steps
+                |--------------------------------------------------------------------------
+                */
+
+                $orderSteps = [
+
+                    [
+                        'status' =>
+                            \App\Models\Order::STATUS_PENDING,
+
+                        'title' =>
+                            'Order Pending',
+
+                        'description' =>
+                            'Your order has been received and is awaiting processing.',
+
+                        'icon' =>
+                            'ri-time-line',
+                    ],
+
+                    [
+                        'status' =>
+                            \App\Models\Order::STATUS_PAID,
+
+                        'title' =>
+                            'Order Paid',
+
+                        'description' =>
+                            'Your order has been successfully confirmed.',
+
+                        'icon' =>
+                            'ri-checkbox-circle-line',
+                    ],
+
+                    [
+                        'status' =>
+                            \App\Models\Order::STATUS_PROCESSING,
+
+                        'title' =>
+                            'Processing',
+
+                        'description' =>
+                            'Your order is currently being processed.',
+
+                        'icon' =>
+                            'ri-loader-4-line',
+                    ],
+
+                    [
+                        'status' =>
+                            \App\Models\Order::STATUS_SHIPPED,
+
+                        'title' =>
+                            'Shipped',
+
+                        'description' =>
+                            'Your order has been handed over to the carrier.',
+
+                        'icon' =>
+                            'ri-truck-line',
+                    ],
+
+                    [
+                        'status' =>
+                            \App\Models\Order::STATUS_IN_TRANSIT,
+
+                        'title' =>
+                            'In Transit',
+
+                        'description' =>
+                            'Your shipment is currently on the way.',
+
+                        'icon' =>
+                            'ri-road-map-line',
+                    ],
+
+                    [
+                        'status' =>
+                            \App\Models\Order::STATUS_OUT_FOR_DELIVERY,
+
+                        'title' =>
+                            'Out for Delivery',
+
+                        'description' =>
+                            'Your shipment is out for delivery.',
+
+                        'icon' =>
+                            'ri-map-pin-line',
+                    ],
+
+                    [
+                        'status' =>
+                            \App\Models\Order::STATUS_DELIVERED,
+
+                        'title' =>
+                            'Delivered',
+
+                        'description' =>
+                            'Your order has been successfully delivered.',
+
+                        'icon' =>
+                            'ri-checkbox-circle-line',
+                    ],
+
+                    [
+                        'status' =>
+                            \App\Models\Order::STATUS_COMPLETED,
+
+                        'title' =>
+                            'Completed',
+
+                        'description' =>
+                            'Your order has been completed successfully.',
+
+                        'icon' =>
+                            'ri-check-double-line',
+                    ],
+
+                ];
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Cancelled / Failed
+                |--------------------------------------------------------------------------
+                */
+
+                $isCancelled =
+                    $currentOrderStatus ===
+                    \App\Models\Order::STATUS_CANCELLED;
+
+
+                $isFailed =
+                    $currentOrderStatus ===
+                    \App\Models\Order::STATUS_FAILED;
+
+
+                $isTerminal =
+                    $isCancelled
+                    || $isFailed;
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Find Current Step
+                |--------------------------------------------------------------------------
+                */
+
+                $currentStep = collect($orderSteps)
+                    ->search(
+                        fn (array $step): bool =>
+                            $step['status'] === $currentOrderStatus
+                    );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Fallback
+                |--------------------------------------------------------------------------
+                */
+
+                if ($currentStep === false) {
+
+                    $currentStep = 0;
+
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Last Step
+                |--------------------------------------------------------------------------
+                */
+
+                $lastStep =
+                    count($orderSteps) - 1;
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Progress Percentage
+                |--------------------------------------------------------------------------
+                */
+
+                $progressPercentage =
+                    !$isTerminal
+                    && $lastStep > 0
+                        ? (
+                            $currentStep
+                            /
+                            $lastStep
+                        ) * 100
+                        : 0;
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Current Status Title
+                |--------------------------------------------------------------------------
+                */
+
+                $currentStatusTitle =
+                    $orderSteps[$currentStep]['title'];
+
+
+                if ($isCancelled) {
+
+                    $currentStatusTitle =
+                        'Order Cancelled';
+
+                }
+
+
+                if ($isFailed) {
+
+                    $currentStatusTitle =
+                        'Order Failed';
+
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Status CSS Class
+                |--------------------------------------------------------------------------
+                */
+
+                $statusClass =
+                    str_replace(
+                        '_',
+                        '-',
+                        $currentOrderStatus
+                    );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Payment Status
+                |--------------------------------------------------------------------------
+                */
+
+                $paymentStatus =
+                    strtolower(
+                        trim(
+                            (string) $order->payment_status
+                        )
+                    );
+
+
+                $paymentStatusLabel =
+                    ucfirst(
+                        str_replace(
+                            '_',
+                            ' ',
+                            $paymentStatus
+                        )
+                    );
+
+            @endphp
+
+
+            <section
+                class="tracking-result-section"
+                id="trackingResult"
+            >
+
+                <div class="container">
+
+
+                    {{-- ======================================================
+                    | Result Header
+                    ====================================================== --}}
+
+                    <div class="tracking-result-header">
+
+                        <div>
+
+                            <span class="subtitle">
+                                E-COMMERCE ORDER
+                            </span>
+
+                            <h2>
+                                Your Order Progress
+                            </h2>
+
+                        </div>
+
+
+                        <div class="tracking-result-header__actions">
+
+                            <div
+                                class="
+                                    tracking-status-badge
+                                    tracking-status-badge--{{ $statusClass }}
+                                "
+                            >
+
+                                {{ $currentStatusTitle }}
+
+                            </div>
+
+
+                            <a
+                                href="{{ route('tracking') }}"
+                                class="tracking-result-reset-btn"
+                            >
+
+                                <i class="ri-refresh-line"></i>
+
+                                New Search
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+
+                    {{-- ======================================================
+                    | Order Information
+                    ====================================================== --}}
+
+                    <div class="tracking-number-card">
+
+
+                        <div class="tracking-number-card__item">
+
+                            <span>
+                                Order Number
+                            </span>
+
+                            <strong>
+                                {{ $order->order_number }}
+                            </strong>
+
+                        </div>
+
+
+                        @if(
+                            $orderShipment
+                            && $orderShipment->tracking_number
+                        )
+
+                            <div class="tracking-number-card__item">
+
+                                <span>
+                                    Tracking Number
+                                </span>
+
+                                <strong>
+                                    {{ $orderShipment->tracking_number }}
+                                </strong>
+
+                            </div>
+
+                        @endif
+
+
+                        @if($order->created_at)
+
+                            <div class="tracking-number-card__item">
+
+                                <span>
+                                    Order Date
+                                </span>
+
+                                <strong>
+                                    {{ $order->created_at->format('d M Y') }}
+                                </strong>
+
+                            </div>
+
+                        @endif
+
+                    </div>
+
+
+                    {{-- ======================================================
+                    | Order Progress
+                    ====================================================== --}}
+
+                    <div class="tracking-progress">
+
+
+                        <div class="tracking-progress__top">
+
+                            <span>
+                                Order Progress
+                            </span>
+
+
+                            @if(!$isTerminal)
+
+                                <strong>
+                                    {{ round($progressPercentage) }}%
+                                </strong>
+
+                            @endif
+
+                        </div>
+
+
+                        @if(!$isTerminal)
+
+                            <div class="tracking-progress__line">
+
+                                <div
+                                    class="tracking-progress__active"
+                                    style="width: {{ $progressPercentage }}%"
+                                ></div>
+
+                            </div>
+
+
+                            <div class="tracking-progress__steps">
+
+                                @foreach(
+                                    $orderSteps
+                                    as $index => $step
+                                )
+
+                                    @php
+
+                                        $isCompleted =
+                                            $index < $currentStep;
+
+                                        $isCurrent =
+                                            $index === $currentStep;
+
+                                    @endphp
+
+
+                                    <div
+                                        class="
+                                            tracking-step
+                                            {{ $isCompleted ? 'is-completed' : '' }}
+                                            {{ $isCurrent ? 'is-current' : '' }}
+                                        "
+                                    >
+
+                                        <div class="tracking-step__icon">
+
+                                            @if($isCompleted)
+
+                                                <i class="ri-check-line"></i>
+
+                                            @else
+
+                                                <i
+                                                    class="{{ $step['icon'] }}"
+                                                ></i>
+
+                                            @endif
+
+                                        </div>
+
+
+                                        <h4>
+                                            {{ $step['title'] }}
+                                        </h4>
+
+
+                                        <p>
+                                            {{ $step['description'] }}
+                                        </p>
+
+                                    </div>
+
+                                @endforeach
+
+                            </div>
+
+                        @elseif($isCancelled)
+
+                            <div class="tracking-alert tracking-alert--danger">
+
+                                <i class="ri-close-circle-line"></i>
+
+                                <span>
+                                    This order has been cancelled.
+                                </span>
+
+                            </div>
+
+                        @elseif($isFailed)
+
+                            <div class="tracking-alert tracking-alert--danger">
+
+                                <i class="ri-error-warning-line"></i>
+
+                                <span>
+                                    There was a problem processing this order.
+                                </span>
+
+                            </div>
+
+                        @endif
+
+                    </div>
+
+
+                    {{-- ======================================================
+                    | Order Details
+                    ====================================================== --}}
+
+                    <div class="tracking-details-grid">
+
+
+                        {{-- ==================================================
+                        | Order Information
+                        ================================================== --}}
+
+                        <div class="tracking-details-card">
+
+                            <h3>
+                                Order Information
+                            </h3>
+
+
+                            <div class="tracking-detail-row">
+
+                                <span>
+                                    Order Number
+                                </span>
+
+                                <strong>
+                                    {{ $order->order_number }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="tracking-detail-row">
+
+                                <span>
+                                    Order Status
+                                </span>
+
+                                <strong>
+                                    {{ $currentStatusTitle }}
+                                </strong>
+
+                            </div>
+
+
+                            @if($order->created_at)
+
+                                <div class="tracking-detail-row">
+
+                                    <span>
+                                        Order Date
+                                    </span>
+
+                                    <strong>
+                                        {{ $order->created_at->format('d M Y') }}
+                                    </strong>
+
+                                </div>
+
+                            @endif
+
+
+                            <div class="tracking-detail-row">
+
+                                <span>
+                                    Payment Status
+                                </span>
+
+                                <strong>
+                                    {{ $paymentStatusLabel }}
+                                </strong>
+
+                            </div>
+
+
+                            @if(isset($order->total))
+
+                                <div class="tracking-detail-row">
+
+                                    <span>
+                                        Order Total
+                                    </span>
+
+                                    <strong>
+                                        {{ $order->currency ?? 'USD' }}
+                                        {{ number_format((float) $order->total, 2) }}
+                                    </strong>
+
+                                </div>
+
+                            @endif
+
+                        </div>
+
+
+                        {{-- ==================================================
+                        | Shipment Information
+                        ================================================== --}}
+
+                        <div class="tracking-details-card">
+
+                            <h3>
+                                Shipment Information
+                            </h3>
+
+
+                            @if($orderShipment)
+
+                                @if($orderShipment->shipment_number)
+
+                                    <div class="tracking-detail-row">
+
+                                        <span>
+                                            Shipment Number
+                                        </span>
+
+                                        <strong>
+                                            {{ $orderShipment->shipment_number }}
+                                        </strong>
+
+                                    </div>
+
+                                @endif
+
+
+                                @if($orderShipment->tracking_number)
+
+                                    <div class="tracking-detail-row">
+
+                                        <span>
+                                            Tracking Number
+                                        </span>
+
+                                        <strong>
+                                            {{ $orderShipment->tracking_number }}
+                                        </strong>
+
+                                    </div>
+
+                                @endif
+
+
+                                @if($orderShipment->carrier)
+
+                                    <div class="tracking-detail-row">
+
+                                        <span>
+                                            Carrier
+                                        </span>
+
+                                        <strong>
+                                            {{ $orderShipment->carrier }}
+                                        </strong>
+
+                                    </div>
+
+                                @endif
+
+
+                                @if($orderShipment->shipping_method)
+
+                                    <div class="tracking-detail-row">
+
+                                        <span>
+                                            Shipping Method
+                                        </span>
+
+                                        <strong>
+                                            {{ $orderShipment->shipping_method }}
+                                        </strong>
+
+                                    </div>
+
+                                @endif
+
+
+                                @if($orderShipment->shipped_at)
+
+                                    <div class="tracking-detail-row">
+
+                                        <span>
+                                            Shipped Date
+                                        </span>
+
+                                        <strong>
+                                            {{ \Carbon\Carbon::parse(
+                                                $orderShipment->shipped_at
+                                            )->format('d M Y') }}
+                                        </strong>
+
+                                    </div>
+
+                                @endif
+
+
+                                @if($orderShipment->estimated_delivery_at)
+
+                                    <div class="tracking-detail-row">
+
+                                        <span>
+                                            Estimated Delivery
+                                        </span>
+
+                                        <strong>
+                                            {{ \Carbon\Carbon::parse(
+                                                $orderShipment->estimated_delivery_at
+                                            )->format('d M Y') }}
+                                        </strong>
+
+                                    </div>
+
+                                @endif
+
+
+                                @if($orderShipment->delivered_at)
+
+                                    <div class="tracking-detail-row">
+
+                                        <span>
+                                            Delivered Date
+                                        </span>
+
+                                        <strong>
+                                            {{ \Carbon\Carbon::parse(
+                                                $orderShipment->delivered_at
+                                            )->format('d M Y') }}
+                                        </strong>
+
+                                    </div>
+
+                                @endif
+
+
+                                @if($orderShipment->status)
+
+                                    <div class="tracking-detail-row">
+
+                                        <span>
+                                            Shipment Status
+                                        </span>
+
+                                        <strong>
+                                            {{ ucfirst(
+                                                str_replace(
+                                                    '_',
+                                                    ' ',
+                                                    $orderShipment->status
+                                                )
+                                            ) }}
+                                        </strong>
+
+                                    </div>
+
+                                @endif
+
+
+                                @if($orderShipment->delivery_status)
+
+                                    <div class="tracking-detail-row">
+
+                                        <span>
+                                            Delivery Status
+                                        </span>
+
+                                        <strong>
+                                            {{ ucfirst(
+                                                str_replace(
+                                                    '_',
+                                                    ' ',
+                                                    $orderShipment->delivery_status
+                                                )
+                                            ) }}
+                                        </strong>
+
+                                    </div>
+
+                                @endif
+
+                            @else
+
+                                <div class="tracking-not-available">
+
+                                    <div class="tracking-not-available__icon">
+
+                                        <i class="ri-truck-line"></i>
+
+                                    </div>
+
+                                    <p>
+                                        Shipment information is not available yet.
+                                    </p>
+
+                                </div>
+
+                            @endif
+
+                        </div>
+
+                    </div>
+
+
+                    {{-- ======================================================
+                    | Shipment Notes
+                    ====================================================== --}}
+
+                    @if(
+                        $orderShipment
+                        && $orderShipment->notes
+                    )
+
+                        <div class="tracking-notes">
+
+                            <h3>
+
+                                <i class="ri-information-line"></i>
+
+                                Shipment Notes
+
+                            </h3>
+
+                            <p>
+                                {{ $orderShipment->notes }}
+                            </p>
+
+                        </div>
+
+                    @endif
+
+                </div>
+
+            </section>
+
+        @endif
+
+
+        {{-- ==========================================================
+        | Smart Buy Tracking
+        =========================================================== --}}
+
+        @if(
+            isset($trackingType)
+            && $trackingType === 'smart-buy'
+            && isset($smartBuy)
+            && isset($shipment)
+            && $smartBuy
+            && $shipment
+        )
+
+            @php
+
+                /*
+                |--------------------------------------------------------------------------
+                | Smart Buy Shipment Steps
+                |--------------------------------------------------------------------------
+                */
+
+                $smartBuySteps = [
 
                     [
                         'status' =>
@@ -239,7 +1185,7 @@
                             'Shipment Pending',
 
                         'description' =>
-                            'Your shipment is being prepared.',
+                            'Your shipment is awaiting preparation.',
 
                         'icon' =>
                             'ri-time-line',
@@ -250,7 +1196,7 @@
                             \App\Models\SmartBuyShipment::STATUS_PREPARING,
 
                         'title' =>
-                            'Preparing Shipment',
+                            'Preparing',
 
                         'description' =>
                             'Your order is being prepared for dispatch.',
@@ -318,24 +1264,103 @@
                 ];
 
 
-                $currentStep = collect($shipmentSteps)
-                    ->search(
-                        fn ($step) =>
-                            $step['status'] === $shipment->status
+                /*
+                |--------------------------------------------------------------------------
+                | Current Smart Buy Status
+                |--------------------------------------------------------------------------
+                */
+
+                $currentShipmentStatus =
+                    strtolower(
+                        trim(
+                            (string) $shipment->status
+                        )
                     );
 
 
-                if ($currentStep === false) {
+                /*
+                |--------------------------------------------------------------------------
+                | Cancelled
+                |--------------------------------------------------------------------------
+                */
 
-                    $currentStep = 0;
+                $isSmartBuyCancelled =
+                    $currentShipmentStatus ===
+                    \App\Models\SmartBuyShipment::STATUS_CANCELLED;
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Find Current Step
+                |--------------------------------------------------------------------------
+                */
+
+                $smartBuyCurrentStep = collect($smartBuySteps)
+                    ->search(
+                        fn (array $step): bool =>
+                            $step['status'] ===
+                            $currentShipmentStatus
+                    );
+
+
+                if ($smartBuyCurrentStep === false) {
+
+                    $smartBuyCurrentStep = 0;
 
                 }
 
 
-                $progressPercentage =
-                    count($shipmentSteps) > 1
-                        ? ($currentStep / (count($shipmentSteps) - 1)) * 100
+                /*
+                |--------------------------------------------------------------------------
+                | Progress
+                |--------------------------------------------------------------------------
+                */
+
+                $smartBuyLastStep =
+                    count($smartBuySteps) - 1;
+
+
+                $smartBuyProgressPercentage =
+                    !$isSmartBuyCancelled
+                    && $smartBuyLastStep > 0
+                        ? (
+                            $smartBuyCurrentStep
+                            /
+                            $smartBuyLastStep
+                        ) * 100
                         : 0;
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Current Status Title
+                |--------------------------------------------------------------------------
+                */
+
+                $smartBuyCurrentStatusTitle =
+                    $smartBuySteps[$smartBuyCurrentStep]['title'];
+
+
+                if ($isSmartBuyCancelled) {
+
+                    $smartBuyCurrentStatusTitle =
+                        'Shipment Cancelled';
+
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Status CSS Class
+                |--------------------------------------------------------------------------
+                */
+
+                $smartBuyStatusClass =
+                    str_replace(
+                        '_',
+                        '-',
+                        $currentShipmentStatus
+                    );
 
             @endphp
 
@@ -348,14 +1373,16 @@
                 <div class="container">
 
 
-                    {{-- Result Header --}}
+                    {{-- ======================================================
+                    | Result Header
+                    ====================================================== --}}
 
                     <div class="tracking-result-header">
 
                         <div>
 
                             <span class="subtitle">
-                                SHIPMENT STATUS
+                                SMART BUY
                             </span>
 
                             <h2>
@@ -367,9 +1394,14 @@
 
                         <div class="tracking-result-header__actions">
 
-                            <div class="tracking-status-badge">
+                            <div
+                                class="
+                                    tracking-status-badge
+                                    tracking-status-badge--{{ $smartBuyStatusClass }}
+                                "
+                            >
 
-                                {{ $shipmentSteps[$currentStep]['title'] }}
+                                {{ $smartBuyCurrentStatusTitle }}
 
                             </div>
 
@@ -390,7 +1422,9 @@
                     </div>
 
 
-                    {{-- Tracking Numbers --}}
+                    {{-- ======================================================
+                    | Smart Buy Information
+                    ====================================================== --}}
 
                     <div class="tracking-number-card">
 
@@ -406,23 +1440,6 @@
                             </strong>
 
                         </div>
-
-
-                        @if($shipment->shipment_number)
-
-                            <div class="tracking-number-card__item">
-
-                                <span>
-                                    Shipment Number
-                                </span>
-
-                                <strong>
-                                    {{ $shipment->shipment_number }}
-                                </strong>
-
-                            </div>
-
-                        @endif
 
 
                         @if($shipment->tracking_number)
@@ -441,11 +1458,28 @@
 
                         @endif
 
+
+                        @if($smartBuy->created_at)
+
+                            <div class="tracking-number-card__item">
+
+                                <span>
+                                    Request Date
+                                </span>
+
+                                <strong>
+                                    {{ $smartBuy->created_at->format('d M Y') }}
+                                </strong>
+
+                            </div>
+
+                        @endif
+
                     </div>
 
 
                     {{-- ======================================================
-                    | Progress
+                    | Smart Buy Progress
                     ====================================================== --}}
 
                     <div class="tracking-progress">
@@ -457,78 +1491,163 @@
                                 Shipment Progress
                             </span>
 
-                            <strong>
-                                {{ round($progressPercentage) }}%
-                            </strong>
+
+                            @if(!$isSmartBuyCancelled)
+
+                                <strong>
+                                    {{ round($smartBuyProgressPercentage) }}%
+                                </strong>
+
+                            @endif
 
                         </div>
 
 
-                        <div class="tracking-progress__line">
+                        @if(!$isSmartBuyCancelled)
 
-                            <div
-                                class="tracking-progress__active"
-                                style="width: {{ $progressPercentage }}%"
-                            ></div>
-
-                        </div>
-
-
-                        <div class="tracking-progress__steps">
-
-                            @foreach($shipmentSteps as $index => $step)
-
-                                @php
-
-                                    $isCompleted =
-                                        $index < $currentStep;
-
-                                    $isCurrent =
-                                        $index === $currentStep;
-
-                                @endphp
-
+                            <div class="tracking-progress__line">
 
                                 <div
-                                    class="tracking-step
-                                    {{ $isCompleted ? 'is-completed' : '' }}
-                                    {{ $isCurrent ? 'is-current' : '' }}"
-                                >
+                                    class="tracking-progress__active"
+                                    style="width: {{ $smartBuyProgressPercentage }}%"
+                                ></div>
 
-                                    <div class="tracking-step__icon">
+                            </div>
 
-                                        <i
-                                            class="{{ $step['icon'] }}"
-                                        ></i>
+
+                            <div class="tracking-progress__steps">
+
+                                @foreach(
+                                    $smartBuySteps
+                                    as $index => $step
+                                )
+
+                                    @php
+
+                                        $isCompleted =
+                                            $index < $smartBuyCurrentStep;
+
+                                        $isCurrent =
+                                            $index === $smartBuyCurrentStep;
+
+                                    @endphp
+
+
+                                    <div
+                                        class="
+                                            tracking-step
+                                            {{ $isCompleted ? 'is-completed' : '' }}
+                                            {{ $isCurrent ? 'is-current' : '' }}
+                                        "
+                                    >
+
+                                        <div class="tracking-step__icon">
+
+                                            @if($isCompleted)
+
+                                                <i class="ri-check-line"></i>
+
+                                            @else
+
+                                                <i
+                                                    class="{{ $step['icon'] }}"
+                                                ></i>
+
+                                            @endif
+
+                                        </div>
+
+
+                                        <h4>
+                                            {{ $step['title'] }}
+                                        </h4>
+
+
+                                        <p>
+                                            {{ $step['description'] }}
+                                        </p>
 
                                     </div>
 
+                                @endforeach
 
-                                    <h4>
-                                        {{ $step['title'] }}
-                                    </h4>
+                            </div>
 
+                        @else
 
-                                    <p>
-                                        {{ $step['description'] }}
-                                    </p>
+                            <div class="tracking-alert tracking-alert--danger">
 
-                                </div>
+                                <i class="ri-close-circle-line"></i>
 
-                            @endforeach
+                                <span>
+                                    This shipment has been cancelled.
+                                </span>
 
-                        </div>
+                            </div>
+
+                        @endif
 
                     </div>
 
 
                     {{-- ======================================================
-                    | Shipment Details
+                    | Smart Buy Shipment Details
                     ====================================================== --}}
 
                     <div class="tracking-details-grid">
 
-                        {{-- Shipment Information --}}
+
+                        <div class="tracking-details-card">
+
+                            <h3>
+                                Smart Buy Information
+                            </h3>
+
+
+                            <div class="tracking-detail-row">
+
+                                <span>
+                                    Smart Buy Number
+                                </span>
+
+                                <strong>
+                                    {{ $smartBuy->request_number }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="tracking-detail-row">
+
+                                <span>
+                                    Shipment Status
+                                </span>
+
+                                <strong>
+                                    {{ $smartBuyCurrentStatusTitle }}
+                                </strong>
+
+                            </div>
+
+
+                            @if($smartBuy->created_at)
+
+                                <div class="tracking-detail-row">
+
+                                    <span>
+                                        Request Date
+                                    </span>
+
+                                    <strong>
+                                        {{ $smartBuy->created_at->format('d M Y') }}
+                                    </strong>
+
+                                </div>
+
+                            @endif
+
+                        </div>
+
 
                         <div class="tracking-details-card">
 
@@ -536,8 +1655,6 @@
                                 Shipment Information
                             </h3>
 
-
-                            {{-- Shipment Number --}}
 
                             @if($shipment->shipment_number)
 
@@ -556,7 +1673,22 @@
                             @endif
 
 
-                            {{-- Carrier --}}
+                            @if($shipment->tracking_number)
+
+                                <div class="tracking-detail-row">
+
+                                    <span>
+                                        Tracking Number
+                                    </span>
+
+                                    <strong>
+                                        {{ $shipment->tracking_number }}
+                                    </strong>
+
+                                </div>
+
+                            @endif
+
 
                             @if($shipment->carrier)
 
@@ -575,8 +1707,6 @@
                             @endif
 
 
-                            {{-- Shipping Method --}}
-
                             @if($shipment->shipping_method)
 
                                 <div class="tracking-detail-row">
@@ -594,8 +1724,6 @@
                             @endif
 
 
-                            {{-- Shipped Date --}}
-
                             @if($shipment->shipped_at)
 
                                 <div class="tracking-detail-row">
@@ -605,34 +1733,28 @@
                                     </span>
 
                                     <strong>
-                                        {{
-                                            \Carbon\Carbon::parse(
-                                                $shipment->shipped_at
-                                            )->format('d M Y')
-                                        }}
+                                        {{ \Carbon\Carbon::parse(
+                                            $shipment->shipped_at
+                                        )->format('d M Y') }}
                                     </strong>
 
                                 </div>
 
                             @endif
 
-
-                            {{-- Estimated Delivery --}}
 
                             @if($shipment->estimated_delivery_at)
 
                                 <div class="tracking-detail-row">
 
-                <span>
-                    Estimated Delivery
-                </span>
+                                    <span>
+                                        Estimated Delivery
+                                    </span>
 
                                     <strong>
-                                        {{
-                                            \Carbon\Carbon::parse(
-                                                $shipment->estimated_delivery_at
-                                            )->format('d M Y')
-                                        }}
+                                        {{ \Carbon\Carbon::parse(
+                                            $shipment->estimated_delivery_at
+                                        )->format('d M Y') }}
                                     </strong>
 
                                 </div>
@@ -640,22 +1762,18 @@
                             @endif
 
 
-                            {{-- Delivered Date --}}
-
                             @if($shipment->delivered_at)
 
                                 <div class="tracking-detail-row">
 
-                <span>
-                    Delivered Date
-                </span>
+                                    <span>
+                                        Delivered Date
+                                    </span>
 
                                     <strong>
-                                        {{
-                                            \Carbon\Carbon::parse(
-                                                $shipment->delivered_at
-                                            )->format('d M Y')
-                                        }}
+                                        {{ \Carbon\Carbon::parse(
+                                            $shipment->delivered_at
+                                        )->format('d M Y') }}
                                     </strong>
 
                                 </div>
@@ -665,6 +1783,32 @@
                         </div>
 
                     </div>
+
+
+                    {{-- ======================================================
+                    | Carrier Tracking
+                    ====================================================== --}}
+
+                    @if($shipment->tracking_url)
+
+                        <div class="tracking-external-link">
+
+                            <a
+                                href="{{ $shipment->tracking_url }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="tracking-track-button"
+                            >
+
+                                Track With Carrier
+
+                                <i class="ri-external-link-line"></i>
+
+                            </a>
+
+                        </div>
+
+                    @endif
 
 
                     {{-- ======================================================
@@ -691,24 +1835,6 @@
 
                     @endif
 
-
-                    {{-- Bottom New Search --}}
-
-                    <div class="tracking-bottom-actions">
-
-                        <a
-                            href="{{ route('tracking') }}"
-                            class="tracking-new-search-btn"
-                        >
-
-                            <i class="ri-search-line"></i>
-
-                            Track Another Shipment
-
-                        </a>
-
-                    </div>
-
                 </div>
 
             </section>
@@ -718,7 +1844,7 @@
 
         {{-- ==========================================================
         | FAQ
-        ========================================================== --}}
+        =========================================================== --}}
 
         <section class="faq-section">
 
@@ -760,7 +1886,7 @@
                                 >
 
                                     <span>
-                                        How can I track my shipment?
+                                        How can I track my order?
                                     </span>
 
                                     <i class="ri-add-line"></i>
@@ -773,9 +1899,9 @@
                                     <div class="inner">
 
                                         <p>
-                                            Enter your Smart Buy number in the
-                                            tracking form to view your current
-                                            shipment status.
+                                            Enter your order number or Smart
+                                            Buy number in the tracking form to
+                                            view the latest available status.
                                         </p>
 
                                     </div>
@@ -793,7 +1919,7 @@
                                 >
 
                                     <span>
-                                        How long does shipping take?
+                                        How long does delivery take?
                                     </span>
 
                                     <i class="ri-add-line"></i>
@@ -806,9 +1932,9 @@
                                     <div class="inner">
 
                                         <p>
-                                            Shipping time depends on your
-                                            destination and selected shipping
-                                            method.
+                                            Delivery time depends on your
+                                            destination, shipping method and
+                                            carrier.
                                         </p>
 
                                     </div>
@@ -839,10 +1965,10 @@
                                     <div class="inner">
 
                                         <p>
-                                            Yes. Once your shipment has been
-                                            processed, you can check its latest
-                                            available status using your Smart
-                                            Buy number.
+                                            Once tracking information becomes
+                                            available, you can view the latest
+                                            shipment status using your order or
+                                            Smart Buy number.
                                         </p>
 
                                     </div>
@@ -864,7 +1990,7 @@
 
         {{-- ==========================================================
         | CTA
-        ========================================================== --}}
+        =========================================================== --}}
 
         <section class="cta-section">
 
@@ -929,6 +2055,12 @@
             'DOMContentLoaded',
             function () {
 
+                /*
+                |--------------------------------------------------------------------------
+                | Page Wrapper
+                |--------------------------------------------------------------------------
+                */
+
                 const trackingPage =
                     document.querySelector(
                         '.tracking-page'
@@ -940,6 +2072,12 @@
                 }
 
 
+                /*
+                |--------------------------------------------------------------------------
+                | Elements
+                |--------------------------------------------------------------------------
+                */
+
                 const form =
                     trackingPage.querySelector(
                         '#trackingForm'
@@ -948,7 +2086,7 @@
 
                 const input =
                     trackingPage.querySelector(
-                        '#requestNumber'
+                        '#trackingNumber'
                     );
 
 
@@ -961,6 +2099,12 @@
                 const resetInput =
                     trackingPage.querySelector(
                         '#resetInput'
+                    );
+
+
+                const trackingResult =
+                    trackingPage.querySelector(
+                        '#trackingResult'
                     );
 
 
@@ -979,7 +2123,14 @@
                             this.value =
                                 this.value
                                     .toUpperCase()
-                                    .replace(/\s/g, '');
+                                    .replace(
+                                        /\s+/g,
+                                        ''
+                                    )
+                                    .replace(
+                                        /[^A-Z0-9-]/g,
+                                        ''
+                                    );
 
                         }
                     );
@@ -993,7 +2144,10 @@
                 |--------------------------------------------------------------------------
                 */
 
-                if (resetInput && input) {
+                if (
+                    resetInput
+                    && input
+                ) {
 
                     resetInput.addEventListener(
                         'click',
@@ -1015,13 +2169,21 @@
                 |--------------------------------------------------------------------------
                 */
 
-                if (form && input && button) {
+                if (
+                    form
+                    && input
+                    && button
+                ) {
 
                     form.addEventListener(
                         'submit',
                         function (event) {
 
-                            if (!input.value.trim()) {
+                            const trackingNumber =
+                                input.value.trim();
+
+
+                            if (!trackingNumber) {
 
                                 event.preventDefault();
 
@@ -1049,12 +2211,6 @@
                 | Scroll To Result
                 |--------------------------------------------------------------------------
                 */
-
-                const trackingResult =
-                    trackingPage.querySelector(
-                        '#trackingResult'
-                    );
-
 
                 if (trackingResult) {
 

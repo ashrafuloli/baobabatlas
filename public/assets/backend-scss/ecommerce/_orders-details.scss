@@ -92,26 +92,101 @@
             background: currentColor;
         }
 
-        &--pending {
-            background: rgba($warning, 0.1);
-            color: $warning;
-        }
-
-        &--paid,
         &--completed {
             background: rgba($success, 0.1);
             color: $success;
         }
 
         &--processing {
+            background: rgba($warning, 0.1);
+            color: $warning;
+        }
+
+        &--pending {
             background: rgba($info, 0.1);
             color: $info;
         }
 
-        &--cancelled,
-        &--failed {
+        &--cancelled {
             background: rgba($danger, 0.1);
             color: $danger;
+        }
+
+        &--refunded {
+            background: rgba($success, 0.1);
+            color: $success;
+        }
+
+        /*
+         * STATUS_PAID
+         */
+        &--paid {
+            color: $success;
+            background: rgba($success, 0.1);
+        }
+
+        /*
+         * STATUS_PROCESSING
+         */
+        &--processing {
+            color: $info;
+            background: rgba($info, 0.1);
+        }
+
+        /*
+         * STATUS_SHIPPED
+         */
+        &--shipped {
+            color: $theme-color;
+            background: rgba($theme-color, 0.1);
+        }
+
+        /*
+         * STATUS_IN_TRANSIT
+         */
+        &--in_transit {
+            color: $info;
+            background: rgba($info, 0.1);
+        }
+
+        /*
+         * STATUS_OUT_FOR_DELIVERY
+         */
+        &--out_for_delivery {
+            color: $theme-color;
+            background: rgba($theme-color, 0.1);
+        }
+
+        /*
+         * STATUS_DELIVERED
+         */
+        &--delivered {
+            color: $success;
+            background: rgba($success, 0.1);
+        }
+
+        /*
+         * STATUS_COMPLETED
+         */
+        &--completed {
+            color: $success;
+            background: rgba($success, 0.1);
+        }
+
+        /*
+         * STATUS_CANCELLED
+         */
+        &--cancelled {
+            color: $danger;
+            background: rgba($danger, 0.1);
+        }
+
+        /*
+         * STATUS_FAILED
+         */
+        &--failed {
+            color: $danger;
+            background: rgba($danger, 0.1);
         }
     }
 
@@ -1140,35 +1215,101 @@
             line-height: 1;
         }
 
-        &--pending {
-            color: $warning;
-            background: rgba($warning, 0.10);
-        }
-
-        &--paid,
-        &--completed,
-        &--shipped,
-        &--delivered {
+        &--completed {
+            background: rgba($success, 0.1);
             color: $success;
-            background: rgba($success, 0.10);
         }
 
-        &--processing,
-        &--in-transit,
-        &--out-for-delivery {
+        &--processing {
+            background: rgba($warning, 0.1);
+            color: $warning;
+        }
+
+        &--pending {
+            background: rgba($info, 0.1);
             color: $info;
-            background: rgba($info, 0.10);
         }
 
-        &--cancelled,
-        &--failed {
+        &--cancelled {
+            background: rgba($danger, 0.1);
             color: $danger;
-            background: rgba($danger, 0.10);
         }
 
         &--refunded {
+            background: rgba($success, 0.1);
             color: $success;
-            background: rgba($success, 0.10);
+        }
+
+        /*
+         * STATUS_PAID
+         */
+        &--paid {
+            color: $success;
+            background: rgba($success, 0.1);
+        }
+
+        /*
+         * STATUS_PROCESSING
+         */
+        &--processing {
+            color: $info;
+            background: rgba($info, 0.1);
+        }
+
+        /*
+         * STATUS_SHIPPED
+         */
+        &--shipped {
+            color: $theme-color;
+            background: rgba($theme-color, 0.1);
+        }
+
+        /*
+         * STATUS_IN_TRANSIT
+         */
+        &--in_transit {
+            color: $info;
+            background: rgba($info, 0.1);
+        }
+
+        /*
+         * STATUS_OUT_FOR_DELIVERY
+         */
+        &--out_for_delivery {
+            color: $theme-color;
+            background: rgba($theme-color, 0.1);
+        }
+
+        /*
+         * STATUS_DELIVERED
+         */
+        &--delivered {
+            color: $success;
+            background: rgba($success, 0.1);
+        }
+
+        /*
+         * STATUS_COMPLETED
+         */
+        &--completed {
+            color: $success;
+            background: rgba($success, 0.1);
+        }
+
+        /*
+         * STATUS_CANCELLED
+         */
+        &--cancelled {
+            color: $danger;
+            background: rgba($danger, 0.1);
+        }
+
+        /*
+         * STATUS_FAILED
+         */
+        &--failed {
+            color: $danger;
+            background: rgba($danger, 0.1);
         }
     }
 
