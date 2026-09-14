@@ -11,6 +11,24 @@ use Illuminate\Support\Facades\DB;
 class SmartBuyPaymentController extends Controller
 {
     /**
+     * Display Smart Buy payments.
+     */
+    public function index()
+    {
+        $payments = SmartBuyPayment::query()
+            ->with([
+                'smartBuyRequest',
+            ])
+            ->latest()
+            ->paginate(15);
+
+        return view(
+            'backend.pages.smart-buy.payments',
+            compact('payments'),
+        );
+    }
+
+    /**
      * Store a manual payment
      * or update an existing payment.
      */

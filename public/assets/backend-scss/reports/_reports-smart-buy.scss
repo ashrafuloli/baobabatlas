@@ -1,1221 +1,807 @@
 @use "../common" as *;
 
-.smart-buy-reports-page {
+.smart-buy-report-page {
+    width: 100%;
+    padding: 24px;
 
-    font-family: $body-fonts;
-    color: $body-color;
-
-
-    // =========================================================
-    // PAGE HEADER
-    // =========================================================
-
-    .page-header {
+    &__header {
         display: flex;
         align-items: flex-end;
         justify-content: space-between;
-        gap: 30px;
-        margin-bottom: 28px;
-    }
-
-    .page-header-content {
-
-        .page-subtitle {
-            display: block;
-            margin-bottom: 6px;
-
-            color: $theme-color;
-            font-family: $header-fonts;
-            font-size: 14px;
-            font-weight: 700;
-            letter-spacing: 1.2px;
-            line-height: 1.2;
-            text-transform: uppercase;
-        }
-
-        h1 {
-            margin: 0 0 6px;
-
-            color: $heading-color;
-            font-family: $header-fonts;
-            font-size: 24px;
-            font-weight: $head-fw;
-            line-height: 1.25;
-        }
-
-        p {
-            margin: 0;
-
-            color: $body-color;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-    }
-
-
-    // =========================================================
-    // HEADER ACTIONS
-    // =========================================================
-
-    .page-header-actions {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .btn {
-        min-height: 42px;
-
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-
-        padding: 0 15px;
-
-        border-radius: 7px;
-
-        font-family: $body-fonts;
-        font-size: 14px;
-        font-weight: 600;
-
-        text-decoration: none;
-
-        transition: all .2s ease;
-    }
-
-    .btn-outline {
-        border: 1px solid $gray;
-        background: #fff;
-        color: $heading-color;
-
-        &:hover {
-            border-color: $theme-color;
-            background: $theme-color;
-            color: #fff;
-        }
-    }
-
-    .report-date-filter {
-        height: 42px;
-
-        display: flex;
-        align-items: center;
-        gap: 8px;
-
-        padding: 0 12px;
-
-        border: 1px solid $gray;
-        border-radius: 7px;
-
-        background: #fff;
-
-        > i {
-            color: $theme-color;
-            font-size: 14px;
-        }
-
-        .form-control {
-            min-width: 125px;
-            height: 38px;
-
-            padding: 0;
-
-            border: 0;
-            outline: 0;
-
-            background: transparent;
-
-            color: $heading-color;
-            font-family: $body-fonts;
-            font-size: 14px;
-            font-weight: 600;
-
-            cursor: pointer;
-        }
-    }
-
-
-    // =========================================================
-    // STATISTICS
-    // =========================================================
-
-    .report-stat-grid {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 18px;
-
+        gap: 24px;
         margin-bottom: 24px;
     }
 
-    .report-stat-card {
-        min-height: 150px;
+    &__heading {
+        min-width: 0;
+    }
 
-        padding: 20px;
+    &__breadcrumb {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 8px;
+        color: $body-color;
+        font-size: 14px;
 
-        border: 1px solid $gray;
-        border-radius: 10px;
+        a {
+            color: $theme-color;
+            text-decoration: none;
+            transition: color 0.2s ease;
 
-        background: #fff;
-
-        transition: all .2s ease;
-
-        &:hover {
-            border-color: rgba($theme-color, .25);
-            box-shadow: 0 6px 20px rgba($dark, .04);
+            &:hover {
+                color: $theme-color-2;
+            }
         }
     }
 
-    .stat-top {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        gap: 10px;
-        margin-bottom: 18px;
+    &__title {
+        margin: 0;
+        color: $heading-color;
+        font-family: $header-fonts;
+        font-size: 24px;
+        font-weight: 600;
+        line-height: 1.4;
     }
 
-    .stat-icon {
-        width: 42px;
-        height: 42px;
+    &__subtitle {
+        max-width: 700px;
+        margin: 8px 0 0;
+        color: $body-color;
+        font-size: 14px;
+        line-height: 1.7;
+    }
 
+    &__back {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-
+        gap: 8px;
+        min-height: 42px;
+        padding: 0 16px;
+        border: 1px solid $hr-color;
         border-radius: 8px;
-
-        font-size: 17px;
-
-        &.requests {
-            background: rgba($theme-color, .09);
-            color: $theme-color;
-        }
-
-        &.quotes {
-            background: rgba($theme-color-2, .14);
-            color: $theme-color-2;
-        }
-
-        &.purchases {
-            background: rgba($success, .09);
-            color: $success;
-        }
-
-        &.revenue {
-            background: rgba($info, .10);
-            color: $info;
-        }
-    }
-
-    .stat-change {
-        display: inline-flex;
-        align-items: center;
-
-        min-height: 26px;
-        padding: 0 8px;
-
-        border-radius: 4px;
-
+        color: $heading-color;
+        background: $white;
         font-size: 14px;
-        font-weight: 600;
-
-        &.positive {
-            background: rgba($success, .09);
-            color: $success;
-        }
-
-        &.negative {
-            background: rgba($danger, .09);
-            color: $danger;
-        }
-    }
-
-    .stat-content {
-
-        .stat-label {
-            display: block;
-
-            margin-bottom: 6px;
-
-            color: $body-color;
-            font-size: 14px;
-        }
-
-        h3 {
-            margin: 0 0 5px;
-
-            color: $heading-color;
-            font-family: $header-fonts;
-            font-size: 24px;
-            font-weight: 700;
-
-            line-height: 1.15;
-        }
-
-        p {
-            margin: 0;
-
-            color: rgba($body-color, .72);
-            font-size: 14px;
-
-            line-height: 1.4;
-        }
-    }
-
-
-    // =========================================================
-    // REPORT GRID
-    // =========================================================
-
-    .reports-grid {
-        display: grid;
-        grid-template-columns:
-            minmax(0, 1.65fr)
-            minmax(320px, .9fr);
-
-        gap: 20px;
-
-        margin-bottom: 20px;
-    }
-
-    .secondary-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .dashboard-card {
-        min-width: 0;
-
-        overflow: hidden;
-
-        border: 1px solid $gray;
-        border-radius: 10px;
-
-        background: #fff;
-    }
-
-    .dashboard-card-header {
-        min-height: 82px;
-
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        gap: 20px;
-
-        padding: 18px 20px;
-
-        border-bottom: 1px solid $gray;
-    }
-
-    .card-header-content {
-
-        h2 {
-            margin: 0 0 5px;
-
-            color: $heading-color;
-            font-family: $header-fonts;
-            font-size: 20px;
-            font-weight: 700;
-
-            line-height: 1.25;
-        }
-
-        p {
-            margin: 0;
-
-            color: $body-color;
-            font-size: 14px;
-
-            line-height: 1.4;
-        }
-    }
-
-
-    // =========================================================
-    // ACTIVITY CHART
-    // =========================================================
-
-    .chart-legend {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-
-        span {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-
-            color: $body-color;
-            font-size: 14px;
-        }
+        font-weight: 500;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: all 0.2s ease;
 
         i {
-            width: 8px;
-            height: 8px;
-
-            display: inline-block;
-
-            border-radius: 50%;
+            font-size: 18px;
         }
 
-        .request-dot {
-            background: $theme-color;
-        }
-
-        .purchase-dot {
-            background: $theme-color-2;
+        &:hover {
+            border-color: $theme-color;
+            color: $theme-color;
         }
     }
 
-    .activity-chart {
-        height: 320px;
+    &__filters {
+        padding: 20px;
+        margin-bottom: 24px;
+        border: 1px solid $hr-color;
+        border-radius: 10px;
+        background: $white;
+    }
 
+    &__filter-form {
         display: flex;
-
-        padding: 24px 20px 20px;
+        align-items: flex-end;
+        flex-wrap: wrap;
+        gap: 12px;
     }
 
-    .chart-y-axis {
-        width: 40px;
-        flex: 0 0 40px;
-
+    &__filter-group {
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        gap: 6px;
+        min-width: 180px;
 
-        padding-bottom: 26px;
-
-        span {
-            color: rgba($body-color, .65);
+        label {
+            color: $heading-color;
             font-size: 14px;
-            line-height: 1;
+            font-weight: 500;
         }
-    }
 
-    .chart-area {
-        position: relative;
-
-        flex: 1;
-        min-width: 0;
-    }
-
-    .chart-grid-lines {
-        position: absolute;
-
-        inset: 0 0 26px;
-
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-
-        span {
+        input {
             width: 100%;
-            height: 1px;
-
-            background: rgba($gray, .7);
-        }
-    }
-
-    .activity-bars {
-        position: absolute;
-
-        inset: 0;
-
-        display: flex;
-        align-items: flex-end;
-        justify-content: space-around;
-
-        gap: 10px;
-
-        padding: 0 8px;
-    }
-
-    .activity-bar-group {
-        height: 100%;
-
-        flex: 1;
-        max-width: 70px;
-
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-end;
-
-        gap: 8px;
-    }
-
-    .activity-bars-inner {
-        width: 100%;
-        height: calc(100% - 25px);
-
-        display: flex;
-        align-items: flex-end;
-        justify-content: center;
-
-        gap: 4px;
-    }
-
-    .activity-bars-inner > span {
-        width: 14px;
-
-        min-height: 8px;
-
-        display: block;
-
-        border-radius: 4px 4px 2px 2px;
-    }
-
-    .request-bar {
-        background: $theme-color;
-    }
-
-    .purchase-bar {
-        background: $theme-color-2;
-    }
-
-    .chart-label {
-        color: rgba($body-color, .72);
-        font-size: 14px;
-    }
-
-
-    // =========================================================
-    // REQUEST STATUS
-    // =========================================================
-
-    .request-status-content {
-        width: 100%;
-
-        display: flex;
-        flex-direction: column;
-
-        padding: 22px 20px 24px;
-    }
-
-    .status-total {
-        display: flex;
-        align-items: flex-end;
-        flex-direction: column;
-
-        gap: 10px;
-
-        strong {
-            color: $heading-color;
-            font-family: $header-fonts;
-            font-size: 24px;
-            font-weight: 700;
-
-            line-height: 1.2;
-        }
-
-        span {
+            height: 42px;
+            padding: 0 12px;
+            border: 1px solid $hr-color;
+            border-radius: 7px;
+            outline: none;
             color: $body-color;
+            background: $white;
+            font-family: $body-fonts;
             font-size: 14px;
-            line-height: 1.4;
+            transition: border-color 0.2s ease;
+
+            &:focus {
+                border-color: $theme-color;
+            }
         }
     }
 
-    .smart-status-item {
-        width: 100%;
-        min-width: 0;
+    &__filter-button,
+    &__reset-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-height: 42px;
+        padding: 0 16px;
+        border-radius: 7px;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
 
+        i {
+            font-size: 17px;
+        }
+    }
+
+    &__filter-button {
+        border: 1px solid $theme-color;
+        color: $white;
+        background: $theme-color;
+
+        &:hover {
+            border-color: $theme-color-2;
+            background: $theme-color-2;
+        }
+    }
+
+    &__reset-button {
+        border: 1px solid $hr-color;
+        color: $body-color;
+        background: $white;
+
+        &:hover {
+            border-color: $theme-color;
+            color: $theme-color;
+        }
+    }
+
+    &__quick-filters {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid $hr-color;
+    }
+
+    &__quick-filter {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        min-height: 36px;
+        padding: 0 12px;
+        border: 1px solid $hr-color;
+        border-radius: 6px;
+        color: $body-color;
+        background: $white;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        i {
+            font-size: 16px;
+        }
+
+        &:hover {
+            border-color: $theme-color;
+            color: $theme-color;
+            background: rgba($theme-color, 0.04);
+        }
+    }
+
+    &__section {
+        margin-bottom: 24px;
+        padding: 20px;
+        border: 1px solid $hr-color;
+        border-radius: 10px;
+        background: $white;
+    }
+
+    &__section-header,
+    &__panel-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 18px;
 
-        gap: 15px;
-
-        margin-bottom: 7px;
-
-        strong {
-            flex: 0 0 auto;
-
+        h2 {
+            margin: 0;
             color: $heading-color;
             font-family: $header-fonts;
-            font-size: 14px;
-            font-weight: 700;
-
-            white-space: nowrap;
+            font-size: 18px;
+            font-weight: 600;
         }
-    }
 
-    .status-item-info {
-        min-width: 0;
-
-        display: flex;
-        align-items: center;
-
-        gap: 9px;
-
-        > span:last-child {
+        p {
+            margin: 5px 0 0;
             color: $body-color;
             font-size: 14px;
-
-            line-height: 1.4;
-
-            white-space: nowrap;
+            line-height: 1.6;
         }
     }
 
-    .status-dot {
-        width: 9px;
-        height: 9px;
+    &__section-meta {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: $body-color;
+        font-size: 14px;
+        white-space: nowrap;
 
-        flex: 0 0 9px;
-
-        display: inline-block;
-
-        border-radius: 50%;
-
-        &.submitted {
-            background: $info;
-        }
-
-        &.reviewing {
-            background: $warning;
-        }
-
-        &.quoted {
-            background: $theme-color-2;
-        }
-
-        &.accepted {
-            background: $theme-color;
-        }
-
-        &.purchased {
-            background: $success;
+        i {
+            font-size: 17px;
         }
     }
 
-    .status-progress {
-        width: 100%;
-        height: 7px;
-
-        overflow: hidden;
-
-        margin: 0 0 16px;
-
-        border-radius: 20px;
-
-        background: $light;
-
-        span {
-            display: block;
-
-            height: 100%;
-
-            min-width: 0;
-
-            border-radius: inherit;
-
-            &.submitted {
-                background: $info;
-            }
-
-            &.reviewing {
-                background: $warning;
-            }
-
-            &.quoted {
-                background: $theme-color-2;
-            }
-
-            &.accepted {
-                background: $theme-color;
-            }
-
-            &.purchased {
-                background: $success;
-            }
-        }
+    &__metrics {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 14px;
     }
 
-
-    // =========================================================
-    // QUOTE PERFORMANCE
-    // =========================================================
-
-    .quote-performance {
-        min-height: 230px;
-
+    &__metric-card {
         display: flex;
         align-items: center;
-
-        gap: 30px;
-
-        padding: 24px 20px;
+        gap: 12px;
+        min-width: 0;
+        padding: 16px;
+        border: 1px solid $hr-color;
+        border-radius: 8px;
+        background: $light;
     }
 
-    .conversion-circle {
-        width: 150px;
-        height: 150px;
-
-        flex: 0 0 150px;
-
+    &__metric-icon {
         display: flex;
-        flex-direction: column;
         align-items: center;
         justify-content: center;
+        flex: 0 0 42px;
+        width: 42px;
+        height: 42px;
+        border-radius: 8px;
+        color: $theme-color;
+        background: rgba($theme-color, 0.08);
 
-        border: 12px solid rgba($theme-color, .10);
-        border-top-color: $theme-color;
-        border-right-color: $theme-color;
+        i {
+            font-size: 20px;
+        }
+    }
 
-        border-radius: 50%;
+    &__metric-content {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        gap: 4px;
 
-        text-align: center;
-
-        .conversion-value {
-            color: $heading-color;
-            font-family: $header-fonts;
-            font-size: 24px;
-            font-weight: 700;
-
-            line-height: 1.2;
+        span {
+            overflow: hidden;
+            color: $body-color;
+            font-size: 14px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
-        > span {
-            margin-top: 5px;
-
-            color: $body-color;
-            font-size: 12px;
-
+        strong {
+            color: $heading-color;
+            font-size: 20px;
+            font-weight: 600;
             line-height: 1.3;
         }
     }
 
-    .quote-metrics {
-        flex: 1;
-
+    &__financial-grid {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 14px;
     }
 
-    .quote-metric {
-        padding: 13px;
+    &__financial-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px;
+        border: 1px solid $hr-color;
+        border-radius: 8px;
+        background: $light;
 
-        border: 1px solid $gray;
-        border-radius: 7px;
+        > div:last-child {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 0;
+        }
 
         span {
-            display: block;
-
-            margin-bottom: 5px;
-
             color: $body-color;
             font-size: 14px;
         }
 
         strong {
-            display: block;
-
             color: $heading-color;
-            font-family: $header-fonts;
             font-size: 20px;
-            font-weight: 700;
+            font-weight: 600;
         }
     }
 
-
-    // =========================================================
-    // VALUE SUMMARY
-    // =========================================================
-
-    .value-summary {
+    &__financial-icon {
         display: flex;
-        flex-direction: column;
-
-        padding: 8px 20px;
-    }
-
-    .value-item {
-        min-height: 76px;
-
-        display: flex;
-        align-items: center;
-
-        gap: 12px;
-
-        border-bottom: 1px solid rgba($gray, .75);
-
-        &:last-child {
-            border-bottom: 0;
-        }
-
-        > div {
-            min-width: 0;
-
-            span {
-                display: block;
-
-                margin-bottom: 4px;
-
-                color: $body-color;
-                font-size: 14px;
-            }
-
-            strong {
-                display: block;
-
-                color: $heading-color;
-                font-family: $header-fonts;
-                font-size: 20px;
-                font-weight: 700;
-            }
-        }
-    }
-
-    .value-icon {
-        width: 40px;
-        height: 40px;
-
-        flex: 0 0 40px;
-
-        display: inline-flex;
         align-items: center;
         justify-content: center;
+        flex: 0 0 40px;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        color: $theme-color;
+        background: rgba($theme-color, 0.08);
 
-        border-radius: 7px;
-
-        font-size: 16px;
-
-        &.quote {
-            background: rgba($theme-color-2, .14);
-            color: $theme-color-2;
-        }
-
-        &.purchase {
-            background: rgba($success, .09);
-            color: $success;
-        }
-
-        &.revenue {
-            background: rgba($theme-color, .09);
-            color: $theme-color;
+        i {
+            font-size: 19px;
         }
     }
 
-
-    // =========================================================
-    // RECENT ACTIVITY
-    // =========================================================
-
-    .recent-activity-card {
-        margin-bottom: 20px;
-    }
-
-    .activity-table-wrapper {
+    &__table-wrapper {
         width: 100%;
-
         overflow-x: auto;
+        border: 1px solid $hr-color;
+        border-radius: 8px;
     }
 
-    .activity-table {
+    &__table {
         width: 100%;
-
+        min-width: 1050px;
         border-collapse: collapse;
 
         th,
         td {
-            padding: 14px 16px;
-
-            border-bottom: 1px solid rgba($gray, .85);
-
+            padding: 13px 14px;
+            border-bottom: 1px solid $hr-color;
             text-align: left;
-
+            vertical-align: middle;
+            font-size: 14px;
             white-space: nowrap;
         }
 
         th {
-            background: $light;
-
             color: $heading-color;
-            font-family: $header-fonts;
-            font-size: 14px;
-            font-weight: 700;
+            background: $light;
+            font-weight: 600;
         }
 
         td {
             color: $body-color;
-            font-size: 14px;
+            background: $white;
         }
 
         tbody tr:last-child td {
             border-bottom: 0;
         }
 
-        td > strong {
-            color: $heading-color;
-            font-family: $header-fonts;
-            font-size: 14px;
-            font-weight: 700;
+        tbody tr {
+            transition: background 0.2s ease;
+
+            &:hover td {
+                background: rgba($theme-color, 0.02);
+            }
         }
     }
 
-    .customer-cell {
-        display: flex;
+    &__date {
+        display: inline-flex;
         align-items: center;
+        gap: 7px;
+        color: $heading-color;
+        font-weight: 500;
 
-        gap: 9px;
+        i {
+            color: $body-color;
+            font-size: 17px;
+        }
     }
 
-    .customer-avatar {
-        width: 36px;
-        height: 36px;
-
-        flex: 0 0 36px;
-
+    &__table-status {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-
-        border-radius: 50%;
-
-        background: rgba($theme-color, .09);
-        color: $theme-color;
-
-        font-family: $header-fonts;
+        min-width: 34px;
+        min-height: 26px;
+        padding: 0 8px;
+        border-radius: 5px;
         font-size: 14px;
-        font-weight: 700;
+        font-weight: 600;
+
+        &--success {
+            color: $success;
+            background: rgba($success, 0.08);
+        }
+
+        &--pending {
+            color: $warning;
+            background: rgba($warning, 0.08);
+        }
+
+        &--processing {
+            color: $info;
+            background: rgba($info, 0.08);
+        }
+
+        &--cancelled {
+            color: $danger;
+            background: rgba($danger, 0.08);
+        }
     }
 
-    .customer-cell > div {
+    &__columns {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px;
+        margin-bottom: 24px;
+    }
+
+    &__panel {
+        min-width: 0;
+        padding: 20px;
+        border: 1px solid $hr-color;
+        border-radius: 10px;
+        background: $white;
+    }
+
+    &__status-list,
+    &__payment-list {
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__status-item,
+    &__payment-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        min-height: 46px;
+        border-bottom: 1px solid $hr-color;
+
+        &:last-child {
+            border-bottom: 0;
+        }
 
         strong {
-            display: block;
-
-            margin-bottom: 3px;
-
             color: $heading-color;
-            font-family: $header-fonts;
             font-size: 14px;
             font-weight: 600;
         }
-
-        span {
-            display: block;
-
-            color: rgba($body-color, .70);
-            font-size: 14px;
-        }
     }
 
-    .request-badge {
-        display: inline-flex;
-        align-items: center;
-
-        min-height: 29px;
-
-        padding: 0 9px;
-
-        border-radius: 5px;
-
-        font-size: 14px;
-        font-weight: 600;
-
-        &.purchased {
-            background: rgba($success, .09);
-            color: $success;
-        }
-
-        &.quoted {
-            background: rgba($theme-color-2, .14);
-            color: argb($theme-color-2, 18%);
-        }
-
-        &.reviewing {
-            background: rgba($warning, .13);
-            color: argb($warning, 18%);
-        }
-
-        &.submitted {
-            background: rgba($info, .10);
-            color: $info;
-        }
-    }
-
-
-    // =========================================================
-    // PAYMENT SUMMARY
-    // =========================================================
-
-    .payment-summary-card {
-        margin-bottom: 20px;
-    }
-
-    .view-report-link {
-        display: inline-flex;
-        align-items: center;
-
-        gap: 7px;
-
-        color: $theme-color;
-
-        font-size: 14px;
-        font-weight: 600;
-
-        text-decoration: none;
-
-        &:hover {
-            color: argb($theme-color, 0.8);
-        }
-    }
-
-    .payment-summary-grid {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-
-        gap: 14px;
-
-        padding: 20px;
-    }
-
-    .payment-summary-item {
-        min-height: 76px;
-
+    &__status-name {
         display: flex;
         align-items: center;
-
-        gap: 12px;
-
-        padding: 14px;
-
-        border: 1px solid $gray;
-        border-radius: 8px;
+        gap: 9px;
+        color: $body-color;
+        font-size: 14px;
     }
 
-    .summary-icon {
-        width: 40px;
-        height: 40px;
+    &__status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: $body-color;
 
-        flex: 0 0 40px;
-
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-
-        border-radius: 7px;
-
-        font-size: 16px;
-
-        &.paid {
-            background: rgba($success, .09);
-            color: $success;
+        &--pending {
+            background: $warning;
         }
 
-        &.pending {
-            background: rgba($warning, .13);
-            color: argb($warning, 18%);
+        &--quote_sent,
+        &--quote_accepted,
+        &--payment_completed,
+        &--product_purchased,
+        &--in_transit {
+            background: $info;
         }
 
-        &.failed {
-            background: rgba($danger, .09);
-            color: $danger;
+        &--completed {
+            background: $success;
         }
 
-        &.revenue {
-            background: rgba($theme-color, .09);
-            color: $theme-color;
+        &--cancelled,
+        &--quote_rejected {
+            background: $danger;
         }
     }
 
-    .payment-summary-item > div {
-
+    &__payment-item {
         span {
-            display: block;
-
-            margin-bottom: 3px;
-
             color: $body-color;
             font-size: 14px;
         }
+    }
 
-        strong {
+    &__performance-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    &__performance-card {
+        padding: 16px;
+        border: 1px solid $hr-color;
+        border-radius: 8px;
+        background: $light;
+
+        > strong {
             display: block;
+            margin-top: 8px;
+            color: $heading-color;
+            font-size: 18px;
+            font-weight: 600;
+        }
+    }
 
+    &__performance-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+
+        span {
+            color: $body-color;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        i {
+            color: $theme-color;
+            font-size: 18px;
+        }
+    }
+
+    &__progress {
+        width: 100%;
+        height: 7px;
+        margin-top: 16px;
+        overflow: hidden;
+        border-radius: 20px;
+        background: $hr-color;
+    }
+
+    &__progress-bar {
+        height: 100%;
+        border-radius: inherit;
+        background: $theme-color;
+        transition: width 0.3s ease;
+    }
+
+    &__empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 220px;
+        padding: 24px;
+        text-align: center;
+
+        i {
+            color: $body-color;
+            font-size: 32px;
+        }
+
+        h3 {
+            margin: 12px 0 4px;
             color: $heading-color;
             font-family: $header-fonts;
-            font-size: 20px;
-            font-weight: 700;
-        }
-    }
-
-
-    // =========================================================
-    // RESPONSIVE - 1200
-    // =========================================================
-
-    @media (max-width: 1200px) {
-
-        .report-stat-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            font-size: 18px;
+            font-weight: 600;
         }
 
-        .reports-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .secondary-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-        .payment-summary-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-    }
-
-
-    // =========================================================
-    // RESPONSIVE - 991
-    // =========================================================
-
-    @media (max-width: 991px) {
-
-        .page-header {
-            align-items: flex-start;
-            flex-direction: column;
-        }
-
-        .page-header-actions {
-            width: 100%;
-            flex-wrap: wrap;
-        }
-
-        .report-date-filter {
-            flex: 1;
-
-            .form-control {
-                width: 100%;
-            }
-        }
-
-        .secondary-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .quote-performance {
-            align-items: flex-start;
-            flex-direction: column;
-        }
-
-        .conversion-circle {
-            width: 130px;
-            height: 130px;
-            flex-basis: 130px;
-        }
-
-        .quote-metrics {
-            width: 100%;
-        }
-    }
-
-
-    // =========================================================
-    // RESPONSIVE - 767
-    // =========================================================
-
-    @media (max-width: 767px) {
-
-        .report-stat-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .payment-summary-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .dashboard-card-header {
-            align-items: flex-start;
-            flex-direction: column;
-        }
-
-        .chart-legend {
-            flex-wrap: wrap;
-        }
-
-        .activity-chart {
-            height: 270px;
-
-            padding-left: 14px;
-            padding-right: 14px;
-        }
-
-        .chart-y-axis {
-            width: 35px;
-            flex-basis: 35px;
-        }
-
-        .activity-bars {
-            gap: 5px;
-            padding-left: 3px;
-            padding-right: 3px;
-        }
-
-        .activity-bars-inner > span {
-            width: 11px;
-        }
-
-        .quote-performance {
-            padding: 20px 18px;
-        }
-
-        .quote-metrics {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-        .request-status-content {
-            padding: 20px 18px 22px;
-        }
-    }
-
-
-    // =========================================================
-    // RESPONSIVE - 480
-    // =========================================================
-
-    @media (max-width: 480px) {
-
-        .page-header-actions {
-            align-items: stretch;
-            flex-direction: column;
-        }
-
-        .report-date-filter,
-        .btn {
-            width: 100%;
-        }
-
-        .activity-chart {
-            height: 240px;
-        }
-
-        .chart-label {
+        p {
+            max-width: 420px;
+            margin: 0;
+            color: $body-color;
             font-size: 14px;
+            line-height: 1.6;
+        }
+    }
+
+    &__empty-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: $light;
+
+        i {
+            color: $body-color;
+            font-size: 26px;
+        }
+    }
+
+    @include mq('xxl') {
+        &__metrics {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+    }
+
+    @include mq('xl') {
+        &__financial-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @include mq('lg') {
+        padding: 20px;
+
+        &__header {
+            align-items: flex-start;
+            flex-direction: column;
         }
 
-        .quote-metrics {
+        &__back {
+            align-self: flex-start;
+        }
+
+        &__columns {
             grid-template-columns: 1fr;
         }
 
-        .conversion-circle {
-            width: 120px;
-            height: 120px;
-            flex-basis: 120px;
+        &__performance-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @include mq('md') {
+        padding: 16px;
+
+        &__metrics {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
-        .value-item > div {
-
-            strong {
-                font-size: 18px;
-            }
+        &__financial-grid {
+            grid-template-columns: 1fr;
         }
 
-        .payment-summary-grid {
+        &__filter-group {
+            flex: 1 1 calc(50% - 6px);
+            min-width: 0;
+        }
+
+        &__filter-button,
+        &__reset-button {
+            flex: 1 1 calc(50% - 6px);
+        }
+
+        &__section,
+        &__panel,
+        &__filters {
             padding: 16px;
+        }
+    }
+
+    @include mq('sm') {
+        padding: 12px;
+
+        &__title {
+            font-size: 22px;
+        }
+
+        &__metrics {
+            grid-template-columns: 1fr;
+        }
+
+        &__filter-form {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        &__filter-group {
+            width: 100%;
+        }
+
+        &__filter-button,
+        &__reset-button {
+            width: 100%;
+            flex: 1 1 auto;
+        }
+
+        &__quick-filters {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        &__quick-filter {
+            justify-content: center;
+        }
+
+        &__section-header,
+        &__panel-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        &__section-meta {
+            align-self: flex-start;
+        }
+    }
+
+    &__section-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
+
+        @include mq('xs') {
+            width: 100%;
+            justify-content: space-between;
+        }
+    }
+
+    &__section-meta {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: $body-color;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 20px;
+        white-space: nowrap;
+
+        i {
+            font-size: 16px;
+            line-height: 1;
+        }
+    }
+
+    &__export-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-height: 38px;
+        padding: 8px 14px;
+        border: 1px solid $theme-color;
+        border-radius: 6px;
+        background-color: $theme-color;
+        color: $white;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 20px;
+        text-decoration: none;
+        white-space: nowrap;
+
+        @include transition(0.3s);
+
+        i {
+            font-size: 17px;
+            line-height: 1;
+        }
+
+        &:hover {
+            border-color: $theme-color-2;
+            background-color: $theme-color-2;
+            color: $white;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $theme-color;
+            outline-offset: 2px;
+        }
+
+        @include mq('xs') {
+            min-height: 36px;
+            padding: 7px 12px;
         }
     }
 }

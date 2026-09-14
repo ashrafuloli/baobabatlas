@@ -11127,819 +11127,684 @@ select.form-control {
   }
 }
 
-.smart-buy-reports-page {
-  font-family: "Poppins", sans-serif;
-  color: #555555;
+.smart-buy-report-page {
+  width: 100%;
+  padding: 24px;
 }
-.smart-buy-reports-page .page-header {
+.smart-buy-report-page__header {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 30px;
-  margin-bottom: 28px;
-}
-.smart-buy-reports-page .page-header-content .page-subtitle {
-  display: block;
-  margin-bottom: 6px;
-  color: #177245;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 1.2px;
-  line-height: 1.2;
-  text-transform: uppercase;
-}
-.smart-buy-reports-page .page-header-content h1 {
-  margin: 0 0 6px;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1.25;
-}
-.smart-buy-reports-page .page-header-content p {
-  margin: 0;
-  color: #555555;
-  font-size: 14px;
-  line-height: 1.5;
-}
-.smart-buy-reports-page .page-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.smart-buy-reports-page .btn {
-  min-height: 42px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 0 15px;
-  border-radius: 7px;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.2s ease;
-}
-.smart-buy-reports-page .btn-outline {
-  border: 1px solid #ddd;
-  background: #fff;
-  color: #0D2B5A;
-}
-.smart-buy-reports-page .btn-outline:hover {
-  border-color: #177245;
-  background: #177245;
-  color: #fff;
-}
-.smart-buy-reports-page .report-date-filter {
-  height: 42px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 12px;
-  border: 1px solid #ddd;
-  border-radius: 7px;
-  background: #fff;
-}
-.smart-buy-reports-page .report-date-filter > i {
-  color: #177245;
-  font-size: 14px;
-}
-.smart-buy-reports-page .report-date-filter .form-control {
-  min-width: 125px;
-  height: 38px;
-  padding: 0;
-  border: 0;
-  outline: 0;
-  background: transparent;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.smart-buy-reports-page .report-stat-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 18px;
+  gap: 24px;
   margin-bottom: 24px;
 }
-.smart-buy-reports-page .report-stat-card {
-  min-height: 150px;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background: #fff;
-  transition: all 0.2s ease;
+.smart-buy-report-page__heading {
+  min-width: 0;
 }
-.smart-buy-reports-page .report-stat-card:hover {
-  border-color: rgba(23, 114, 69, 0.25);
-  box-shadow: 0 6px 20px rgba(16, 26, 35, 0.04);
-}
-.smart-buy-reports-page .stat-top {
+.smart-buy-report-page__breadcrumb {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 18px;
-}
-.smart-buy-reports-page .stat-icon {
-  width: 42px;
-  height: 42px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  font-size: 17px;
-}
-.smart-buy-reports-page .stat-icon.requests {
-  background: rgba(23, 114, 69, 0.09);
-  color: #177245;
-}
-.smart-buy-reports-page .stat-icon.quotes {
-  background: rgba(212, 175, 55, 0.14);
-  color: #D4AF37;
-}
-.smart-buy-reports-page .stat-icon.purchases {
-  background: rgba(25, 135, 84, 0.09);
-  color: #198754;
-}
-.smart-buy-reports-page .stat-icon.revenue {
-  background: rgba(13, 202, 240, 0.1);
-  color: #0dcaf0;
-}
-.smart-buy-reports-page .stat-change {
-  display: inline-flex;
-  align-items: center;
-  min-height: 26px;
-  padding: 0 8px;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 600;
-}
-.smart-buy-reports-page .stat-change.positive {
-  background: rgba(25, 135, 84, 0.09);
-  color: #198754;
-}
-.smart-buy-reports-page .stat-change.negative {
-  background: rgba(220, 53, 69, 0.09);
-  color: #dc3545;
-}
-.smart-buy-reports-page .stat-content .stat-label {
-  display: block;
-  margin-bottom: 6px;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
   color: #555555;
   font-size: 14px;
 }
-.smart-buy-reports-page .stat-content h3 {
-  margin: 0 0 5px;
+.smart-buy-report-page__breadcrumb a {
+  color: #177245;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.smart-buy-report-page__breadcrumb a:hover {
+  color: #D4AF37;
+}
+.smart-buy-report-page__title {
+  margin: 0;
   color: #0D2B5A;
   font-family: "Poppins", sans-serif;
   font-size: 24px;
-  font-weight: 700;
-  line-height: 1.15;
-}
-.smart-buy-reports-page .stat-content p {
-  margin: 0;
-  color: rgba(85, 85, 85, 0.72);
-  font-size: 14px;
+  font-weight: 600;
   line-height: 1.4;
 }
-.smart-buy-reports-page .reports-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.65fr) minmax(320px, 0.9fr);
-  gap: 20px;
-  margin-bottom: 20px;
+.smart-buy-report-page__subtitle {
+  max-width: 700px;
+  margin: 8px 0 0;
+  color: #555555;
+  font-size: 14px;
+  line-height: 1.7;
 }
-.smart-buy-reports-page .secondary-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+.smart-buy-report-page__back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid #eaecf0;
+  border-radius: 8px;
+  color: #0D2B5A;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.2s ease;
 }
-.smart-buy-reports-page .dashboard-card {
-  min-width: 0;
-  overflow: hidden;
-  border: 1px solid #ddd;
+.smart-buy-report-page__back i {
+  font-size: 18px;
+}
+.smart-buy-report-page__back:hover {
+  border-color: #177245;
+  color: #177245;
+}
+.smart-buy-report-page__filters {
+  padding: 20px;
+  margin-bottom: 24px;
+  border: 1px solid #eaecf0;
   border-radius: 10px;
   background: #fff;
 }
-.smart-buy-reports-page .dashboard-card-header {
-  min-height: 82px;
+.smart-buy-report-page__filter-form {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 18px 20px;
-  border-bottom: 1px solid #ddd;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
 }
-.smart-buy-reports-page .card-header-content h2 {
-  margin: 0 0 5px;
+.smart-buy-report-page__filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 180px;
+}
+.smart-buy-report-page__filter-group label {
   color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 1.25;
-}
-.smart-buy-reports-page .card-header-content p {
-  margin: 0;
-  color: #555555;
   font-size: 14px;
-  line-height: 1.4;
+  font-weight: 500;
 }
-.smart-buy-reports-page .chart-legend {
+.smart-buy-report-page__filter-group input {
+  width: 100%;
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid #eaecf0;
+  border-radius: 7px;
+  outline: none;
+  color: #555555;
+  background: #fff;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  transition: border-color 0.2s ease;
+}
+.smart-buy-report-page__filter-group input:focus {
+  border-color: #177245;
+}
+.smart-buy-report-page__filter-button, .smart-buy-report-page__reset-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 7px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.smart-buy-report-page__filter-button i, .smart-buy-report-page__reset-button i {
+  font-size: 17px;
+}
+.smart-buy-report-page__filter-button {
+  border: 1px solid #177245;
+  color: #fff;
+  background: #177245;
+}
+.smart-buy-report-page__filter-button:hover {
+  border-color: #D4AF37;
+  background: #D4AF37;
+}
+.smart-buy-report-page__reset-button {
+  border: 1px solid #eaecf0;
+  color: #555555;
+  background: #fff;
+}
+.smart-buy-report-page__reset-button:hover {
+  border-color: #177245;
+  color: #177245;
+}
+.smart-buy-report-page__quick-filters {
   display: flex;
   align-items: center;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #eaecf0;
 }
-.smart-buy-reports-page .chart-legend span {
+.smart-buy-report-page__quick-filter {
   display: inline-flex;
   align-items: center;
   gap: 7px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid #eaecf0;
+  border-radius: 6px;
   color: #555555;
+  background: #fff;
   font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
-.smart-buy-reports-page .chart-legend i {
-  width: 8px;
-  height: 8px;
-  display: inline-block;
-  border-radius: 50%;
+.smart-buy-report-page__quick-filter i {
+  font-size: 16px;
 }
-.smart-buy-reports-page .chart-legend .request-dot {
-  background: #177245;
+.smart-buy-report-page__quick-filter:hover {
+  border-color: #177245;
+  color: #177245;
+  background: rgba(23, 114, 69, 0.04);
 }
-.smart-buy-reports-page .chart-legend .purchase-dot {
-  background: #D4AF37;
+.smart-buy-report-page__section {
+  margin-bottom: 24px;
+  padding: 20px;
+  border: 1px solid #eaecf0;
+  border-radius: 10px;
+  background: #fff;
 }
-.smart-buy-reports-page .activity-chart {
-  height: 320px;
-  display: flex;
-  padding: 24px 20px 20px;
-}
-.smart-buy-reports-page .chart-y-axis {
-  width: 40px;
-  flex: 0 0 40px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding-bottom: 26px;
-}
-.smart-buy-reports-page .chart-y-axis span {
-  color: rgba(85, 85, 85, 0.65);
-  font-size: 14px;
-  line-height: 1;
-}
-.smart-buy-reports-page .chart-area {
-  position: relative;
-  flex: 1;
-  min-width: 0;
-}
-.smart-buy-reports-page .chart-grid-lines {
-  position: absolute;
-  inset: 0 0 26px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.smart-buy-reports-page .chart-grid-lines span {
-  width: 100%;
-  height: 1px;
-  background: rgba(221, 221, 221, 0.7);
-}
-.smart-buy-reports-page .activity-bars {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-around;
-  gap: 10px;
-  padding: 0 8px;
-}
-.smart-buy-reports-page .activity-bar-group {
-  height: 100%;
-  flex: 1;
-  max-width: 70px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-}
-.smart-buy-reports-page .activity-bars-inner {
-  width: 100%;
-  height: calc(100% - 25px);
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 4px;
-}
-.smart-buy-reports-page .activity-bars-inner > span {
-  width: 14px;
-  min-height: 8px;
-  display: block;
-  border-radius: 4px 4px 2px 2px;
-}
-.smart-buy-reports-page .request-bar {
-  background: #177245;
-}
-.smart-buy-reports-page .purchase-bar {
-  background: #D4AF37;
-}
-.smart-buy-reports-page .chart-label {
-  color: rgba(85, 85, 85, 0.72);
-  font-size: 14px;
-}
-.smart-buy-reports-page .request-status-content {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  padding: 22px 20px 24px;
-}
-.smart-buy-reports-page .status-total {
-  display: flex;
-  align-items: flex-end;
-  flex-direction: column;
-  gap: 10px;
-}
-.smart-buy-reports-page .status-total strong {
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1.2;
-}
-.smart-buy-reports-page .status-total span {
-  color: #555555;
-  font-size: 14px;
-  line-height: 1.4;
-}
-.smart-buy-reports-page .smart-status-item {
-  width: 100%;
-  min-width: 0;
+.smart-buy-report-page__section-header, .smart-buy-report-page__panel-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 15px;
-  margin-bottom: 7px;
+  gap: 16px;
+  margin-bottom: 18px;
 }
-.smart-buy-reports-page .smart-status-item strong {
-  flex: 0 0 auto;
+.smart-buy-report-page__section-header h2, .smart-buy-report-page__panel-header h2 {
+  margin: 0;
   color: #0D2B5A;
   font-family: "Poppins", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+}
+.smart-buy-report-page__section-header p, .smart-buy-report-page__panel-header p {
+  margin: 5px 0 0;
+  color: #555555;
   font-size: 14px;
-  font-weight: 700;
+  line-height: 1.6;
+}
+.smart-buy-report-page__section-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #555555;
+  font-size: 14px;
   white-space: nowrap;
 }
-.smart-buy-reports-page .status-item-info {
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  gap: 9px;
+.smart-buy-report-page__section-meta i {
+  font-size: 17px;
 }
-.smart-buy-reports-page .status-item-info > span:last-child {
-  color: #555555;
-  font-size: 14px;
-  line-height: 1.4;
-  white-space: nowrap;
-}
-.smart-buy-reports-page .status-dot {
-  width: 9px;
-  height: 9px;
-  flex: 0 0 9px;
-  display: inline-block;
-  border-radius: 50%;
-}
-.smart-buy-reports-page .status-dot.submitted {
-  background: #0dcaf0;
-}
-.smart-buy-reports-page .status-dot.reviewing {
-  background: #ffc107;
-}
-.smart-buy-reports-page .status-dot.quoted {
-  background: #D4AF37;
-}
-.smart-buy-reports-page .status-dot.accepted {
-  background: #177245;
-}
-.smart-buy-reports-page .status-dot.purchased {
-  background: #198754;
-}
-.smart-buy-reports-page .status-progress {
-  width: 100%;
-  height: 7px;
-  overflow: hidden;
-  margin: 0 0 16px;
-  border-radius: 20px;
-  background: #F2F4F7;
-}
-.smart-buy-reports-page .status-progress span {
-  display: block;
-  height: 100%;
-  min-width: 0;
-  border-radius: inherit;
-}
-.smart-buy-reports-page .status-progress span.submitted {
-  background: #0dcaf0;
-}
-.smart-buy-reports-page .status-progress span.reviewing {
-  background: #ffc107;
-}
-.smart-buy-reports-page .status-progress span.quoted {
-  background: #D4AF37;
-}
-.smart-buy-reports-page .status-progress span.accepted {
-  background: #177245;
-}
-.smart-buy-reports-page .status-progress span.purchased {
-  background: #198754;
-}
-.smart-buy-reports-page .quote-performance {
-  min-height: 230px;
-  display: flex;
-  align-items: center;
-  gap: 30px;
-  padding: 24px 20px;
-}
-.smart-buy-reports-page .conversion-circle {
-  width: 150px;
-  height: 150px;
-  flex: 0 0 150px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border: 12px solid rgba(23, 114, 69, 0.1);
-  border-top-color: #177245;
-  border-right-color: #177245;
-  border-radius: 50%;
-  text-align: center;
-}
-.smart-buy-reports-page .conversion-circle .conversion-value {
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1.2;
-}
-.smart-buy-reports-page .conversion-circle > span {
-  margin-top: 5px;
-  color: #555555;
-  font-size: 12px;
-  line-height: 1.3;
-}
-.smart-buy-reports-page .quote-metrics {
-  flex: 1;
+.smart-buy-report-page__metrics {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 14px;
 }
-.smart-buy-reports-page .quote-metric {
-  padding: 13px;
-  border: 1px solid #ddd;
-  border-radius: 7px;
-}
-.smart-buy-reports-page .quote-metric span {
-  display: block;
-  margin-bottom: 5px;
-  color: #555555;
-  font-size: 14px;
-}
-.smart-buy-reports-page .quote-metric strong {
-  display: block;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 20px;
-  font-weight: 700;
-}
-.smart-buy-reports-page .value-summary {
-  display: flex;
-  flex-direction: column;
-  padding: 8px 20px;
-}
-.smart-buy-reports-page .value-item {
-  min-height: 76px;
+.smart-buy-report-page__metric-card {
   display: flex;
   align-items: center;
   gap: 12px;
-  border-bottom: 1px solid rgba(221, 221, 221, 0.75);
-}
-.smart-buy-reports-page .value-item:last-child {
-  border-bottom: 0;
-}
-.smart-buy-reports-page .value-item > div {
   min-width: 0;
-}
-.smart-buy-reports-page .value-item > div span {
-  display: block;
-  margin-bottom: 4px;
-  color: #555555;
-  font-size: 14px;
-}
-.smart-buy-reports-page .value-item > div strong {
-  display: block;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 20px;
-  font-weight: 700;
-}
-.smart-buy-reports-page .value-icon {
-  width: 40px;
-  height: 40px;
-  flex: 0 0 40px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 7px;
-  font-size: 16px;
-}
-.smart-buy-reports-page .value-icon.quote {
-  background: rgba(212, 175, 55, 0.14);
-  color: #D4AF37;
-}
-.smart-buy-reports-page .value-icon.purchase {
-  background: rgba(25, 135, 84, 0.09);
-  color: #198754;
-}
-.smart-buy-reports-page .value-icon.revenue {
-  background: rgba(23, 114, 69, 0.09);
-  color: #177245;
-}
-.smart-buy-reports-page .recent-activity-card {
-  margin-bottom: 20px;
-}
-.smart-buy-reports-page .activity-table-wrapper {
-  width: 100%;
-  overflow-x: auto;
-}
-.smart-buy-reports-page .activity-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-.smart-buy-reports-page .activity-table th,
-.smart-buy-reports-page .activity-table td {
-  padding: 14px 16px;
-  border-bottom: 1px solid rgba(221, 221, 221, 0.85);
-  text-align: left;
-  white-space: nowrap;
-}
-.smart-buy-reports-page .activity-table th {
+  padding: 16px;
+  border: 1px solid #eaecf0;
+  border-radius: 8px;
   background: #F2F4F7;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
 }
-.smart-buy-reports-page .activity-table td {
-  color: #555555;
-  font-size: 14px;
-}
-.smart-buy-reports-page .activity-table tbody tr:last-child td {
-  border-bottom: 0;
-}
-.smart-buy-reports-page .activity-table td > strong {
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-}
-.smart-buy-reports-page .customer-cell {
+.smart-buy-report-page__metric-icon {
   display: flex;
   align-items: center;
-  gap: 9px;
+  justify-content: center;
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  color: #177245;
+  background: rgba(23, 114, 69, 0.08);
 }
-.smart-buy-reports-page .customer-avatar {
-  width: 36px;
-  height: 36px;
-  flex: 0 0 36px;
+.smart-buy-report-page__metric-icon i {
+  font-size: 20px;
+}
+.smart-buy-report-page__metric-content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 4px;
+}
+.smart-buy-report-page__metric-content span {
+  overflow: hidden;
+  color: #555555;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.smart-buy-report-page__metric-content strong {
+  color: #0D2B5A;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.smart-buy-report-page__financial-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+.smart-buy-report-page__financial-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #eaecf0;
+  border-radius: 8px;
+  background: #F2F4F7;
+}
+.smart-buy-report-page__financial-card > div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.smart-buy-report-page__financial-card span {
+  color: #555555;
+  font-size: 14px;
+}
+.smart-buy-report-page__financial-card strong {
+  color: #0D2B5A;
+  font-size: 20px;
+  font-weight: 600;
+}
+.smart-buy-report-page__financial-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  color: #177245;
+  background: rgba(23, 114, 69, 0.08);
+}
+.smart-buy-report-page__financial-icon i {
+  font-size: 19px;
+}
+.smart-buy-report-page__table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #eaecf0;
+  border-radius: 8px;
+}
+.smart-buy-report-page__table {
+  width: 100%;
+  min-width: 1050px;
+  border-collapse: collapse;
+}
+.smart-buy-report-page__table th,
+.smart-buy-report-page__table td {
+  padding: 13px 14px;
+  border-bottom: 1px solid #eaecf0;
+  text-align: left;
+  vertical-align: middle;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.smart-buy-report-page__table th {
+  color: #0D2B5A;
+  background: #F2F4F7;
+  font-weight: 600;
+}
+.smart-buy-report-page__table td {
+  color: #555555;
+  background: #fff;
+}
+.smart-buy-report-page__table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.smart-buy-report-page__table tbody tr {
+  transition: background 0.2s ease;
+}
+.smart-buy-report-page__table tbody tr:hover td {
+  background: rgba(23, 114, 69, 0.02);
+}
+.smart-buy-report-page__date {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #0D2B5A;
+  font-weight: 500;
+}
+.smart-buy-report-page__date i {
+  color: #555555;
+  font-size: 17px;
+}
+.smart-buy-report-page__table-status {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  background: rgba(23, 114, 69, 0.09);
-  color: #177245;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-}
-.smart-buy-reports-page .customer-cell > div strong {
-  display: block;
-  margin-bottom: 3px;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-}
-.smart-buy-reports-page .customer-cell > div span {
-  display: block;
-  color: rgba(85, 85, 85, 0.7);
-  font-size: 14px;
-}
-.smart-buy-reports-page .request-badge {
-  display: inline-flex;
-  align-items: center;
-  min-height: 29px;
-  padding: 0 9px;
+  min-width: 34px;
+  min-height: 26px;
+  padding: 0 8px;
   border-radius: 5px;
   font-size: 14px;
   font-weight: 600;
 }
-.smart-buy-reports-page .request-badge.purchased {
-  background: rgba(25, 135, 84, 0.09);
+.smart-buy-report-page__table-status--success {
   color: #198754;
+  background: rgba(25, 135, 84, 0.08);
 }
-.smart-buy-reports-page .request-badge.quoted {
-  background: rgba(212, 175, 55, 0.14);
-  color: rgba(212, 175, 55, 0.18);
+.smart-buy-report-page__table-status--pending {
+  color: #ffc107;
+  background: rgba(255, 193, 7, 0.08);
 }
-.smart-buy-reports-page .request-badge.reviewing {
-  background: rgba(255, 193, 7, 0.13);
-  color: rgba(255, 193, 7, 0.18);
-}
-.smart-buy-reports-page .request-badge.submitted {
-  background: rgba(13, 202, 240, 0.1);
+.smart-buy-report-page__table-status--processing {
   color: #0dcaf0;
+  background: rgba(13, 202, 240, 0.08);
 }
-.smart-buy-reports-page .payment-summary-card {
-  margin-bottom: 20px;
+.smart-buy-report-page__table-status--cancelled {
+  color: #dc3545;
+  background: rgba(220, 53, 69, 0.08);
 }
-.smart-buy-reports-page .view-report-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  color: #177245;
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-}
-.smart-buy-reports-page .view-report-link:hover {
-  color: rgba(23, 114, 69, 0.8);
-}
-.smart-buy-reports-page .payment-summary-grid {
+.smart-buy-report-page__columns {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
-  padding: 20px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
 }
-.smart-buy-reports-page .payment-summary-item {
-  min-height: 76px;
+.smart-buy-report-page__panel {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid #eaecf0;
+  border-radius: 10px;
+  background: #fff;
+}
+.smart-buy-report-page__status-list, .smart-buy-report-page__payment-list {
+  display: flex;
+  flex-direction: column;
+}
+.smart-buy-report-page__status-item, .smart-buy-report-page__payment-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 46px;
+  border-bottom: 1px solid #eaecf0;
 }
-.smart-buy-reports-page .summary-icon {
-  width: 40px;
-  height: 40px;
-  flex: 0 0 40px;
-  display: inline-flex;
+.smart-buy-report-page__status-item:last-child, .smart-buy-report-page__payment-item:last-child {
+  border-bottom: 0;
+}
+.smart-buy-report-page__status-item strong, .smart-buy-report-page__payment-item strong {
+  color: #0D2B5A;
+  font-size: 14px;
+  font-weight: 600;
+}
+.smart-buy-report-page__status-name {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  border-radius: 7px;
-  font-size: 16px;
-}
-.smart-buy-reports-page .summary-icon.paid {
-  background: rgba(25, 135, 84, 0.09);
-  color: #198754;
-}
-.smart-buy-reports-page .summary-icon.pending {
-  background: rgba(255, 193, 7, 0.13);
-  color: rgba(255, 193, 7, 0.18);
-}
-.smart-buy-reports-page .summary-icon.failed {
-  background: rgba(220, 53, 69, 0.09);
-  color: #dc3545;
-}
-.smart-buy-reports-page .summary-icon.revenue {
-  background: rgba(23, 114, 69, 0.09);
-  color: #177245;
-}
-.smart-buy-reports-page .payment-summary-item > div span {
-  display: block;
-  margin-bottom: 3px;
+  gap: 9px;
   color: #555555;
   font-size: 14px;
 }
-.smart-buy-reports-page .payment-summary-item > div strong {
+.smart-buy-report-page__status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #555555;
+}
+.smart-buy-report-page__status-dot--pending {
+  background: #ffc107;
+}
+.smart-buy-report-page__status-dot--quote_sent, .smart-buy-report-page__status-dot--quote_accepted, .smart-buy-report-page__status-dot--payment_completed, .smart-buy-report-page__status-dot--product_purchased, .smart-buy-report-page__status-dot--in_transit {
+  background: #0dcaf0;
+}
+.smart-buy-report-page__status-dot--completed {
+  background: #198754;
+}
+.smart-buy-report-page__status-dot--cancelled, .smart-buy-report-page__status-dot--quote_rejected {
+  background: #dc3545;
+}
+.smart-buy-report-page__payment-item span {
+  color: #555555;
+  font-size: 14px;
+}
+.smart-buy-report-page__performance-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+.smart-buy-report-page__performance-card {
+  padding: 16px;
+  border: 1px solid #eaecf0;
+  border-radius: 8px;
+  background: #F2F4F7;
+}
+.smart-buy-report-page__performance-card > strong {
   display: block;
+  margin-top: 8px;
+  color: #0D2B5A;
+  font-size: 18px;
+  font-weight: 600;
+}
+.smart-buy-report-page__performance-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.smart-buy-report-page__performance-heading span {
+  color: #555555;
+  font-size: 14px;
+  font-weight: 500;
+}
+.smart-buy-report-page__performance-heading i {
+  color: #177245;
+  font-size: 18px;
+}
+.smart-buy-report-page__progress {
+  width: 100%;
+  height: 7px;
+  margin-top: 16px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #eaecf0;
+}
+.smart-buy-report-page__progress-bar {
+  height: 100%;
+  border-radius: inherit;
+  background: #177245;
+  transition: width 0.3s ease;
+}
+.smart-buy-report-page__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+  padding: 24px;
+  text-align: center;
+}
+.smart-buy-report-page__empty i {
+  color: #555555;
+  font-size: 32px;
+}
+.smart-buy-report-page__empty h3 {
+  margin: 12px 0 4px;
   color: #0D2B5A;
   font-family: "Poppins", sans-serif;
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 18px;
+  font-weight: 600;
 }
-@media (max-width: 1200px) {
-  .smart-buy-reports-page .report-stat-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+.smart-buy-report-page__empty p {
+  max-width: 420px;
+  margin: 0;
+  color: #555555;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.smart-buy-report-page__empty-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #F2F4F7;
+}
+.smart-buy-report-page__empty-icon i {
+  color: #555555;
+  font-size: 26px;
+}
+@media (min-width: 1400px) and (max-width: 1700px) {
+  .smart-buy-report-page__metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-  .smart-buy-reports-page .reports-grid {
-    grid-template-columns: 1fr;
-  }
-  .smart-buy-reports-page .secondary-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .smart-buy-reports-page .payment-summary-grid {
+}
+@media (min-width: 1200px) and (max-width: 1399px) {
+  .smart-buy-report-page__financial-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-@media (max-width: 991px) {
-  .smart-buy-reports-page .page-header {
+@media (min-width: 992px) and (max-width: 1199px) {
+  .smart-buy-report-page {
+    padding: 20px;
+  }
+  .smart-buy-report-page__header {
     align-items: flex-start;
     flex-direction: column;
   }
-  .smart-buy-reports-page .page-header-actions {
-    width: 100%;
-    flex-wrap: wrap;
+  .smart-buy-report-page__back {
+    align-self: flex-start;
   }
-  .smart-buy-reports-page .report-date-filter {
-    flex: 1;
-  }
-  .smart-buy-reports-page .report-date-filter .form-control {
-    width: 100%;
-  }
-  .smart-buy-reports-page .secondary-grid {
+  .smart-buy-report-page__columns {
     grid-template-columns: 1fr;
   }
-  .smart-buy-reports-page .quote-performance {
+  .smart-buy-report-page__performance-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (min-width: 768px) and (max-width: 991px) {
+  .smart-buy-report-page {
+    padding: 16px;
+  }
+  .smart-buy-report-page__metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .smart-buy-report-page__financial-grid {
+    grid-template-columns: 1fr;
+  }
+  .smart-buy-report-page__filter-group {
+    flex: 1 1 calc(50% - 6px);
+    min-width: 0;
+  }
+  .smart-buy-report-page__filter-button, .smart-buy-report-page__reset-button {
+    flex: 1 1 calc(50% - 6px);
+  }
+  .smart-buy-report-page__section, .smart-buy-report-page__panel, .smart-buy-report-page__filters {
+    padding: 16px;
+  }
+}
+@media (min-width: 480px) and (max-width: 767px) {
+  .smart-buy-report-page {
+    padding: 12px;
+  }
+  .smart-buy-report-page__title {
+    font-size: 22px;
+  }
+  .smart-buy-report-page__metrics {
+    grid-template-columns: 1fr;
+  }
+  .smart-buy-report-page__filter-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .smart-buy-report-page__filter-group {
+    width: 100%;
+  }
+  .smart-buy-report-page__filter-button, .smart-buy-report-page__reset-button {
+    width: 100%;
+    flex: 1 1 auto;
+  }
+  .smart-buy-report-page__quick-filters {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .smart-buy-report-page__quick-filter {
+    justify-content: center;
+  }
+  .smart-buy-report-page__section-header, .smart-buy-report-page__panel-header {
     align-items: flex-start;
     flex-direction: column;
   }
-  .smart-buy-reports-page .conversion-circle {
-    width: 130px;
-    height: 130px;
-    flex-basis: 130px;
+  .smart-buy-report-page__section-meta {
+    align-self: flex-start;
   }
-  .smart-buy-reports-page .quote-metrics {
-    width: 100%;
-  }
+}
+.smart-buy-report-page__section-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
 }
 @media (max-width: 767px) {
-  .smart-buy-reports-page .report-stat-grid {
-    grid-template-columns: 1fr;
-  }
-  .smart-buy-reports-page .payment-summary-grid {
-    grid-template-columns: 1fr;
-  }
-  .smart-buy-reports-page .dashboard-card-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  .smart-buy-reports-page .chart-legend {
-    flex-wrap: wrap;
-  }
-  .smart-buy-reports-page .activity-chart {
-    height: 270px;
-    padding-left: 14px;
-    padding-right: 14px;
-  }
-  .smart-buy-reports-page .chart-y-axis {
-    width: 35px;
-    flex-basis: 35px;
-  }
-  .smart-buy-reports-page .activity-bars {
-    gap: 5px;
-    padding-left: 3px;
-    padding-right: 3px;
-  }
-  .smart-buy-reports-page .activity-bars-inner > span {
-    width: 11px;
-  }
-  .smart-buy-reports-page .quote-performance {
-    padding: 20px 18px;
-  }
-  .smart-buy-reports-page .quote-metrics {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .smart-buy-reports-page .request-status-content {
-    padding: 20px 18px 22px;
+  .smart-buy-report-page__section-actions {
+    width: 100%;
+    justify-content: space-between;
   }
 }
-@media (max-width: 480px) {
-  .smart-buy-reports-page .page-header-actions {
-    align-items: stretch;
-    flex-direction: column;
-  }
-  .smart-buy-reports-page .report-date-filter,
-  .smart-buy-reports-page .btn {
-    width: 100%;
-  }
-  .smart-buy-reports-page .activity-chart {
-    height: 240px;
-  }
-  .smart-buy-reports-page .chart-label {
-    font-size: 14px;
-  }
-  .smart-buy-reports-page .quote-metrics {
-    grid-template-columns: 1fr;
-  }
-  .smart-buy-reports-page .conversion-circle {
-    width: 120px;
-    height: 120px;
-    flex-basis: 120px;
-  }
-  .smart-buy-reports-page .value-item > div strong {
-    font-size: 18px;
-  }
-  .smart-buy-reports-page .payment-summary-grid {
-    padding: 16px;
+.smart-buy-report-page__section-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #555555;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  white-space: nowrap;
+}
+.smart-buy-report-page__section-meta i {
+  font-size: 16px;
+  line-height: 1;
+}
+.smart-buy-report-page__export-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 8px 14px;
+  border: 1px solid #177245;
+  border-radius: 6px;
+  background-color: #177245;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  text-decoration: none;
+  white-space: nowrap;
+  -webkit-transition: all 0.3s linear 0s;
+  -o-transition: all 0.3s linear 0s;
+  transition: all 0.3s linear 0s;
+}
+.smart-buy-report-page__export-button i {
+  font-size: 17px;
+  line-height: 1;
+}
+.smart-buy-report-page__export-button:hover {
+  border-color: #D4AF37;
+  background-color: #D4AF37;
+  color: #fff;
+}
+.smart-buy-report-page__export-button:focus-visible {
+  outline: 2px solid #177245;
+  outline-offset: 2px;
+}
+@media (max-width: 767px) {
+  .smart-buy-report-page__export-button {
+    min-height: 36px;
+    padding: 7px 12px;
   }
 }
 
@@ -14480,2361 +14345,6 @@ select.form-control {
     padding-left: 16px;
   }
 }
-.payments-page {
-  font-family: "Poppins", sans-serif;
-  color: #555555;
-}
-.payments-page .page-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 30px;
-  margin-bottom: 28px;
-}
-.payments-page .page-header-content .page-subtitle {
-  display: block;
-  margin-bottom: 6px;
-  color: #177245;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 1.2px;
-  line-height: 1.2;
-  text-transform: uppercase;
-}
-.payments-page .page-header-content h1 {
-  margin: 0 0 6px;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1.25;
-}
-.payments-page .page-header-content p {
-  margin: 0;
-  color: #555555;
-  font-size: 14px;
-  line-height: 1.5;
-}
-.payments-page .page-header-actions {
-  display: flex;
-  align-items: center;
-}
-.payments-page .btn {
-  min-height: 42px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 0 16px;
-  border-radius: 7px;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1;
-  text-decoration: none;
-  transition: all 0.2s ease;
-}
-.payments-page .btn i {
-  font-size: 14px;
-}
-.payments-page .btn-outline-danger {
-  border: 1px solid rgba(220, 53, 69, 0.3);
-  background: #fff;
-  color: #dc3545;
-}
-.payments-page .btn-outline-danger:hover {
-  border-color: #dc3545;
-  background: #dc3545;
-  color: #fff;
-}
-.payments-page .payment-stat-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 18px;
-  margin-bottom: 24px;
-}
-.payments-page .payment-stat-card {
-  min-height: 126px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background: #fff;
-  transition: all 0.2s ease;
-}
-.payments-page .payment-stat-card:hover {
-  border-color: rgba(23, 114, 69, 0.25);
-  box-shadow: 0 5px 20px rgba(16, 26, 35, 0.04);
-}
-.payments-page .stat-icon {
-  width: 46px;
-  height: 46px;
-  flex: 0 0 46px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 9px;
-  background: rgba(23, 114, 69, 0.09);
-  color: #177245;
-  font-size: 18px;
-}
-.payments-page .stat-icon.success {
-  background: rgba(25, 135, 84, 0.09);
-  color: #198754;
-}
-.payments-page .stat-icon.danger {
-  background: rgba(220, 53, 69, 0.09);
-  color: #dc3545;
-}
-.payments-page .stat-content {
-  min-width: 0;
-  flex: 1;
-}
-.payments-page .stat-content .stat-label {
-  display: block;
-  margin-bottom: 5px;
-  color: #555555;
-  font-size: 14px;
-  line-height: 1.3;
-}
-.payments-page .stat-content h3 {
-  margin: 0 0 5px;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1.15;
-}
-.payments-page .stat-content p {
-  margin: 0;
-  color: rgba(85, 85, 85, 0.72);
-  font-size: 14px;
-  line-height: 1.35;
-  white-space: nowrap;
-}
-.payments-page .stat-growth {
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 28px;
-  padding: 0 8px;
-  border-radius: 5px;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1;
-}
-.payments-page .stat-growth.positive {
-  background: rgba(25, 135, 84, 0.09);
-  color: #198754;
-}
-.payments-page .stat-growth.negative {
-  background: rgba(220, 53, 69, 0.09);
-  color: #dc3545;
-}
-.payments-page .payment-transactions-card {
-  overflow: hidden;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background: #fff;
-}
-.payments-page .dashboard-card-header {
-  min-height: 84px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 25px;
-  padding: 18px 20px;
-  border-bottom: 1px solid #ddd;
-}
-.payments-page .card-header-content h2 {
-  margin: 0 0 5px;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 1.25;
-}
-.payments-page .card-header-content p {
-  margin: 0;
-  color: #555555;
-  font-size: 14px;
-  line-height: 1.4;
-}
-.payments-page .card-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.payments-page .payment-filter .form-control {
-  width: 150px;
-  height: 40px;
-  padding: 0 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  outline: none;
-  background: #fff;
-  color: #555555;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-.payments-page .payment-filter .form-control:focus {
-  border-color: #177245;
-  box-shadow: 0 0 0 3px rgba(23, 114, 69, 0.07);
-}
-.payments-page .table-responsive {
-  width: 100%;
-  overflow-x: auto;
-}
-.payments-page .payment-table {
-  width: 100%;
-  min-width: 1100px;
-  border-collapse: collapse;
-}
-.payments-page .payment-table th,
-.payments-page .payment-table td {
-  padding: 16px 20px;
-  text-align: left;
-  vertical-align: middle;
-  border-bottom: 1px solid #ddd;
-}
-.payments-page .payment-table th {
-  height: 48px;
-  background: #F2F4F7;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-.payments-page .payment-table td {
-  height: 66px;
-  color: #555555;
-  font-size: 14px;
-  line-height: 1.4;
-  white-space: nowrap;
-}
-.payments-page .payment-table tbody tr {
-  transition: background-color 0.15s ease;
-}
-.payments-page .payment-table tbody tr:hover {
-  background: rgba(23, 114, 69, 0.018);
-}
-.payments-page .payment-table tbody tr:last-child td {
-  border-bottom: 0;
-}
-.payments-page .transaction-id {
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-}
-.payments-page .customer-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 200px;
-}
-.payments-page .customer-info .customer-avatar {
-  width: 36px;
-  height: 36px;
-  flex: 0 0 36px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: rgba(23, 114, 69, 0.09);
-  color: #177245;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-}
-.payments-page .customer-details strong {
-  display: block;
-  margin-bottom: 3px;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.3;
-}
-.payments-page .customer-details span {
-  display: block;
-  color: rgba(85, 85, 85, 0.7);
-  font-size: 14px;
-  line-height: 1.3;
-}
-.payments-page .payment-type {
-  display: inline-flex;
-  align-items: center;
-  min-height: 28px;
-  padding: 0 10px;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1;
-}
-.payments-page .payment-type.ecommerce {
-  background: rgba(23, 114, 69, 0.09);
-  color: #177245;
-}
-.payments-page .payment-type.smart-buy {
-  background: rgba(212, 175, 55, 0.14);
-  color: rgba(212, 175, 55, 0.18);
-}
-.payments-page .payment-amount {
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-}
-.payments-page .payment-method {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.payments-page .payment-method i {
-  color: #0D2B5A;
-  font-size: 20px;
-}
-.payments-page .payment-method span {
-  color: #555555;
-  font-size: 14px;
-}
-.payments-page .payment-status {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 28px;
-  padding: 0 10px;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1;
-}
-.payments-page .payment-status.success {
-  background: rgba(25, 135, 84, 0.09);
-  color: #198754;
-}
-.payments-page .payment-status.pending {
-  background: rgba(255, 193, 7, 0.13);
-  color: rgba(255, 193, 7, 0.18);
-}
-.payments-page .payment-status.failed {
-  background: rgba(220, 53, 69, 0.09);
-  color: #dc3545;
-}
-.payments-page .text-end {
-  text-align: right !important;
-}
-.payments-page .table-action {
-  width: 36px;
-  height: 36px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  background: #fff;
-  color: #555555;
-  font-size: 14px;
-  text-decoration: none;
-  transition: all 0.2s ease;
-}
-.payments-page .table-action:hover {
-  border-color: #177245;
-  background: #177245;
-  color: #fff;
-}
-.payments-page .table-footer {
-  min-height: 70px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 14px 20px;
-  border-top: 1px solid #ddd;
-}
-.payments-page .table-results {
-  color: #555555;
-  font-size: 14px;
-}
-.payments-page .pagination {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-.payments-page .pagination button {
-  width: 34px;
-  height: 34px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background: #fff;
-  color: #555555;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-.payments-page .pagination button i {
-  font-size: 14px;
-}
-.payments-page .pagination button:hover:not(:disabled) {
-  border-color: #177245;
-  color: #177245;
-}
-.payments-page .pagination button.active {
-  border-color: #177245;
-  background: #177245;
-  color: #fff;
-}
-.payments-page .pagination button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-.payments-page .pagination span {
-  color: #555555;
-  font-size: 14px;
-}
-@media (max-width: 1200px) {
-  .payments-page .payment-stat-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (max-width: 991px) {
-  .payments-page .page-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  .payments-page .page-header-actions {
-    width: 100%;
-  }
-  .payments-page .dashboard-card-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  .payments-page .card-header-actions {
-    width: 100%;
-  }
-  .payments-page .payment-filter {
-    flex: 1;
-  }
-  .payments-page .payment-filter .form-control {
-    width: 100%;
-  }
-}
-@media (max-width: 767px) {
-  .payments-page .payment-stat-grid {
-    grid-template-columns: 1fr;
-  }
-  .payments-page .card-header-actions {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .payments-page .payment-filter {
-    width: 100%;
-  }
-  .payments-page .table-footer {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  .payments-page .pagination {
-    width: 100%;
-    justify-content: flex-end;
-  }
-}
-@media (max-width: 480px) {
-  .payments-page .page-header-content h1 {
-    font-size: 22px;
-  }
-  .payments-page .payment-stat-card {
-    min-height: 115px;
-    padding: 16px;
-  }
-  .payments-page .stat-content h3 {
-    font-size: 20px;
-  }
-  .payments-page .dashboard-card-header {
-    padding: 16px;
-  }
-  .payments-page .table-footer {
-    padding: 14px 16px;
-  }
-}
-
-.ecommerce-payments-page {
-  font-family: "Poppins", sans-serif;
-  color: #555555;
-}
-.ecommerce-payments-page .page-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 30px;
-  margin-bottom: 28px;
-}
-.ecommerce-payments-page .page-header-content .page-subtitle {
-  display: block;
-  margin-bottom: 6px;
-  color: #177245;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-}
-.ecommerce-payments-page .page-header-content h1 {
-  margin: 0 0 6px;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1.25;
-}
-.ecommerce-payments-page .page-header-content p {
-  margin: 0;
-  color: #555555;
-  font-size: 14px;
-  line-height: 1.5;
-}
-.ecommerce-payments-page .page-header-actions {
-  display: flex;
-  align-items: center;
-}
-.ecommerce-payments-page .btn {
-  min-height: 42px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 0 16px;
-  border-radius: 7px;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.2s ease;
-}
-.ecommerce-payments-page .btn-outline {
-  border: 1px solid #ddd;
-  background: #fff;
-  color: #0D2B5A;
-}
-.ecommerce-payments-page .btn-outline:hover {
-  border-color: #177245;
-  background: #177245;
-  color: #fff;
-}
-.ecommerce-payments-page .payment-stat-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 18px;
-  margin-bottom: 24px;
-}
-.ecommerce-payments-page .payment-stat-card {
-  min-height: 126px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background: #fff;
-  transition: all 0.2s ease;
-}
-.ecommerce-payments-page .payment-stat-card:hover {
-  border-color: rgba(23, 114, 69, 0.25);
-  box-shadow: 0 5px 20px rgba(16, 26, 35, 0.04);
-}
-.ecommerce-payments-page .stat-icon {
-  width: 46px;
-  height: 46px;
-  flex: 0 0 46px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 9px;
-  background: rgba(23, 114, 69, 0.09);
-  color: #177245;
-  font-size: 18px;
-}
-.ecommerce-payments-page .stat-icon.success {
-  background: rgba(25, 135, 84, 0.09);
-  color: #198754;
-}
-.ecommerce-payments-page .stat-icon.danger {
-  background: rgba(220, 53, 69, 0.09);
-  color: #dc3545;
-}
-.ecommerce-payments-page .stat-content {
-  min-width: 0;
-  flex: 1;
-}
-.ecommerce-payments-page .stat-content .stat-label {
-  display: block;
-  margin-bottom: 5px;
-  color: #555555;
-  font-size: 14px;
-}
-.ecommerce-payments-page .stat-content h3 {
-  margin: 0 0 5px;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1.15;
-}
-.ecommerce-payments-page .stat-content p {
-  margin: 0;
-  color: rgba(85, 85, 85, 0.72);
-  font-size: 14px;
-  line-height: 1.35;
-  white-space: nowrap;
-}
-.ecommerce-payments-page .stat-growth {
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 28px;
-  padding: 0 8px;
-  border-radius: 5px;
-  font-size: 14px;
-  font-weight: 600;
-}
-.ecommerce-payments-page .stat-growth.positive {
-  background: rgba(25, 135, 84, 0.09);
-  color: #198754;
-}
-.ecommerce-payments-page .stat-growth.negative {
-  background: rgba(220, 53, 69, 0.09);
-  color: #dc3545;
-}
-.ecommerce-payments-page .ecommerce-transactions-card {
-  overflow: hidden;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background: #fff;
-}
-.ecommerce-payments-page .dashboard-card-header {
-  min-height: 84px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 25px;
-  padding: 18px 20px;
-  border-bottom: 1px solid #ddd;
-}
-.ecommerce-payments-page .card-header-content h2 {
-  margin: 0 0 5px;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 20px;
-  font-weight: 700;
-}
-.ecommerce-payments-page .card-header-content p {
-  margin: 0;
-  color: #555555;
-  font-size: 14px;
-}
-.ecommerce-payments-page .card-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.ecommerce-payments-page .payment-filter .form-control {
-  width: 150px;
-  height: 40px;
-  padding: 0 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  outline: none;
-  background: #fff;
-  color: #555555;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-}
-.ecommerce-payments-page .payment-filter .form-control:focus {
-  border-color: #177245;
-  box-shadow: 0 0 0 3px rgba(23, 114, 69, 0.07);
-}
-.ecommerce-payments-page .table-responsive {
-  width: 100%;
-  overflow-x: auto;
-}
-.ecommerce-payments-page .payment-table {
-  width: 100%;
-  min-width: 1150px;
-  border-collapse: collapse;
-}
-.ecommerce-payments-page .payment-table th,
-.ecommerce-payments-page .payment-table td {
-  padding: 16px 20px;
-  text-align: left;
-  vertical-align: middle;
-  border-bottom: 1px solid #ddd;
-}
-.ecommerce-payments-page .payment-table th {
-  height: 48px;
-  background: #F2F4F7;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-.ecommerce-payments-page .payment-table td {
-  height: 66px;
-  color: #555555;
-  font-size: 14px;
-  white-space: nowrap;
-}
-.ecommerce-payments-page .payment-table tbody tr:hover {
-  background: rgba(23, 114, 69, 0.018);
-}
-.ecommerce-payments-page .payment-table tbody tr:last-child td {
-  border-bottom: 0;
-}
-.ecommerce-payments-page .transaction-id,
-.ecommerce-payments-page .order-id {
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-}
-.ecommerce-payments-page .customer-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 210px;
-}
-.ecommerce-payments-page .customer-avatar {
-  width: 36px;
-  height: 36px;
-  flex: 0 0 36px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: rgba(23, 114, 69, 0.09);
-  color: #177245;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-}
-.ecommerce-payments-page .customer-details strong {
-  display: block;
-  margin-bottom: 3px;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-}
-.ecommerce-payments-page .customer-details span {
-  display: block;
-  color: rgba(85, 85, 85, 0.7);
-  font-size: 14px;
-}
-.ecommerce-payments-page .payment-amount {
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-}
-.ecommerce-payments-page .payment-method {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.ecommerce-payments-page .payment-method i {
-  color: #0D2B5A;
-  font-size: 20px;
-}
-.ecommerce-payments-page .payment-method span {
-  color: #555555;
-  font-size: 14px;
-}
-.ecommerce-payments-page .payment-status {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 28px;
-  padding: 0 10px;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 600;
-}
-.ecommerce-payments-page .payment-status.success {
-  background: rgba(25, 135, 84, 0.09);
-  color: #198754;
-}
-.ecommerce-payments-page .payment-status.pending {
-  background: rgba(255, 193, 7, 0.13);
-  color: rgba(255, 193, 7, 0.18);
-}
-.ecommerce-payments-page .payment-status.failed {
-  background: rgba(220, 53, 69, 0.09);
-  color: #dc3545;
-}
-.ecommerce-payments-page .text-end {
-  text-align: right !important;
-}
-.ecommerce-payments-page .table-action {
-  width: 36px;
-  height: 36px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  background: #fff;
-  color: #555555;
-  font-size: 14px;
-  text-decoration: none;
-  transition: all 0.2s ease;
-}
-.ecommerce-payments-page .table-action:hover {
-  border-color: #177245;
-  background: #177245;
-  color: #fff;
-}
-.ecommerce-payments-page .table-footer {
-  min-height: 70px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 14px 20px;
-  border-top: 1px solid #ddd;
-}
-.ecommerce-payments-page .table-results {
-  color: #555555;
-  font-size: 14px;
-}
-.ecommerce-payments-page .pagination {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-.ecommerce-payments-page .pagination button {
-  width: 34px;
-  height: 34px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background: #fff;
-  color: #555555;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  cursor: pointer;
-}
-.ecommerce-payments-page .pagination button:hover:not(:disabled) {
-  border-color: #177245;
-  color: #177245;
-}
-.ecommerce-payments-page .pagination button.active {
-  border-color: #177245;
-  background: #177245;
-  color: #fff;
-}
-.ecommerce-payments-page .pagination button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-.ecommerce-payments-page .pagination span {
-  color: #555555;
-  font-size: 14px;
-}
-@media (max-width: 1200px) {
-  .ecommerce-payments-page .payment-stat-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (max-width: 991px) {
-  .ecommerce-payments-page .page-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  .ecommerce-payments-page .page-header-actions {
-    width: 100%;
-  }
-  .ecommerce-payments-page .dashboard-card-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  .ecommerce-payments-page .card-header-actions {
-    width: 100%;
-  }
-  .ecommerce-payments-page .payment-filter {
-    flex: 1;
-  }
-  .ecommerce-payments-page .payment-filter .form-control {
-    width: 100%;
-  }
-}
-@media (max-width: 767px) {
-  .ecommerce-payments-page .payment-stat-grid {
-    grid-template-columns: 1fr;
-  }
-  .ecommerce-payments-page .card-header-actions {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .ecommerce-payments-page .payment-filter {
-    width: 100%;
-  }
-  .ecommerce-payments-page .table-footer {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  .ecommerce-payments-page .pagination {
-    width: 100%;
-    justify-content: flex-end;
-  }
-}
-
-.smart-buy-payments-page {
-  font-family: "Poppins", sans-serif;
-  color: #555555;
-}
-.smart-buy-payments-page .page-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 30px;
-  margin-bottom: 28px;
-}
-.smart-buy-payments-page .page-header-content .page-subtitle {
-  display: block;
-  margin-bottom: 6px;
-  color: #177245;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 1.2px;
-  line-height: 1.2;
-  text-transform: uppercase;
-}
-.smart-buy-payments-page .page-header-content h1 {
-  margin: 0 0 6px;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1.25;
-}
-.smart-buy-payments-page .page-header-content p {
-  margin: 0;
-  color: #555555;
-  font-size: 14px;
-  line-height: 1.5;
-}
-.smart-buy-payments-page .page-header-actions {
-  display: flex;
-  align-items: center;
-}
-.smart-buy-payments-page .btn {
-  min-height: 42px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 0 16px;
-  border-radius: 7px;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.2s ease;
-}
-.smart-buy-payments-page .btn-outline {
-  border: 1px solid #ddd;
-  background: #fff;
-  color: #0D2B5A;
-}
-.smart-buy-payments-page .btn-outline:hover {
-  border-color: #177245;
-  background: #177245;
-  color: #fff;
-}
-.smart-buy-payments-page .payment-stat-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 18px;
-  margin-bottom: 24px;
-}
-.smart-buy-payments-page .payment-stat-card {
-  min-height: 126px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background: #fff;
-  transition: all 0.2s ease;
-}
-.smart-buy-payments-page .payment-stat-card:hover {
-  border-color: rgba(23, 114, 69, 0.25);
-  box-shadow: 0 5px 20px rgba(16, 26, 35, 0.04);
-}
-.smart-buy-payments-page .stat-icon {
-  width: 46px;
-  height: 46px;
-  flex: 0 0 46px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 9px;
-  background: rgba(23, 114, 69, 0.09);
-  color: #177245;
-  font-size: 18px;
-}
-.smart-buy-payments-page .stat-icon.gold {
-  background: rgba(212, 175, 55, 0.13);
-  color: #D4AF37;
-}
-.smart-buy-payments-page .stat-icon.success {
-  background: rgba(25, 135, 84, 0.09);
-  color: #198754;
-}
-.smart-buy-payments-page .stat-icon.danger {
-  background: rgba(220, 53, 69, 0.09);
-  color: #dc3545;
-}
-.smart-buy-payments-page .stat-content {
-  min-width: 0;
-  flex: 1;
-}
-.smart-buy-payments-page .stat-content .stat-label {
-  display: block;
-  margin-bottom: 5px;
-  color: #555555;
-  font-size: 14px;
-  line-height: 1.3;
-}
-.smart-buy-payments-page .stat-content h3 {
-  margin: 0 0 5px;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1.15;
-}
-.smart-buy-payments-page .stat-content p {
-  margin: 0;
-  color: rgba(85, 85, 85, 0.72);
-  font-size: 14px;
-  line-height: 1.35;
-  white-space: nowrap;
-}
-.smart-buy-payments-page .stat-growth {
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 28px;
-  padding: 0 8px;
-  border-radius: 5px;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1;
-}
-.smart-buy-payments-page .stat-growth.positive {
-  background: rgba(25, 135, 84, 0.09);
-  color: #198754;
-}
-.smart-buy-payments-page .stat-growth.negative {
-  background: rgba(220, 53, 69, 0.09);
-  color: #dc3545;
-}
-.smart-buy-payments-page .smart-buy-transactions-card {
-  overflow: hidden;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background: #fff;
-}
-.smart-buy-payments-page .dashboard-card-header {
-  min-height: 84px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 25px;
-  padding: 18px 20px;
-  border-bottom: 1px solid #ddd;
-}
-.smart-buy-payments-page .card-header-content h2 {
-  margin: 0 0 5px;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 1.25;
-}
-.smart-buy-payments-page .card-header-content p {
-  margin: 0;
-  color: #555555;
-  font-size: 14px;
-  line-height: 1.4;
-}
-.smart-buy-payments-page .card-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.smart-buy-payments-page .payment-filter .form-control {
-  width: 150px;
-  height: 40px;
-  padding: 0 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  outline: none;
-  background: #fff;
-  color: #555555;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-.smart-buy-payments-page .payment-filter .form-control:focus {
-  border-color: #177245;
-  box-shadow: 0 0 0 3px rgba(23, 114, 69, 0.07);
-}
-.smart-buy-payments-page .table-responsive {
-  width: 100%;
-  overflow-x: auto;
-}
-.smart-buy-payments-page .payment-table {
-  width: 100%;
-  min-width: 1180px;
-  border-collapse: collapse;
-}
-.smart-buy-payments-page .payment-table th,
-.smart-buy-payments-page .payment-table td {
-  padding: 16px 20px;
-  text-align: left;
-  vertical-align: middle;
-  border-bottom: 1px solid #ddd;
-}
-.smart-buy-payments-page .payment-table th {
-  height: 48px;
-  background: #F2F4F7;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-.smart-buy-payments-page .payment-table td {
-  height: 66px;
-  color: #555555;
-  font-size: 14px;
-  line-height: 1.4;
-  white-space: nowrap;
-}
-.smart-buy-payments-page .payment-table tbody tr {
-  transition: background-color 0.15s ease;
-}
-.smart-buy-payments-page .payment-table tbody tr:hover {
-  background: rgba(23, 114, 69, 0.018);
-}
-.smart-buy-payments-page .payment-table tbody tr:last-child td {
-  border-bottom: 0;
-}
-.smart-buy-payments-page .transaction-id,
-.smart-buy-payments-page .request-id {
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-}
-.smart-buy-payments-page .customer-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 205px;
-}
-.smart-buy-payments-page .customer-avatar {
-  width: 36px;
-  height: 36px;
-  flex: 0 0 36px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: rgba(23, 114, 69, 0.09);
-  color: #177245;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-}
-.smart-buy-payments-page .customer-details strong {
-  display: block;
-  margin-bottom: 3px;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.3;
-}
-.smart-buy-payments-page .customer-details span {
-  display: block;
-  color: rgba(85, 85, 85, 0.7);
-  font-size: 14px;
-  line-height: 1.3;
-}
-.smart-buy-payments-page .payment-amount {
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-}
-.smart-buy-payments-page .payment-method {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.smart-buy-payments-page .payment-method i {
-  color: #0D2B5A;
-  font-size: 20px;
-}
-.smart-buy-payments-page .payment-method span {
-  color: #555555;
-  font-size: 14px;
-}
-.smart-buy-payments-page .payment-status {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 28px;
-  padding: 0 10px;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1;
-}
-.smart-buy-payments-page .payment-status.success {
-  background: rgba(25, 135, 84, 0.09);
-  color: #198754;
-}
-.smart-buy-payments-page .payment-status.pending {
-  background: rgba(255, 193, 7, 0.13);
-  color: rgba(255, 193, 7, 0.18);
-}
-.smart-buy-payments-page .payment-status.failed {
-  background: rgba(220, 53, 69, 0.09);
-  color: #dc3545;
-}
-.smart-buy-payments-page .text-end {
-  text-align: right !important;
-}
-.smart-buy-payments-page .table-action {
-  width: 36px;
-  height: 36px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  background: #fff;
-  color: #555555;
-  font-size: 14px;
-  text-decoration: none;
-  transition: all 0.2s ease;
-}
-.smart-buy-payments-page .table-action:hover {
-  border-color: #177245;
-  background: #177245;
-  color: #fff;
-}
-.smart-buy-payments-page .table-footer {
-  min-height: 70px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 14px 20px;
-  border-top: 1px solid #ddd;
-}
-.smart-buy-payments-page .table-results {
-  color: #555555;
-  font-size: 14px;
-  line-height: 1.4;
-}
-.smart-buy-payments-page .pagination {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-.smart-buy-payments-page .pagination button {
-  width: 34px;
-  height: 34px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background: #fff;
-  color: #555555;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-.smart-buy-payments-page .pagination button i {
-  font-size: 14px;
-}
-.smart-buy-payments-page .pagination button:hover:not(:disabled) {
-  border-color: #177245;
-  color: #177245;
-}
-.smart-buy-payments-page .pagination button.active {
-  border-color: #177245;
-  background: #177245;
-  color: #fff;
-}
-.smart-buy-payments-page .pagination button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-.smart-buy-payments-page .pagination span {
-  color: #555555;
-  font-size: 14px;
-}
-@media (max-width: 1200px) {
-  .smart-buy-payments-page .payment-stat-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (max-width: 991px) {
-  .smart-buy-payments-page .page-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  .smart-buy-payments-page .page-header-actions {
-    width: 100%;
-  }
-  .smart-buy-payments-page .dashboard-card-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  .smart-buy-payments-page .card-header-actions {
-    width: 100%;
-  }
-  .smart-buy-payments-page .payment-filter {
-    flex: 1;
-  }
-  .smart-buy-payments-page .payment-filter .form-control {
-    width: 100%;
-  }
-}
-@media (max-width: 767px) {
-  .smart-buy-payments-page .payment-stat-grid {
-    grid-template-columns: 1fr;
-  }
-  .smart-buy-payments-page .card-header-actions {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .smart-buy-payments-page .payment-filter {
-    width: 100%;
-  }
-  .smart-buy-payments-page .table-footer {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  .smart-buy-payments-page .pagination {
-    width: 100%;
-    justify-content: flex-end;
-  }
-}
-
-.failed-payments-page {
-  font-family: "Poppins", sans-serif;
-  color: #555555;
-}
-.failed-payments-page .page-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 30px;
-  margin-bottom: 28px;
-}
-.failed-payments-page .page-header-content .page-subtitle {
-  display: block;
-  margin-bottom: 6px;
-  color: #dc3545;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 1.2px;
-  line-height: 1.2;
-  text-transform: uppercase;
-}
-.failed-payments-page .page-header-content h1 {
-  margin: 0 0 6px;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1.25;
-}
-.failed-payments-page .page-header-content p {
-  margin: 0;
-  color: #555555;
-  font-size: 14px;
-  line-height: 1.5;
-}
-.failed-payments-page .page-header-actions {
-  display: flex;
-  align-items: center;
-}
-.failed-payments-page .btn {
-  min-height: 42px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 0 16px;
-  border-radius: 7px;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1;
-  text-decoration: none;
-  transition: all 0.2s ease;
-}
-.failed-payments-page .btn-outline {
-  border: 1px solid #ddd;
-  background: #fff;
-  color: #0D2B5A;
-}
-.failed-payments-page .btn-outline:hover {
-  border-color: #177245;
-  background: #177245;
-  color: #fff;
-}
-.failed-payments-page .payment-stat-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 18px;
-  margin-bottom: 24px;
-}
-.failed-payments-page .payment-stat-card {
-  min-height: 126px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background: #fff;
-  transition: all 0.2s ease;
-}
-.failed-payments-page .payment-stat-card:hover {
-  border-color: rgba(220, 53, 69, 0.2);
-  box-shadow: 0 5px 20px rgba(16, 26, 35, 0.04);
-}
-.failed-payments-page .stat-icon {
-  width: 46px;
-  height: 46px;
-  flex: 0 0 46px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 9px;
-  background: rgba(23, 114, 69, 0.09);
-  color: #177245;
-  font-size: 18px;
-}
-.failed-payments-page .stat-icon.danger {
-  background: rgba(220, 53, 69, 0.09);
-  color: #dc3545;
-}
-.failed-payments-page .stat-icon.gold {
-  background: rgba(212, 175, 55, 0.13);
-  color: #D4AF37;
-}
-.failed-payments-page .stat-content {
-  min-width: 0;
-  flex: 1;
-}
-.failed-payments-page .stat-content .stat-label {
-  display: block;
-  margin-bottom: 5px;
-  color: #555555;
-  font-size: 14px;
-  line-height: 1.3;
-}
-.failed-payments-page .stat-content h3 {
-  margin: 0 0 5px;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1.15;
-}
-.failed-payments-page .stat-content p {
-  margin: 0;
-  color: rgba(85, 85, 85, 0.72);
-  font-size: 14px;
-  line-height: 1.35;
-  white-space: nowrap;
-}
-.failed-payments-page .stat-growth {
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 28px;
-  padding: 0 8px;
-  border-radius: 5px;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1;
-}
-.failed-payments-page .stat-growth.positive {
-  background: rgba(25, 135, 84, 0.09);
-  color: #198754;
-}
-.failed-payments-page .stat-growth.negative {
-  background: rgba(220, 53, 69, 0.09);
-  color: #dc3545;
-}
-.failed-payments-page .failed-transactions-card {
-  overflow: hidden;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background: #fff;
-}
-.failed-payments-page .dashboard-card-header {
-  min-height: 84px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 25px;
-  padding: 18px 20px;
-  border-bottom: 1px solid #ddd;
-}
-.failed-payments-page .card-header-content h2 {
-  margin: 0 0 5px;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 1.25;
-}
-.failed-payments-page .card-header-content p {
-  margin: 0;
-  color: #555555;
-  font-size: 14px;
-  line-height: 1.4;
-}
-.failed-payments-page .card-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.failed-payments-page .payment-filter .form-control {
-  width: 160px;
-  height: 40px;
-  padding: 0 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  outline: none;
-  background: #fff;
-  color: #555555;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-.failed-payments-page .payment-filter .form-control:focus {
-  border-color: #177245;
-  box-shadow: 0 0 0 3px rgba(23, 114, 69, 0.07);
-}
-.failed-payments-page .table-responsive {
-  width: 100%;
-  overflow-x: auto;
-}
-.failed-payments-page .payment-table {
-  width: 100%;
-  min-width: 1180px;
-  border-collapse: collapse;
-}
-.failed-payments-page .payment-table th,
-.failed-payments-page .payment-table td {
-  padding: 16px 20px;
-  text-align: left;
-  vertical-align: middle;
-  border-bottom: 1px solid #ddd;
-}
-.failed-payments-page .payment-table th {
-  height: 48px;
-  background: #F2F4F7;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-.failed-payments-page .payment-table td {
-  height: 66px;
-  color: #555555;
-  font-size: 14px;
-  line-height: 1.4;
-  white-space: nowrap;
-}
-.failed-payments-page .payment-table tbody tr {
-  transition: background-color 0.15s ease;
-}
-.failed-payments-page .payment-table tbody tr:hover {
-  background: rgba(220, 53, 69, 0.018);
-}
-.failed-payments-page .payment-table tbody tr:last-child td {
-  border-bottom: 0;
-}
-.failed-payments-page .transaction-id {
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-}
-.failed-payments-page .customer-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 205px;
-}
-.failed-payments-page .customer-avatar {
-  width: 36px;
-  height: 36px;
-  flex: 0 0 36px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: rgba(220, 53, 69, 0.08);
-  color: #dc3545;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-}
-.failed-payments-page .customer-details strong {
-  display: block;
-  margin-bottom: 3px;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.3;
-}
-.failed-payments-page .customer-details span {
-  display: block;
-  color: rgba(85, 85, 85, 0.7);
-  font-size: 14px;
-  line-height: 1.3;
-}
-.failed-payments-page .payment-type {
-  display: inline-flex;
-  align-items: center;
-  min-height: 28px;
-  padding: 0 10px;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1;
-}
-.failed-payments-page .payment-type.ecommerce {
-  background: rgba(23, 114, 69, 0.09);
-  color: #177245;
-}
-.failed-payments-page .payment-type.smart-buy {
-  background: rgba(212, 175, 55, 0.14);
-  color: rgba(212, 175, 55, 0.18);
-}
-.failed-payments-page .payment-amount {
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-}
-.failed-payments-page .payment-method {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.failed-payments-page .payment-method i {
-  color: #0D2B5A;
-  font-size: 20px;
-}
-.failed-payments-page .payment-method span {
-  color: #555555;
-  font-size: 14px;
-}
-.failed-payments-page .failure-reason {
-  display: inline-flex;
-  align-items: center;
-  min-height: 28px;
-  padding: 0 10px;
-  border-radius: 4px;
-  background: rgba(220, 53, 69, 0.08);
-  color: #dc3545;
-  font-size: 14px;
-  font-weight: 600;
-}
-.failed-payments-page .text-end {
-  text-align: right !important;
-}
-.failed-payments-page .table-action {
-  width: 36px;
-  height: 36px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  background: #fff;
-  color: #555555;
-  font-size: 14px;
-  text-decoration: none;
-  transition: all 0.2s ease;
-}
-.failed-payments-page .table-action:hover {
-  border-color: #dc3545;
-  background: #dc3545;
-  color: #fff;
-}
-.failed-payments-page .table-footer {
-  min-height: 70px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 14px 20px;
-  border-top: 1px solid #ddd;
-}
-.failed-payments-page .table-results {
-  color: #555555;
-  font-size: 14px;
-  line-height: 1.4;
-}
-.failed-payments-page .pagination {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-.failed-payments-page .pagination button {
-  width: 34px;
-  height: 34px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background: #fff;
-  color: #555555;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-.failed-payments-page .pagination button i {
-  font-size: 14px;
-}
-.failed-payments-page .pagination button:hover:not(:disabled) {
-  border-color: #177245;
-  color: #177245;
-}
-.failed-payments-page .pagination button.active {
-  border-color: #177245;
-  background: #177245;
-  color: #fff;
-}
-.failed-payments-page .pagination button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-.failed-payments-page .pagination span {
-  color: #555555;
-  font-size: 14px;
-}
-@media (max-width: 1200px) {
-  .failed-payments-page .payment-stat-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (max-width: 991px) {
-  .failed-payments-page .page-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  .failed-payments-page .page-header-actions {
-    width: 100%;
-  }
-  .failed-payments-page .dashboard-card-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  .failed-payments-page .card-header-actions {
-    width: 100%;
-  }
-  .failed-payments-page .payment-filter {
-    flex: 1;
-  }
-  .failed-payments-page .payment-filter .form-control {
-    width: 100%;
-  }
-}
-@media (max-width: 767px) {
-  .failed-payments-page .payment-stat-grid {
-    grid-template-columns: 1fr;
-  }
-  .failed-payments-page .card-header-actions {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .failed-payments-page .payment-filter {
-    width: 100%;
-  }
-  .failed-payments-page .table-footer {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  .failed-payments-page .pagination {
-    width: 100%;
-    justify-content: flex-end;
-  }
-}
-
-.payment-details-page {
-  font-family: "Poppins", sans-serif;
-  color: #555555;
-}
-.payment-details-page .page-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 30px;
-  margin-bottom: 28px;
-}
-.payment-details-page .page-header-content .page-subtitle {
-  display: block;
-  margin-bottom: 6px;
-  color: #177245;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 1.2px;
-  line-height: 1.2;
-  text-transform: uppercase;
-}
-.payment-details-page .page-header-content h1 {
-  margin: 0 0 6px;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1.25;
-}
-.payment-details-page .page-header-content p {
-  margin: 0;
-  color: #555555;
-  font-size: 14px;
-  line-height: 1.5;
-}
-.payment-details-page .page-header-actions {
-  display: flex;
-  align-items: center;
-}
-.payment-details-page .btn {
-  min-height: 42px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 0 16px;
-  border-radius: 7px;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.2s ease;
-}
-.payment-details-page .btn-outline {
-  border: 1px solid #ddd;
-  background: #fff;
-  color: #0D2B5A;
-}
-.payment-details-page .btn-outline:hover {
-  border-color: #177245;
-  background: #177245;
-  color: #fff;
-}
-.payment-details-page .payment-summary-card {
-  min-height: 120px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 30px;
-  margin-bottom: 20px;
-  padding: 22px 24px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background: #fff;
-}
-.payment-details-page .payment-summary-main {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.payment-details-page .payment-status-icon {
-  width: 52px;
-  height: 52px;
-  flex: 0 0 52px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  font-size: 22px;
-}
-.payment-details-page .payment-status-icon.success {
-  background: rgba(25, 135, 84, 0.1);
-  color: #198754;
-}
-.payment-details-page .payment-status-icon.danger {
-  background: rgba(220, 53, 69, 0.1);
-  color: #dc3545;
-}
-.payment-details-page .payment-summary-content .summary-label {
-  display: block;
-  margin-bottom: 4px;
-  color: #555555;
-  font-size: 14px;
-}
-.payment-details-page .payment-summary-content h2 {
-  margin: 0 0 4px;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1.2;
-}
-.payment-details-page .payment-summary-content p {
-  margin: 0;
-  color: #555555;
-  font-size: 14px;
-}
-.payment-details-page .payment-summary-meta {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-}
-.payment-details-page .payment-date {
-  color: #555555;
-  font-size: 14px;
-}
-.payment-details-page .payment-status {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 30px;
-  padding: 0 11px;
-  border-radius: 5px;
-  font-size: 14px;
-  font-weight: 600;
-}
-.payment-details-page .payment-status.success {
-  background: rgba(25, 135, 84, 0.09);
-  color: #198754;
-}
-.payment-details-page .payment-status.pending {
-  background: rgba(255, 193, 7, 0.13);
-  color: rgba(255, 193, 7, 0.18);
-}
-.payment-details-page .payment-status.failed {
-  background: rgba(220, 53, 69, 0.09);
-  color: #dc3545;
-}
-.payment-details-page .details-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
-  margin-bottom: 20px;
-}
-.payment-details-page .details-card {
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background: #fff;
-}
-.payment-details-page .details-card-header {
-  padding: 20px;
-  border-bottom: 1px solid #ddd;
-}
-.payment-details-page .details-card-header h2 {
-  margin: 0 0 5px;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 1.25;
-}
-.payment-details-page .details-card-header p {
-  margin: 0;
-  color: #555555;
-  font-size: 14px;
-  line-height: 1.4;
-}
-.payment-details-page .details-list {
-  padding: 6px 20px;
-}
-.payment-details-page .detail-item {
-  min-height: 58px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(221, 221, 221, 0.75);
-}
-.payment-details-page .detail-item:last-child {
-  border-bottom: 0;
-}
-.payment-details-page .detail-label {
-  color: #555555;
-  font-size: 14px;
-  line-height: 1.4;
-}
-.payment-details-page .detail-value {
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  text-align: right;
-}
-.payment-details-page .payment-type {
-  display: inline-flex;
-  align-items: center;
-  min-height: 30px;
-  padding: 0 10px;
-  border-radius: 5px;
-  font-size: 14px;
-  font-weight: 600;
-}
-.payment-details-page .payment-type.ecommerce {
-  background: rgba(23, 114, 69, 0.09);
-  color: #177245;
-}
-.payment-details-page .payment-type.smart-buy {
-  background: rgba(212, 175, 55, 0.14);
-  color: rgba(212, 175, 55, 0.18);
-}
-.payment-details-page .customer-profile {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 20px;
-}
-.payment-details-page .customer-avatar {
-  width: 48px;
-  height: 48px;
-  flex: 0 0 48px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: rgba(23, 114, 69, 0.09);
-  color: #177245;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-}
-.payment-details-page .customer-avatar.large {
-  width: 52px;
-  height: 52px;
-  flex-basis: 52px;
-}
-.payment-details-page .customer-profile-info h3 {
-  margin: 0 0 4px;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 20px;
-  font-weight: 700;
-}
-.payment-details-page .customer-profile-info p {
-  margin: 0 0 3px;
-  color: #555555;
-  font-size: 14px;
-}
-.payment-details-page .customer-profile-info span {
-  color: rgba(85, 85, 85, 0.72);
-  font-size: 14px;
-}
-.payment-details-page .customer-contact-list {
-  padding: 0 20px 18px;
-}
-.payment-details-page .contact-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 42px;
-  color: #555555;
-  font-size: 14px;
-}
-.payment-details-page .contact-item i {
-  width: 18px;
-  color: #177245;
-  font-size: 16px;
-}
-.payment-details-page .amount-highlight {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 20px;
-  padding: 18px;
-  border-radius: 8px;
-  background: rgba(23, 114, 69, 0.05);
-}
-.payment-details-page .amount-highlight span {
-  color: #555555;
-  font-size: 14px;
-}
-.payment-details-page .amount-highlight strong {
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-}
-.payment-details-page .payment-method {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-}
-.payment-details-page .payment-method i {
-  color: #0D2B5A;
-  font-size: 20px;
-}
-.payment-details-page .payment-method span {
-  color: #555555;
-  font-size: 14px;
-}
-.payment-details-page .related-order {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin: 20px;
-  padding: 16px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: #F2F4F7;
-}
-.payment-details-page .order-icon {
-  width: 44px;
-  height: 44px;
-  flex: 0 0 44px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 7px;
-  background: #fff;
-  color: #177245;
-  font-size: 18px;
-}
-.payment-details-page .order-content {
-  flex: 1;
-}
-.payment-details-page .order-content span {
-  display: block;
-  margin-bottom: 3px;
-  color: #555555;
-  font-size: 14px;
-}
-.payment-details-page .order-content strong {
-  display: block;
-  margin-bottom: 3px;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-}
-.payment-details-page .order-content p {
-  margin: 0;
-  color: #555555;
-  font-size: 14px;
-}
-.payment-details-page .view-order-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  color: #177245;
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-}
-.payment-details-page .view-order-btn:hover {
-  color: rgba(23, 114, 69, 0.8);
-}
-.payment-details-page .order-status {
-  display: inline-flex;
-  align-items: center;
-  min-height: 30px;
-  padding: 0 10px;
-  border-radius: 5px;
-  background: rgba(255, 193, 7, 0.13);
-  color: rgba(255, 193, 7, 0.18);
-  font-size: 14px;
-  font-weight: 600;
-}
-.payment-details-page .payment-timeline-card {
-  margin-bottom: 20px;
-}
-.payment-details-page .payment-timeline {
-  padding: 20px 24px;
-}
-.payment-details-page .timeline-item {
-  position: relative;
-  display: flex;
-  gap: 14px;
-  min-height: 86px;
-}
-.payment-details-page .timeline-item:not(:last-child)::before {
-  content: "";
-  position: absolute;
-  top: 38px;
-  left: 16px;
-  width: 1px;
-  height: calc(100% - 12px);
-  background: #ddd;
-}
-.payment-details-page .timeline-icon {
-  position: relative;
-  z-index: 1;
-  width: 34px;
-  height: 34px;
-  flex: 0 0 34px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba(25, 135, 84, 0.2);
-  border-radius: 50%;
-  background: rgba(25, 135, 84, 0.09);
-  color: #198754;
-  font-size: 14px;
-}
-.payment-details-page .timeline-content strong {
-  display: block;
-  margin-bottom: 4px;
-  color: #0D2B5A;
-  font-family: "Poppins", sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 1.3;
-}
-.payment-details-page .timeline-content p {
-  margin: 0 0 5px;
-  color: #555555;
-  font-size: 14px;
-  line-height: 1.4;
-}
-.payment-details-page .timeline-content span {
-  color: rgba(85, 85, 85, 0.7);
-  font-size: 14px;
-}
-@media (max-width: 991px) {
-  .payment-details-page .page-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  .payment-details-page .page-header-actions {
-    width: 100%;
-  }
-  .payment-details-page .payment-summary-card {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  .payment-details-page .payment-summary-meta {
-    width: 100%;
-    justify-content: space-between;
-  }
-  .payment-details-page .details-grid {
-    grid-template-columns: 1fr;
-  }
-}
-@media (max-width: 767px) {
-  .payment-details-page .payment-summary-main {
-    align-items: flex-start;
-  }
-  .payment-details-page .payment-summary-content h2 {
-    font-size: 20px;
-  }
-  .payment-details-page .payment-summary-meta {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .payment-details-page .details-card-header {
-    padding: 18px;
-  }
-  .payment-details-page .details-list {
-    padding: 6px 18px;
-  }
-  .payment-details-page .customer-profile {
-    padding: 18px;
-  }
-  .payment-details-page .customer-contact-list {
-    padding: 0 18px 18px;
-  }
-  .payment-details-page .related-order {
-    align-items: flex-start;
-    flex-wrap: wrap;
-    margin: 18px;
-  }
-  .payment-details-page .view-order-btn {
-    width: 100%;
-    padding-top: 8px;
-  }
-  .payment-details-page .payment-timeline {
-    padding: 20px 18px;
-  }
-}
-@media (max-width: 480px) {
-  .payment-details-page .payment-summary-card {
-    padding: 18px;
-  }
-  .payment-details-page .payment-summary-main {
-    gap: 12px;
-  }
-  .payment-details-page .payment-status-icon {
-    width: 46px;
-    height: 46px;
-    flex-basis: 46px;
-  }
-  .payment-details-page .detail-item {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .payment-details-page .detail-value {
-    text-align: left;
-  }
-  .payment-details-page .amount-highlight strong {
-    font-size: 20px;
-  }
-}
-
 /*================================*
 * Roles Page
 *=================================*/
@@ -30471,613 +27981,682 @@ body.payment-modal-open {
 }
 
 .smart-buy-payments-page {
-  width: 100%;
-  max-width: 100%;
-  padding: 24px;
-  font-size: 14px;
+  padding: 30px;
 }
-.smart-buy-payments-page * {
-  box-sizing: border-box;
-}
-.smart-buy-payments-page a {
-  text-decoration: none;
-}
-.smart-buy-payments-page button,
-.smart-buy-payments-page input,
-.smart-buy-payments-page select {
-  font: inherit;
-}
-.smart-buy-payments-page .smart-buy-payments-breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 18px;
-  font-size: 14px;
-}
-.smart-buy-payments-page .smart-buy-payments-breadcrumb a {
-  color: #64748b;
-  transition: color 0.2s ease;
-}
-.smart-buy-payments-page .smart-buy-payments-breadcrumb a:hover {
-  color: #12355B;
-}
-.smart-buy-payments-page .smart-buy-payments-breadcrumb i {
-  color: #94a3b8;
-  font-size: 16px;
-}
-.smart-buy-payments-page .smart-buy-payments-breadcrumb span {
-  color: #12355B;
-  font-weight: 600;
-}
-.smart-buy-payments-page .smart-buy-payments-header {
+.smart-buy-payments-page .page-header {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
   gap: 24px;
   margin-bottom: 28px;
 }
-.smart-buy-payments-page .smart-buy-payments-header__content .smart-buy-payments-eyebrow {
-  display: inline-flex;
-  margin-bottom: 7px;
-  color: #C8A646;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+.smart-buy-payments-page .page-header__content {
+  min-width: 0;
 }
-.smart-buy-payments-page .smart-buy-payments-header__content h1 {
-  margin: 0;
-  color: #12355B;
+.smart-buy-payments-page .page-header__breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+  color: #555555;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.smart-buy-payments-page .page-header__breadcrumb a {
+  color: #555555;
+  text-decoration: none;
+  -webkit-transition: all 0.3s linear 0s;
+  -o-transition: all 0.3s linear 0s;
+  transition: all 0.3s linear 0s;
+}
+.smart-buy-payments-page .page-header__breadcrumb a:hover {
+  color: #177245;
+}
+.smart-buy-payments-page .page-header__breadcrumb span {
+  color: #555555;
+}
+.smart-buy-payments-page .page-header__breadcrumb span:last-child {
+  color: #0D2B5A;
+}
+.smart-buy-payments-page .page-header__title {
+  margin: 0 0 6px;
+  color: #0D2B5A;
+  font-family: "Poppins", sans-serif;
   font-size: 24px;
-  line-height: 1.25;
   font-weight: 700;
+  line-height: 1.35;
 }
-.smart-buy-payments-page .smart-buy-payments-header__content p {
-  max-width: 680px;
-  margin: 8px 0 0;
-  color: #64748b;
+.smart-buy-payments-page .page-header__description {
+  max-width: 620px;
+  margin: 0;
+  color: #555555;
   font-size: 14px;
-  line-height: 1.6;
+  line-height: 1.7;
 }
-.smart-buy-payments-page .smart-buy-payment-stats {
+.smart-buy-payments-page .page-header__action {
+  flex: 0 0 auto;
+}
+.smart-buy-payments-page .back-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid #eaecf0;
+  border-radius: 6px;
+  background: #fff;
+  color: #0D2B5A;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  -webkit-transition: all 0.3s linear 0s;
+  -o-transition: all 0.3s linear 0s;
+  transition: all 0.3s linear 0s;
+}
+.smart-buy-payments-page .back-button i {
+  font-size: 14px;
+}
+.smart-buy-payments-page .back-button:hover {
+  border-color: #177245;
+  background: #177245;
+  color: #fff;
+}
+.smart-buy-payments-page .payment-summary {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
   margin-bottom: 24px;
 }
-.smart-buy-payments-page .smart-buy-payment-stat {
+.smart-buy-payments-page .summary-card {
+  position: relative;
   display: flex;
-  align-items: flex-start;
-  gap: 13px;
-  min-width: 0;
-  padding: 18px;
+  align-items: center;
+  gap: 16px;
+  min-height: 104px;
+  padding: 20px 22px;
+  overflow: hidden;
+  border: 1px solid #eaecf0;
+  border-radius: 8px;
   background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 14px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.035);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  -webkit-transition: all 0.3s linear 0s;
+  -o-transition: all 0.3s linear 0s;
+  transition: all 0.3s linear 0s;
 }
-.smart-buy-payments-page .smart-buy-payment-stat:hover {
+.smart-buy-payments-page .summary-card::after {
+  position: absolute;
+  right: -35px;
+  bottom: -45px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: #F2F4F7;
+  content: "";
+  pointer-events: none;
+}
+.smart-buy-payments-page .summary-card:hover {
+  border-color: rgba(23, 114, 69, 0.35);
   transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
 }
-.smart-buy-payments-page .smart-buy-payment-stat__icon {
+.smart-buy-payments-page .summary-card__icon {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 0 0 42px;
-  width: 42px;
-  height: 42px;
-  border-radius: 11px;
+  flex: 0 0 52px;
+  width: 52px;
+  height: 52px;
+  border-radius: 7px;
+  background: #F2F4F7;
+  color: #177245;
   font-size: 20px;
 }
-.smart-buy-payments-page .smart-buy-payment-stat__icon.total {
-  background: #eef4fa;
-  color: #12355B;
-}
-.smart-buy-payments-page .smart-buy-payment-stat__icon.paid {
-  background: #ecfdf5;
-  color: #047857;
-}
-.smart-buy-payments-page .smart-buy-payment-stat__icon.pending {
-  background: #fffbeb;
-  color: #b45309;
-}
-.smart-buy-payments-page .smart-buy-payment-stat__icon.failed {
-  background: #fef2f2;
-  color: #dc2626;
-}
-.smart-buy-payments-page .smart-buy-payment-stat__icon.refunded {
-  background: #f5f3ff;
-  color: #6d28d9;
-}
-.smart-buy-payments-page .smart-buy-payment-stat__content {
+.smart-buy-payments-page .summary-card__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   min-width: 0;
 }
-.smart-buy-payments-page .smart-buy-payment-stat__content span {
-  display: block;
-  margin-bottom: 5px;
-  color: #64748b;
+.smart-buy-payments-page .summary-card__label {
+  color: #555555;
   font-size: 14px;
-  line-height: 1.4;
+  line-height: 1.5;
 }
-.smart-buy-payments-page .smart-buy-payment-stat__content strong {
-  display: block;
-  margin-bottom: 4px;
-  color: #12355B;
-  font-size: 22px;
-  line-height: 1.2;
+.smart-buy-payments-page .summary-card__value {
+  color: #0D2B5A;
+  font-family: "Poppins", sans-serif;
+  font-size: 24px;
   font-weight: 700;
+  line-height: 1.2;
 }
-.smart-buy-payments-page .smart-buy-payment-stat__content small {
-  display: block;
-  color: #94a3b8;
-  font-size: 14px;
-  line-height: 1.4;
-}
-.smart-buy-payments-page .smart-buy-payments-card {
+.smart-buy-payments-page .payments-card {
   overflow: hidden;
+  border: 1px solid #eaecf0;
+  border-radius: 8px;
   background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.035);
 }
-.smart-buy-payments-page .smart-buy-payments-toolbar {
+.smart-buy-payments-page .payments-card__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 24px;
   padding: 20px 22px;
-  border-bottom: 1px solid #edf0f3;
+  border-bottom: 1px solid #eaecf0;
 }
-.smart-buy-payments-page .smart-buy-payments-toolbar__title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-}
-.smart-buy-payments-page .smart-buy-payments-toolbar__title h2 {
-  margin: 0;
-  color: #12355B;
+.smart-buy-payments-page .payments-card__title {
+  margin: 0 0 5px;
+  color: #0D2B5A;
+  font-family: "Poppins", sans-serif;
   font-size: 18px;
-  line-height: 1.3;
   font-weight: 700;
+  line-height: 1.4;
 }
-.smart-buy-payments-page .smart-buy-payments-toolbar__title > span {
-  display: inline-flex;
-  padding: 4px 8px;
-  color: #64748b;
-  background: #f8fafc;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
+.smart-buy-payments-page .payments-card__subtitle {
+  margin: 0;
+  color: #555555;
   font-size: 14px;
-  line-height: 1.2;
+  line-height: 1.5;
 }
-.smart-buy-payments-page .smart-buy-payments-toolbar__actions {
+.smart-buy-payments-page .payments-card__tools {
+  flex: 0 0 auto;
+}
+.smart-buy-payments-page .payments-card__footer {
   display: flex;
   align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
+  justify-content: flex-end;
+  min-height: 72px;
+  padding: 16px 22px;
+  border-top: 1px solid #eaecf0;
 }
-.smart-buy-payments-page .smart-buy-payment-search {
+.smart-buy-payments-page .payments-card__footer .pagination {
+  margin: 0;
+}
+.smart-buy-payments-page .payment-search {
   position: relative;
-  width: 220px;
+  width: 270px;
 }
-.smart-buy-payments-page .smart-buy-payment-search i {
+.smart-buy-payments-page .payment-search i {
   position: absolute;
   top: 50%;
-  left: 12px;
+  left: 14px;
   z-index: 1;
+  color: #555555;
+  font-size: 14px;
+  pointer-events: none;
   transform: translateY(-50%);
-  color: #94a3b8;
-  font-size: 17px;
-  pointer-events: none;
 }
-.smart-buy-payments-page .smart-buy-payment-search input {
+.smart-buy-payments-page .payment-search input {
+  display: block;
   width: 100%;
-  height: 40px;
-  padding: 0 12px 0 38px;
-  color: #12355B;
-  background: #fff;
-  border: 1px solid #dfe4ea;
-  border-radius: 9px;
+  height: 42px;
+  padding: 0 14px 0 38px;
+  border: 1px solid #eaecf0;
+  border-radius: 6px;
   outline: none;
-  font-size: 14px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-.smart-buy-payments-page .smart-buy-payment-search input::placeholder {
-  color: #a1aab5;
-}
-.smart-buy-payments-page .smart-buy-payment-search input:focus {
-  border-color: #12355B;
-  box-shadow: 0 0 0 3px rgba(18, 53, 91, 0.08);
-}
-.smart-buy-payments-page .smart-buy-payment-filter {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-.smart-buy-payments-page .smart-buy-payment-filter i {
-  position: absolute;
-  left: 11px;
-  z-index: 1;
-  color: #64748b;
-  font-size: 16px;
-  pointer-events: none;
-}
-.smart-buy-payments-page .smart-buy-payment-filter select {
-  width: 145px;
-  height: 40px;
-  padding: 0 30px 0 34px;
-  color: #334155;
   background: #fff;
-  border: 1px solid #dfe4ea;
-  border-radius: 9px;
-  outline: none;
-  appearance: none;
-  cursor: pointer;
+  color: #0D2B5A;
+  font-family: "Poppins", sans-serif;
   font-size: 14px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  line-height: 42px;
+  -webkit-transition: all 0.3s linear 0s;
+  -o-transition: all 0.3s linear 0s;
+  transition: all 0.3s linear 0s;
 }
-.smart-buy-payments-page .smart-buy-payment-filter select:focus {
-  border-color: #12355B;
-  box-shadow: 0 0 0 3px rgba(18, 53, 91, 0.08);
+.smart-buy-payments-page .payment-search input::-webkit-input-placeholder {
+  color: #555555;
+  opacity: 1;
 }
-.smart-buy-payments-page .smart-buy-payment-filter::after {
-  content: "\ea4e";
-  position: absolute;
-  right: 10px;
-  color: #94a3b8;
-  font-family: "remixicon";
-  font-size: 15px;
-  pointer-events: none;
+.smart-buy-payments-page .payment-search input:-moz-placeholder {
+  color: #555555;
+  opacity: 1;
 }
-.smart-buy-payments-page .smart-buy-payments-table-wrapper {
+.smart-buy-payments-page .payment-search input::-moz-placeholder {
+  color: #555555;
+  opacity: 1;
+}
+.smart-buy-payments-page .payment-search input:-ms-input-placeholder {
+  color: #555555;
+  opacity: 1;
+}
+.smart-buy-payments-page .payment-search input:hover {
+  border-color: rgba(23, 114, 69, 0.4);
+}
+.smart-buy-payments-page .payment-search input:focus {
+  border-color: #177245;
+  box-shadow: 0 0 0 3px rgba(23, 114, 69, 0.08);
+}
+.smart-buy-payments-page .payments-table-wrapper {
   width: 100%;
   overflow-x: auto;
   scrollbar-width: thin;
 }
-.smart-buy-payments-page .smart-buy-payments-table {
+.smart-buy-payments-page .payments-table-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+.smart-buy-payments-page .payments-table-wrapper::-webkit-scrollbar-track {
+  background: #F2F4F7;
+}
+.smart-buy-payments-page .payments-table-wrapper::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: #555555;
+}
+.smart-buy-payments-page .payments-table {
   width: 100%;
-  min-width: 1050px;
+  min-width: 1120px;
   border-collapse: collapse;
+  border-spacing: 0;
 }
-.smart-buy-payments-page .smart-buy-payments-table thead {
-  background: #f8fafc;
-}
-.smart-buy-payments-page .smart-buy-payments-table th {
-  padding: 12px 18px;
-  color: #64748b;
-  border-bottom: 1px solid #e5e7eb;
+.smart-buy-payments-page .payments-table th,
+.smart-buy-payments-page .payments-table td {
+  padding: 16px 20px;
   text-align: left;
-  white-space: nowrap;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.4;
-}
-.smart-buy-payments-page .smart-buy-payments-table td {
-  padding: 15px 18px;
-  color: #475569;
-  border-bottom: 1px solid #edf0f3;
   vertical-align: middle;
+}
+.smart-buy-payments-page .payments-table th {
+  border-bottom: 1px solid #eaecf0;
+  background: #F2F4F7;
+  color: #0D2B5A;
+  font-family: "Poppins", sans-serif;
   font-size: 14px;
-  line-height: 1.45;
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: nowrap;
 }
-.smart-buy-payments-page .smart-buy-payments-table tbody tr {
-  transition: background 0.15s ease;
+.smart-buy-payments-page .payments-table td {
+  border-bottom: 1px solid #eaecf0;
+  color: #555555;
+  font-size: 14px;
+  line-height: 1.5;
 }
-.smart-buy-payments-page .smart-buy-payments-table tbody tr:hover {
-  background: #fafcff;
+.smart-buy-payments-page .payments-table tbody tr {
+  -webkit-transition: all 0.3s linear 0s;
+  -o-transition: all 0.3s linear 0s;
+  transition: all 0.3s linear 0s;
 }
-.smart-buy-payments-page .smart-buy-payments-table tbody tr:last-child td {
+.smart-buy-payments-page .payments-table tbody tr:hover {
+  background: rgba(242, 244, 247, 0.55);
+}
+.smart-buy-payments-page .payments-table tbody tr:last-child td {
   border-bottom: 0;
 }
-.smart-buy-payments-page .smart-buy-payment-id {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
+.smart-buy-payments-page .payments-table tbody tr[hidden] {
+  display: none;
 }
-.smart-buy-payments-page .smart-buy-payment-id strong {
-  color: #12355B;
-  font-size: 14px;
-  font-weight: 700;
-}
-.smart-buy-payments-page .smart-buy-payment-id span {
-  color: #94a3b8;
-  font-size: 14px;
-}
-.smart-buy-payments-page .smart-buy-payment-request {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-.smart-buy-payments-page .smart-buy-payment-request strong {
-  color: #12355B;
-  font-size: 14px;
-  font-weight: 700;
-  transition: color 0.2s ease;
-}
-.smart-buy-payments-page .smart-buy-payment-request span {
-  color: #64748b;
-  font-size: 14px;
-  white-space: nowrap;
-  overflow: hidden;
-  max-width: 170px;
-  text-overflow: ellipsis;
-}
-.smart-buy-payments-page .smart-buy-payment-request:hover strong {
-  color: #C8A646;
-}
-.smart-buy-payments-page .smart-buy-payment-customer {
+.smart-buy-payments-page .payment-number {
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-width: 190px;
+  gap: 11px;
+  min-width: 155px;
 }
-.smart-buy-payments-page .smart-buy-payment-customer > div:last-child {
-  min-width: 0;
-}
-.smart-buy-payments-page .smart-buy-payment-avatar {
+.smart-buy-payments-page .payment-number__icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 0 0 34px;
-  width: 34px;
-  height: 34px;
-  color: #12355B;
-  background: #eef4fa;
-  border-radius: 50%;
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  border-radius: 6px;
+  background: #F2F4F7;
+  color: #177245;
   font-size: 14px;
-  font-weight: 700;
 }
-.smart-buy-payments-page .smart-buy-payment-customer strong {
-  display: block;
-  margin-bottom: 2px;
-  color: #334155;
+.smart-buy-payments-page .payment-number > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.smart-buy-payments-page .payment-number strong {
+  overflow: hidden;
+  color: #0D2B5A;
   font-size: 14px;
   font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  max-width: 155px;
+  line-height: 1.4;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.smart-buy-payments-page .smart-buy-payment-customer span {
-  display: block;
-  color: #94a3b8;
+.smart-buy-payments-page .payment-number span {
+  color: #555555;
   font-size: 14px;
-  white-space: nowrap;
-  overflow: hidden;
-  max-width: 155px;
-  text-overflow: ellipsis;
+  line-height: 1.4;
 }
-.smart-buy-payments-page .smart-buy-payment-amount {
-  color: #12355B;
+.smart-buy-payments-page .smart-buy-link {
+  display: inline-flex;
+  align-items: center;
+  color: #177245;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  text-decoration: none;
+  white-space: nowrap;
+  -webkit-transition: all 0.3s linear 0s;
+  -o-transition: all 0.3s linear 0s;
+  transition: all 0.3s linear 0s;
+}
+.smart-buy-payments-page .smart-buy-link:hover {
+  color: #D4AF37;
+}
+.smart-buy-payments-page .payment-amount strong {
+  color: #0D2B5A;
+  font-family: "Poppins", sans-serif;
   font-size: 14px;
   font-weight: 700;
+  line-height: 1.5;
   white-space: nowrap;
 }
-.smart-buy-payments-page .smart-buy-payment-method {
+.smart-buy-payments-page .table-text {
+  display: inline-block;
+  max-width: 145px;
+  overflow: hidden;
+  color: #555555;
+  font-size: 14px;
+  line-height: 1.5;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.smart-buy-payments-page .gateway-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid #eaecf0;
+  border-radius: 5px;
+  background: #F2F4F7;
+  color: #555555;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+}
+.smart-buy-payments-page .status-badge {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  color: #475569;
-  white-space: nowrap;
-}
-.smart-buy-payments-page .smart-buy-payment-method i {
-  color: #64748b;
-  font-size: 16px;
-}
-.smart-buy-payments-page .smart-buy-payment-date {
-  color: #64748b;
-  white-space: nowrap;
-}
-.smart-buy-payments-page .smart-buy-payment-status {
-  display: inline-flex;
-  align-items: center;
-  padding: 5px 9px;
-  border-radius: 999px;
-  white-space: nowrap;
+  min-height: 30px;
+  padding: 0 10px;
+  border-radius: 5px;
   font-size: 14px;
   font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
 }
-.smart-buy-payments-page .smart-buy-payment-status.paid {
-  color: #047857;
-  background: #ecfdf5;
+.smart-buy-payments-page .status-badge__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
 }
-.smart-buy-payments-page .smart-buy-payment-status.pending {
-  color: #b45309;
-  background: #fffbeb;
+.smart-buy-payments-page .status-badge.is-success {
+  background: rgba(25, 135, 84, 0.1);
+  color: #198754;
 }
-.smart-buy-payments-page .smart-buy-payment-status.failed {
-  color: #dc2626;
-  background: #fef2f2;
+.smart-buy-payments-page .status-badge.is-info {
+  background: rgba(13, 202, 240, 0.1);
+  color: #0dcaf0;
 }
-.smart-buy-payments-page .smart-buy-payment-status.refunded {
-  color: #6d28d9;
-  background: #f5f3ff;
+.smart-buy-payments-page .status-badge.is-warning {
+  background: rgba(255, 193, 7, 0.1);
+  color: #ffc107;
 }
-.smart-buy-payments-page .smart-buy-payment-action {
+.smart-buy-payments-page .status-badge.is-danger {
+  background: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+}
+.smart-buy-payments-page .status-badge.is-muted {
+  background: #F2F4F7;
+  color: #555555;
+}
+.smart-buy-payments-page .status-badge.is-refunded {
+  background: rgba(23, 114, 69, 0.1);
+  color: #177245;
+}
+.smart-buy-payments-page .date-column {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 105px;
+  white-space: nowrap;
+}
+.smart-buy-payments-page .date-column strong {
+  color: #0D2B5A;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.smart-buy-payments-page .date-column span {
+  color: #555555;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.smart-buy-payments-page .muted-text {
+  color: #555555;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.smart-buy-payments-page .table-action {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
-  color: #64748b;
-  background: #f8fafc;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  font-size: 17px;
-  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #eaecf0;
+  border-radius: 6px;
+  background: #fff;
+  color: #555555;
+  font-size: 14px;
+  text-decoration: none;
+  -webkit-transition: all 0.3s linear 0s;
+  -o-transition: all 0.3s linear 0s;
+  transition: all 0.3s linear 0s;
 }
-.smart-buy-payments-page .smart-buy-payment-action:hover {
+.smart-buy-payments-page .table-action:hover {
+  border-color: #177245;
+  background: #177245;
   color: #fff;
-  background: #12355B;
-  border-color: #12355B;
 }
-.smart-buy-payments-page .smart-buy-payments-empty {
-  min-height: 260px;
+.smart-buy-payments-page .empty-row td {
+  padding: 0;
+}
+.smart-buy-payments-page .empty-state {
+  display: flex;
   align-items: center;
-  justify-content: center;
   flex-direction: column;
-  padding: 40px 20px;
+  justify-content: center;
+  min-height: 360px;
+  padding: 45px 24px;
   text-align: center;
 }
-.smart-buy-payments-page .smart-buy-payments-empty__icon {
+.smart-buy-payments-page .empty-state__icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 54px;
-  height: 54px;
-  margin-bottom: 14px;
-  color: #64748b;
-  background: #f8fafc;
-  border: 1px solid #e5e7eb;
-  border-radius: 14px;
-  font-size: 24px;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 18px;
+  border-radius: 50%;
+  background: #F2F4F7;
+  color: #555555;
+  font-size: 22px;
 }
-.smart-buy-payments-page .smart-buy-payments-empty h3 {
-  margin: 0 0 6px;
-  color: #12355B;
+.smart-buy-payments-page .empty-state h3 {
+  margin: 0 0 8px;
+  color: #0D2B5A;
+  font-family: "Poppins", sans-serif;
   font-size: 18px;
   font-weight: 700;
+  line-height: 1.4;
 }
-.smart-buy-payments-page .smart-buy-payments-empty p {
-  margin: 0;
-  color: #94a3b8;
+.smart-buy-payments-page .empty-state p {
+  max-width: 430px;
+  margin: 0 0 22px;
+  color: #555555;
   font-size: 14px;
+  line-height: 1.7;
 }
-.smart-buy-payments-page .smart-buy-payments-pagination {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 16px 22px;
-  border-top: 1px solid #edf0f3;
-}
-.smart-buy-payments-page .smart-buy-payments-pagination__info {
-  color: #64748b;
-  font-size: 14px;
-}
-.smart-buy-payments-page .smart-buy-payments-pagination__info strong {
-  color: #334155;
-  font-weight: 600;
-}
-.smart-buy-payments-page .smart-buy-payments-pagination__buttons {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-.smart-buy-payments-page .pagination-button {
+.smart-buy-payments-page .empty-state__button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 34px;
-  height: 34px;
-  padding: 0 8px;
-  color: #475569;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
-}
-.smart-buy-payments-page .pagination-button:hover:not(.disabled):not(.active) {
-  color: #12355B;
-  border-color: #12355B;
-}
-.smart-buy-payments-page .pagination-button.active {
+  min-height: 42px;
+  padding: 0 17px;
+  border-radius: 6px;
+  background: #177245;
   color: #fff;
-  background: #12355B;
-  border-color: #12355B;
-}
-.smart-buy-payments-page .pagination-button.disabled {
-  color: #cbd5e1;
-  background: #f8fafc;
-  cursor: not-allowed;
-}
-.smart-buy-payments-page .pagination-button i {
-  font-size: 17px;
-}
-.smart-buy-payments-page .pagination-dots {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 25px;
-  color: #94a3b8;
   font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  -webkit-transition: all 0.3s linear 0s;
+  -o-transition: all 0.3s linear 0s;
+  transition: all 0.3s linear 0s;
 }
-@media (max-width: 1400px) {
-  .smart-buy-payments-page .smart-buy-payment-stats {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+.smart-buy-payments-page .empty-state__button:hover {
+  background: #D4AF37;
+}
+@media (min-width: 1200px) and (max-width: 1399px) {
+  .smart-buy-payments-page {
+    padding: 26px;
+  }
+  .smart-buy-payments-page .payments-table {
+    min-width: 1050px;
+  }
+  .smart-buy-payments-page .payments-table th,
+  .smart-buy-payments-page .payments-table td {
+    padding-right: 16px;
+    padding-left: 16px;
   }
 }
-@media (max-width: 1100px) {
-  .smart-buy-payments-page .smart-buy-payments-toolbar {
+@media (min-width: 992px) and (max-width: 1199px) {
+  .smart-buy-payments-page {
+    padding: 24px;
+  }
+  .smart-buy-payments-page .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .smart-buy-payments-page .page-header__action {
+    width: 100%;
+  }
+  .smart-buy-payments-page .back-button {
+    width: fit-content;
+  }
+  .smart-buy-payments-page .payments-card__header {
     align-items: flex-start;
     flex-direction: column;
   }
-  .smart-buy-payments-page .smart-buy-payments-toolbar__actions {
+  .smart-buy-payments-page .payments-card__tools {
     width: 100%;
   }
-  .smart-buy-payments-page .smart-buy-payment-search {
-    flex: 1;
-    min-width: 220px;
+  .smart-buy-payments-page .payment-search {
+    width: 100%;
+    max-width: 360px;
   }
 }
-@media (max-width: 800px) {
+@media (min-width: 768px) and (max-width: 991px) {
+  .smart-buy-payments-page .payment-summary {
+    gap: 16px;
+  }
+  .smart-buy-payments-page .summary-card {
+    min-height: 96px;
+    padding: 18px;
+  }
+  .smart-buy-payments-page .summary-card__icon {
+    flex-basis: 48px;
+    width: 48px;
+    height: 48px;
+  }
+  .smart-buy-payments-page .payments-table {
+    min-width: 1020px;
+  }
+}
+@media (min-width: 480px) and (max-width: 767px) {
   .smart-buy-payments-page {
     padding: 18px;
   }
-  .smart-buy-payments-page .smart-buy-payment-stats {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .smart-buy-payments-page .page-header {
+    margin-bottom: 22px;
   }
-  .smart-buy-payments-page .smart-buy-payments-header__content h1 {
+  .smart-buy-payments-page .page-header__breadcrumb {
+    margin-bottom: 8px;
+  }
+  .smart-buy-payments-page .page-header__title {
     font-size: 22px;
   }
-  .smart-buy-payments-page .smart-buy-payments-pagination {
-    align-items: flex-start;
-    flex-direction: column;
+  .smart-buy-payments-page .page-header__description {
+    line-height: 1.6;
+  }
+  .smart-buy-payments-page .back-button {
+    width: 100%;
+  }
+  .smart-buy-payments-page .payment-summary {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .smart-buy-payments-page .summary-card {
+    min-height: 88px;
+    padding: 16px;
+  }
+  .smart-buy-payments-page .summary-card__value {
+    font-size: 22px;
+  }
+  .smart-buy-payments-page .payments-card {
+    border-radius: 7px;
+  }
+  .smart-buy-payments-page .payments-card__header {
+    padding: 18px 16px;
+  }
+  .smart-buy-payments-page .payments-card__footer {
+    justify-content: center;
+    min-height: auto;
+    padding: 16px;
+  }
+  .smart-buy-payments-page .payment-search {
+    max-width: none;
+  }
+  .smart-buy-payments-page .payments-table {
+    min-width: 1000px;
+  }
+  .smart-buy-payments-page .payments-table th,
+  .smart-buy-payments-page .payments-table td {
+    padding: 14px 16px;
+  }
+  .smart-buy-payments-page .empty-state {
+    min-height: 320px;
+    padding: 35px 18px;
   }
 }
-@media (max-width: 560px) {
+@media (max-width: 767px) {
   .smart-buy-payments-page {
     padding: 14px;
   }
-  .smart-buy-payments-page .smart-buy-payment-stats {
-    grid-template-columns: 1fr;
+  .smart-buy-payments-page .page-header__title {
+    font-size: 20px;
   }
-  .smart-buy-payments-page .smart-buy-payment-stat {
-    padding: 15px;
+  .smart-buy-payments-page .summary-card {
+    gap: 12px;
   }
-  .smart-buy-payments-page .smart-buy-payments-toolbar {
-    padding: 16px;
+  .smart-buy-payments-page .summary-card__icon {
+    flex-basis: 44px;
+    width: 44px;
+    height: 44px;
+    font-size: 18px;
   }
-  .smart-buy-payments-page .smart-buy-payments-toolbar__title {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 6px;
+  .smart-buy-payments-page .payments-card__title {
+    font-size: 18px;
   }
-  .smart-buy-payments-page .smart-buy-payments-toolbar__actions {
-    align-items: stretch;
-    flex-direction: column;
-  }
-  .smart-buy-payments-page .smart-buy-payment-search {
-    width: 100%;
-    min-width: 0;
-  }
-  .smart-buy-payments-page .smart-buy-payment-filter {
-    width: 100%;
-  }
-  .smart-buy-payments-page .smart-buy-payment-filter select {
-    width: 100%;
-  }
-  .smart-buy-payments-page .smart-buy-payments-pagination {
-    padding: 14px 16px;
-  }
-  .smart-buy-payments-page .smart-buy-payments-pagination__buttons {
-    width: 100%;
-    overflow-x: auto;
-    padding-bottom: 2px;
+  .smart-buy-payments-page .empty-state__icon {
+    width: 58px;
+    height: 58px;
+    font-size: 20px;
   }
 }
 

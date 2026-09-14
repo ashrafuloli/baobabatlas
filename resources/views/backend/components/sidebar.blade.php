@@ -550,6 +550,20 @@
 
                                 </li>
 
+                                <li class="{{ request()->routeIs(
+                                    'smart-buy.payments',
+                                ) ? 'active' : '' }}">
+
+                                    <a href="{{ route('smart-buy.payments') }}">
+
+                                        <span>
+                                            Payments
+                                        </span>
+
+                                    </a>
+
+                                </li>
+
                             @endif
 
                         </ul>
@@ -696,122 +710,6 @@
 
 
                 {{-- ========================================
-                    PAYMENTS
-                ========================================= --}}
-                @if(
-                    auth()->user()->hasPermission('view-payments') ||
-                    auth()->user()->hasPermission('view-ecommerce-payments') ||
-                    auth()->user()->hasPermission('view-smart-buy-payments') ||
-                    auth()->user()->hasPermission('view-failed-payments')
-                )
-
-                    <li class="has-submenu {{ request()->routeIs(
-                        'payments',
-                        'payments-ecommerce',
-                        'payments-smart-buy',
-                        'payments-failed',
-                        'payments-details'
-                    ) ? 'active open' : '' }}">
-
-                        <a href="javascript:void(0);">
-
-                            <i class="ri-bank-card-line"></i>
-
-                            <span>
-                                Payments
-                            </span>
-
-                            <i class="ri-arrow-down-s-line submenu-arrow"></i>
-
-                        </a>
-
-                        <ul class="submenu">
-
-
-                            @if(auth()->user()->hasPermission('view-payments'))
-
-                                <li class="{{ request()->routeIs(
-                                    'payments',
-                                    'payments-details'
-                                ) ? 'active' : '' }}">
-
-                                    <a href="{{ route('payments') }}">
-
-                                        <span>
-                                            All Payments
-                                        </span>
-
-                                    </a>
-
-                                </li>
-
-                            @endif
-
-
-                            @if(auth()->user()->hasPermission('view-ecommerce-payments'))
-
-                                <li class="{{ request()->routeIs(
-                                    'payments-ecommerce'
-                                ) ? 'active' : '' }}">
-
-                                    <a href="{{ route('payments-ecommerce') }}">
-
-                                        <span>
-                                            Ecommerce
-                                        </span>
-
-                                    </a>
-
-                                </li>
-
-                            @endif
-
-
-                            @if(auth()->user()->hasPermission('view-smart-buy-payments'))
-
-                                <li class="{{ request()->routeIs(
-                                    'payments-smart-buy'
-                                ) ? 'active' : '' }}">
-
-                                    <a href="{{ route('payments-smart-buy') }}">
-
-                                        <span>
-                                            Smart Buy
-                                        </span>
-
-                                    </a>
-
-                                </li>
-
-                            @endif
-
-
-                            @if(auth()->user()->hasPermission('view-failed-payments'))
-
-                                <li class="{{ request()->routeIs(
-                                    'payments-failed'
-                                ) ? 'active' : '' }}">
-
-                                    <a href="{{ route('payments-failed') }}">
-
-                                        <span>
-                                            Failed
-                                        </span>
-
-                                    </a>
-
-                                </li>
-
-                            @endif
-
-                        </ul>
-
-                    </li>
-
-                @endif
-
-
-                {{-- ========================================
                     REPORTS
                 ========================================= --}}
                 @if(
@@ -822,8 +720,8 @@
 
                     <li class="has-submenu {{ request()->routeIs(
                         'reports',
-                        'reports-ecommerce',
-                        'reports-smart-buy'
+                        'reports.ecommerce',
+                        'reports.smart-buy'
                     ) ? 'active open' : '' }}">
 
                         <a href="javascript:void(0);">
@@ -862,11 +760,11 @@
 
                             @if(auth()->user()->hasPermission('view-ecommerce-reports'))
 
-                                <li class="{{ request()->routeIs('reports-ecommerce')
+                                <li class="{{ request()->routeIs('reports.ecommerce')
                                     ? 'active'
                                     : '' }}">
 
-                                    <a href="{{ route('reports-ecommerce') }}">
+                                    <a href="{{ route('reports.ecommerce') }}">
 
                                         <span>
                                             Ecommerce
@@ -881,11 +779,11 @@
 
                             @if(auth()->user()->hasPermission('view-smart-buy-reports'))
 
-                                <li class="{{ request()->routeIs('reports-smart-buy')
+                                <li class="{{ request()->routeIs('reports.smart-buy')
                                     ? 'active'
                                     : '' }}">
 
-                                    <a href="{{ route('reports-smart-buy') }}">
+                                    <a href="{{ route('reports.smart-buy') }}">
 
                                         <span>
                                             Smart Buy

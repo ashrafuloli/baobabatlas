@@ -1,1250 +1,856 @@
 @extends('backend.layouts.backend')
 
-@section('title', 'Smart Buy Reports')
+@section('title', 'Smart Buy Report')
 
 @section('content')
+    <div class="smart-buy-report-page">
+        <div class="smart-buy-report-page__header">
+            <div class="smart-buy-report-page__heading">
+                <div class="smart-buy-report-page__breadcrumb">
+                    <a href="{{ route('dashboard') }}">
+                        Dashboard
+                    </a>
 
-    <div class="page-content smart-buy-reports-page">
+                    <span>/</span>
 
-        {{-- ==================================================
-            PAGE HEADER
-        ================================================== --}}
-        <div class="page-header">
+                    <span>Smart Buy Report</span>
+                </div>
 
-            <div class="page-header-content">
-
-            <span class="page-subtitle">
-                Reports
-            </span>
-
-                <h1>
-                    Smart Buy Reports
+                <h1 class="smart-buy-report-page__title">
+                    Smart Buy Report
                 </h1>
 
-                <p>
-                    Analyze Smart Buy requests, quotes, purchases, revenue and fulfillment.
+                <p class="smart-buy-report-page__subtitle">
+                    Monitor Smart Buy requests, quotes, payments and
+                    overall financial performance.
                 </p>
-
             </div>
 
+            <a
+                href="{{ route('smart-buy') }}"
+                class="smart-buy-report-page__back"
+            >
+                <i class="ri-arrow-left-line"></i>
 
-            <div class="page-header-actions">
+                <span>Back to Requests</span>
+            </a>
+        </div>
 
-                <a
-                    href="{{ route('reports') }}"
-                    class="btn btn-outline"
-                >
-                    <i class="fa-regular fa-arrow-left"></i>
+        <div class="smart-buy-report-page__filters">
+            <form
+                action="{{ route('reports.smart-buy') }}"
+                method="GET"
+                class="smart-buy-report-page__filter-form"
+                data-report-filter
+            >
+                <div class="smart-buy-report-page__filter-group">
+                    <label for="report-date-from">
+                        From
+                    </label>
 
-                    <span>
-                    Reports
-                </span>
-                </a>
-
-
-                <div class="report-date-filter">
-
-                    <i class="fa-regular fa-calendar"></i>
-
-                    <select
-                        name="period"
-                        class="form-control"
+                    <input
+                        type="date"
+                        id="report-date-from"
+                        name="date_from"
+                        value="{{ $dateFrom?->format('Y-m-d') }}"
                     >
-                        <option value="30">
-                            Last 30 Days
-                        </option>
-
-                        <option value="7">
-                            Last 7 Days
-                        </option>
-
-                        <option value="90">
-                            Last 90 Days
-                        </option>
-
-                        <option value="year">
-                            This Year
-                        </option>
-                    </select>
-
                 </div>
 
-            </div>
+                <div class="smart-buy-report-page__filter-group">
+                    <label for="report-date-to">
+                        To
+                    </label>
 
-        </div>
-
-
-        {{-- ==================================================
-            STATISTICS
-        ================================================== --}}
-        <div class="report-stat-grid">
-
-
-            {{-- Requests --}}
-            <div class="report-stat-card">
-
-                <div class="stat-top">
-
-                    <div class="stat-icon requests">
-                        <i class="fa-regular fa-file-lines"></i>
-                    </div>
-
-                    <span class="stat-change positive">
-                    +15.2%
-                </span>
-
+                    <input
+                        type="date"
+                        id="report-date-to"
+                        name="date_to"
+                        value="{{ $dateTo?->format('Y-m-d') }}"
+                    >
                 </div>
 
-                <div class="stat-content">
-
-                <span class="stat-label">
-                    Total Requests
-                </span>
-
-                    <h3>
-                        146
-                    </h3>
-
-                    <p>
-                        Smart Buy requests submitted
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            {{-- Quotes --}}
-            <div class="report-stat-card">
-
-                <div class="stat-top">
-
-                    <div class="stat-icon quotes">
-                        <i class="fa-regular fa-file-invoice-dollar"></i>
-                    </div>
-
-                    <span class="stat-change positive">
-                    +10.4%
-                </span>
-
-                </div>
-
-                <div class="stat-content">
-
-                <span class="stat-label">
-                    Quotes Sent
-                </span>
-
-                    <h3>
-                        118
-                    </h3>
-
-                    <p>
-                        Quotes prepared and sent
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            {{-- Purchases --}}
-            <div class="report-stat-card">
-
-                <div class="stat-top">
-
-                    <div class="stat-icon purchases">
-                        <i class="fa-regular fa-bag-shopping"></i>
-                    </div>
-
-                    <span class="stat-change positive">
-                    +12.6%
-                </span>
-
-                </div>
-
-                <div class="stat-content">
-
-                <span class="stat-label">
-                    Completed Purchases
-                </span>
-
-                    <h3>
-                        82
-                    </h3>
-
-                    <p>
-                        Products purchased successfully
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            {{-- Revenue --}}
-            <div class="report-stat-card">
-
-                <div class="stat-top">
-
-                    <div class="stat-icon revenue">
-                        <i class="fa-regular fa-money-bill-wave"></i>
-                    </div>
-
-                    <span class="stat-change positive">
-                    +18.4%
-                </span>
-
-                </div>
-
-                <div class="stat-content">
-
-                <span class="stat-label">
-                    Smart Buy Revenue
-                </span>
-
-                    <h3>
-                        $6,400
-                    </h3>
-
-                    <p>
-                        Revenue from Smart Buy
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        {{-- ==================================================
-            REQUEST & REVENUE OVERVIEW
-        ================================================== --}}
-        <div class="reports-grid">
-
-
-            {{-- Request Chart --}}
-            <div class="dashboard-card request-chart-card">
-
-                <div class="dashboard-card-header">
-
-                    <div class="card-header-content">
-
-                        <h2>
-                            Smart Buy Activity
-                        </h2>
-
-                        <p>
-                            Requests and completed purchases during the selected period.
-                        </p>
-
-                    </div>
-
-
-                    <div class="chart-legend">
-
-                    <span>
-                        <i class="request-dot"></i>
-                        Requests
-                    </span>
-
-                        <span>
-                        <i class="purchase-dot"></i>
-                        Purchases
-                    </span>
-
-                    </div>
-
-                </div>
-
-
-                <div class="activity-chart">
-
-                    <div class="chart-y-axis">
-
-                    <span>
-                        40
-                    </span>
-
-                        <span>
-                        30
-                    </span>
-
-                        <span>
-                        20
-                    </span>
-
-                        <span>
-                        10
-                    </span>
-
-                        <span>
-                        0
-                    </span>
-
-                    </div>
-
-
-                    <div class="chart-area">
-
-                        <div class="chart-grid-lines">
-
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                            <span></span>
-
-                        </div>
-
-
-                        <div class="activity-bars">
-
-                            <div class="activity-bar-group">
-
-                                <div class="activity-bars-inner">
-
-                                <span
-                                    class="request-bar"
-                                    style="height: 55%;"
-                                ></span>
-
-                                    <span
-                                        class="purchase-bar"
-                                        style="height: 30%;"
-                                    ></span>
-
-                                </div>
-
-                                <span class="chart-label">
-                                01
-                            </span>
-
-                            </div>
-
-
-                            <div class="activity-bar-group">
-
-                                <div class="activity-bars-inner">
-
-                                <span
-                                    class="request-bar"
-                                    style="height: 70%;"
-                                ></span>
-
-                                    <span
-                                        class="purchase-bar"
-                                        style="height: 38%;"
-                                    ></span>
-
-                                </div>
-
-                                <span class="chart-label">
-                                05
-                            </span>
-
-                            </div>
-
-
-                            <div class="activity-bar-group">
-
-                                <div class="activity-bars-inner">
-
-                                <span
-                                    class="request-bar"
-                                    style="height: 48%;"
-                                ></span>
-
-                                    <span
-                                        class="purchase-bar"
-                                        style="height: 25%;"
-                                    ></span>
-
-                                </div>
-
-                                <span class="chart-label">
-                                10
-                            </span>
-
-                            </div>
-
-
-                            <div class="activity-bar-group">
-
-                                <div class="activity-bars-inner">
-
-                                <span
-                                    class="request-bar"
-                                    style="height: 78%;"
-                                ></span>
-
-                                    <span
-                                        class="purchase-bar"
-                                        style="height: 48%;"
-                                    ></span>
-
-                                </div>
-
-                                <span class="chart-label">
-                                15
-                            </span>
-
-                            </div>
-
-
-                            <div class="activity-bar-group">
-
-                                <div class="activity-bars-inner">
-
-                                <span
-                                    class="request-bar"
-                                    style="height: 64%;"
-                                ></span>
-
-                                    <span
-                                        class="purchase-bar"
-                                        style="height: 42%;"
-                                    ></span>
-
-                                </div>
-
-                                <span class="chart-label">
-                                20
-                            </span>
-
-                            </div>
-
-
-                            <div class="activity-bar-group">
-
-                                <div class="activity-bars-inner">
-
-                                <span
-                                    class="request-bar"
-                                    style="height: 84%;"
-                                ></span>
-
-                                    <span
-                                        class="purchase-bar"
-                                        style="height: 56%;"
-                                    ></span>
-
-                                </div>
-
-                                <span class="chart-label">
-                                25
-                            </span>
-
-                            </div>
-
-
-                            <div class="activity-bar-group">
-
-                                <div class="activity-bars-inner">
-
-                                <span
-                                    class="request-bar"
-                                    style="height: 92%;"
-                                ></span>
-
-                                    <span
-                                        class="purchase-bar"
-                                        style="height: 64%;"
-                                    ></span>
-
-                                </div>
-
-                                <span class="chart-label">
-                                30
-                            </span>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            {{-- Request Status --}}
-            <div class="dashboard-card request-status-card">
-
-                <div class="dashboard-card-header">
-
-                    <div class="card-header-content">
-
-                        <h2>
-                            Request Status
-                        </h2>
-
-                        <p>
-                            Current Smart Buy requests.
-                        </p>
-
-                    </div>
-
-                    <div class="status-total">
-
-                    <span>
-                       Total Requests
-                    </span>
-
-                        <strong>146</strong>
-
-                    </div>
-
-                </div>
-
-
-                <div class="request-status-content">
-
-
-                    <div class="smart-status-item">
-
-                        <div class="status-item-info">
-
-                            <span class="status-dot submitted"></span>
-
-                            <span>
-                            Submitted
-                        </span>
-
-                        </div>
-
-                        <strong>
-                            22
-                        </strong>
-
-                    </div>
-
-                    <div class="status-progress">
-
-                    <span
-                        class="submitted"
-                        style="width: 15%;"
-                    ></span>
-
-                    </div>
-
-
-                    <div class="smart-status-item">
-
-                        <div class="status-item-info">
-
-                            <span class="status-dot reviewing"></span>
-
-                            <span>
-                            Under Review
-                        </span>
-
-                        </div>
-
-                        <strong>
-                            18
-                        </strong>
-
-                    </div>
-
-                    <div class="status-progress">
-
-                    <span
-                        class="reviewing"
-                        style="width: 12%;"
-                    ></span>
-
-                    </div>
-
-
-                    <div class="smart-status-item">
-
-                        <div class="status-item-info">
-
-                            <span class="status-dot quoted"></span>
-
-                            <span>
-                            Quote Sent
-                        </span>
-
-                        </div>
-
-                        <strong>
-                            24
-                        </strong>
-
-                    </div>
-
-                    <div class="status-progress">
-
-                    <span
-                        class="quoted"
-                        style="width: 16%;"
-                    ></span>
-
-                    </div>
-
-
-                    <div class="smart-status-item">
-
-                        <div class="status-item-info">
-
-                            <span class="status-dot accepted"></span>
-
-                            <span>
-                            Accepted
-                        </span>
-
-                        </div>
-
-                        <strong>
-                            16
-                        </strong>
-
-                    </div>
-
-                    <div class="status-progress">
-
-                    <span
-                        class="accepted"
-                        style="width: 11%;"
-                    ></span>
-
-                    </div>
-
-
-                    <div class="smart-status-item">
-
-                        <div class="status-item-info">
-
-                            <span class="status-dot purchased"></span>
-
-                            <span>
-                            Purchased
-                        </span>
-
-                        </div>
-
-                        <strong>
-                            82
-                        </strong>
-
-                    </div>
-
-                    <div class="status-progress">
-
-                    <span
-                        class="purchased"
-                        style="width: 56%;"
-                    ></span>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        {{-- ==================================================
-            QUOTE PERFORMANCE
-        ================================================== --}}
-        <div class="reports-grid secondary-grid">
-
-
-            {{-- Quote Performance --}}
-            <div class="dashboard-card">
-
-                <div class="dashboard-card-header">
-
-                    <div class="card-header-content">
-
-                        <h2>
-                            Quote Performance
-                        </h2>
-
-                        <p>
-                            Quote acceptance and conversion.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="quote-performance">
-
-                    <div class="conversion-circle">
-
-                        <div class="conversion-value">
-                            69%
-                        </div>
-
-                        <span>
-                        Acceptance Rate
-                    </span>
-
-                    </div>
-
-
-                    <div class="quote-metrics">
-
-                        <div class="quote-metric">
-
-                        <span>
-                            Quotes Sent
-                        </span>
-
-                            <strong>
-                                118
-                            </strong>
-
-                        </div>
-
-
-                        <div class="quote-metric">
-
-                        <span>
-                            Accepted
-                        </span>
-
-                            <strong>
-                                82
-                            </strong>
-
-                        </div>
-
-
-                        <div class="quote-metric">
-
-                        <span>
-                            Pending
-                        </span>
-
-                            <strong>
-                                20
-                            </strong>
-
-                        </div>
-
-
-                        <div class="quote-metric">
-
-                        <span>
-                            Declined
-                        </span>
-
-                            <strong>
-                                16
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            {{-- Average Quote --}}
-            <div class="dashboard-card">
-
-                <div class="dashboard-card-header">
-
-                    <div class="card-header-content">
-
-                        <h2>
-                            Quote & Purchase Value
-                        </h2>
-
-                        <p>
-                            Financial performance of Smart Buy quotes.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="value-summary">
-
-
-                    <div class="value-item">
-
-                    <span class="value-icon quote">
-                        <i class="fa-regular fa-file-invoice-dollar"></i>
-                    </span>
-
-                        <div>
-
-                        <span>
-                            Average Quote
-                        </span>
-
-                            <strong>
-                                $780.00
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="value-item">
-
-                    <span class="value-icon purchase">
-                        <i class="fa-regular fa-bag-shopping"></i>
-                    </span>
-
-                        <div>
-
-                        <span>
-                            Average Purchase
-                        </span>
-
-                            <strong>
-                                $640.00
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="value-item">
-
-                    <span class="value-icon revenue">
-                        <i class="fa-regular fa-money-bill-wave"></i>
-                    </span>
-
-                        <div>
-
-                        <span>
-                            Total Revenue
-                        </span>
-
-                            <strong>
-                                $6,400
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        {{-- ==================================================
-            RECENT SMART BUY ACTIVITY
-        ================================================== --}}
-        <div class="dashboard-card recent-activity-card">
-
-            <div class="dashboard-card-header">
-
-                <div class="card-header-content">
-
-                    <h2>
-                        Recent Smart Buy Activity
-                    </h2>
-
-                    <p>
-                        Latest requests and their current progress.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div class="activity-table-wrapper">
-
-                <table class="activity-table">
-
-                    <thead>
-
-                    <tr>
-
-                        <th>
-                            Request
-                        </th>
-
-                        <th>
-                            Customer
-                        </th>
-
-                        <th>
-                            Quote
-                        </th>
-
-                        <th>
-                            Amount
-                        </th>
-
-                        <th>
-                            Status
-                        </th>
-
-                        <th>
-                            Date
-                        </th>
-
-                    </tr>
-
-                    </thead>
-
-
-                    <tbody>
-
-                    <tr>
-
-                        <td>
-                            <strong>
-                                #SB-10482
-                            </strong>
-                        </td>
-
-                        <td>
-
-                            <div class="customer-cell">
-
-                                <span class="customer-avatar">
-                                    JD
-                                </span>
-
-                                <div>
-
-                                    <strong>
-                                        John Doe
-                                    </strong>
-
-                                    <span>
-                                        john@example.com
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-                        <td>
-                            $1,250.00
-                        </td>
-
-                        <td>
-                            $1,250.00
-                        </td>
-
-                        <td>
-                            <span class="request-badge purchased">
-                                Purchased
-                            </span>
-                        </td>
-
-                        <td>
-                            Aug 17, 2026
-                        </td>
-
-                    </tr>
-
-
-                    <tr>
-
-                        <td>
-                            <strong>
-                                #SB-10481
-                            </strong>
-                        </td>
-
-                        <td>
-
-                            <div class="customer-cell">
-
-                                <span class="customer-avatar">
-                                    SS
-                                </span>
-
-                                <div>
-
-                                    <strong>
-                                        Sarah Smith
-                                    </strong>
-
-                                    <span>
-                                        sarah@example.com
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-                        <td>
-                            $850.00
-                        </td>
-
-                        <td>
-                            $850.00
-                        </td>
-
-                        <td>
-                            <span class="request-badge quoted">
-                                Quote Sent
-                            </span>
-                        </td>
-
-                        <td>
-                            Aug 17, 2026
-                        </td>
-
-                    </tr>
-
-
-                    <tr>
-
-                        <td>
-                            <strong>
-                                #SB-10480
-                            </strong>
-                        </td>
-
-                        <td>
-
-                            <div class="customer-cell">
-
-                                <span class="customer-avatar">
-                                    MB
-                                </span>
-
-                                <div>
-
-                                    <strong>
-                                        Michael Brown
-                                    </strong>
-
-                                    <span>
-                                        michael@example.com
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-                        <td>
-                            $620.00
-                        </td>
-
-                        <td>
-                            $620.00
-                        </td>
-
-                        <td>
-                            <span class="request-badge reviewing">
-                                Under Review
-                            </span>
-                        </td>
-
-                        <td>
-                            Aug 16, 2026
-                        </td>
-
-                    </tr>
-
-
-                    <tr>
-
-                        <td>
-                            <strong>
-                                #SB-10479
-                            </strong>
-                        </td>
-
-                        <td>
-
-                            <div class="customer-cell">
-
-                                <span class="customer-avatar">
-                                    EW
-                                </span>
-
-                                <div>
-
-                                    <strong>
-                                        Emma Wilson
-                                    </strong>
-
-                                    <span>
-                                        emma@example.com
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-                        <td>
-                            $480.00
-                        </td>
-
-                        <td>
-                            $480.00
-                        </td>
-
-                        <td>
-                            <span class="request-badge submitted">
-                                Submitted
-                            </span>
-                        </td>
-
-                        <td>
-                            Aug 16, 2026
-                        </td>
-
-                    </tr>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-
-        {{-- ==================================================
-            PAYMENT SUMMARY
-        ================================================== --}}
-        <div class="dashboard-card payment-summary-card">
-
-            <div class="dashboard-card-header">
-
-                <div class="card-header-content">
-
-                    <h2>
-                        Smart Buy Payment Summary
-                    </h2>
-
-                    <p>
-                        Payment performance for Smart Buy transactions.
-                    </p>
-
-                </div>
-
+                <button
+                    type="submit"
+                    class="smart-buy-report-page__filter-button"
+                >
+                    <i class="ri-filter-3-line"></i>
+
+                    <span>Apply Filter</span>
+                </button>
 
                 <a
-                    href="{{ route('payments-smart-buy') }}"
-                    class="view-report-link"
+                    href="{{ route('reports.smart-buy') }}"
+                    class="smart-buy-report-page__reset-button"
                 >
-                    View Payments
+                    <i class="ri-refresh-line"></i>
 
-                    <i class="fa-regular fa-arrow-right"></i>
+                    <span>Reset</span>
                 </a>
+            </form>
 
+            <div class="smart-buy-report-page__quick-filters">
+                <button
+                    type="button"
+                    class="smart-buy-report-page__quick-filter"
+                    data-period="today"
+                >
+                    <i class="ri-calendar-check-line"></i>
+
+                    <span>Today</span>
+                </button>
+
+                <button
+                    type="button"
+                    class="smart-buy-report-page__quick-filter"
+                    data-period="yesterday"
+                >
+                    <i class="ri-calendar-line"></i>
+
+                    <span>Yesterday</span>
+                </button>
+
+                <button
+                    type="button"
+                    class="smart-buy-report-page__quick-filter"
+                    data-period="7"
+                >
+                    <i class="ri-calendar-2-line"></i>
+
+                    <span>Last 7 Days</span>
+                </button>
+
+                <button
+                    type="button"
+                    class="smart-buy-report-page__quick-filter"
+                    data-period="30"
+                >
+                    <i class="ri-calendar-schedule-line"></i>
+
+                    <span>Last 30 Days</span>
+                </button>
+
+                <button
+                    type="button"
+                    class="smart-buy-report-page__quick-filter"
+                    data-period="month"
+                >
+                    <i class="ri-calendar-month-line"></i>
+
+                    <span>This Month</span>
+                </button>
             </div>
-
-
-            <div class="payment-summary-grid">
-
-
-                <div class="payment-summary-item">
-
-                <span class="summary-icon paid">
-                    <i class="fa-regular fa-circle-check"></i>
-                </span>
-
-                    <div>
-
-                    <span>
-                        Successful
-                    </span>
-
-                        <strong>
-                            82
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <div class="payment-summary-item">
-
-                <span class="summary-icon pending">
-                    <i class="fa-regular fa-clock"></i>
-                </span>
-
-                    <div>
-
-                    <span>
-                        Pending
-                    </span>
-
-                        <strong>
-                            8
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <div class="payment-summary-item">
-
-                <span class="summary-icon failed">
-                    <i class="fa-regular fa-circle-xmark"></i>
-                </span>
-
-                    <div>
-
-                    <span>
-                        Failed
-                    </span>
-
-                        <strong>
-                            4
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <div class="payment-summary-item">
-
-                <span class="summary-icon revenue">
-                    <i class="fa-regular fa-money-bill-wave"></i>
-                </span>
-
-                    <div>
-
-                    <span>
-                        Collected
-                    </span>
-
-                        <strong>
-                            $6,400
-                        </strong>
-
-                    </div>
-
-                </div>
-
-            </div>
-
         </div>
 
-    </div>
+        <div class="smart-buy-report-page__section">
+            <div class="smart-buy-report-page__section-header">
+                <div>
+                    <h2>Request Overview</h2>
 
+                    <p>
+                        Summary of Smart Buy request activity.
+                    </p>
+                </div>
+            </div>
+
+            <div class="smart-buy-report-page__metrics">
+                <div class="smart-buy-report-page__metric-card">
+                    <div class="smart-buy-report-page__metric-icon">
+                        <i class="ri-shopping-bag-3-line"></i>
+                    </div>
+
+                    <div class="smart-buy-report-page__metric-content">
+                        <span>Total Requests</span>
+
+                        <strong>
+                            {{ number_format(
+                                $report['requests']['total']
+                            ) }}
+                        </strong>
+                    </div>
+                </div>
+
+                <div class="smart-buy-report-page__metric-card">
+                    <div class="smart-buy-report-page__metric-icon">
+                        <i class="ri-checkbox-circle-line"></i>
+                    </div>
+
+                    <div class="smart-buy-report-page__metric-content">
+                        <span>Completed</span>
+
+                        <strong>
+                            {{ number_format(
+                                $report['requests']['completed']
+                            ) }}
+                        </strong>
+                    </div>
+                </div>
+
+                <div class="smart-buy-report-page__metric-card">
+                    <div class="smart-buy-report-page__metric-icon">
+                        <i class="ri-time-line"></i>
+                    </div>
+
+                    <div class="smart-buy-report-page__metric-content">
+                        <span>Pending</span>
+
+                        <strong>
+                            {{ number_format(
+                                $report['requests']['pending']
+                            ) }}
+                        </strong>
+                    </div>
+                </div>
+
+                <div class="smart-buy-report-page__metric-card">
+                    <div class="smart-buy-report-page__metric-icon">
+                        <i class="ri-loader-4-line"></i>
+                    </div>
+
+                    <div class="smart-buy-report-page__metric-content">
+                        <span>Processing</span>
+
+                        <strong>
+                            {{ number_format(
+                                $report['requests']['processing']
+                            ) }}
+                        </strong>
+                    </div>
+                </div>
+
+                <div class="smart-buy-report-page__metric-card">
+                    <div class="smart-buy-report-page__metric-icon">
+                        <i class="ri-close-circle-line"></i>
+                    </div>
+
+                    <div class="smart-buy-report-page__metric-content">
+                        <span>Cancelled</span>
+
+                        <strong>
+                            {{ number_format(
+                                $report['requests']['cancelled']
+                            ) }}
+                        </strong>
+                    </div>
+                </div>
+
+                <div class="smart-buy-report-page__metric-card">
+                    <div class="smart-buy-report-page__metric-icon">
+                        <i class="ri-percent-line"></i>
+                    </div>
+
+                    <div class="smart-buy-report-page__metric-content">
+                        <span>Completion Rate</span>
+
+                        <strong>
+                            {{ number_format(
+                                $report['performance']['completion_rate'],
+                                2
+                            ) }}%
+                        </strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="smart-buy-report-page__section">
+            <div class="smart-buy-report-page__section-header">
+                <div>
+                    <h2>Financial Overview</h2>
+
+                    <p>
+                        Quote, payment and outstanding financial summary.
+                    </p>
+                </div>
+            </div>
+
+            <div class="smart-buy-report-page__financial-grid">
+                <div class="smart-buy-report-page__financial-card">
+                    <div class="smart-buy-report-page__financial-icon">
+                        <i class="ri-file-list-3-line"></i>
+                    </div>
+
+                    <div>
+                        <span>Requested Value</span>
+
+                        <strong>
+                            ${{ number_format(
+                                $report['financial']['requested_value'],
+                                2
+                            ) }}
+                        </strong>
+                    </div>
+                </div>
+
+                <div class="smart-buy-report-page__financial-card">
+                    <div class="smart-buy-report-page__financial-icon">
+                        <i class="ri-checkbox-circle-line"></i>
+                    </div>
+
+                    <div>
+                        <span>Accepted Value</span>
+
+                        <strong>
+                            ${{ number_format(
+                                $report['financial']['accepted_value'],
+                                2
+                            ) }}
+                        </strong>
+                    </div>
+                </div>
+
+                <div class="smart-buy-report-page__financial-card">
+                    <div class="smart-buy-report-page__financial-icon">
+                        <i class="ri-wallet-3-line"></i>
+                    </div>
+
+                    <div>
+                        <span>Total Paid</span>
+
+                        <strong>
+                            ${{ number_format(
+                                $report['financial']['paid_amount'],
+                                2
+                            ) }}
+                        </strong>
+                    </div>
+                </div>
+
+                <div class="smart-buy-report-page__financial-card">
+                    <div class="smart-buy-report-page__financial-icon">
+                        <i class="ri-hourglass-line"></i>
+                    </div>
+
+                    <div>
+                        <span>Outstanding</span>
+
+                        <strong>
+                            ${{ number_format(
+                                $report['financial']['outstanding_amount'],
+                                2
+                            ) }}
+                        </strong>
+                    </div>
+                </div>
+
+                <div class="smart-buy-report-page__financial-card">
+                    <div class="smart-buy-report-page__financial-icon">
+                        <i class="ri-refund-2-line"></i>
+                    </div>
+
+                    <div>
+                        <span>Refunded</span>
+
+                        <strong>
+                            ${{ number_format(
+                                $report['financial']['refunded_amount'],
+                                2
+                            ) }}
+                        </strong>
+                    </div>
+                </div>
+
+                <div class="smart-buy-report-page__financial-card">
+                    <div class="smart-buy-report-page__financial-icon">
+                        <i class="ri-bar-chart-2-line"></i>
+                    </div>
+
+                    <div>
+                        <span>Average Request Value</span>
+
+                        <strong>
+                            ${{ number_format(
+                                $report['performance']['average_request_value'],
+                                2
+                            ) }}
+                        </strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="smart-buy-report-page__section">
+            <div class="smart-buy-report-page__section-header">
+                <div>
+                    <h2>Daily Report</h2>
+
+                    <p>
+                        Daily breakdown of Smart Buy requests and financial
+                        activity for the selected period.
+                    </p>
+                </div>
+
+                <div class="smart-buy-report-page__section-actions">
+                    <div class="smart-buy-report-page__section-meta">
+                        <i class="ri-calendar-line"></i>
+
+                        <span>
+                            {{ number_format(count($dailyRows)) }} day(s)
+                        </span>
+                    </div>
+
+                    <a
+                        href="{{ route(
+                            'reports.smart-buy.export',
+                            request()->only(['date_from', 'date_to'])
+                        ) }}"
+                        class="smart-buy-report-page__export-button"
+                    >
+                        <i class="ri-download-2-line"></i>
+
+                        <span>Export CSV</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="smart-buy-report-page__table-wrapper">
+                @if (count($dailyRows) > 0)
+                    <table class="smart-buy-report-page__table">
+                        <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Requests</th>
+                            <th>Completed</th>
+                            <th>Pending</th>
+                            <th>Processing</th>
+                            <th>Cancelled</th>
+                            <th>Accepted Value</th>
+                            <th>Paid</th>
+                            <th>Outstanding</th>
+                            <th>Refunded</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        @foreach ($dailyRows as $row)
+                            <tr>
+                                <td>
+                                    {{ \Carbon\CarbonImmutable::parse(
+                                        $row['date']
+                                    )->format('M d, Y') }}
+                                </td>
+
+                                <td>
+                                    {{ number_format(
+                                        $row['requests']
+                                    ) }}
+                                </td>
+
+                                <td>
+                                    {{ number_format(
+                                        $row['completed']
+                                    ) }}
+                                </td>
+
+                                <td>
+                                    {{ number_format(
+                                        $row['pending']
+                                    ) }}
+                                </td>
+
+                                <td>
+                                    {{ number_format(
+                                        $row['processing']
+                                    ) }}
+                                </td>
+
+                                <td>
+                                    {{ number_format(
+                                        $row['cancelled']
+                                    ) }}
+                                </td>
+
+                                <td>
+                                    ${{ number_format(
+                                        (float) $row['accepted_value'],
+                                        2
+                                    ) }}
+                                </td>
+
+                                <td>
+                                    ${{ number_format(
+                                        (float) $row['paid_amount'],
+                                        2
+                                    ) }}
+                                </td>
+
+                                <td>
+                                    ${{ number_format(
+                                        (float) $row['outstanding_amount'],
+                                        2
+                                    ) }}
+                                </td>
+
+                                <td>
+                                    ${{ number_format(
+                                        (float) $row['refunded_amount'],
+                                        2
+                                    ) }}
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                @else
+                    <div class="smart-buy-report-page__empty">
+                        <div class="smart-buy-report-page__empty-icon">
+                            <i class="ri-file-chart-line"></i>
+                        </div>
+
+                        <h3>
+                            No report data available
+                        </h3>
+
+                        <p>
+                            There are no Smart Buy requests for the selected
+                            date range.
+                        </p>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        <div class="smart-buy-report-page__columns">
+            <div class="smart-buy-report-page__panel">
+                <div class="smart-buy-report-page__panel-header">
+                    <div>
+                        <h2>Request Status</h2>
+
+                        <p>
+                            Current request distribution.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="smart-buy-report-page__status-list">
+                    @forelse (
+                        $report['requests']['status_counts']
+                        as $status => $count
+                    )
+                        <div class="smart-buy-report-page__status-item">
+                            <div class="smart-buy-report-page__status-name">
+                                <span
+                                    class="smart-buy-report-page__status-dot
+                                    smart-buy-report-page__status-dot--{{ $status }}"
+                                ></span>
+
+                                <span>
+                                    {{ str($status)
+                                        ->replace('_', ' ')
+                                        ->title() }}
+                                </span>
+                            </div>
+
+                            <strong>
+                                {{ number_format($count) }}
+                            </strong>
+                        </div>
+                    @empty
+                        <div class="smart-buy-report-page__empty">
+                            <i class="ri-inbox-line"></i>
+
+                            <span>
+                                No request data available.
+                            </span>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+
+            <div class="smart-buy-report-page__panel">
+                <div class="smart-buy-report-page__panel-header">
+                    <div>
+                        <h2>Payment Overview</h2>
+
+                        <p>
+                            Smart Buy payment activity.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="smart-buy-report-page__payment-list">
+                    <div class="smart-buy-report-page__payment-item">
+                        <span>Total Payments</span>
+
+                        <strong>
+                            {{ number_format(
+                                $report['payments']['total']
+                            ) }}
+                        </strong>
+                    </div>
+
+                    <div class="smart-buy-report-page__payment-item">
+                        <span>Completed</span>
+
+                        <strong>
+                            {{ number_format(
+                                $report['payments']['completed']
+                            ) }}
+                        </strong>
+                    </div>
+
+                    <div class="smart-buy-report-page__payment-item">
+                        <span>Pending</span>
+
+                        <strong>
+                            {{ number_format(
+                                $report['payments']['pending']
+                            ) }}
+                        </strong>
+                    </div>
+
+                    <div class="smart-buy-report-page__payment-item">
+                        <span>Processing</span>
+
+                        <strong>
+                            {{ number_format(
+                                $report['payments']['processing']
+                            ) }}
+                        </strong>
+                    </div>
+
+                    <div class="smart-buy-report-page__payment-item">
+                        <span>Failed</span>
+
+                        <strong>
+                            {{ number_format(
+                                $report['payments']['failed']
+                            ) }}
+                        </strong>
+                    </div>
+
+                    <div class="smart-buy-report-page__payment-item">
+                        <span>Cancelled</span>
+
+                        <strong>
+                            {{ number_format(
+                                $report['payments']['cancelled']
+                            ) }}
+                        </strong>
+                    </div>
+
+                    <div class="smart-buy-report-page__payment-item">
+                        <span>Refunded</span>
+
+                        <strong>
+                            {{ number_format(
+                                $report['payments']['refunded']
+                            ) }}
+                        </strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="smart-buy-report-page__section">
+            <div class="smart-buy-report-page__section-header">
+                <div>
+                    <h2>Performance</h2>
+
+                    <p>
+                        Key Smart Buy performance indicators.
+                    </p>
+                </div>
+            </div>
+
+            <div class="smart-buy-report-page__performance-grid">
+                <div class="smart-buy-report-page__performance-card">
+                    <div class="smart-buy-report-page__performance-heading">
+                        <span>Completion Rate</span>
+
+                        <i class="ri-checkbox-circle-line"></i>
+                    </div>
+
+                    <div class="smart-buy-report-page__progress">
+                        <div
+                            class="smart-buy-report-page__progress-bar"
+                            style="width: {{ min(
+                                100,
+                                max(
+                                    0,
+                                    $report['performance']['completion_rate']
+                                )
+                            ) }}%;"
+                        ></div>
+                    </div>
+
+                    <strong>
+                        {{ number_format(
+                            $report['performance']['completion_rate'],
+                            2
+                        ) }}%
+                    </strong>
+                </div>
+
+                <div class="smart-buy-report-page__performance-card">
+                    <div class="smart-buy-report-page__performance-heading">
+                        <span>Payment Collection Rate</span>
+
+                        <i class="ri-wallet-3-line"></i>
+                    </div>
+
+                    <div class="smart-buy-report-page__progress">
+                        <div
+                            class="smart-buy-report-page__progress-bar"
+                            style="width: {{ min(
+                                100,
+                                max(
+                                    0,
+                                    $report['performance']['payment_collection_rate']
+                                )
+                            ) }}%;"
+                        ></div>
+                    </div>
+
+                    <strong>
+                        {{ number_format(
+                            $report['performance']['payment_collection_rate'],
+                            2
+                        ) }}%
+                    </strong>
+                </div>
+
+                <div class="smart-buy-report-page__performance-card">
+                    <div class="smart-buy-report-page__performance-heading">
+                        <span>Cancellation Rate</span>
+
+                        <i class="ri-close-circle-line"></i>
+                    </div>
+
+                    <div class="smart-buy-report-page__progress">
+                        <div
+                            class="smart-buy-report-page__progress-bar"
+                            style="width: {{ min(
+                                100,
+                                max(
+                                    0,
+                                    $report['performance']['cancellation_rate']
+                                )
+                            ) }}%;"
+                        ></div>
+                    </div>
+
+                    <strong>
+                        {{ number_format(
+                            $report['performance']['cancellation_rate'],
+                            2
+                        ) }}%
+                    </strong>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const page = document.querySelector(
+                '.smart-buy-report-page'
+            );
+
+            if (!page) {
+                return;
+            }
+
+            const form = page.querySelector(
+                '[data-report-filter]'
+            );
+
+            const fromInput = page.querySelector(
+                '#report-date-from'
+            );
+
+            const toInput = page.querySelector(
+                '#report-date-to'
+            );
+
+            const quickFilters = page.querySelectorAll(
+                '[data-period]'
+            );
+
+            if (!form || !fromInput || !toInput) {
+                return;
+            }
+
+            const formatDate = (date) => {
+                const year = date.getFullYear();
+
+                const month = String(
+                    date.getMonth() + 1
+                ).padStart(2, '0');
+
+                const day = String(
+                    date.getDate()
+                ).padStart(2, '0');
+
+                return `${year}-${month}-${day}`;
+            };
+
+            const submitPeriod = (period) => {
+                const today = new Date();
+
+                let fromDate = new Date(today);
+                let toDate = new Date(today);
+
+                if (period === 'yesterday') {
+                    fromDate.setDate(
+                        today.getDate() - 1
+                    );
+
+                    toDate = new Date(fromDate);
+                }
+
+                if (period === '7') {
+                    fromDate.setDate(
+                        today.getDate() - 6
+                    );
+                }
+
+                if (period === '30') {
+                    fromDate.setDate(
+                        today.getDate() - 29
+                    );
+                }
+
+                if (period === 'month') {
+                    fromDate = new Date(
+                        today.getFullYear(),
+                        today.getMonth(),
+                        1
+                    );
+                }
+
+                fromInput.value = formatDate(fromDate);
+                toInput.value = formatDate(toDate);
+
+                form.submit();
+            };
+
+            quickFilters.forEach((button) => {
+                button.addEventListener('click', () => {
+                    const period = button.dataset.period;
+
+                    if (!period) {
+                        return;
+                    }
+
+                    submitPeriod(period);
+                });
+            });
+
+            form.addEventListener('submit', (event) => {
+                if (
+                    fromInput.value
+                    && toInput.value
+                    && fromInput.value > toInput.value
+                ) {
+                    event.preventDefault();
+
+                    window.alert(
+                        'The start date cannot be later than the end date.'
+                    );
+                }
+            });
+        });
+    </script>
+@endpush

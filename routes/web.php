@@ -19,6 +19,7 @@ use App\Http\Controllers\Backend\ShipmentController;
 use App\Http\Controllers\Backend\SmartBuyController;
 use App\Http\Controllers\Backend\SmartBuyPaymentController;
 use App\Http\Controllers\Backend\SmartBuyQuoteController;
+use App\Http\Controllers\Backend\SmartBuyReportController;
 use App\Http\Controllers\Backend\SmartBuyShipmentController;
 use App\Http\Controllers\Backend\TrackingController;
 use App\Http\Controllers\Backend\UserAddressController;
@@ -717,6 +718,11 @@ Route::middleware('auth')
                     ->middleware('permission:smart-buy-payment')
                     ->name('smart-buy.payment.update');
 
+                Route::get('/smart-buy/payments', [
+                    SmartBuyPaymentController::class,
+                    'index',
+                ])->name('smart-buy.payments');
+
                 Route::get(
                     '/{smartBuy}/shipment/create',
                     [SmartBuyShipmentController::class, 'create']
@@ -1207,58 +1213,6 @@ Route::middleware('auth')
 
                 /*
                 |--------------------------------------------------------------------------
-                | CENTRAL PAYMENTS
-                |--------------------------------------------------------------------------
-                */
-
-                Route::prefix('payments')
-                    ->group(function (): void {
-
-                        Route::view(
-                            '/',
-                            'backend.pages.payments.index'
-                        )
-                            ->middleware('permission:view-payments')
-                            ->name('payments');
-
-                        Route::view(
-                            '/ecommerce',
-                            'backend.pages.payments.ecommerce'
-                        )
-                            ->middleware('permission:view-ecommerce-payments')
-                            ->name('payments-ecommerce');
-
-                        Route::view(
-                            '/smart-buy',
-                            'backend.pages.payments.smart-buy'
-                        )
-                            ->middleware('permission:view-smart-buy-payments')
-                            ->name('payments-smart-buy');
-
-                        Route::view(
-                            '/failed',
-                            'backend.pages.payments.failed'
-                        )
-                            ->middleware('permission:view-failed-payments')
-                            ->name('payments-failed');
-
-                        Route::get(
-                            '/{payment}',
-                            function ($payment) {
-                                return view(
-                                    'backend.pages.payments.details',
-                                    compact('payment')
-                                );
-                            }
-                        )
-                            ->middleware('permission:view-payment-details')
-                            ->name('payments-details');
-
-                    });
-
-
-                /*
-                |--------------------------------------------------------------------------
                 | CENTRAL REPORTS
                 |--------------------------------------------------------------------------
                 */
@@ -1278,14 +1232,18 @@ Route::middleware('auth')
                             'backend.pages.reports.ecommerce'
                         )
                             ->middleware('permission:view-ecommerce-reports')
-                            ->name('reports-ecommerce');
+                            ->name('reports.ecommerce');
 
-                        Route::view(
-                            '/smart-buy',
-                            'backend.pages.reports.smart-buy'
-                        )
+                        Route::get('/smart-buy', [
+                            SmartBuyReportController::class, 'index',
+                        ])
                             ->middleware('permission:view-smart-buy-reports')
-                            ->name('reports-smart-buy');
+                            ->name('reports.smart-buy');
+
+                        Route::get('/smart-buy/reports/export', [
+                            SmartBuyReportController::class,
+                            'export',
+                        ])->name('reports.smart-buy.export');
 
                     });
 

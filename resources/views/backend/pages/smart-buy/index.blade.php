@@ -30,7 +30,7 @@
             <div class="smart-buy-admin-header__actions">
 
                 <a
-                    href="{{ route('payments-smart-buy') }}"
+                    href="{{ route('smart-buy.payments') }}"
                     class="smart-buy-admin-header__button smart-buy-admin-header__button--outline"
                 >
                     <i class="fa-solid fa-credit-card"></i>

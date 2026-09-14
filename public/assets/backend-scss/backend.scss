@@ -29,12 +29,6 @@
 @use "dashboard/dashboard-admin";
 @use "dashboard/dashboard-customer";
 
-@use "payments/payments-all";
-@use "payments/payments-ecommerce";
-@use "payments/payments-smart-buy";
-@use "payments/payments-failed";
-@use "payments/payments-details";
-
 @use "roles/roles-all";
 @use "roles/role-create";
 @use "roles/role-details";
