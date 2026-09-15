@@ -1279,7 +1279,7 @@
             const quillToolbar = [
                 [
                     {
-                        header: [1, 2, 3, false]
+                        header: [2, 3, false]
                     }
                 ],
 
@@ -1321,7 +1321,6 @@
 
                 [
                     'link',
-                    'image'
                 ],
 
                 [

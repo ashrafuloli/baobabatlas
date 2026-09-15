@@ -26,7 +26,7 @@
             </div>
 
             <a
-                href="{{ route('categories') }}"
+                href="{{ route('admin-categories') }}"
                 class="category-create-page__back-btn"
             >
                 <i class="ri-arrow-left-line"></i>
@@ -633,7 +633,7 @@
             <div class="category-create-actions">
 
                 <a
-                    href="{{ route('categories') }}"
+                    href="{{ route('admin-categories') }}"
                     class="category-create-actions__cancel"
                 >
                     Cancel

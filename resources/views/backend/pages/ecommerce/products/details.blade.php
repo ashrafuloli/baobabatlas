@@ -185,7 +185,7 @@
                                     Short Description
                                 </span>
 
-                                <p>{{ $product->short_description }}</p>
+                                <p>{!! nl2br($product->short_description) !!}</p>
                             </div>
                         @endif
 
@@ -196,7 +196,7 @@
                                 </span>
 
                                 <div class="product-details-page__rich-content">
-                                    {!! $product->description !!}
+                                    {!! nl2br($product->description) !!}
                                 </div>
                             </div>
                         @endif

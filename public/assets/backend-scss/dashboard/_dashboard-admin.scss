@@ -3,21 +3,6 @@
 .admin-dashboard-page {
     padding: 24px 0 40px;
 
-    &__container {
-        width: 100%;
-        max-width: 1440px;
-        margin: 0 auto;
-        padding: 0 24px;
-
-        @include mq("md") {
-            padding: 0 18px;
-        }
-
-        @include mq("xs") {
-            padding: 0 14px;
-        }
-    }
-
     &__welcome {
         display: flex;
         align-items: center;

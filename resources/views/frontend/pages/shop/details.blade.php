@@ -669,7 +669,7 @@
                         @if($product->short_description)
 
                             <div class="product-short-description">
-                                {{ $product->short_description }}
+                                {!! nl2br($product->short_description) !!}
                             </div>
 
                         @endif
@@ -970,7 +970,7 @@
                             @if($product->description)
 
                                 <div class="product-description">
-                                    {!! nl2br(e($product->description)) !!}
+                                    {!! nl2br($product->description) !!}
                                 </div>
 
                             @else

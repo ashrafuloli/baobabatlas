@@ -183,50 +183,6 @@
 
                 @endif
 
-
-                {{-- PAYMENTS --}}
-                @if(auth()->user()->hasPermission('view-payments'))
-
-                    <li class="{{ request()->routeIs(
-                        'account.payments'
-                    ) ? 'active' : '' }}">
-
-                        <a href="{{ route('account.payments') }}">
-
-                            <i class="ri-bank-card-line"></i>
-
-                            <span>
-                                Payments
-                            </span>
-
-                        </a>
-
-                    </li>
-
-                @endif
-
-
-                {{-- NOTIFICATIONS --}}
-                @if(auth()->user()->hasPermission('view-notifications'))
-
-                    <li class="{{ request()->routeIs(
-                        'notifications'
-                    ) ? 'active' : '' }}">
-
-                        <a href="{{ route('notifications') }}">
-
-                            <i class="ri-notification-3-line"></i>
-
-                            <span>
-                                Notifications
-                            </span>
-
-                        </a>
-
-                    </li>
-
-                @endif
-
             </ul>
 
         @endif

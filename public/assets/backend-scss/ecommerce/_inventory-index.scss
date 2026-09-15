@@ -1,6 +1,7 @@
+@use "../common" as *;
+
 .inventory-page {
     width: 100%;
-    padding: 24px;
 
     &__header {
         display: flex;
@@ -40,7 +41,7 @@
         border: 1px solid #e5e7eb;
         border-radius: 8px;
         background: #fff;
-        color: #374151;
+        color: $theme-color;
         font-size: 13px;
         font-weight: 600;
         text-decoration: none;
@@ -94,7 +95,7 @@
         height: 42px;
         border-radius: 10px;
         background: #f3f4f6;
-        color: #374151;
+        color: $theme-color;
         font-size: 16px;
     }
 
@@ -230,13 +231,13 @@
         color 0.2s ease;
 
     &--primary {
-        border-color: #111827;
-        background: #111827;
+        border-color: $theme-color;
+        background: $theme-color;
         color: #fff;
 
         &:hover {
-            border-color: #1f2937;
-            background: #1f2937;
+            border-color: $theme-color-2;
+            background: $theme-color-2;
         }
     }
 

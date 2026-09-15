@@ -351,3 +351,12 @@ Tracking Number: 1234567890
 
 Tracking URL: https://www.dhl.com/en/express/tracking.html?AWB=1234567890
 https://www.dhl.com/en/express/tracking.html?AWB=1234567890
+
+
+
+Username:	baobabatlas@jamescoders.com
+Password:	r;@?xn1peoCN)XcT
+Incoming Server:	mail.jamescoders.com
+IMAP Port: 993 POP3 Port: 995
+Outgoing Server:	mail.jamescoders.com
+SMTP Port: 465
