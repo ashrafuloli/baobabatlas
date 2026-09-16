@@ -26,7 +26,7 @@
                 </div>
 
                 {{-- Header Controls --}}
-                <div class="settings-header-actions">
+                <div class="settings-header-actions d-none">
 
                     {{-- Theme Toggle --}}
                     <button

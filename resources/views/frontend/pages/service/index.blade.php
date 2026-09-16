@@ -203,7 +203,7 @@
                         </div>
 
                         <div class="cta-btn">
-                            <a href="#">
+                            <a href="{{route('contact')}}">
                                 Request a Quote <i class="ri-arrow-right-line"></i>
                             </a>
                         </div>

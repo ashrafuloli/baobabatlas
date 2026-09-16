@@ -21,30 +21,81 @@
         </div>
     </div>
 
-    <section class="tracking-section">
+    <section class="services-section">
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-xl-6 col-md-7 m-b-xs-30">
-                    <div class="section-heading m-b-30">
-                        <span class="subtitle">TRACK YOUR SHIPMENT</span>
-                        <h2>Real-time Tracking, Total Peace of Mind</h2>
+            <div class="row m-b-50">
+                <div class="col-xl-12">
+                    <div class="section-heading text-center">
+                        <span class="subtitle">OUR SERVICES</span>
+                        <h2>End-to-End Logistics Solutions</h2>
                     </div>
-                    <form class="tracking-form">
-
-                        <input
-                            type="text"
-                            placeholder="Enter your tracking number"
-                        >
-
-                        <button type="submit">
-                            Track Now
-                            <i class="ri-box-3-line"></i>
-                        </button>
-
-                    </form>
                 </div>
-                <div class="col-xl-6 col-md-5">
-                    <img src="{{asset('assets/img/thumb/thumb-3.png')}}" alt="thumb">
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-xl-4 col-md-6 m-b-30">
+                    <div class="service-card">
+                        <div class="icon">
+                            <i class="ri-ship-line"></i>
+                        </div>
+
+                        <h3>Freight Forwarding</h3>
+
+                        <p>
+                            Sea, air, and land freight solutions tailored to your needs.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-md-6 m-b-30">
+                    <div class="service-card">
+                        <div class="icon">
+                            <i class="ri-file-list-3-line"></i>
+                        </div>
+
+                        <h3>Customs Clearance</h3>
+
+                        <p>
+                            Efficient customs clearance ensuring smooth border crossings.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-md-6 m-b-30">
+                    <div class="service-card">
+                        <div class="icon">
+                            <i class="ri-store-2-line"></i>
+                        </div>
+
+                        <h3>Warehousing</h3>
+
+                        <p>
+                            Secure storage solutions with real-time inventory management.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-md-6 m-b-30">
+                    <div class="service-card">
+                        <div class="icon">
+                            <i class="ri-truck-line"></i>
+                        </div>
+
+                        <h3>Distribution</h3>
+
+                        <p>
+                            Reliable last-mile delivery across Guinea and beyond.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-md-6 m-b-30">
+                    <div class="service-card">
+                        <div class="icon">
+                            <i class="ri-shopping-cart-line"></i>
+                        </div>
+
+                        <h3>Marketplace</h3>
+
+                        <p>
+                            Buy and sell goods easily through our secure platform.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -152,7 +203,7 @@
                         </div>
 
                         <div class="cta-btn">
-                            <a href="#">
+                            <a href="{{route('contact')}}">
                                 Request a Quote <i class="ri-arrow-right-line"></i>
                             </a>
                         </div>

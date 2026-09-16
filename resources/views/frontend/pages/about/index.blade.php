@@ -26,7 +26,7 @@
 
             <div class="about-image">
                 <img
-                    src="{{ asset('assets/img/thumb/thumb-1.png') }}"
+                    src="{{ asset('assets/img/thumb/thumb-1.webp') }}"
                     alt="Baobab Atlas team"
                 >
             </div>
@@ -293,7 +293,7 @@
                         </div>
 
                         <div class="cta-btn">
-                            <a href="#">
+                            <a href="{{route('contact')}}">
                                 Request a Quote <i class="ri-arrow-right-line"></i>
                             </a>
                         </div>

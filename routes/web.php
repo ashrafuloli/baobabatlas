@@ -33,6 +33,7 @@ use App\Http\Controllers\Customer\MySmartBuyTrackingController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\CheckoutController;
 use App\Http\Controllers\Frontend\FrontendTrackingController;
+use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\MarketplaceController;
 use App\Http\Controllers\Frontend\OrderController;
 use App\Http\Controllers\Frontend\RefundRequestController;
@@ -49,10 +50,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('maintenance')->group(function (): void {
 
-    Route::view(
-        '/',
-        'frontend.pages.home.index'
-    )->name('home');
+    Route::get('/', [HomeController::class, 'index'])->name('home');
 
 
     /*

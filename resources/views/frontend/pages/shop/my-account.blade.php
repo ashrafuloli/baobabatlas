@@ -182,6 +182,33 @@
                         </a>
 
                         {{-- ==========================================
+                            Request
+                        =========================================== --}}
+
+                        <a
+                            href="{{ auth()->user()->hasRole('admin') ? route('smart-buy') : route('my-smart-buy') }}"
+                            class="my-account-page__card"
+                        >
+
+                            <div class="my-account-page__card-icon">
+
+                                <i class="ri-file-list-3-line"></i>
+
+                            </div>
+
+                            <span class="my-account-page__card-title">
+                                Request Item
+                            </span>
+
+                            <span class="my-account-page__card-arrow">
+
+                                <i class="ri-arrow-right-line"></i>
+
+                            </span>
+
+                        </a>
+
+                        {{-- ==========================================
                             Cart
                         =========================================== --}}
 

@@ -141,6 +141,56 @@
 
         @endif
 
+        {{-- ============================================
+            MAIN
+        ============================================= --}}
+        <p class="menu-title">
+            Ecommerce
+        </p>
+
+        @php
+            $headerCart = auth()->check()
+                ? auth()->user()->cart
+                : \App\Models\Cart::query()
+                    ->where('session_id', session()->getId())
+                    ->first();
+
+            $headerCartCount =
+                $headerCart?->totalQuantity() ?? 0;
+        @endphp
+
+        <ul>
+
+            <li>
+                <a href="{{ route('my-account') }}">
+                    <i class="ri-user-3-line"></i>
+                    <span>My Account</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ route('my-cart') }}">
+                    <i class="ri-shopping-bag-3-line"></i>
+                    <span>Cart ({{ $headerCartCount }})</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ route('my-orders') }}">
+                    <i class="ri-file-list-3-line"></i>
+                    <span>Orders</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ route('my-wishlist') }}">
+                    <i class="ri-heart-3-line"></i>
+                    <span>Wishlist</span>
+                </a>
+            </li>
+
+        </ul>
+
 
         {{-- ============================================
             ACCOUNT - CUSTOMER

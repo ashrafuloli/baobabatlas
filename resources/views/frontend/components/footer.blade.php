@@ -7,7 +7,7 @@
 
                     <!-- Logo -->
                     <div class="footer-brand">
-                        <a href="#" class="f-logo">
+                        <a href="{{route('home')}}" class="f-logo">
                             <img src="{{asset('logo-white.png')}}" alt="logo">
                         </a>
 
@@ -24,10 +24,10 @@
                         <h4>Quick Links</h4>
 
                         <ul>
-                            <li><a href="#">Home</a></li>
-                            <li><a href="#">Services</a></li>
-                            <li><a href="#">Track Shipment</a></li>
-                            <li><a href="#">Marketplace</a></li>
+                            <li><a href="{{route('home')}}">Home</a></li>
+                            <li><a href="{{route('service')}}">Services</a></li>
+                            <li><a href="{{route('tracking')}}">Track Shipment</a></li>
+                            <li><a href="{{route('shop')}}">Marketplace</a></li>
                         </ul>
                     </div>
 
@@ -35,8 +35,8 @@
                     <div class="footer-links">
                         <h4>Company</h4>
                         <ul>
-                            <li><a href="#">About Us</a></li>
-                            <li><a href="#">Partners</a></li>
+                            <li><a href="{{route('about')}}">About Us</a></li>
+                            <li><a href="{{route('partners')}}">Partners</a></li>
                             <li><a href="#">Careers</a></li>
                             <li><a href="#">News</a></li>
                         </ul>
@@ -47,8 +47,8 @@
                         <h4>Support</h4>
 
                         <ul>
-                            <li><a href="#">FAQ</a></li>
-                            <li><a href="#">Contact Us</a></li>
+                            <li><a href="">FAQ</a></li>
+                            <li><a href="{{route('contact')}}">Contact Us</a></li>
                             <li><a href="#">Terms of Service</a></li>
                             <li><a href="#">Privacy Policy</a></li>
                         </ul>

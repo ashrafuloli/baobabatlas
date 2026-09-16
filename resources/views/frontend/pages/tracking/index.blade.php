@@ -261,7 +261,7 @@
                         <div class="tracking-image">
 
                             <img
-                                src="{{ asset('assets/img/thumb/thumb-3.png') }}"
+                                src="{{ asset('assets/img/thumb/thumb-3.webp') }}"
                                 alt="Shipment Tracking"
                             >
 
@@ -2022,11 +2022,9 @@
 
                             <div class="cta-btn">
 
-                                <a href="#">
+                                <a href="{{route('contact')}}">
 
-                                    Request a Quote
-
-                                    <i class="ri-arrow-right-line"></i>
+                                    Request a Quote <i class="ri-arrow-right-line"></i>
 
                                 </a>
 
