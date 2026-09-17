@@ -412,6 +412,160 @@
         </div>
     </section>
 
+
+    <section class="home-popular-products p-t-80">
+        <div class="container">
+            <div class="row m-b-50">
+                <div class="col-xl-12">
+                    <div class="section-heading text-center">
+                        <span class="subtitle">products</span>
+                        <h2>Popular This Week</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="home-product-grid">
+                @forelse ($latestProducts as $product)
+
+                    @php
+                        $thumbnail = $product->thumbnail;
+
+                        $imageUrl = $thumbnail
+                            ? (
+                                filter_var(
+                                    $thumbnail,
+                                    FILTER_VALIDATE_URL
+                                )
+                                    ? $thumbnail
+                                    : asset($thumbnail)
+                            )
+                            : asset(
+                                'assets/img/products/product-placeholder.jpg'
+                            );
+
+                        $stock = $product->variants->sum('stock');
+
+                        $isWishlisted = in_array(
+                            $product->id,
+                            $wishlistProductIds ?? [],
+                            true
+                        );
+                    @endphp
+
+                    <div class="product-card">
+                        <div class="product-image">
+
+                            {{-- Source Badge --}}
+                            @if ($product->source !== 'own')
+
+                                <span class="product-badge premium">
+                                        {{ strtoupper($product->source) }}
+                                    </span>
+
+                            @endif
+
+
+                            {{-- Out Of Stock --}}
+                            @if ($stock <= 0)
+
+                                <span class="product-badge out-of-stock">
+                                        OUT OF STOCK
+                                    </span>
+
+                            @endif
+
+
+                            {{-- Wishlist --}}
+                            <button
+                                type="button"
+                                class="wishlist {{ $isWishlisted ? 'is-active' : '' }}"
+                                data-product-id="{{ $product->id }}"
+                                data-product-name="{{ $product->name }}"
+                                data-wishlist-url="{{ route('wishlist.toggle', $product) }}"
+                                aria-label="{{ $isWishlisted ? 'Remove' : 'Add' }} {{ $product->name }} {{ $isWishlisted ? 'from' : 'to' }} wishlist"
+                                aria-pressed="{{ $isWishlisted ? 'true' : 'false' }}"
+                            >
+
+                                <i class="{{ $isWishlisted ? 'ri-heart-fill' : 'ri-heart-line' }}"></i>
+
+                            </button>
+
+
+                            {{-- Product Image --}}
+                            <a href="{{ route('shop.details', $product->slug) }}">
+
+                                <img
+                                    src="{{ $imageUrl }}"
+                                    alt="{{ $product->name }}"
+                                    loading="lazy"
+                                >
+
+                            </a>
+
+                        </div>
+                        <div class="product-content">
+
+                            @if ($product->brand)
+
+                                <span class="product-brand">
+                                        {{ $product->brand->name }}
+                                    </span>
+
+                            @endif
+
+
+                            <h4>
+
+                                <a
+                                    href="{{ route('shop.details', $product->slug) }}"
+                                >
+                                    {{ $product->name }}
+                                </a>
+
+                            </h4>
+
+
+                            <strong class="product-price">
+
+                                ${{ number_format( (float) $product->price,2) }}
+
+                            </strong>
+
+
+                            @if ($product->categories->isNotEmpty())
+
+                                <span class="product-category">
+
+                                        {{ $product->categories->first()->name }}
+
+                                    </span>
+
+                            @endif
+
+                        </div>
+                    </div>
+
+                @empty
+                    <div class="marketplace-empty">
+
+                        <div class="marketplace-empty-icon">
+                            <i class="ri-shopping-bag-3-line"></i>
+                        </div>
+
+                        <h4>
+                            No Products Available
+                        </h4>
+
+                        <p>
+                            Popular products will appear here.
+                        </p>
+
+                    </div>
+                @endforelse
+            </div>
+        </div>
+    </section>
+
     <section class="services-section">
         <div class="container">
             <div class="row m-b-50">
@@ -748,3 +902,323 @@
     </section>
 
 @endsection
+
+
+@push('scripts')
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const homePage = document.querySelector('body');
+
+            if (!homePage) {
+                return;
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Wishlist Button
+            |--------------------------------------------------------------------------
+            */
+
+            homePage.addEventListener('click', async function (event) {
+
+                const button = event.target.closest(
+                    '.home-popular-products .wishlist'
+                );
+
+                if (!button || button.disabled) {
+                    return;
+                }
+
+
+                event.preventDefault();
+                event.stopPropagation();
+
+
+                const wishlistUrl =
+                    button.dataset.wishlistUrl;
+
+                const productId =
+                    Number(button.dataset.productId);
+
+                const productName =
+                    button.dataset.productName || 'product';
+
+
+                if (!wishlistUrl || !productId) {
+                    return;
+                }
+
+
+                const icon =
+                    button.querySelector('i');
+
+                if (!icon) {
+                    return;
+                }
+
+
+                const wasWishlisted =
+                    button.classList.contains('is-active');
+
+
+                button.disabled = true;
+
+                button.classList.add('is-loading');
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Loading
+                |--------------------------------------------------------------------------
+                */
+
+                icon.className =
+                    'ri-loader-4-line ri-spin';
+
+
+                try {
+
+                    const csrfToken =
+                        document
+                            .querySelector(
+                                'meta[name="csrf-token"]'
+                            )
+                            ?.getAttribute('content') || '';
+
+
+                    const response =
+                        await fetch(
+                            wishlistUrl,
+                            {
+                                method: 'POST',
+
+                                headers: {
+                                    'Accept':
+                                        'application/json',
+
+                                    'X-Requested-With':
+                                        'XMLHttpRequest',
+
+                                    'Content-Type':
+                                        'application/json',
+
+                                    'X-CSRF-TOKEN':
+                                    csrfToken,
+                                },
+
+                                credentials:
+                                    'same-origin',
+                            }
+                        );
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Authentication
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (
+                        response.status === 401 ||
+                        response.status === 419
+                    ) {
+
+                        window.location.href =
+                            '{{ route('login') }}';
+
+                        return;
+                    }
+
+
+                    const contentType =
+                        response.headers.get(
+                            'content-type'
+                        ) || '';
+
+
+                    if (
+                        !contentType.includes(
+                            'application/json'
+                        )
+                    ) {
+
+                        throw new Error(
+                            'Unable to update your wishlist.'
+                        );
+
+                    }
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            data?.message ||
+                            'Unable to update your wishlist.'
+                        );
+
+                    }
+
+
+                    const wishlisted =
+                        data.wishlisted === true;
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Update Button
+                    |--------------------------------------------------------------------------
+                    */
+
+                    button.classList.toggle(
+                        'is-active',
+                        wishlisted
+                    );
+
+
+                    button.setAttribute(
+                        'aria-pressed',
+                        wishlisted
+                            ? 'true'
+                            : 'false'
+                    );
+
+
+                    button.setAttribute(
+                        'aria-label',
+                        wishlisted
+                            ? `Remove ${productName} from wishlist`
+                            : `Add ${productName} to wishlist`
+                    );
+
+
+                    icon.className =
+                        wishlisted
+                            ? 'ri-heart-fill'
+                            : 'ri-heart-line';
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Toast
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (
+                        window.AppToast &&
+                        typeof window.AppToast.fire ===
+                        'function'
+                    ) {
+
+                        window.AppToast.fire({
+
+                            icon: 'success',
+
+                            title:
+                                data.message ||
+                                (
+                                    wishlisted
+                                        ? 'Product added to your wishlist.'
+                                        : 'Product removed from your wishlist.'
+                                ),
+
+                        });
+
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Global Wishlist Event
+                    |--------------------------------------------------------------------------
+                    */
+
+                    document.dispatchEvent(
+                        new CustomEvent(
+                            'wishlist:updated',
+                            {
+                                detail: {
+                                    productId:
+                                    productId,
+
+                                    wishlisted:
+                                    wishlisted,
+                                },
+                            }
+                        )
+                    );
+
+                } catch (error) {
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Restore State
+                    |--------------------------------------------------------------------------
+                    */
+
+                    button.classList.toggle(
+                        'is-active',
+                        wasWishlisted
+                    );
+
+
+                    button.setAttribute(
+                        'aria-pressed',
+                        wasWishlisted
+                            ? 'true'
+                            : 'false'
+                    );
+
+
+                    icon.className =
+                        wasWishlisted
+                            ? 'ri-heart-fill'
+                            : 'ri-heart-line';
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Error Toast
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (
+                        window.AppToast &&
+                        typeof window.AppToast.fire ===
+                        'function'
+                    ) {
+
+                        window.AppToast.fire({
+
+                            icon: 'error',
+
+                            title:
+                                error.message ||
+                                'Unable to update your wishlist.',
+
+                        });
+
+                    }
+
+                } finally {
+
+                    button.disabled = false;
+
+                    button.classList.remove(
+                        'is-loading'
+                    );
+
+                }
+
+            });
+
+        });
+    </script>
+
+@endpush

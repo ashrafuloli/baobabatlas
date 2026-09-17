@@ -46,10 +46,10 @@ class DatabaseSeeder extends Seeder
             |--------------------------------------------------------------------------
             */
 
-//            BrandSeeder::class,
-//            CategorySeeder::class,
-//            AttributeSeeder::class,
-//            ProductSeeder::class,
+            BrandSeeder::class,
+            CategorySeeder::class,
+            AttributeSeeder::class,
+            ProductSeeder::class,
 
             /*
             |--------------------------------------------------------------------------

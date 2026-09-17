@@ -491,7 +491,6 @@ label {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 30px;
   margin-left: 250px;
   overflow-x: hidden;
 }
@@ -519,13 +518,16 @@ label {
   align-items: center;
   gap: 10px;
 }
+.dashboard-topbar .topbar-left .d-logo img {
+  max-width: 150px;
+}
 .dashboard-topbar .open-menu {
   font-weight: 600;
   font-size: 20px;
   color: #fff;
   width: 38px;
   height: 38px;
-  background: #000;
+  background: #177245;
   display: inline-flex;
   align-items: center;
   justify-content: center;
