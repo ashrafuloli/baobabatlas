@@ -457,11 +457,9 @@
 
                             {{-- Source Badge --}}
                             @if ($product->source !== 'own')
-
                                 <span class="product-badge premium">
-                                        {{ strtoupper($product->source) }}
-                                    </span>
-
+                                    {{ strtoupper($product->source) }}
+                                </span>
                             @endif
 
 
@@ -469,8 +467,8 @@
                             @if ($stock <= 0)
 
                                 <span class="product-badge out-of-stock">
-                                        OUT OF STOCK
-                                    </span>
+                                    OUT OF STOCK
+                                </span>
 
                             @endif
 
@@ -504,24 +502,17 @@
 
                         </div>
                         <div class="product-content">
-
                             @if ($product->brand)
-
                                 <span class="product-brand">
-                                        {{ $product->brand->name }}
-                                    </span>
-
+                                    {{ $product->brand->name }}
+                                </span>
                             @endif
 
 
                             <h4>
-
-                                <a
-                                    href="{{ route('shop.details', $product->slug) }}"
-                                >
+                                <a href="{{ route('shop.details', $product->slug) }}">
                                     {{ $product->name }}
                                 </a>
-
                             </h4>
 
 
@@ -531,17 +522,11 @@
 
                             </strong>
 
-
-                            @if ($product->categories->isNotEmpty())
-
-                                <span class="product-category">
-
-                                        {{ $product->categories->first()->name }}
-
-                                    </span>
-
-                            @endif
-
+                            <div class="read-more">
+                                <a href="{{ route('shop.details', $product->slug) }}">
+                                    Add to Cart
+                                </a>
+                            </div>
                         </div>
                     </div>
 
@@ -659,7 +644,7 @@
 
             <div class="row">
                 <div class="col-xl-12">
-                    <div class="steps">
+                    <div class="steps d-none">
                         <div class="step">
                             <div class="step-icon">
                                 <i class="ri-file-list-3-line"></i>
@@ -699,6 +684,97 @@
                                 </p>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="how-it-works-steps">
+
+                        <!-- Step 01 -->
+                        <div class="step">
+
+                            <div class="icon-wrap">
+
+                                <div class="icon">
+                                    <i class="ri-shopping-cart-line"></i>
+                                </div>
+
+                                <span class="number">
+                                    1
+                                </span>
+
+                            </div>
+
+                            <h3 class="step-title">
+                                1. Shop or Request
+                            </h3>
+
+                        </div>
+
+
+                        <!-- Step 02 -->
+                        <div class="step">
+
+                            <div class="icon-wrap">
+
+                                <div class="icon">
+                                    <i class="ri-file-list-3-line"></i>
+                                </div>
+
+                                <span class="number">
+                        2
+                    </span>
+
+                            </div>
+
+                            <h3 class="step-title">
+                                2. Get Your Price
+                            </h3>
+
+                        </div>
+
+
+                        <!-- Step 03 -->
+                        <div class="step">
+
+                            <div class="icon-wrap">
+
+                                <div class="icon">
+                                    <i class="ri-box-3-line"></i>
+                                </div>
+
+                                <span class="number">
+                        3
+                    </span>
+
+                            </div>
+
+                            <h3 class="step-title">
+                                3. We Purchase
+                            </h3>
+
+                        </div>
+
+
+                        <!-- Step 04 -->
+                        <div class="step">
+
+                            <div class="icon-wrap">
+
+                                <div class="icon">
+                                    <i class="ri-home-4-line"></i>
+                                </div>
+
+                                <span class="number">
+                        4
+                    </span>
+
+                            </div>
+
+                            <h3 class="step-title">
+                                4. Delivered to You
+                            </h3>
+
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -789,7 +865,61 @@
 
     </section>
 
-    <section class="faq-section">
+    <section class="baobab-request-section">
+        <div class="container">
+            <div class="baobab-request-section__wrapper">
+
+                <div class="row align-items-center">
+
+                    {{-- Content --}}
+                    <div class="col-lg-7 col-md-7">
+                        <div class="baobab-request-section__content">
+
+                            <h2 class="baobab-request-section__title">
+                                Can’t Find What You Need?
+                            </h2>
+
+                            <p class="baobab-request-section__description">
+                                Send us the product link or tell us what you want.<br>
+                                We’ll find it, price it and bring it closer.
+                            </p>
+
+                            <div class="baobab-request-section__actions">
+
+                                <a href="http://baobabatlas.test/shop" class="btn-1">
+                                    Shop Now
+                                    <i class="ri-arrow-right-line"></i>
+                                </a>
+
+                                <a href="http://baobabatlas.test/portal/my-smart-buy" class="btn-2">
+                                    Request an Item
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                    {{-- Image --}}
+                    <div class="col-lg-5 col-md-5">
+                        <div class="baobab-request-section__visual">
+
+                            <img
+                                src="{{ asset('assets/img/thumb/thumb-6.webp') }}"
+                                alt="Request a product"
+                                class="img-fluid"
+                            >
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="faq-section bg-white">
         <div class="container">
             <div class="row m-b-50">
                 <div class="col-xl-12">
@@ -874,30 +1004,6 @@
                 </div>
             </div>
 
-        </div>
-    </section>
-
-    <section class="cta-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-xl-12">
-                    <div class="cta-content">
-                        <div class="section-heading text-center">
-                            <span class="subtitle">Get In Touch</span>
-                            <h2>Need a custom solution?</h2>
-                            <p class="description">
-                                We are here to help your business growth globally.
-                            </p>
-                        </div>
-
-                        <div class="cta-btn">
-                            <a href="{{route('contact')}}">
-                                Request a Quote <i class="ri-arrow-right-line"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </section>
 

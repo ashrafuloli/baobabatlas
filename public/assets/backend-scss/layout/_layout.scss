@@ -391,6 +391,10 @@
     width: 100%;
     padding: 16px;
 
+    @include mq(xs){
+        flex-direction: column;
+    }
+
     &__info {
         flex: 0 0 auto;
         color: $body-color;

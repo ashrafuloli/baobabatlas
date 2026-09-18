@@ -653,6 +653,11 @@ label {
   width: 100%;
   padding: 16px;
 }
+@media (max-width: 767px) {
+  .common-pagination {
+    flex-direction: column;
+  }
+}
 .common-pagination__info {
   flex: 0 0 auto;
   color: #555555;

@@ -8,6 +8,10 @@
     width: 100%;
     padding: 16px;
 
+    @include mq(xs) {
+        flex-direction: column;
+    }
+
     &__info {
         flex: 0 0 auto;
         color: $body-color;
@@ -168,12 +172,12 @@
         inset: 0;
         z-index: -1;
         background: linear-gradient(
-                90deg,
-                rgba(255, 249, 235, 0.98) 0%,
-                rgba(255, 249, 235, 0.96) 30%,
-                rgba(255, 249, 235, 0.78) 44%,
-                rgba(255, 249, 235, 0.28) 60%,
-                rgba(255, 249, 235, 0) 78%
+            90deg,
+            rgba(255, 249, 235, 0.98) 0%,
+            rgba(255, 249, 235, 0.96) 30%,
+            rgba(255, 249, 235, 0.78) 44%,
+            rgba(255, 249, 235, 0.28) 60%,
+            rgba(255, 249, 235, 0) 78%
         );
     }
 
@@ -187,11 +191,11 @@
 
         &:before {
             background: linear-gradient(
-                    90deg,
-                    rgba(255, 249, 235, 0.98) 0%,
-                    rgba(255, 249, 235, 0.92) 40%,
-                    rgba(255, 249, 235, 0.45) 65%,
-                    rgba(255, 249, 235, 0) 100%
+                90deg,
+                rgba(255, 249, 235, 0.98) 0%,
+                rgba(255, 249, 235, 0.92) 40%,
+                rgba(255, 249, 235, 0.45) 65%,
+                rgba(255, 249, 235, 0) 100%
             );
         }
     }
@@ -202,11 +206,11 @@
 
         &:before {
             background: linear-gradient(
-                    90deg,
-                    rgba(255, 249, 235, 0.98) 0%,
-                    rgba(255, 249, 235, 0.90) 48%,
-                    rgba(255, 249, 235, 0.40) 75%,
-                    rgba(255, 249, 235, 0) 100%
+                90deg,
+                rgba(255, 249, 235, 0.98) 0%,
+                rgba(255, 249, 235, 0.90) 48%,
+                rgba(255, 249, 235, 0.40) 75%,
+                rgba(255, 249, 235, 0) 100%
             );
         }
     }
@@ -217,11 +221,11 @@
 
         &:before {
             background: linear-gradient(
-                    90deg,
-                    rgba(255, 249, 235, 0.98) 0%,
-                    rgba(255, 249, 235, 0.94) 48%,
-                    rgba(255, 249, 235, 0.58) 72%,
-                    rgba(255, 249, 235, 0.15) 100%
+                90deg,
+                rgba(255, 249, 235, 0.98) 0%,
+                rgba(255, 249, 235, 0.94) 48%,
+                rgba(255, 249, 235, 0.58) 72%,
+                rgba(255, 249, 235, 0.15) 100%
             );
         }
     }
@@ -428,11 +432,11 @@
             position: absolute;
             inset: 0;
             background: linear-gradient(
-                    90deg,
-                    rgba(255, 250, 239, 0.96) 0%,
-                    rgba(255, 250, 239, 0.88) 38%,
-                    rgba(255, 250, 239, 0.35) 65%,
-                    rgba(255, 250, 239, 0) 100%
+                90deg,
+                rgba(255, 250, 239, 0.96) 0%,
+                rgba(255, 250, 239, 0.88) 38%,
+                rgba(255, 250, 239, 0.35) 65%,
+                rgba(255, 250, 239, 0) 100%
             );
         }
     }
@@ -440,11 +444,11 @@
     .home-cta-card--smarter {
         &:before {
             background: linear-gradient(
-                    90deg,
-                    rgba(229, 242, 211, 0.96) 0%,
-                    rgba(229, 242, 211, 0.88) 40%,
-                    rgba(229, 242, 211, 0.35) 70%,
-                    rgba(229, 242, 211, 0) 100%
+                90deg,
+                rgba(229, 242, 211, 0.96) 0%,
+                rgba(229, 242, 211, 0.88) 40%,
+                rgba(229, 242, 211, 0.35) 70%,
+                rgba(229, 242, 211, 0) 100%
             );
         }
     }
@@ -576,7 +580,7 @@
     }
 }
 
-.home-categories{
+.home-categories {
     .category-card {
         min-width: 140px;
         min-height: 110px;
@@ -596,8 +600,7 @@
         @include transition(0.3s);
 
         &:hover {
-            box-shadow:
-                0 8px 25px rgba($black, 0.10);
+            box-shadow: 0 8px 25px rgba($black, 0.10);
 
             @include transform(
                 translateY(-2px)
@@ -619,7 +622,7 @@
                 font-size: 24px;
             }
 
-            img{
+            img {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
@@ -859,6 +862,10 @@
 .faq-section {
     background: #eef8f2;
     padding: 80px 0;
+
+    .bg-white {
+        background: #fff;
+    }
 
     @include mq(xs) {
         padding: 60px 0;
@@ -1687,6 +1694,32 @@
         transform: translateY(-3px);
         box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
     }
+
+    .read-more {
+        margin-top: 10px;
+
+        a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 40px;
+            padding: 9px 18px;
+            color: $white;
+            background: $theme-color;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1.2;
+            white-space: nowrap;
+            text-decoration: none;
+            @include transition(0.3s);
+
+            &:hover {
+                color: $white;
+                background: $theme-color-2;
+            }
+        }
+    }
 }
 
 .product-image {
@@ -1863,7 +1896,6 @@
         line-height: 1.45;
     }
 }
-
 
 
 /*================================*
@@ -2348,12 +2380,22 @@
 }
 
 
-.home-popular-products{
+.home-popular-products {
 
     .home-product-grid {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 20px;
+
+        @include mq(lg) {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+        @include mq(md) {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        @include mq(xs) {
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
     }
 
     .home-product-card {
@@ -2361,14 +2403,12 @@
         border: 1px solid #e9edef;
         border-radius: 8px;
         background: $white;
-        box-shadow:
-            0 2px 9px rgba($black, 0.035);
+        box-shadow: 0 2px 9px rgba($black, 0.035);
 
         @include transition(0.3s);
 
         &:hover {
-            box-shadow:
-                0 8px 22px rgba($black, 0.08);
+            box-shadow: 0 8px 22px rgba($black, 0.08);
 
             @include transform(
                 translateY(-3px)
@@ -2568,4 +2608,506 @@
 }
 
 
+// ==========================================
+// Can't Find What You Need
+// ==========================================
 
+// ==========================================
+// Can't Find What You Need
+// ==========================================
+
+.baobab-request-section {
+    background: #edf9ed;
+    padding: 80px 0;
+
+    @include mq(xs) {
+        padding: 60px 0;
+    }
+
+    &__content {
+        position: relative;
+        z-index: 2;
+    }
+
+    &__title {
+        font-size: 42px;
+        font-weight: 700;
+        color: #12263f;
+        margin: 0 0 10px;
+
+        @include mq(lg) {
+            font-size: 36px;
+        }
+
+        @include mq(md) {
+            font-size: 30px;
+        }
+
+        @include mq(xs) {
+            font-size: 26px;
+        }
+    }
+
+    &__description {
+        margin: 0 0 20px;
+
+        color: #173e68;
+        font-size: 18px;
+        font-weight: 400;
+        line-height: 1.5;
+    }
+
+    &__actions {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+
+        a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 54px;
+            padding: 10px 24px;
+            font-size: 18px;
+            font-weight: 600;
+            line-height: 1.2;
+            border-radius: 10px;
+            @include transition(0.3s);
+
+            @include mq(md) {
+                min-height: 52px;
+                padding: 13px 20px;
+                font-size: 16px;
+            }
+
+            @include mq(xs) {
+                min-height: 50px;
+                padding: 12px 20px;
+                font-size: 16px;
+            }
+        }
+
+        .btn-1 {
+            color: $white;
+            background: #287b4d;
+            border: 2px solid #287b4d;
+
+            i {
+                margin-left: 12px;
+                font-size: 24px;
+                line-height: 1;
+            }
+
+            &:hover {
+                color: $white;
+                background: #D4AF37;
+                border-color: #D4AF37;
+            }
+        }
+
+        .btn-2 {
+            color: #287b4d;
+            background: rgba(255, 255, 255, 0.88);
+            border: 2px solid #287b4d;
+
+            &:hover {
+                color: $white;
+                background: #287b4d;
+            }
+        }
+
+        @include mq(xs) {
+            align-items: stretch;
+            flex-direction: column;
+
+            a {
+                width: fit-content;
+                max-width: 100%;
+            }
+        }
+    }
+
+
+
+    &__button {
+        min-width: 220px;
+        min-height: 54px;
+        padding: 12px 24px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 9px;
+
+        font-size: 15px;
+        font-weight: 700;
+        line-height: 1;
+        text-align: center;
+        text-transform: uppercase;
+        text-decoration: none;
+
+        transition: color 0.25s ease,
+        background-color 0.25s ease,
+        border-color 0.25s ease,
+        transform 0.25s ease;
+
+        &:hover {
+            transform: translateY(-2px);
+        }
+
+        &--primary {
+            color: #ffffff;
+            background-color: #078642;
+            border: 1px solid #078642;
+
+            &:hover {
+                color: #ffffff;
+                background-color: #056f37;
+                border-color: #056f37;
+            }
+        }
+
+        &--secondary {
+            color: $theme-color;
+            background-color: #ffffff;
+            border: 2px solid #fff;
+
+            &:hover {
+                color: #ffffff;
+                background-color: $theme-color-2;
+                border-color: $theme-color-2;
+            }
+        }
+    }
+
+    &__visual {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+
+        position: relative;
+
+        img {
+            width: 100%;
+            display: block;
+            object-fit: contain;
+            object-position: right center;
+        }
+    }
+}
+
+
+// ==========================================
+// Responsive
+// ==========================================
+
+@media (max-width: 991px) {
+
+    .baobab-request-section {
+
+        &__title {
+            font-size: 28px;
+        }
+
+        &__description {
+            font-size: 16px;
+        }
+
+        &__button {
+            min-width: 180px;
+        }
+
+        &__visual {
+            height: 170px;
+
+            img {
+                height: 170px;
+            }
+        }
+    }
+}
+
+
+@media (max-width: 767px) {
+
+    .baobab-request-section {
+
+        &__content {
+            margin-bottom: 20px;
+        }
+
+        &__title {
+            font-size: 26px;
+        }
+
+        &__description {
+
+            br {
+                display: none;
+            }
+        }
+
+        &__actions {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 10px;
+        }
+
+        &__button {
+            width: 100%;
+            min-width: 0;
+        }
+
+        &__visual {
+            height: 180px;
+
+            justify-content: center;
+
+            img {
+                height: 180px;
+                max-width: 360px;
+
+                object-position: center;
+            }
+        }
+    }
+}
+
+
+@media (max-width: 575px) {
+
+    .baobab-request-section {
+
+        &__title {
+            font-size: 24px;
+        }
+
+        &__description {
+            font-size: 15px;
+        }
+    }
+}
+
+// ==========================================
+// How Baobab Atlas Works
+// ==========================================
+
+.how-it-works-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    @include mq(md){
+        grid-template-columns: repeat(2, 1fr);
+    }
+    @include mq(xs){
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .step {
+        min-height: 120px;
+        padding: 8px 20px 18px;
+
+        position: relative;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+
+        text-align: center;
+    }
+
+    .icon-wrap {
+        position: relative;
+
+        width: 100px;
+        height: 100px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        margin-bottom: 20px;
+
+        @include mq(xs) {
+            width: 80px;
+            height: 80px;
+        }
+    }
+
+    .icon {
+        width: 100px;
+        height: 100px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        color: #12263f;
+        background: #fff;
+        border-radius: 50%;
+
+        font-size: 31px;
+
+        @include mq(xs) {
+            width: 80px;
+            height: 80px;
+        }
+    }
+
+    .number {
+        position: absolute;
+        right: -8px;
+        bottom: -3px;
+        width: 35px;
+        height: 35px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        color: #ffffff;
+        background: #078642;
+        border-radius: 50%;
+
+        font-size: 12px;
+        font-weight: 700;
+
+        border: 2px solid #ffffff;
+
+        @include mq(xs){
+            right: -3px;
+            bottom: -1px;
+            width: 25px;
+            height: 25px;
+        }
+    }
+
+    .step-title {
+        margin: 0;
+        color: #12263f;
+        font-size: 20px;
+        font-weight: 600;
+        line-height: 1.4;
+
+        @include mq(xs){
+            font-size: 16px;
+        }
+    }
+}
+
+
+// ==========================================
+// Responsive
+// ==========================================
+
+@media (max-width: 991px) {
+
+    .baobab-request-section {
+
+        &__title,
+        .baobab-how-it-works__title {
+            font-size: 28px;
+        }
+    }
+}
+
+
+@media (max-width: 767px) {
+
+    .baobab-request-section {
+
+        &__title {
+            font-size: 26px;
+        }
+
+        &__description {
+            font-size: 16px;
+
+            br {
+                display: none;
+            }
+        }
+
+        &__actions {
+            width: 100%;
+
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        &__button {
+            width: 100%;
+            min-width: 0;
+        }
+
+        &__visual {
+            width: 100%;
+            height: 170px;
+        }
+    }
+
+
+    .baobab-how-it-works {
+
+        &__title {
+            font-size: 26px;
+        }
+
+        &__steps {
+            grid-template-columns: repeat(2, 1fr);
+            row-gap: 20px;
+        }
+
+        &__step {
+
+            &:nth-child(2) {
+                border-right: 0;
+            }
+
+            &:nth-child(-n + 2) {
+                border-bottom: 1px solid #e2e2e2;
+                padding-bottom: 20px;
+            }
+        }
+    }
+}
+
+
+@media (max-width: 480px) {
+
+    .baobab-request-section {
+        &__title {
+            font-size: 24px;
+        }
+
+        &__description {
+            font-size: 15px;
+        }
+    }
+
+    .baobab-how-it-works {
+        padding-left: 14px;
+        padding-right: 14px;
+
+        &__title {
+            font-size: 24px;
+        }
+
+        &__steps {
+            grid-template-columns: 1fr;
+        }
+
+        &__step {
+            min-height: auto;
+            padding: 12px 10px 20px !important;
+            border-right: 0 !important;
+            border-bottom: 1px solid #e2e2e2;
+
+            &:last-child {
+                border-bottom: 0;
+            }
+        }
+    }
+}

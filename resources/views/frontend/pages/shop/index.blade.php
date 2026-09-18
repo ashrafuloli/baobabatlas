@@ -1111,16 +1111,11 @@
                                             </strong>
 
 
-                                            {{-- Category --}}
-                                            @if ($product->categories->isNotEmpty())
-
-                                                <span class="product-category">
-
-                                                    {{ $product->categories->first()->name }}
-
-                                                </span>
-
-                                            @endif
+                                            <div class="read-more">
+                                                <a href="{{ route('shop.details', $product->slug) }}">
+                                                    Add to Cart
+                                                </a>
+                                            </div>
 
                                         </div>
 
