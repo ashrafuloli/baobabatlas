@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Refund;
 
+use App\Models\Order;
 use App\Models\RefundRequest;
 use App\Models\User;
 use DomainException;
@@ -17,33 +18,105 @@ final class RejectRefundRequest
     public function execute(
         RefundRequest $refundRequest,
         User $admin,
-        ?string $adminNote = null
+        ?string $adminNote = null,
     ): RefundRequest {
         return DB::transaction(function () use (
             $refundRequest,
             $admin,
-            $adminNote
+            $adminNote,
         ): RefundRequest {
-            $refundRequest = RefundRequest::query()
-                ->lockForUpdate()
-                ->findOrFail($refundRequest->id);
+            /*
+            |--------------------------------------------------------------------------
+            | Lock Refund Request
+            |--------------------------------------------------------------------------
+            */
 
-            if (! $refundRequest->isPending()) {
+            $refundRequest = RefundRequest::query()
+                ->whereKey($refundRequest->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            /*
+            |--------------------------------------------------------------------------
+            | Validate Status
+            |--------------------------------------------------------------------------
+            */
+
+            if (!$refundRequest->isPending()) {
                 throw new DomainException(
-                    'This refund request can no longer be rejected.'
+                    'This refund request can no longer be rejected.',
                 );
             }
 
+            /*
+            |--------------------------------------------------------------------------
+            | Lock Order
+            |--------------------------------------------------------------------------
+            |
+            | We lock the order because its refund status will be updated.
+            |
+            */
+
+            $order = Order::query()
+                ->whereKey($refundRequest->order_id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            /*
+            |--------------------------------------------------------------------------
+            | Reject Refund Request
+            |--------------------------------------------------------------------------
+            */
+
             $refundRequest->update([
                 'status' => RefundRequest::STATUS_REJECTED,
+
                 'approved_by' => $admin->id,
+
                 'approved_at' => now(),
+
                 'admin_note' => $adminNote !== null
                     ? trim($adminNote)
                     : null,
             ]);
 
-            return $refundRequest->refresh();
+            /*
+            |--------------------------------------------------------------------------
+            | Update Order Refund Status
+            |--------------------------------------------------------------------------
+            |
+            | IMPORTANT:
+            |
+            | No stock change happens here.
+            |
+            | The order was never refunded, so the existing stock remains
+            | unchanged.
+            |
+            */
+
+            if (
+                defined(
+                    Order::class . '::REFUND_STATUS_REJECTED',
+                )
+            ) {
+                $order->update([
+                    'refund_status' =>
+                        Order::REFUND_STATUS_REJECTED,
+                ]);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Return Fresh Refund Request
+            |--------------------------------------------------------------------------
+            */
+
+            return $refundRequest->fresh([
+                'order',
+                'requester',
+                'approver',
+                'refund',
+            ]);
         });
     }
 }

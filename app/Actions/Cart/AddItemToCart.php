@@ -40,23 +40,51 @@ final class AddItemToCart
                 ->firstOrFail();
 
             /*
-             * Re-check the product inside the transaction.
-             */
+            |--------------------------------------------------------------------------
+            | Lock Product
+            |--------------------------------------------------------------------------
+            */
+
+            $product = Product::query()
+                ->whereKey($product->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
             if (!$product->isActive()) {
                 throw ValidationException::withMessages([
                     'product_id' => 'This product is no longer available.',
                 ]);
             }
 
+            /*
+            |--------------------------------------------------------------------------
+            | Product Type Validation
+            |--------------------------------------------------------------------------
+            */
+
+            if ($product->isSimple() && $variant !== null) {
+                throw ValidationException::withMessages([
+                    'variant_id' => 'Simple products cannot have variants.',
+                ]);
+            }
+
+            if ($product->isVariable() && $variant === null) {
+                throw ValidationException::withMessages([
+                    'variant_id' => 'Please select a product variant.',
+                ]);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Resolve Variant
+            |--------------------------------------------------------------------------
+            */
+
             $lockedVariant = null;
 
-            if ($variant !== null) {
-                /*
-                 * Lock the variant row so concurrent requests cannot
-                 * exceed the available stock while modifying the cart.
-                 */
+            if ($product->isVariable()) {
                 $lockedVariant = ProductVariant::query()
-                    ->whereKey($variant->id)
+                    ->whereKey($variant?->id)
                     ->where('product_id', $product->id)
                     ->lockForUpdate()
                     ->first();
@@ -78,14 +106,23 @@ final class AddItemToCart
             }
 
             /*
-             * Find the exact cart item:
-             *
-             * Product + Variant
-             *
-             * or
-             *
-             * Product + NULL variant
-             */
+            |--------------------------------------------------------------------------
+            | Simple Product Stock
+            |--------------------------------------------------------------------------
+            */
+
+            if ($product->isSimple() && $product->stock < 1) {
+                throw ValidationException::withMessages([
+                    'quantity' => 'This product is currently out of stock.',
+                ]);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Find Exact Cart Item
+            |--------------------------------------------------------------------------
+            */
+
             $item = CartItem::query()
                 ->where('cart_id', $cart->id)
                 ->where('product_id', $product->id)
@@ -107,26 +144,33 @@ final class AddItemToCart
             $newQuantity = $quantity;
 
             if ($item !== null) {
-                $newQuantity += $item->quantity;
+                $newQuantity += (int) $item->quantity;
             }
 
             /*
-             * Only variants have stock in the current schema.
-             *
-             * Non-variant products intentionally do not receive
-             * artificial stock validation here.
-             */
-            if (
-                $lockedVariant !== null
-                && $newQuantity > $lockedVariant->stock
-            ) {
+            |--------------------------------------------------------------------------
+            | Stock Validation
+            |--------------------------------------------------------------------------
+            */
+
+            $availableStock = $product->isSimple()
+                ? (int) $product->stock
+                : (int) $lockedVariant->stock;
+
+            if ($newQuantity > $availableStock) {
                 throw ValidationException::withMessages([
                     'quantity' => sprintf(
                         'Only %d item(s) are available in stock.',
-                        $lockedVariant->stock,
+                        $availableStock,
                     ),
                 ]);
             }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Create / Update Cart Item
+            |--------------------------------------------------------------------------
+            */
 
             if ($item === null) {
                 return $cart->items()->create([

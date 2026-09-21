@@ -43,15 +43,6 @@
         |
         | Product shipping_cost is charged once per cart line.
         |
-        | Example:
-        |
-        | Product A = $10
-        | Quantity = 5
-        |
-        | Shipping = $10
-        |
-        | NOT $50.
-        |
         */
 
         $shipping = $checkoutItems->sum(
@@ -101,22 +92,41 @@
 
         $userName = trim((string) data_get($user, 'name'));
 
-        $userFirstName = trim((string) data_get($user, 'first_name'));
-        $userLastName = trim((string) data_get($user, 'last_name'));
+        $userFirstName = trim(
+            (string) data_get($user, 'first_name')
+        );
+
+        $userLastName = trim(
+            (string) data_get($user, 'last_name')
+        );
+
 
         if (
             $userFirstName === '' &&
             $userLastName === '' &&
             $userName !== ''
         ) {
-            $nameParts = preg_split('/\s+/', $userName, 2);
+            $nameParts = preg_split(
+                '/\s+/',
+                $userName,
+                2
+            );
 
-            $userFirstName = $nameParts[0] ?? '';
-            $userLastName = $nameParts[1] ?? '';
+            $userFirstName =
+                $nameParts[0] ?? '';
+
+            $userLastName =
+                $nameParts[1] ?? '';
         }
 
-        $userEmail = trim((string) data_get($user, 'email'));
-        $userPhone = trim((string) data_get($user, 'phone'));
+
+        $userEmail = trim(
+            (string) data_get($user, 'email')
+        );
+
+        $userPhone = trim(
+            (string) data_get($user, 'phone')
+        );
 
 
         /*
@@ -143,7 +153,8 @@
             $profileMissingFields[] = 'phone number';
         }
 
-        $profileComplete = empty($profileMissingFields);
+        $profileComplete =
+            empty($profileMissingFields);
 
 
         /*
@@ -152,9 +163,11 @@
         |--------------------------------------------------------------------------
         */
 
-        $addresses = $addresses ?? collect();
+        $addresses =
+            $addresses ?? collect();
 
-        $defaultAddress = $default_address ?? null;
+        $defaultAddress =
+            $default_address ?? null;
 
         $selectedAddressId = old(
             'address_id',
@@ -169,43 +182,75 @@
         */
 
         $savedFirstName = trim(
-            (string) data_get($defaultAddress, 'first_name')
+            (string) data_get(
+                $defaultAddress,
+                'first_name'
+            )
         );
 
         $savedLastName = trim(
-            (string) data_get($defaultAddress, 'last_name')
+            (string) data_get(
+                $defaultAddress,
+                'last_name'
+            )
         );
 
         $savedPhone = trim(
-            (string) data_get($defaultAddress, 'phone')
+            (string) data_get(
+                $defaultAddress,
+                'phone'
+            )
         );
 
         $savedCountry = strtoupper(
-            trim((string) data_get($defaultAddress, 'country'))
+            trim(
+                (string) data_get(
+                    $defaultAddress,
+                    'country'
+                )
+            )
         );
 
         $savedAddress = trim(
-            (string) data_get($defaultAddress, 'address')
+            (string) data_get(
+                $defaultAddress,
+                'address'
+            )
         );
 
         $savedApartment = trim(
-            (string) data_get($defaultAddress, 'apartment')
+            (string) data_get(
+                $defaultAddress,
+                'apartment'
+            )
         );
 
         $savedCity = trim(
-            (string) data_get($defaultAddress, 'city')
+            (string) data_get(
+                $defaultAddress,
+                'city'
+            )
         );
 
         $savedState = trim(
-            (string) data_get($defaultAddress, 'state')
+            (string) data_get(
+                $defaultAddress,
+                'state'
+            )
         );
 
         $savedPostalCode = trim(
-            (string) data_get($defaultAddress, 'postal_code')
+            (string) data_get(
+                $defaultAddress,
+                'postal_code'
+            )
         );
 
         $savedAddressLabel = trim(
-            (string) data_get($defaultAddress, 'label')
+            (string) data_get(
+                $defaultAddress,
+                'label'
+            )
         );
 
 
@@ -237,10 +282,12 @@
         );
 
         $checkoutCountry = strtoupper(
-            trim((string) old(
-                'country',
-                $savedCountry
-            ))
+            trim(
+                (string) old(
+                    'country',
+                    $savedCountry
+                )
+            )
         );
 
         $checkoutAddress = old(
@@ -291,6 +338,21 @@
             'countries.' . $savedCountry,
             $savedCountry
         );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Checkout Stock Validation
+        |--------------------------------------------------------------------------
+        |
+        | Frontend validation only.
+        |
+        | The real stock validation is still performed by
+        | PrepareCheckout / CreateOrder on the server.
+        |
+        */
+
+        $hasUnavailableCheckoutItems = false;
     @endphp
 
     <div class="checkout-page">
@@ -300,6 +362,7 @@
             {{-- =====================================================
                 BREADCRUMB
             ====================================================== --}}
+
             <div class="checkout-breadcrumb">
 
                 <a href="{{ route('my-cart') }}">
@@ -320,6 +383,7 @@
             {{-- =====================================================
                 PAGE HEADER
             ====================================================== --}}
+
             <div class="checkout-page__header">
 
                 <div class="checkout-page__header-content">
@@ -344,7 +408,8 @@
             {{-- =====================================================
                 PROFILE COMPLETION NOTICE
             ====================================================== --}}
-            @if(!$profileComplete)
+
+            @if (!$profileComplete)
 
                 <div class="checkout-profile-notice">
 
@@ -371,6 +436,7 @@
                         class="checkout-profile-notice__action"
                     >
                         Complete Profile
+
                         <i class="ri-arrow-right-line"></i>
                     </a>
 
@@ -382,6 +448,7 @@
             {{-- =====================================================
                 CHECKOUT FORM
             ====================================================== --}}
+
             <form
                 action="{{ route('checkout.payment') }}"
                 method="POST"
@@ -394,17 +461,19 @@
                 {{-- =================================================
                     MAIN CHECKOUT LAYOUT
                 ================================================== --}}
+
                 <div class="checkout-layout">
 
                     {{-- =================================================
                         LEFT COLUMN
                     ================================================== --}}
-                    <div class="checkout-main">
 
+                    <div class="checkout-main">
 
                         {{-- =================================================
                             CONTACT INFORMATION
                         ================================================== --}}
+
                         <section class="checkout-card">
 
                             <div class="checkout-card__header">
@@ -428,16 +497,19 @@
                                 <div class="checkout-form">
 
                                     {{-- Email --}}
+
                                     <div class="form-group form-group--full">
 
                                         <label for="checkout-email">
 
                                             Email Address
 
-                                            @if($userEmail === '')
+                                            @if ($userEmail === '')
+
                                                 <span class="field-add-label">
                                                     Add in profile
                                                 </span>
+
                                             @endif
 
                                         </label>
@@ -456,7 +528,7 @@
                                                 readonly
                                             >
 
-                                            @if($userEmail !== '')
+                                            @if ($userEmail !== '')
 
                                                 <span class="field-locked">
                                                     <i class="ri-lock-line"></i>
@@ -480,16 +552,19 @@
 
 
                                     {{-- First Name --}}
+
                                     <div class="form-group">
 
                                         <label for="checkout-first-name">
 
                                             First Name
 
-                                            @if($userFirstName === '')
+                                            @if ($userFirstName === '')
+
                                                 <span class="field-add-label">
                                                     Add in profile
                                                 </span>
+
                                             @endif
 
                                         </label>
@@ -506,7 +581,7 @@
                                                 readonly
                                             >
 
-                                            @if($userFirstName !== '')
+                                            @if ($userFirstName !== '')
 
                                                 <span class="field-locked">
                                                     <i class="ri-lock-line"></i>
@@ -530,16 +605,19 @@
 
 
                                     {{-- Last Name --}}
+
                                     <div class="form-group">
 
                                         <label for="checkout-last-name">
 
                                             Last Name
 
-                                            @if($userLastName === '')
+                                            @if ($userLastName === '')
+
                                                 <span class="field-add-label">
                                                     Add in profile
                                                 </span>
+
                                             @endif
 
                                         </label>
@@ -556,7 +634,7 @@
                                                 readonly
                                             >
 
-                                            @if($userLastName !== '')
+                                            @if ($userLastName !== '')
 
                                                 <span class="field-locked">
                                                     <i class="ri-lock-line"></i>
@@ -580,16 +658,19 @@
 
 
                                     {{-- Phone --}}
+
                                     <div class="form-group form-group--full">
 
                                         <label for="checkout-phone">
 
                                             Phone Number
 
-                                            @if($userPhone === '')
+                                            @if ($userPhone === '')
+
                                                 <span class="field-add-label">
                                                     Add in profile
                                                 </span>
+
                                             @endif
 
                                         </label>
@@ -608,7 +689,7 @@
                                                 readonly
                                             >
 
-                                            @if($userPhone !== '')
+                                            @if ($userPhone !== '')
 
                                                 <span class="field-locked">
                                                     <i class="ri-lock-line"></i>
@@ -640,6 +721,7 @@
                         {{-- =================================================
                             SHIPPING ADDRESS
                         ================================================== --}}
+
                         <section class="checkout-card">
 
                             <div class="checkout-card__header">
@@ -668,7 +750,8 @@
                                 {{-- =========================================
                                     SAVED ADDRESS OPTIONS
                                 ========================================== --}}
-                                @if($addresses->isNotEmpty())
+
+                                @if ($addresses->isNotEmpty())
 
                                     <div class="checkout-address-options">
 
@@ -688,11 +771,13 @@
 
                                         <div class="checkout-address-list">
 
-                                            @foreach($addresses as $address)
+                                            @foreach ($addresses as $address)
 
                                                 @php
                                                     $addressCountry = strtoupper(
-                                                        trim((string) $address->country)
+                                                        trim(
+                                                            (string) $address->country
+                                                        )
                                                     );
 
                                                     $addressCountryName = config(
@@ -701,7 +786,9 @@
                                                     );
 
                                                     $addressFullName = trim(
-                                                        $address->first_name . ' ' . $address->last_name
+                                                        $address->first_name .
+                                                        ' ' .
+                                                        $address->last_name
                                                     );
 
                                                     $addressLine = trim(
@@ -770,7 +857,7 @@
                                                                 {{ $address->label ?: 'Saved Address' }}
                                                             </strong>
 
-                                                            @if($address->is_default)
+                                                            @if ($address->is_default)
 
                                                                 <small>
                                                                     Default
@@ -807,9 +894,8 @@
                                             @endforeach
 
 
-                                            {{-- =================================
-                                                ADD NEW ADDRESS
-                                            ================================== --}}
+                                            {{-- Add New Address --}}
+
                                             <label
                                                 class="checkout-address-option checkout-address-option--new {{ $selectedAddressId === null ? 'is-selected' : '' }}"
                                                 data-new-address-option
@@ -858,7 +944,6 @@
 
                                 @else
 
-                                    {{-- No Saved Address --}}
                                     <div class="checkout-no-address">
 
                                         <div class="checkout-no-address__icon">
@@ -888,10 +973,9 @@
                                 @endif
 
 
-                                {{-- =========================================
-                                    SELECTED ADDRESS PREVIEW
-                                ========================================== --}}
-                                @if($defaultAddress !== null)
+                                {{-- Selected Address Preview --}}
+
+                                @if ($defaultAddress !== null)
 
                                     <div
                                         class="checkout-saved-address {{ $selectedAddressId === null ? 'is-hidden' : '' }}"
@@ -899,9 +983,7 @@
                                     >
 
                                         <div class="checkout-saved-address__icon">
-
                                             <i class="ri-map-pin-2-line"></i>
-
                                         </div>
 
                                         <div class="checkout-saved-address__content">
@@ -924,14 +1006,18 @@
                                             </div>
 
                                             <span data-selected-address-name>
-                                                {{ trim($checkoutFirstName . ' ' . $checkoutLastName) }}
+                                                {{ trim(
+                                                    $checkoutFirstName .
+                                                    ' ' .
+                                                    $checkoutLastName
+                                                ) }}
                                             </span>
 
                                             <span data-selected-address-line>
 
                                                 {{ $checkoutAddress }}
 
-                                                @if($checkoutApartment !== '')
+                                                @if ($checkoutApartment !== '')
                                                     , {{ $checkoutApartment }}
                                                 @endif
 
@@ -941,7 +1027,7 @@
 
                                                 {{ $checkoutCity }}
 
-                                                @if($checkoutState !== '')
+                                                @if ($checkoutState !== '')
                                                     , {{ $checkoutState }}
                                                 @endif
 
@@ -960,9 +1046,8 @@
                                 @endif
 
 
-                                {{-- =========================================
-                                    NEW ADDRESS FORM
-                                ========================================== --}}
+                                {{-- New Address Form --}}
+
                                 <div
                                     class="checkout-address-form {{ $selectedAddressId !== null && $addresses->isNotEmpty() ? 'is-hidden' : '' }}"
                                     data-address-form
@@ -988,6 +1073,7 @@
                                     <div class="checkout-form">
 
                                         {{-- Address Label --}}
+
                                         <div class="form-group form-group--full">
 
                                             <label for="checkout-address-label">
@@ -1019,6 +1105,7 @@
 
 
                                         {{-- First Name --}}
+
                                         <div class="form-group">
 
                                             <label for="checkout-address-first-name">
@@ -1039,6 +1126,7 @@
 
 
                                         {{-- Last Name --}}
+
                                         <div class="form-group">
 
                                             <label for="checkout-address-last-name">
@@ -1059,6 +1147,7 @@
 
 
                                         {{-- Phone --}}
+
                                         <div class="form-group form-group--full">
 
                                             <label for="checkout-address-phone">
@@ -1085,6 +1174,7 @@
 
 
                                         {{-- Country --}}
+
                                         <div class="form-group form-group--full">
 
                                             <label for="checkout-country">
@@ -1103,11 +1193,16 @@
                                                         Select Country
                                                     </option>
 
-                                                    @foreach(config('countries', []) as $code => $country)
+                                                    @foreach (
+                                                        config('countries', []) as $code => $country
+                                                    )
 
                                                         <option
                                                             value="{{ $code }}"
-                                                            @selected($checkoutCountry === strtoupper((string) $code))
+                                                            @selected(
+                                                                $checkoutCountry ===
+                                                                strtoupper((string) $code)
+                                                            )
                                                         >
                                                             {{ $country }}
                                                         </option>
@@ -1124,6 +1219,7 @@
 
 
                                         {{-- Street Address --}}
+
                                         <div class="form-group form-group--full">
 
                                             <label for="checkout-address">
@@ -1149,6 +1245,7 @@
 
 
                                         {{-- Apartment --}}
+
                                         <div class="form-group">
 
                                             <label for="checkout-apartment">
@@ -1174,6 +1271,7 @@
 
 
                                         {{-- City --}}
+
                                         <div class="form-group">
 
                                             <label for="checkout-city">
@@ -1193,6 +1291,7 @@
 
 
                                         {{-- State --}}
+
                                         <div class="form-group">
 
                                             <label for="checkout-state">
@@ -1212,6 +1311,7 @@
 
 
                                         {{-- Postal Code --}}
+
                                         <div class="form-group">
 
                                             <label for="checkout-postal-code">
@@ -1231,6 +1331,7 @@
 
 
                                         {{-- Save Address --}}
+
                                         <div class="form-group form-group--full">
 
                                             <label class="checkout-checkbox">
@@ -1264,6 +1365,7 @@
                         {{-- =================================================
                             SHIPPING METHOD
                         ================================================== --}}
+
                         <section class="checkout-card d-none">
 
                             <div class="checkout-card__header">
@@ -1358,6 +1460,7 @@
                         {{-- =================================================
                             ORDER NOTES
                         ================================================== --}}
+
                         <section class="checkout-card">
 
                             <div class="checkout-card__header">
@@ -1406,6 +1509,7 @@
                         {{-- =================================================
                             SECURITY NOTICE
                         ================================================== --}}
+
                         <div class="checkout-security">
 
                             <div class="checkout-security__icon">
@@ -1432,12 +1536,13 @@
                     {{-- =====================================================
                         RIGHT COLUMN
                     ====================================================== --}}
-                    <aside class="checkout-sidebar">
 
+                    <aside class="checkout-sidebar">
 
                         {{-- =================================================
                             ORDER SUMMARY
                         ================================================== --}}
+
                         <section class="order-summary">
 
                             <div class="order-summary__header">
@@ -1461,14 +1566,109 @@
                             </div>
 
 
-                            {{-- Products --}}
+                            {{-- =================================================
+                                Products
+                            ================================================== --}}
+
                             <div class="order-summary__products">
 
-                                @foreach($checkoutItems as $item)
+                                @foreach ($checkoutItems as $item)
 
                                     @php
                                         $variant = $item->variant;
                                         $product = $item->product;
+
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | Product Type
+                                        |--------------------------------------------------------------------------
+                                        */
+
+                                        $isSimple =
+                                            $product->isSimple();
+
+                                        $isVariable =
+                                            $product->isVariable();
+
+
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | Available Stock
+                                        |--------------------------------------------------------------------------
+                                        */
+
+                                        $availableStock = 0;
+
+                                        if ($isSimple) {
+
+                                            $availableStock =
+                                                max(
+                                                    0,
+                                                    (int) $product->stock
+                                                );
+
+                                        } elseif (
+                                            $isVariable &&
+                                            $variant !== null
+                                        ) {
+
+                                            $availableStock =
+                                                max(
+                                                    0,
+                                                    (int) $variant->stock
+                                                );
+
+                                        }
+
+
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | Product / Variant Availability
+                                        |--------------------------------------------------------------------------
+                                        */
+
+                                        $productAvailable =
+                                            $product->isActive();
+
+                                        $variantAvailable = true;
+
+                                        if ($isVariable) {
+
+                                            $variantAvailable =
+                                                $variant !== null &&
+                                                $variant->isActive();
+
+                                        } elseif ($isSimple) {
+
+                                            $variantAvailable =
+                                                $variant === null;
+
+                                        } else {
+
+                                            $variantAvailable = false;
+
+                                        }
+
+
+                                        $itemQuantity =
+                                            (int) $item->quantity;
+
+
+                                        $itemHasStock =
+                                            $availableStock >=
+                                            $itemQuantity;
+
+
+                                        $itemAvailable =
+                                            $productAvailable &&
+                                            $variantAvailable &&
+                                            $itemHasStock;
+
+
+                                        if (!$itemAvailable) {
+                                            $hasUnavailableCheckoutItems = true;
+                                        }
+
 
                                         /*
                                         |--------------------------------------------------------------------------
@@ -1479,34 +1679,53 @@
                                         $image = null;
 
                                         if (
+                                            $isVariable &&
                                             $variant !== null &&
                                             $variant->image
                                         ) {
-                                            $image = $variant->image;
+                                            $image =
+                                                $variant->image;
                                         }
 
-                                        if (
-                                            $image === null &&
-                                            $variant !== null
-                                        ) {
-                                            $variantImage =
-                                                $variant->images->first();
-
-                                            if ($variantImage?->image) {
-                                                $image =
-                                                    $variantImage->image;
-                                            }
-                                        }
 
                                         if ($image === null) {
-                                            $productImage =
-                                                $product->images->first();
 
-                                            if ($productImage?->image) {
+                                            $productImage =
+                                                $product->images
+                                                    ->whereNull('variant_id')
+                                                    ->sortByDesc('is_primary')
+                                                    ->sortBy('sort_order')
+                                                    ->first();
+
+                                            if (
+                                                $productImage?->image
+                                            ) {
                                                 $image =
                                                     $productImage->image;
                                             }
+
                                         }
+
+
+                                        if ($image === null) {
+
+                                            $image =
+                                                $product->thumbnail;
+
+                                        }
+
+
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | Image URL
+                                        |--------------------------------------------------------------------------
+                                        */
+
+                                        $imageUrl = $image
+                                            ? asset($image)
+                                            : asset(
+                                                'assets/img/products/placeholder.png'
+                                            );
 
 
                                         /*
@@ -1517,18 +1736,23 @@
 
                                         $variantLabel = '';
 
-                                        if ($variant !== null) {
+                                        if (
+                                            $isVariable &&
+                                            $variant !== null
+                                        ) {
+
                                             $variantLabel =
                                                 $variant->values
                                                     ->map(
                                                         function ($value) {
                                                             return $value
                                                                 ->attributeValue
-                                                                ?->name;
+                                                                ?->label;
                                                         }
                                                     )
                                                     ->filter()
                                                     ->implode(' / ');
+
                                         }
 
 
@@ -1539,9 +1763,13 @@
                                         */
 
                                         $checkoutUnitPrice =
-                                            isset($item->checkout_unit_price)
-                                                ? (float) $item->checkout_unit_price
+                                            isset(
+                                                $item->checkout_unit_price
+                                            )
+                                                ? (float)
+                                                    $item->checkout_unit_price
                                                 : (
+                                                    $isVariable &&
                                                     $variant !== null
                                                         ? (float) $variant->price
                                                         : (float) $product->price
@@ -1555,11 +1783,14 @@
                                         */
 
                                         $checkoutTotal =
-                                            isset($item->checkout_total)
-                                                ? (float) $item->checkout_total
+                                            isset(
+                                                $item->checkout_total
+                                            )
+                                                ? (float)
+                                                    $item->checkout_total
                                                 : (
                                                     $checkoutUnitPrice *
-                                                    (int) $item->quantity
+                                                    $itemQuantity
                                                 );
 
 
@@ -1577,31 +1808,26 @@
 
 
                                     <div
-                                        class="summary-product"
+                                        class="summary-product {{ !$itemAvailable ? 'is-unavailable' : '' }}"
                                         data-item-id="{{ $item->id }}"
-                                        data-unit-price="{{ $checkoutUnitPrice }}"
-                                        data-shipping-cost="{{ $itemShippingCost }}"
+                                        data-product-id="{{ $product->id }}"
+                                        data-product-type="{{ $product->type }}"
+                                        data-variant-id="{{ $variant?->id }}"
+                                        data-stock="{{ $availableStock }}"
+                                        data-quantity="{{ $itemQuantity }}"
+                                        data-unit-price="{{ number_format($checkoutUnitPrice, 2, '.', '') }}"
+                                        data-shipping-cost="{{ number_format($itemShippingCost, 2, '.', '') }}"
                                     >
 
                                         <div class="summary-product__image">
 
-                                            @if($image)
-
-                                                <img
-                                                    src="{{ $image }}"
-                                                    alt="{{ $product->name }}"
-                                                >
-
-                                            @else
-
-                                                <span>
-                                                    No Image
-                                                </span>
-
-                                            @endif
+                                            <img
+                                                src="{{ $imageUrl }}"
+                                                alt="{{ $product->name }}"
+                                            >
 
                                             <b>
-                                                {{ $item->quantity }}
+                                                {{ $itemQuantity }}
                                             </b>
 
                                         </div>
@@ -1613,11 +1839,60 @@
                                                 {{ $product->name }}
                                             </strong>
 
-                                            @if($variantLabel !== '')
+
+                                            @if (
+                                                $isVariable &&
+                                                $variantLabel !== ''
+                                            )
 
                                                 <span>
                                                     {{ $variantLabel }}
                                                 </span>
+
+                                            @endif
+
+
+                                            @if ($isVariable && $variant?->sku)
+
+                                                <small>
+                                                    SKU: {{ $variant->sku }}
+                                                </small>
+
+                                            @elseif ($isSimple && $product->sku)
+
+                                                <small>
+                                                    SKU: {{ $product->sku }}
+                                                </small>
+
+                                            @endif
+
+
+                                            @if (!$itemAvailable)
+
+                                                <small class="summary-product__availability">
+
+                                                    @if (!$productAvailable)
+
+                                                        Product unavailable.
+
+                                                    @elseif (!$variantAvailable)
+
+                                                        Variant unavailable.
+
+                                                    @elseif ($availableStock <= 0)
+
+                                                        Out of stock.
+
+                                                    @else
+
+                                                        Only
+                                                        {{ $availableStock }}
+                                                        {{ $availableStock === 1 ? 'item' : 'items' }}
+                                                        available.
+
+                                                    @endif
+
+                                                </small>
 
                                             @endif
 
@@ -1626,7 +1901,10 @@
 
                                         <div class="summary-product__price">
 
-                                            ${{ number_format($checkoutTotal, 2) }}
+                                            ${{ number_format(
+                                                $checkoutTotal,
+                                                2
+                                            ) }}
 
                                         </div>
 
@@ -1637,7 +1915,41 @@
                             </div>
 
 
-                            {{-- Totals --}}
+                            {{-- =================================================
+                                Checkout Stock Notice
+                            ================================================== --}}
+
+                            @if ($hasUnavailableCheckoutItems)
+
+                                <div class="checkout-stock-notice">
+
+                                    <div class="checkout-stock-notice__icon">
+
+                                        <i class="ri-error-warning-line"></i>
+
+                                    </div>
+
+                                    <div class="checkout-stock-notice__content">
+
+                                        <strong>
+                                            Stock availability changed
+                                        </strong>
+
+                                        <span>
+                                            One or more items in your cart are no longer available in the requested quantity. Please return to your cart and update your items.
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            @endif
+
+
+                            {{-- =================================================
+                                Totals
+                            ================================================== --}}
+
                             <div class="order-summary__totals">
 
                                 <div class="summary-row">
@@ -1647,7 +1959,10 @@
                                     </span>
 
                                     <strong class="summary-subtotal">
-                                        ${{ number_format($subtotal, 2) }}
+                                        ${{ number_format(
+                                            $subtotal,
+                                            2
+                                        ) }}
                                     </strong>
 
                                 </div>
@@ -1661,9 +1976,12 @@
 
                                     <strong class="summary-shipping">
 
-                                        @if($shipping > 0)
+                                        @if ($shipping > 0)
 
-                                            ${{ number_format($shipping, 2) }}
+                                            ${{ number_format(
+                                                $shipping,
+                                                2
+                                            ) }}
 
                                         @else
 
@@ -1683,7 +2001,12 @@
                                     </span>
 
                                     <strong class="summary-discount-value is-discount">
-                                        -${{ number_format($discount, 2) }}
+
+                                        -${{ number_format(
+                                            $discount,
+                                            2
+                                        ) }}
+
                                     </strong>
 
                                 </div>
@@ -1696,7 +2019,10 @@
                                     </span>
 
                                     <strong class="summary-tax">
-                                        ${{ number_format($tax, 2) }}
+                                        ${{ number_format(
+                                            $tax,
+                                            2
+                                        ) }}
                                     </strong>
 
                                 </div>
@@ -1704,7 +2030,10 @@
                             </div>
 
 
-                            {{-- Total --}}
+                            {{-- =================================================
+                                Total
+                            ================================================== --}}
+
                             <div class="order-summary__total">
 
                                 <strong>
@@ -1712,18 +2041,27 @@
                                 </strong>
 
                                 <strong class="summary-total">
-                                    ${{ number_format($total, 2) }}
+                                    ${{ number_format(
+                                        $total,
+                                        2
+                                    ) }}
                                 </strong>
 
                             </div>
 
 
-                            {{-- Continue --}}
+                            {{-- =================================================
+                                Continue To Payment
+                            ================================================== --}}
+
                             <button
                                 type="submit"
                                 class="checkout-submit"
                                 data-checkout-submit
-                                @disabled(!$profileComplete)
+                                @disabled(
+                                    !$profileComplete ||
+                                    $hasUnavailableCheckoutItems
+                                )
                             >
 
                                 <span>
@@ -1735,7 +2073,28 @@
                             </button>
 
 
-                            {{-- Terms --}}
+                            @if ($hasUnavailableCheckoutItems)
+
+                                <a
+                                    href="{{ route('my-cart') }}"
+                                    class="checkout-stock-return"
+                                >
+
+                                    <i class="ri-arrow-left-line"></i>
+
+                                    <span>
+                                        Return to Cart
+                                    </span>
+
+                                </a>
+
+                            @endif
+
+
+                            {{-- =================================================
+                                Terms
+                            ================================================== --}}
+
                             <div class="checkout-terms">
 
                                 <p>
@@ -1759,7 +2118,10 @@
                         </section>
 
 
-                        {{-- Sidebar Security --}}
+                        {{-- =================================================
+                            Sidebar Security
+                        ================================================== --}}
+
                         <div class="checkout-sidebar-security">
 
                             <div class="checkout-sidebar-security__icon">
@@ -1813,6 +2175,19 @@
 
                 /*
                 |--------------------------------------------------------------------------
+                | Server-side Checkout State
+                |--------------------------------------------------------------------------
+                */
+
+                const profileComplete =
+                    @json($profileComplete);
+
+                const hasUnavailableCheckoutItems =
+                    @json($hasUnavailableCheckoutItems);
+
+
+                /*
+                |--------------------------------------------------------------------------
                 | Toast Message
                 |--------------------------------------------------------------------------
                 */
@@ -1824,7 +2199,8 @@
 
                     if (
                         window.AppToast &&
-                        typeof window.AppToast.fire === 'function'
+                        typeof window.AppToast.fire ===
+                        'function'
                     ) {
 
                         window.AppToast.fire({
@@ -1840,7 +2216,9 @@
                         type === 'error'
                             ? 'error'
                             : 'log'
-                        ](message);
+                        ](
+                        message
+                    );
 
                 };
 
@@ -1874,7 +2252,8 @@
                             }
 
 
-                            button.disabled = true;
+                            button.disabled =
+                                true;
 
                             button.classList.add(
                                 'is-processing'
@@ -1889,7 +2268,8 @@
                         }
 
 
-                        button.disabled = false;
+                        button.disabled =
+                            false;
 
                         button.classList.remove(
                             'is-processing'
@@ -2012,45 +2392,54 @@
                         '[data-address-option]'
                     );
 
+
                 const newAddressOption =
                     checkoutPage.querySelector(
                         '[data-new-address-option]'
                     );
+
 
                 const addressForm =
                     checkoutPage.querySelector(
                         '[data-address-form]'
                     );
 
+
                 const savedAddress =
                     checkoutPage.querySelector(
                         '[data-saved-address]'
                     );
+
 
                 const selectedAddressLabel =
                     checkoutPage.querySelector(
                         '[data-selected-address-label]'
                     );
 
+
                 const selectedAddressDefault =
                     checkoutPage.querySelector(
                         '[data-selected-address-default]'
                     );
+
 
                 const selectedAddressName =
                     checkoutPage.querySelector(
                         '[data-selected-address-name]'
                     );
 
+
                 const selectedAddressLine =
                     checkoutPage.querySelector(
                         '[data-selected-address-line]'
                     );
 
+
                 const selectedAddressLocation =
                     checkoutPage.querySelector(
                         '[data-selected-address-location]'
                     );
+
 
                 const selectedAddressCountry =
                     checkoutPage.querySelector(
@@ -2136,6 +2525,7 @@
                             return '';
                         }
 
+
                         return countries[code] || code;
 
                     };
@@ -2189,7 +2579,8 @@
                         if (addressFields.firstName) {
 
                             addressFields.firstName.value =
-                                option.dataset.firstName || '';
+                                option.dataset.firstName ||
+                                '';
 
                         }
 
@@ -2197,7 +2588,8 @@
                         if (addressFields.lastName) {
 
                             addressFields.lastName.value =
-                                option.dataset.lastName || '';
+                                option.dataset.lastName ||
+                                '';
 
                         }
 
@@ -2205,7 +2597,8 @@
                         if (addressFields.phone) {
 
                             addressFields.phone.value =
-                                option.dataset.phone || '';
+                                option.dataset.phone ||
+                                '';
 
                         }
 
@@ -2213,7 +2606,8 @@
                         if (addressFields.country) {
 
                             addressFields.country.value =
-                                option.dataset.country || '';
+                                option.dataset.country ||
+                                '';
 
                             addressFields.country.dispatchEvent(
                                 new Event('change')
@@ -2225,7 +2619,8 @@
                         if (addressFields.address) {
 
                             addressFields.address.value =
-                                option.dataset.address || '';
+                                option.dataset.address ||
+                                '';
 
                         }
 
@@ -2233,7 +2628,8 @@
                         if (addressFields.apartment) {
 
                             addressFields.apartment.value =
-                                option.dataset.apartment || '';
+                                option.dataset.apartment ||
+                                '';
 
                         }
 
@@ -2241,7 +2637,8 @@
                         if (addressFields.city) {
 
                             addressFields.city.value =
-                                option.dataset.city || '';
+                                option.dataset.city ||
+                                '';
 
                         }
 
@@ -2249,7 +2646,8 @@
                         if (addressFields.state) {
 
                             addressFields.state.value =
-                                option.dataset.state || '';
+                                option.dataset.state ||
+                                '';
 
                         }
 
@@ -2257,7 +2655,8 @@
                         if (addressFields.postalCode) {
 
                             addressFields.postalCode.value =
-                                option.dataset.postalCode || '';
+                                option.dataset.postalCode ||
+                                '';
 
                         }
 
@@ -2265,7 +2664,8 @@
                         if (addressFields.label) {
 
                             addressFields.label.value =
-                                option.dataset.label || 'Home';
+                                option.dataset.label ||
+                                'Home';
 
                         }
 
@@ -2287,10 +2687,14 @@
 
 
                         const firstName =
-                            option.dataset.firstName || '';
+                            option.dataset.firstName ||
+                            '';
+
 
                         const lastName =
-                            option.dataset.lastName || '';
+                            option.dataset.lastName ||
+                            '';
+
 
                         const fullName =
                             `${firstName} ${lastName}`
@@ -2298,22 +2702,34 @@
 
 
                         const address =
-                            option.dataset.address || '';
+                            option.dataset.address ||
+                            '';
+
 
                         const apartment =
-                            option.dataset.apartment || '';
+                            option.dataset.apartment ||
+                            '';
+
 
                         const city =
-                            option.dataset.city || '';
+                            option.dataset.city ||
+                            '';
+
 
                         const state =
-                            option.dataset.state || '';
+                            option.dataset.state ||
+                            '';
+
 
                         const postalCode =
-                            option.dataset.postalCode || '';
+                            option.dataset.postalCode ||
+                            '';
+
 
                         const country =
-                            option.dataset.country || '';
+                            option.dataset.country ||
+                            '';
+
 
                         const label =
                             option.dataset.label ||
@@ -2382,7 +2798,9 @@
                         if (selectedAddressCountry) {
 
                             selectedAddressCountry.textContent =
-                                getCountryName(country);
+                                getCountryName(
+                                    country
+                                );
 
                         }
 
@@ -2452,7 +2870,8 @@
 
                         if (radio) {
 
-                            radio.checked = true;
+                            radio.checked =
+                                true;
 
                         }
 
@@ -2509,7 +2928,8 @@
 
                             if (radio) {
 
-                                radio.checked = true;
+                                radio.checked =
+                                    true;
 
                             }
 
@@ -2641,60 +3061,182 @@
                 const requiredFields = [
 
                     {
-                        selector: '#checkout-email',
+                        selector:
+                            '#checkout-email',
+
                         message:
                             'Please add your email address in your profile.'
                     },
 
                     {
-                        selector: '#checkout-first-name',
+                        selector:
+                            '#checkout-first-name',
+
                         message:
                             'Please add your first name in your profile.'
                     },
 
                     {
-                        selector: '#checkout-last-name',
+                        selector:
+                            '#checkout-last-name',
+
                         message:
                             'Please add your last name in your profile.'
                     },
 
                     {
-                        selector: '#checkout-phone',
+                        selector:
+                            '#checkout-phone',
+
                         message:
                             'Please add your phone number in your profile.'
                     },
 
                     {
-                        selector: '#checkout-country',
+                        selector:
+                            '#checkout-country',
+
                         message:
                             'Please select your country.'
                     },
 
                     {
-                        selector: '#checkout-address',
+                        selector:
+                            '#checkout-address',
+
                         message:
                             'Please enter your shipping address.'
                     },
 
                     {
-                        selector: '#checkout-city',
+                        selector:
+                            '#checkout-city',
+
                         message:
                             'Please enter your city.'
                     },
 
                     {
-                        selector: '#checkout-state',
+                        selector:
+                            '#checkout-state',
+
                         message:
                             'Please enter your state or province.'
                     },
 
                     {
-                        selector: '#checkout-postal-code',
+                        selector:
+                            '#checkout-postal-code',
+
                         message:
                             'Please enter your postal code.'
                     }
 
                 ];
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Validate Checkout Stock
+                |--------------------------------------------------------------------------
+                */
+
+                const validateCheckoutStock =
+                    function () {
+
+                        const products =
+                            checkoutPage.querySelectorAll(
+                                '.summary-product'
+                            );
+
+
+                        if (
+                            products.length === 0
+                        ) {
+
+                            showMessage(
+                                'Your cart is empty.',
+                                'error'
+                            );
+
+                            return false;
+
+                        }
+
+
+                        for (
+                            const product of products
+                            ) {
+
+                            if (
+                                product.classList.contains(
+                                    'is-unavailable'
+                                )
+                            ) {
+
+                                const name =
+                                    product.querySelector(
+                                        '.summary-product__content strong'
+                                    )?.textContent
+                                        ?.trim() ||
+                                    'An item';
+
+
+                                showMessage(
+                                    `${name} is no longer available in the requested quantity.`,
+                                    'error'
+                                );
+
+
+                                return false;
+
+                            }
+
+
+                            const stock =
+                                parseInt(
+                                    product.dataset.stock,
+                                    10
+                                ) || 0;
+
+
+                            const quantity =
+                                parseInt(
+                                    product.dataset.quantity,
+                                    10
+                                ) || 0;
+
+
+                            if (
+                                stock < 1 ||
+                                quantity < 1 ||
+                                quantity > stock
+                            ) {
+
+                                const name =
+                                    product.querySelector(
+                                        '.summary-product__content strong'
+                                    )?.textContent
+                                        ?.trim() ||
+                                    'An item';
+
+
+                                showMessage(
+                                    `${name} does not have enough stock.`,
+                                    'error'
+                                );
+
+
+                                return false;
+
+                            }
+
+                        }
+
+
+                        return true;
+
+                    };
 
 
                 /*
@@ -2706,15 +3248,34 @@
                 const validateCheckout =
                     function () {
 
-                        if (
-                            !@json($profileComplete)
-                        ) {
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Profile
+                        |--------------------------------------------------------------------------
+                        */
+
+                        if (!profileComplete) {
 
                             showMessage(
                                 'Please complete your profile before continuing.',
                                 'warning'
                             );
 
+                            return false;
+
+                        }
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Stock
+                        |--------------------------------------------------------------------------
+                        */
+
+                        if (
+                            hasUnavailableCheckoutItems ||
+                            !validateCheckoutStock()
+                        ) {
 
                             return false;
 
@@ -2777,10 +3338,17 @@
                             */
 
                             if (
-                                field.selector === '#checkout-email' ||
-                                field.selector === '#checkout-first-name' ||
-                                field.selector === '#checkout-last-name' ||
-                                field.selector === '#checkout-phone'
+                                field.selector ===
+                                '#checkout-email' ||
+
+                                field.selector ===
+                                '#checkout-first-name' ||
+
+                                field.selector ===
+                                '#checkout-last-name' ||
+
+                                field.selector ===
+                                '#checkout-phone'
                             ) {
 
                                 continue;
@@ -2800,7 +3368,8 @@
 
 
                             if (
-                                element.value.trim() === ''
+                                element.value.trim() ===
+                                ''
                             ) {
 
                                 element.focus();
@@ -2830,10 +3399,12 @@
                                 '[data-shipping-first-name]'
                             );
 
+
                         const shippingLastName =
                             checkoutPage.querySelector(
                                 '[data-shipping-last-name]'
                             );
+
 
                         const shippingPhone =
                             checkoutPage.querySelector(
@@ -2843,15 +3414,18 @@
 
                         if (
                             shippingFirstName &&
-                            shippingFirstName.value.trim() === ''
+                            shippingFirstName.value.trim() ===
+                            ''
                         ) {
 
                             shippingFirstName.focus();
+
 
                             showMessage(
                                 'Please enter the shipping first name.',
                                 'error'
                             );
+
 
                             return false;
 
@@ -2860,15 +3434,18 @@
 
                         if (
                             shippingLastName &&
-                            shippingLastName.value.trim() === ''
+                            shippingLastName.value.trim() ===
+                            ''
                         ) {
 
                             shippingLastName.focus();
+
 
                             showMessage(
                                 'Please enter the shipping last name.',
                                 'error'
                             );
+
 
                             return false;
 
@@ -2877,15 +3454,18 @@
 
                         if (
                             shippingPhone &&
-                            shippingPhone.value.trim() === ''
+                            shippingPhone.value.trim() ===
+                            ''
                         ) {
 
                             shippingPhone.focus();
+
 
                             showMessage(
                                 'Please enter the shipping phone number.',
                                 'error'
                             );
+
 
                             return false;
 
@@ -2899,7 +3479,7 @@
 
                 /*
                 |--------------------------------------------------------------------------
-                | Copy Shipping Contact to Checkout Contact
+                | Copy Shipping Contact To Checkout Contact
                 |--------------------------------------------------------------------------
                 */
 
@@ -2923,25 +3503,30 @@
                                 '[data-shipping-first-name]'
                             );
 
+
                         const shippingLastName =
                             checkoutPage.querySelector(
                                 '[data-shipping-last-name]'
                             );
+
 
                         const shippingPhone =
                             checkoutPage.querySelector(
                                 '[data-shipping-phone]'
                             );
 
+
                         const contactFirstName =
                             checkoutPage.querySelector(
                                 '#checkout-first-name'
                             );
 
+
                         const contactLastName =
                             checkoutPage.querySelector(
                                 '#checkout-last-name'
                             );
+
 
                         const contactPhone =
                             checkoutPage.querySelector(
@@ -3024,6 +3609,7 @@
                     checkoutPage.querySelector(
                         '[data-checkout-form]'
                     );
+
 
                 const checkoutButton =
                     checkoutPage.querySelector(

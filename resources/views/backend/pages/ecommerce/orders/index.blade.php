@@ -28,6 +28,7 @@
 
             </div>
 
+
             <div class="orders-page__header-actions">
 
                 <button
@@ -168,6 +169,7 @@
                         name="search"
                         value="{{ $search }}"
                         placeholder="Search order ID, customer or email..."
+                        autocomplete="off"
                     >
 
                 </div>
@@ -215,7 +217,9 @@
 
                             <option
                                 value="{{ $paymentStatusOption }}"
-                                @selected($paymentStatus === $paymentStatusOption)
+                                @selected(
+                                    $paymentStatus === $paymentStatusOption
+                                )
                             >
                                 {{ ucfirst($paymentStatusOption) }}
                             </option>
@@ -292,7 +296,7 @@
                         </th>
 
                         <th>
-                            Products
+                            Items
                         </th>
 
                         <th>
@@ -325,48 +329,140 @@
                     @forelse ($orders as $order)
 
                         @php
+                            /*
+                            |--------------------------------------------------------------------------
+                            | Customer
+                            |--------------------------------------------------------------------------
+                            */
+
                             $customerName = trim(
-                                $order->first_name . ' ' . $order->last_name
+                                implode(
+                                    ' ',
+                                    array_filter([
+                                        $order->first_name,
+                                        $order->last_name,
+                                    ])
+                                )
                             );
 
+
                             $customerInitials = collect(
-                                preg_split('/\s+/', $customerName)
+                                preg_split(
+                                    '/\s+/',
+                                    $customerName
+                                )
                             )
                                 ->filter()
                                 ->take(2)
                                 ->map(
-                                    fn ($name) => strtoupper(
-                                        mb_substr($name, 0, 1)
-                                    )
+                                    fn ($name): string =>
+                                        strtoupper(
+                                            mb_substr(
+                                                (string) $name,
+                                                0,
+                                                1
+                                            )
+                                        )
                                 )
                                 ->implode('');
 
+
+                            /*
+                            |--------------------------------------------------------------------------
+                            | Order Status Class
+                            |--------------------------------------------------------------------------
+                            */
+
                             $statusClass = match ($order->status) {
-                                \App\Models\Order::STATUS_PENDING => 'pending',
-                                \App\Models\Order::STATUS_PAID => 'paid',
-                                \App\Models\Order::STATUS_PROCESSING => 'processing',
-                                \App\Models\Order::STATUS_COMPLETED => 'completed',
-                                \App\Models\Order::STATUS_CANCELLED => 'cancelled',
-                                \App\Models\Order::STATUS_FAILED => 'failed',
-                                default => 'pending',
+
+                                \App\Models\Order::STATUS_PENDING =>
+                                    'pending',
+
+                                \App\Models\Order::STATUS_PAID =>
+                                    'paid',
+
+                                \App\Models\Order::STATUS_PROCESSING =>
+                                    'processing',
+
+                                \App\Models\Order::STATUS_COMPLETED =>
+                                    'completed',
+
+                                \App\Models\Order::STATUS_CANCELLED =>
+                                    'cancelled',
+
+                                \App\Models\Order::STATUS_FAILED =>
+                                    'failed',
+
+                                default =>
+                                    'pending',
                             };
 
-                            $paymentClass = match ($order->payment_status) {
-                                \App\Models\Order::PAYMENT_STATUS_PAID => 'paid',
-                                \App\Models\Order::PAYMENT_STATUS_PENDING => 'pending',
-                                \App\Models\Order::PAYMENT_STATUS_FAILED => 'failed',
-                                \App\Models\Order::PAYMENT_STATUS_REFUNDED => 'refunded',
-                                default => 'pending',
+
+                            /*
+                            |--------------------------------------------------------------------------
+                            | Payment Status Class
+                            |--------------------------------------------------------------------------
+                            */
+
+                            $paymentClass = match (
+                                $order->payment_status
+                            ) {
+
+                                \App\Models\Order::PAYMENT_STATUS_PAID =>
+                                    'paid',
+
+                                \App\Models\Order::PAYMENT_STATUS_PENDING =>
+                                    'pending',
+
+                                \App\Models\Order::PAYMENT_STATUS_FAILED =>
+                                    'failed',
+
+                                \App\Models\Order::PAYMENT_STATUS_REFUNDED =>
+                                    'refunded',
+
+                                default =>
+                                    'pending',
                             };
+
+
+                            /*
+                            |--------------------------------------------------------------------------
+                            | Labels
+                            |--------------------------------------------------------------------------
+                            */
+
+                            $orderStatusLabel = ucfirst(
+                                str_replace(
+                                    '_',
+                                    ' ',
+                                    (string) $order->status
+                                )
+                            );
+
+
+                            $paymentStatusLabel = ucfirst(
+                                str_replace(
+                                    '_',
+                                    ' ',
+                                    (string) $order->payment_status
+                                )
+                            );
                         @endphp
+
 
                         <tr>
 
-                            {{-- Order --}}
+                            {{-- ================================================= --}}
+                            {{-- ORDER --}}
+                            {{-- ================================================= --}}
+
                             <td>
 
                                 <a
-                                    href="{{ route('admin-order-details', ['order' => $order]) }}"
+                                    href="{{ route(
+                                        'admin-order-details',
+                                        ['order' => $order]
+                                    ) }}"
                                     class="orders-number"
                                 >
                                     #{{ $order->order_number }}
@@ -375,14 +471,20 @@
                             </td>
 
 
-                            {{-- Customer --}}
+                            {{-- ================================================= --}}
+                            {{-- CUSTOMER --}}
+                            {{-- ================================================= --}}
+
                             <td>
 
                                 <div class="orders-customer">
 
                                     <div class="orders-customer__avatar">
+
                                         {{ $customerInitials ?: '?' }}
+
                                     </div>
+
 
                                     <div>
 
@@ -391,7 +493,7 @@
                                         </strong>
 
                                         <span>
-                                            {{ $order->email }}
+                                            {{ $order->email ?: '—' }}
                                         </span>
 
                                     </div>
@@ -401,74 +503,119 @@
                             </td>
 
 
-                            {{-- Products --}}
+                            {{-- ================================================= --}}
+                            {{-- ITEMS --}}
+                            {{-- ================================================= --}}
+
                             <td>
 
                                 <span class="orders-products">
-                                    {{ $order->items_count }}
-                                    {{ $order->items_count === 1 ? 'Item' : 'Items' }}
+
+                                    {{ number_format(
+                                        (int) $order->items_count
+                                    ) }}
+
+                                    {{
+                                        (int) $order->items_count === 1
+                                            ? 'Item'
+                                            : 'Items'
+                                    }}
+
                                 </span>
 
                             </td>
 
 
-                            {{-- Total --}}
+                            {{-- ================================================= --}}
+                            {{-- TOTAL --}}
+                            {{-- ================================================= --}}
+
                             <td>
 
                                 <strong class="orders-total">
-                                    ${{ number_format((float) $order->total, 2) }}
+
+                                    ${{ number_format(
+                                        (float) $order->total,
+                                        2
+                                    ) }}
+
                                 </strong>
 
                             </td>
 
 
-                            {{-- Payment --}}
+                            {{-- ================================================= --}}
+                            {{-- PAYMENT --}}
+                            {{-- ================================================= --}}
+
                             <td>
 
                                 <span
-                                    class="orders-payment orders-payment--{{ $paymentClass }}"
+                                    class="
+                                        orders-payment
+                                        orders-payment--{{ $paymentClass }}
+                                    "
                                 >
 
                                     <i></i>
 
-                                    {{ ucfirst($order->payment_status) }}
+                                    {{ $paymentStatusLabel }}
 
                                 </span>
 
                             </td>
 
 
-                            {{-- Status --}}
+                            {{-- ================================================= --}}
+                            {{-- ORDER STATUS --}}
+                            {{-- ================================================= --}}
+
                             <td>
 
                                 <span
-                                    class="orders-status orders-status--{{ $statusClass }}"
+                                    class="
+                                        orders-status
+                                        orders-status--{{ $statusClass }}
+                                    "
                                 >
 
                                     <i></i>
 
-                                    {{ ucfirst($order->status) }}
+                                    {{ $orderStatusLabel }}
 
                                 </span>
 
                             </td>
 
 
-                            {{-- Date --}}
+                            {{-- ================================================= --}}
+                            {{-- DATE --}}
+                            {{-- ================================================= --}}
+
                             <td>
 
                                 <span class="orders-date">
-                                    {{ $order->created_at?->format('M d, Y') }}
+
+                                    {{ $order->created_at?->format(
+                                        'M d, Y'
+                                    ) }}
+
                                 </span>
 
                             </td>
 
 
-                            {{-- Action --}}
+                            {{-- ================================================= --}}
+                            {{-- ACTION --}}
+                            {{-- ================================================= --}}
+
                             <td>
 
                                 <a
-                                    href="{{ route('admin-order-details', ['order' => $order]) }}"
+                                    href="{{ route(
+                                        'admin-order-details',
+                                        ['order' => $order]
+                                    ) }}"
                                     class="orders-view-btn"
                                 >
 
@@ -484,6 +631,10 @@
 
                     @empty
 
+                        {{-- ================================================= --}}
+                        {{-- EMPTY STATE --}}
+                        {{-- ================================================= --}}
+
                         <tr>
 
                             <td
@@ -494,12 +645,16 @@
                                 <div class="orders-empty__content">
 
                                     <div class="orders-empty__icon">
+
                                         <i class="ri-shopping-bag-3-line"></i>
+
                                     </div>
+
 
                                     <h3>
                                         No orders found
                                     </h3>
+
 
                                     <p>
                                         Try adjusting your search or filters.
@@ -531,6 +686,7 @@
                     <div class="orders-pagination__info">
 
                         Showing
+
                         <strong>
                             {{ $orders->firstItem() }}
                         </strong>
@@ -554,41 +710,62 @@
 
                     <div class="orders-pagination__buttons">
 
+                        {{-- Previous --}}
                         @if ($orders->onFirstPage())
 
                             <button
                                 type="button"
                                 disabled
+                                aria-label="Previous page"
                             >
                                 <i class="ri-arrow-left-s-line"></i>
                             </button>
 
                         @else
 
-                            <a href="{{ $orders->previousPageUrl() }}">
+                            <a
+                                href="{{ $orders->previousPageUrl() }}"
+                                aria-label="Previous page"
+                            >
                                 <i class="ri-arrow-left-s-line"></i>
                             </a>
 
                         @endif
 
 
-                        @foreach ($orders->getUrlRange(
-                            max(1, $orders->currentPage() - 2),
-                            min($orders->lastPage(), $orders->currentPage() + 2)
-                        ) as $page => $url)
+                        {{-- Page Numbers --}}
+                        @foreach (
+                            $orders->getUrlRange(
+                                max(
+                                    1,
+                                    $orders->currentPage() - 2
+                                ),
+                                min(
+                                    $orders->lastPage(),
+                                    $orders->currentPage() + 2
+                                )
+                            ) as $page => $url
+                        )
 
-                            @if ($page === $orders->currentPage())
+                            @if (
+                                $page ===
+                                $orders->currentPage()
+                            )
 
                                 <button
                                     type="button"
                                     class="active"
+                                    aria-current="page"
                                 >
                                     {{ $page }}
                                 </button>
 
                             @else
 
-                                <a href="{{ $url }}">
+                                <a
+                                    href="{{ $url }}"
+                                    aria-label="Go to page {{ $page }}"
+                                >
                                     {{ $page }}
                                 </a>
 
@@ -597,9 +774,13 @@
                         @endforeach
 
 
+                        {{-- Next --}}
                         @if ($orders->hasMorePages())
 
-                            <a href="{{ $orders->nextPageUrl() }}">
+                            <a
+                                href="{{ $orders->nextPageUrl() }}"
+                                aria-label="Next page"
+                            >
                                 <i class="ri-arrow-right-s-line"></i>
                             </a>
 
@@ -608,6 +789,7 @@
                             <button
                                 type="button"
                                 disabled
+                                aria-label="Next page"
                             >
                                 <i class="ri-arrow-right-s-line"></i>
                             </button>
@@ -626,67 +808,231 @@
 
 @endsection
 
+
 @push('scripts')
+
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const ordersPage = document.querySelector(".orders-page");
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
 
-            if (!ordersPage) {
-                return;
-            }
-
-            const filterForm = ordersPage.querySelector(
-                "[data-orders-filter-form]",
-            );
-
-            const filterFields = ordersPage.querySelectorAll(
-                "[data-orders-filter]",
-            );
-
-            const searchInput = filterForm?.querySelector(
-                'input[name="search"]',
-            );
-
-            const exportButton = ordersPage.querySelector(
-                "[data-export-orders]",
-            );
-
-            filterFields.forEach(function (field) {
-                field.addEventListener("change", function () {
-                    if (!filterForm) {
-                        return;
-                    }
-
-                    filterForm.submit();
-                });
-            });
-
-            if (filterForm) {
-                filterForm.addEventListener("submit", function () {
-                    if (searchInput && searchInput.value.trim() === "") {
-                        searchInput.disabled = true;
-                    }
-                });
-            }
-
-            if (exportButton) {
-                exportButton.addEventListener("click", function () {
-                    if (!filterForm) {
-                        return;
-                    }
-
-                    const params = new URLSearchParams(
-                        new FormData(filterForm),
+                const ordersPage =
+                    document.querySelector(
+                        ".orders-page"
                     );
 
-                    params.delete("_token");
 
-                    const exportUrl =
-                        `${filterForm.action}/export?${params.toString()}`;
+                if (!ordersPage) {
+                    return;
+                }
 
-                    window.location.href = exportUrl;
-                });
+
+                /*
+                |--------------------------------------------------------------------------
+                | Filter Form
+                |--------------------------------------------------------------------------
+                */
+
+                const filterForm =
+                    ordersPage.querySelector(
+                        "[data-orders-filter-form]"
+                    );
+
+
+                const filterFields =
+                    ordersPage.querySelectorAll(
+                        "[data-orders-filter]"
+                    );
+
+
+                const searchInput =
+                    filterForm?.querySelector(
+                        'input[name="search"]'
+                    );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Export
+                |--------------------------------------------------------------------------
+                */
+
+                const exportButton =
+                    ordersPage.querySelector(
+                        "[data-export-orders]"
+                    );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Filter Change
+                |--------------------------------------------------------------------------
+                */
+
+                filterFields.forEach(
+                    function (field) {
+
+                        field.addEventListener(
+                            "change",
+                            function () {
+
+                                if (!filterForm) {
+                                    return;
+                                }
+
+
+                                filterForm.submit();
+
+                            }
+                        );
+
+                    }
+                );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Search
+                |--------------------------------------------------------------------------
+                */
+
+                let searchTimer = null;
+
+
+                if (searchInput) {
+
+                    searchInput.addEventListener(
+                        "input",
+                        function () {
+
+                            window.clearTimeout(
+                                searchTimer
+                            );
+
+
+                            searchTimer =
+                                window.setTimeout(
+                                    function () {
+
+                                        if (!filterForm) {
+                                            return;
+                                        }
+
+
+                                        filterForm.submit();
+
+                                    },
+                                    500
+                                );
+
+                        }
+                    );
+
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Submit
+                |--------------------------------------------------------------------------
+                |
+                | Empty search values are removed from the
+                | request so the URL stays clean.
+                |
+                */
+
+                if (filterForm) {
+
+                    filterForm.addEventListener(
+                        "submit",
+                        function () {
+
+                            if (
+                                searchInput
+                                && searchInput.value.trim() === ""
+                            ) {
+
+                                searchInput.disabled = true;
+
+                            }
+
+                        }
+                    );
+
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Export
+                |--------------------------------------------------------------------------
+                */
+
+                if (exportButton) {
+
+                    exportButton.addEventListener(
+                        "click",
+                        function () {
+
+                            if (!filterForm) {
+                                return;
+                            }
+
+
+                            const formData =
+                                new FormData(
+                                    filterForm
+                                );
+
+
+                            const params =
+                                new URLSearchParams();
+
+
+                            formData.forEach(
+                                function (
+                                    value,
+                                    key
+                                ) {
+
+                                    const cleanValue =
+                                        String(value).trim();
+
+
+                                    if (
+                                        cleanValue !== ""
+                                    ) {
+
+                                        params.append(
+                                            key,
+                                            cleanValue
+                                        );
+
+                                    }
+
+                                }
+                            );
+
+
+                            const exportUrl =
+                                `${filterForm.action}/export`
+                                + (
+                                    params.toString()
+                                        ? `?${params.toString()}`
+                                        : ""
+                                );
+
+
+                            window.location.href =
+                                exportUrl;
+
+                        }
+                    );
+
+                }
+
             }
-        });
+        );
     </script>
+
 @endpush

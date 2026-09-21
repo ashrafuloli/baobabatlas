@@ -6,6 +6,7 @@ namespace App\Actions\Cart;
 
 use App\Models\Cart;
 use App\Models\CartItem;
+use App\Models\Product;
 use App\Models\ProductVariant;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -32,23 +33,14 @@ final class UpdateCartItem
         ): CartItem {
             $cart = $this->resolveCart($request);
 
-            /*
-             * Lock the cart row before modifying one of its items.
-             */
             $cart = Cart::query()
                 ->whereKey($cart->id)
                 ->lockForUpdate()
                 ->firstOrFail();
 
-            /*
-             * Only retrieve an item that belongs to the resolved cart.
-             * This prevents users from modifying another user's or
-             * another guest session's cart item.
-             */
             $item = CartItem::query()
                 ->where('cart_id', $cart->id)
                 ->whereKey($cartItemId)
-                ->with('product')
                 ->lockForUpdate()
                 ->first();
 
@@ -56,7 +48,16 @@ final class UpdateCartItem
                 throw new ModelNotFoundException();
             }
 
-            $product = $item->product;
+            /*
+            |--------------------------------------------------------------------------
+            | Lock Product
+            |--------------------------------------------------------------------------
+            */
+
+            $product = Product::query()
+                ->whereKey($item->product_id)
+                ->lockForUpdate()
+                ->first();
 
             if ($product === null || !$product->isActive()) {
                 throw ValidationException::withMessages([
@@ -64,13 +65,54 @@ final class UpdateCartItem
                 ]);
             }
 
-            $variant = null;
+            /*
+            |--------------------------------------------------------------------------
+            | Validate Product Type
+            |--------------------------------------------------------------------------
+            */
 
-            if ($item->variant_id !== null) {
-                /*
-                 * Lock the variant row so stock cannot change between
-                 * validation and the cart update.
-                 */
+            if ($product->isSimple() && $item->variant_id !== null) {
+                throw ValidationException::withMessages([
+                    'quantity' => 'This cart item contains an invalid variant.',
+                ]);
+            }
+
+            if ($product->isVariable() && $item->variant_id === null) {
+                throw ValidationException::withMessages([
+                    'quantity' => 'Please select a product variant.',
+                ]);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Simple Product
+            |--------------------------------------------------------------------------
+            */
+
+            if ($product->isSimple()) {
+                if ($product->stock < 1) {
+                    throw ValidationException::withMessages([
+                        'quantity' => 'This product is currently out of stock.',
+                    ]);
+                }
+
+                if ($quantity > $product->stock) {
+                    throw ValidationException::withMessages([
+                        'quantity' => sprintf(
+                            'Only %d item(s) are available in stock.',
+                            $product->stock,
+                        ),
+                    ]);
+                }
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Variable Product
+            |--------------------------------------------------------------------------
+            */
+
+            if ($product->isVariable()) {
                 $variant = ProductVariant::query()
                     ->whereKey($item->variant_id)
                     ->where('product_id', $product->id)
@@ -102,10 +144,6 @@ final class UpdateCartItem
                 }
             }
 
-            /*
-             * Non-variant products do not have a stock column in the
-             * current schema, so no artificial stock validation is applied.
-             */
             $item->update([
                 'quantity' => $quantity,
             ]);

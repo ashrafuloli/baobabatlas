@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Actions\Refund;
 
+use App\Models\InventoryTransaction;
 use App\Models\Order;
+use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\Refund;
 use App\Models\RefundRequest;
 use Illuminate\Support\Facades\DB;
@@ -18,20 +21,31 @@ final class RefundOrder
     public function execute(
         RefundRequest $refundRequest,
     ): Refund {
+        /*
+        |--------------------------------------------------------------------------
+        | Create / Retrieve Local Refund
+        |--------------------------------------------------------------------------
+        */
+
         $refund = DB::transaction(
             function () use ($refundRequest): Refund {
                 /*
-                 * Lock the refund request to prevent concurrent
-                 * refund processing.
-                 */
+                |--------------------------------------------------------------------------
+                | Lock Refund Request
+                |--------------------------------------------------------------------------
+                */
+
                 $refundRequest = RefundRequest::query()
                     ->whereKey($refundRequest->id)
                     ->lockForUpdate()
                     ->firstOrFail();
 
                 /*
-                 * Only approved refund requests can be processed.
-                 */
+                |--------------------------------------------------------------------------
+                | Validate Refund Request
+                |--------------------------------------------------------------------------
+                */
+
                 if (
                     $refundRequest->status
                     !== RefundRequest::STATUS_APPROVED
@@ -42,23 +56,22 @@ final class RefundOrder
                 }
 
                 /*
-                 * Lock the order to prevent concurrent refund
-                 * operations against the same payment.
-                 */
+                |--------------------------------------------------------------------------
+                | Lock Order
+                |--------------------------------------------------------------------------
+                */
+
                 $order = Order::query()
                     ->whereKey($refundRequest->order_id)
                     ->lockForUpdate()
                     ->firstOrFail();
 
                 /*
-                 * =========================================================
-                 * Validate Payment
-                 * =========================================================
-                 *
-                 * Refund processing depends only on payment status.
-                 *
-                 * Order status does not restrict the refund.
-                 */
+                |--------------------------------------------------------------------------
+                | Validate Payment
+                |--------------------------------------------------------------------------
+                */
+
                 if (
                     $order->payment_status
                     !== Order::PAYMENT_STATUS_PAID
@@ -69,11 +82,13 @@ final class RefundOrder
                 }
 
                 /*
-                 * Stripe Payment Intent is required to create
-                 * the refund.
-                 */
+                |--------------------------------------------------------------------------
+                | Validate Stripe Payment Intent
+                |--------------------------------------------------------------------------
+                */
+
                 if (
-                    ! filled($order->stripe_payment_intent_id)
+                    !filled($order->stripe_payment_intent_id)
                 ) {
                     throw new RuntimeException(
                         'The Stripe payment intent is missing.',
@@ -81,13 +96,14 @@ final class RefundOrder
                 }
 
                 /*
-                 * =========================================================
-                 * Check Existing Refund
-                 * =========================================================
-                 *
-                 * One local Refund record is associated with one
-                 * RefundRequest.
-                 */
+                |--------------------------------------------------------------------------
+                | Check Existing Refund
+                |--------------------------------------------------------------------------
+                |
+                | One Refund belongs to one RefundRequest.
+                |
+                */
+
                 $existingRefund = Refund::query()
                     ->where(
                         'refund_request_id',
@@ -98,45 +114,71 @@ final class RefundOrder
 
                 if ($existingRefund !== null) {
                     /*
-                     * Refund already succeeded.
-                     */
+                    |--------------------------------------------------------------------------
+                    | Already Successfully Refunded
+                    |--------------------------------------------------------------------------
+                    */
+
                     if ($existingRefund->isSucceeded()) {
                         return $existingRefund;
                     }
 
                     /*
-                     * Stripe already returned a refund ID.
-                     *
-                     * Never create another Stripe refund.
-                     */
-                    if (filled($existingRefund->stripe_refund_id)) {
+                    |--------------------------------------------------------------------------
+                    | Stripe Refund Already Exists
+                    |--------------------------------------------------------------------------
+                    |
+                    | Never create another Stripe refund when a Stripe
+                    | refund ID is already stored.
+                    |
+                    */
+
+                    if (
+                        filled(
+                            $existingRefund->stripe_refund_id,
+                        )
+                    ) {
                         return $existingRefund;
                     }
 
                     /*
-                     * Existing pending/failed refund without a Stripe ID
-                     * can be retried outside this transaction using the
-                     * same persisted idempotency key and amount.
-                     */
+                    |--------------------------------------------------------------------------
+                    | Existing Pending / Failed Refund
+                    |--------------------------------------------------------------------------
+                    |
+                    | Reuse the existing refund and its persisted
+                    | idempotency key.
+                    |
+                    */
+
                     return $existingRefund;
                 }
 
                 /*
-                 * =========================================================
-                 * Calculate Refundable Amount
-                 * =========================================================
-                 */
+                |--------------------------------------------------------------------------
+                | Calculate Successfully Refunded Amount
+                |--------------------------------------------------------------------------
+                */
 
-                $successfulRefundedAmount = (float) $order->refunds()
-                    ->where(
-                        'status',
-                        Refund::STATUS_SUCCEEDED,
-                    )
-                    ->sum('amount');
+                $successfulRefundedAmount = round(
+                    (float) $order->refunds()
+                        ->where(
+                            'status',
+                            Refund::STATUS_SUCCEEDED,
+                        )
+                        ->sum('amount'),
+                    2,
+                );
 
                 /*
-                 * Shipping charges are non-refundable.
-                 */
+                |--------------------------------------------------------------------------
+                | Calculate Remaining Refundable Amount
+                |--------------------------------------------------------------------------
+                |
+                | Shipping is non-refundable.
+                |
+                */
+
                 $remainingRefundableAmount = max(
                     0,
                     round(
@@ -154,19 +196,43 @@ final class RefundOrder
                 }
 
                 /*
-                 * Never refund more than the remaining refundable amount.
-                 */
-                $requestedRefundAmount = min(
-                    round(
-                        (float) $refundRequest->amount,
-                        2,
-                    ),
-                    $remainingRefundableAmount,
+                |--------------------------------------------------------------------------
+                | Requested Refund Amount
+                |--------------------------------------------------------------------------
+                */
+
+                $requestedRefundAmount = round(
+                    (float) $refundRequest->amount,
+                    2,
                 );
 
+                if ($requestedRefundAmount <= 0) {
+                    throw new RuntimeException(
+                        'The requested refund amount must be greater than zero.',
+                    );
+                }
+
                 /*
-                 * Apply any admin-approved deduction.
-                 */
+                |--------------------------------------------------------------------------
+                | Never Exceed Remaining Refundable Amount
+                |--------------------------------------------------------------------------
+                */
+
+                if (
+                    $requestedRefundAmount
+                    > $remainingRefundableAmount
+                ) {
+                    throw new RuntimeException(
+                        'The requested refund amount exceeds the remaining refundable amount.',
+                    );
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | Deduction
+                |--------------------------------------------------------------------------
+                */
+
                 $deductionAmount = max(
                     0,
                     round(
@@ -180,13 +246,16 @@ final class RefundOrder
                     > $requestedRefundAmount
                 ) {
                     throw new RuntimeException(
-                        'The deduction amount cannot exceed the refundable amount.',
+                        'The deduction amount cannot exceed the requested refund amount.',
                     );
                 }
 
                 /*
-                 * Final amount that will actually be sent to Stripe.
-                 */
+                |--------------------------------------------------------------------------
+                | Final Stripe Refund Amount
+                |--------------------------------------------------------------------------
+                */
+
                 $finalRefundAmount = round(
                     $requestedRefundAmount
                     - $deductionAmount,
@@ -200,77 +269,77 @@ final class RefundOrder
                 }
 
                 /*
-                 * =========================================================
-                 * Create Local Refund Record
-                 * =========================================================
-                 *
-                 * The refund record is created BEFORE communicating
-                 * with Stripe.
-                 *
-                 * This permanently stores:
-                 *
-                 * - refund amount
-                 * - currency
-                 * - Stripe idempotency key
-                 * - refund request relationship
-                 *
-                 * The same idempotency key will be used if the Stripe
-                 * request needs to be retried.
-                 */
+                |--------------------------------------------------------------------------
+                | Create Local Refund
+                |--------------------------------------------------------------------------
+                |
+                | The Stripe idempotency key is generated once and persisted.
+                |
+                */
+
                 return Refund::query()->create([
                     'order_id' => $order->id,
-                    'refund_request_id' => $refundRequest->id,
+
+                    'refund_request_id' =>
+                        $refundRequest->id,
+
                     'stripe_refund_id' => null,
-                    'stripe_idempotency_key' => Str::uuid()->toString(),
+
+                    'stripe_idempotency_key' =>
+                        Str::uuid()->toString(),
+
                     'amount' => $finalRefundAmount,
+
                     'currency' => strtolower(
                         (string) $order->currency,
                     ),
+
                     'status' => Refund::STATUS_PENDING,
                 ]);
             },
         );
 
         /*
-         * =============================================================
-         * Already Successfully Refunded
-         * =============================================================
-         */
+        |--------------------------------------------------------------------------
+        | Already Successfully Refunded
+        |--------------------------------------------------------------------------
+        */
 
         if ($refund->isSucceeded()) {
             return $refund->fresh();
         }
 
         /*
-         * =============================================================
-         * Stripe Refund Already Exists
-         * =============================================================
-         *
-         * If Stripe has already returned a refund ID, never create
-         * another refund.
-         */
-        if (filled($refund->stripe_refund_id)) {
+        |--------------------------------------------------------------------------
+        | Stripe Refund Already Exists
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            filled($refund->stripe_refund_id)
+        ) {
             return $refund->fresh();
         }
 
         /*
-         * =============================================================
-         * Load Order
-         * =============================================================
-         */
+        |--------------------------------------------------------------------------
+        | Load Order
+        |--------------------------------------------------------------------------
+        */
 
-        $order = $refund->order()->firstOrFail();
+        $order = $refund->order()
+            ->firstOrFail();
 
         /*
-         * =============================================================
-         * Stripe Configuration
-         * =============================================================
-         */
+        |--------------------------------------------------------------------------
+        | Stripe Configuration
+        |--------------------------------------------------------------------------
+        */
 
         $stripeSecret = config('services.stripe.secret');
 
         if (
-            ! is_string($stripeSecret)
+            !is_string($stripeSecret)
             || $stripeSecret === ''
         ) {
             $this->markAsFailed(
@@ -282,13 +351,15 @@ final class RefundOrder
             );
         }
 
-        $stripe = new StripeClient($stripeSecret);
+        $stripe = new StripeClient(
+            $stripeSecret,
+        );
 
         /*
-         * =============================================================
-         * Create Stripe Refund
-         * =============================================================
-         */
+        |--------------------------------------------------------------------------
+        | Create Stripe Refund
+        |--------------------------------------------------------------------------
+        */
 
         try {
             $stripeRefund = $stripe->refunds->create(
@@ -302,13 +373,14 @@ final class RefundOrder
                 ],
                 [
                     /*
-                     * IMPORTANT:
-                     *
-                     * The idempotency key was generated once and
-                     * persisted in the Refund record.
-                     *
-                     * Retries must use the exact same key.
-                     */
+                    |--------------------------------------------------------------------------
+                    | IMPORTANT
+                    |--------------------------------------------------------------------------
+                    |
+                    | Always reuse the same persisted idempotency key.
+                    |
+                    */
+
                     'idempotency_key' =>
                         $refund->stripe_idempotency_key,
                 ],
@@ -328,52 +400,107 @@ final class RefundOrder
         }
 
         /*
-         * =============================================================
-         * Store Stripe Result
-         * =============================================================
-         */
+        |--------------------------------------------------------------------------
+        | Store Stripe Result + Restore Stock
+        |--------------------------------------------------------------------------
+        */
 
         return DB::transaction(
             function () use (
                 $refund,
                 $stripeRefund,
             ): Refund {
+                /*
+                |--------------------------------------------------------------------------
+                | Lock Refund
+                |--------------------------------------------------------------------------
+                */
+
                 $refund = Refund::query()
                     ->whereKey($refund->id)
                     ->lockForUpdate()
                     ->firstOrFail();
 
                 /*
-                 * Another request may have completed this refund while
-                 * the current request was communicating with Stripe.
-                 */
+                |--------------------------------------------------------------------------
+                | Prevent Duplicate Processing
+                |--------------------------------------------------------------------------
+                */
+
                 if (
                     $refund->isSucceeded()
-                    && filled($refund->stripe_refund_id)
+                    && filled(
+                        $refund->stripe_refund_id,
+                    )
                 ) {
                     return $refund;
                 }
 
                 /*
-                 * Store Stripe's refund ID and current status.
-                 */
+                |--------------------------------------------------------------------------
+                | Store Stripe Result
+                |--------------------------------------------------------------------------
+                */
+
                 $refund->update([
-                    'stripe_refund_id' => $stripeRefund->id,
-                    'status' => $stripeRefund->status,
+                    'stripe_refund_id' =>
+                        $stripeRefund->id,
+
+                    'status' =>
+                        $stripeRefund->status,
                 ]);
 
                 /*
-                 * Stripe successfully refunded the payment.
-                 *
-                 * At this point the Order is marked as refunded.
-                 */
+                |--------------------------------------------------------------------------
+                | Stripe Refund Successful
+                |--------------------------------------------------------------------------
+                */
+
                 if (
                     $stripeRefund->status
                     === Refund::STATUS_SUCCEEDED
                 ) {
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Lock Order
+                    |--------------------------------------------------------------------------
+                    */
+
                     $order = $refund->order()
                         ->lockForUpdate()
                         ->firstOrFail();
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Restore Stock
+                    |--------------------------------------------------------------------------
+                    |
+                    | Only restore stock when this refund represents the
+                    | entire remaining refundable amount.
+                    |
+                    | Deduction does NOT affect stock quantity because the
+                    | deduction is a financial adjustment, not a quantity
+                    | adjustment.
+                    |
+                    */
+
+                    if (
+                        $this->isFullRefund(
+                            $refund,
+                            $order,
+                        )
+                    ) {
+                        $this->restoreStock(
+                            $refund,
+                            $order,
+                        );
+                    }
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Mark Order Refunded
+                    |--------------------------------------------------------------------------
+                    */
 
                     $order->update([
                         'refund_status' =>
@@ -381,9 +508,346 @@ final class RefundOrder
                     ]);
                 }
 
+                /*
+                |--------------------------------------------------------------------------
+                | Return Fresh Refund
+                |--------------------------------------------------------------------------
+                */
+
                 return $refund->fresh();
             },
         );
+    }
+
+    /**
+     * Determine whether the refund represents the full remaining
+     * refundable amount.
+     *
+     * No `is_full_refund` column is required.
+     */
+    private function isFullRefund(
+        Refund $refund,
+        Order $order,
+    ): bool {
+        /*
+        |--------------------------------------------------------------------------
+        | Load Refund Request
+        |--------------------------------------------------------------------------
+        */
+
+        $refundRequest = RefundRequest::query()
+            ->whereKey(
+                $refund->refund_request_id,
+            )
+            ->first();
+
+        if ($refundRequest === null) {
+            return false;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Calculate Previously Successful Refunds
+        |--------------------------------------------------------------------------
+        |
+        | Current refund is still being processed and therefore is not
+        | included because its status has not yet been persisted as
+        | succeeded when this method is called.
+        |
+        */
+
+        $alreadyRefunded = round(
+            (float) $order->refunds()
+                ->where(
+                    'status',
+                    Refund::STATUS_SUCCEEDED,
+                )
+                ->whereKeyNot($refund->id)
+                ->sum('amount'),
+            2,
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Remaining Refundable Amount
+        |--------------------------------------------------------------------------
+        */
+
+        $remainingRefundableAmount = max(
+            0,
+            round(
+                (float) $order->total
+                - (float) $order->shipping
+                - $alreadyRefunded,
+                2,
+            ),
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Requested Amount
+        |--------------------------------------------------------------------------
+        |
+        | IMPORTANT:
+        |
+        | We compare the REQUESTED amount, not the final Stripe amount.
+        |
+        | Example:
+        |
+        | Remaining refundable = $100
+        | Admin deduction = $10
+        | Stripe refund = $90
+        |
+        | This is still a full product refund, therefore stock must
+        | be restored.
+        |
+        */
+
+        $requestedAmount = round(
+            (float) $refundRequest->amount,
+            2,
+        );
+
+        return abs(
+                $requestedAmount
+                - $remainingRefundableAmount,
+            ) < 0.01;
+    }
+
+    /**
+     * Restore stock for a full refund.
+     */
+    private function restoreStock(
+        Refund $refund,
+        Order $order,
+    ): void {
+        /*
+        |--------------------------------------------------------------------------
+        | Load Order Items
+        |--------------------------------------------------------------------------
+        */
+
+        $order->loadMissing('items');
+
+        if ($order->items->isEmpty()) {
+            throw new RuntimeException(
+                'Cannot restore stock because the order has no items.',
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Inventory Reference
+        |--------------------------------------------------------------------------
+        */
+
+        $reference = 'REFUND-' . $refund->id;
+
+        /*
+        |--------------------------------------------------------------------------
+        | Restore Each Order Item
+        |--------------------------------------------------------------------------
+        */
+
+        foreach ($order->items as $orderItem) {
+            $quantity = (int) $orderItem->quantity;
+
+            if ($quantity < 1) {
+                throw new RuntimeException(
+                    sprintf(
+                        'Invalid quantity for order item #%d.',
+                        $orderItem->id,
+                    ),
+                );
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Check Existing Inventory Transaction
+            |--------------------------------------------------------------------------
+            |
+            | This makes stock restoration idempotent.
+            |
+            */
+
+            $alreadyRestored = InventoryTransaction::query()
+                ->where(
+                    'reference',
+                    $reference,
+                )
+                ->where(
+                    'product_id',
+                    $orderItem->product_id,
+                )
+                ->when(
+                    $orderItem->variant_id !== null,
+                    function ($query) use ($orderItem): void {
+                        $query->where(
+                            'product_variant_id',
+                            $orderItem->variant_id,
+                        );
+                    },
+                    function ($query): void {
+                        $query->whereNull(
+                            'product_variant_id',
+                        );
+                    },
+                )
+                ->exists();
+
+            if ($alreadyRestored) {
+                continue;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | SIMPLE PRODUCT
+            |--------------------------------------------------------------------------
+            |
+            | variant_id = NULL
+            | stock = products.stock
+            |
+            */
+
+            if ($orderItem->variant_id === null) {
+                $product = Product::query()
+                    ->whereKey(
+                        $orderItem->product_id,
+                    )
+                    ->lockForUpdate()
+                    ->first();
+
+                if ($product === null) {
+                    throw new RuntimeException(
+                        sprintf(
+                            'Product #%d could not be found while restoring stock.',
+                            $orderItem->product_id,
+                        ),
+                    );
+                }
+
+                if (!$product->isSimple()) {
+                    throw new RuntimeException(
+                        sprintf(
+                            'Product #%d is not a simple product.',
+                            $product->id,
+                        ),
+                    );
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | Restore Simple Product Stock
+                |--------------------------------------------------------------------------
+                */
+
+                $stockBefore = (int) $product->stock;
+
+                $product->increment(
+                    'stock',
+                    $quantity,
+                );
+
+                $product->refresh();
+
+                /*
+                |--------------------------------------------------------------------------
+                | Create Inventory Transaction
+                |--------------------------------------------------------------------------
+                */
+
+                InventoryTransaction::query()->create([
+                    'product_id' => $product->id,
+
+                    'product_variant_id' => null,
+
+                    'type' => 'refund',
+
+                    'quantity' => $quantity,
+
+                    'reference' => $reference,
+
+                    'note' => sprintf(
+                        'Stock restored for refund %s, order %s.',
+                        $refund->id,
+                        $order->order_number,
+                    ),
+                ]);
+
+                continue;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | VARIABLE PRODUCT
+            |--------------------------------------------------------------------------
+            |
+            | variant_id = actual variant
+            | stock = product_variants.stock
+            |
+            */
+
+            $variant = ProductVariant::query()
+                ->whereKey(
+                    $orderItem->variant_id,
+                )
+                ->where(
+                    'product_id',
+                    $orderItem->product_id,
+                )
+                ->lockForUpdate()
+                ->first();
+
+            if ($variant === null) {
+                throw new RuntimeException(
+                    sprintf(
+                        'Variant #%d could not be found while restoring stock.',
+                        $orderItem->variant_id,
+                    ),
+                );
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Restore Variant Stock
+            |--------------------------------------------------------------------------
+            */
+
+            $stockBefore = (int) $variant->stock;
+
+            $variant->increment(
+                'stock',
+                $quantity,
+            );
+
+            $variant->refresh();
+
+            /*
+            |--------------------------------------------------------------------------
+            | Create Inventory Transaction
+            |--------------------------------------------------------------------------
+            */
+
+            InventoryTransaction::query()->create([
+                'product_id' =>
+                    $orderItem->product_id,
+
+                'product_variant_id' =>
+                    $variant->id,
+
+                'type' => 'refund',
+
+                'quantity' => $quantity,
+
+                'reference' => $reference,
+
+                'note' => sprintf(
+                    'Stock restored for refund %s, order %s.',
+                    $refund->id,
+                    $order->order_number,
+                ),
+            ]);
+        }
     }
 
     /**
@@ -398,7 +862,8 @@ final class RefundOrder
                     ->whereKey($refundId)
                     ->lockForUpdate()
                     ->update([
-                        'status' => Refund::STATUS_FAILED,
+                        'status' =>
+                            Refund::STATUS_FAILED,
                     ]);
             },
         );

@@ -207,13 +207,25 @@ final class MarketplaceController extends Controller
         |--------------------------------------------------------------------------
         | Products
         |--------------------------------------------------------------------------
+        |
+        | Simple Product:
+        |   Stock comes from products.stock.
+        |
+        | Variable Product:
+        |   Stock comes from active product_variants.stock.
+        |
         */
 
         $products = Product::query()
             ->with([
                 'brand',
                 'categories',
-                'variants',
+
+                'variants' => function ($query): void {
+                    $query
+                        ->where('status', true)
+                        ->orderBy('id');
+                },
             ])
             ->where('status', true)
 
@@ -358,6 +370,10 @@ final class MarketplaceController extends Controller
             |--------------------------------------------------------------------------
             | Attribute Filters
             |--------------------------------------------------------------------------
+            |
+            | Attribute filtering applies only to variable products
+            | because simple products do not have variants.
+            |
             */
 
             ->when(
@@ -387,6 +403,16 @@ final class MarketplaceController extends Controller
                         ) {
                             continue;
                         }
+
+                        $query->whereHas(
+                            'variants',
+                            function ($query): void {
+                                $query->where(
+                                    'status',
+                                    true,
+                                );
+                            },
+                        );
 
                         $query->whereHas(
                             'variants.values',
@@ -518,6 +544,13 @@ final class MarketplaceController extends Controller
         |--------------------------------------------------------------------------
         | Product
         |--------------------------------------------------------------------------
+        |
+        | Simple products:
+        |   No variant is required.
+        |
+        | Variable products:
+        |   Only active variants are loaded.
+        |
         */
 
         $product->load([

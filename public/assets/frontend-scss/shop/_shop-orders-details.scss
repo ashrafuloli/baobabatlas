@@ -454,6 +454,7 @@
         }
     }
 
+    &__item-type,
     &__item-quantity,
     &__item-sku {
         display: block;
@@ -1133,6 +1134,37 @@
             flex: 0 0 auto;
             margin-top: 1px;
             color: $info;
+            font-size: 17px;
+            line-height: 1;
+        }
+
+        p {
+            margin: 0;
+            font-size: 12px;
+            line-height: 1.6;
+
+            strong {
+                color: $heading-color;
+                font-weight: 700;
+            }
+        }
+    }
+
+
+    &__refund-confirmation {
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
+        margin-top: 18px;
+        padding: 12px 13px;
+        border-radius: 7px;
+        color: $body-color;
+        background: rgba($warning, 0.07);
+
+        i {
+            flex: 0 0 auto;
+            margin-top: 1px;
+            color: $warning;
             font-size: 17px;
             line-height: 1;
         }

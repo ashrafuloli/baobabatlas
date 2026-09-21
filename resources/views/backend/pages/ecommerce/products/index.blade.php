@@ -4,10 +4,13 @@
 
 @section('content')
     <div class="product-index-page">
+
         {{-- Header --}}
         <div class="product-index-page__header">
             <div>
-                <span class="product-index-page__eyebrow">Ecommerce</span>
+                <span class="product-index-page__eyebrow">
+                    Ecommerce
+                </span>
 
                 <h1 class="product-index-page__title">
                     Products
@@ -31,7 +34,10 @@
         @if (session('success'))
             <div class="product-index-page__alert product-index-page__alert--success">
                 <i class="ri-checkbox-circle-line"></i>
-                <span>{{ session('success') }}</span>
+
+                <span>
+                    {{ session('success') }}
+                </span>
             </div>
         @endif
 
@@ -40,6 +46,7 @@
 
             {{-- Filter Bar --}}
             <div class="product-index-page__filters">
+
                 <div class="product-index-page__search">
                     <i class="ri-search-line"></i>
 
@@ -62,10 +69,13 @@
                 </div>
 
                 <div class="product-index-page__filter-group">
+
                     {{-- Status --}}
                     <div class="product-index-page__select">
                         <select id="product-status-filter">
-                            <option value="">All Status</option>
+                            <option value="">
+                                All Status
+                            </option>
 
                             <option
                                 value="active"
@@ -88,7 +98,9 @@
                     {{-- Source --}}
                     <div class="product-index-page__select">
                         <select id="product-source-filter">
-                            <option value="">All Sources</option>
+                            <option value="">
+                                All Sources
+                            </option>
 
                             <option
                                 value="own"
@@ -118,12 +130,17 @@
                     {{-- Category --}}
                     <div class="product-index-page__select">
                         <select id="product-category-filter">
-                            <option value="">All Categories</option>
+                            <option value="">
+                                All Categories
+                            </option>
 
                             @foreach ($categories as $category)
                                 <option
                                     value="{{ $category->id }}"
-                                    @selected((string) request('category') === (string) $category->id)
+                                    @selected(
+                                        (string) request('category') ===
+                                        (string) $category->id
+                                    )
                                 >
                                     {{ $category->name }}
                                 </option>
@@ -131,7 +148,10 @@
                                 @foreach ($category->children as $subcategory)
                                     <option
                                         value="{{ $subcategory->id }}"
-                                        @selected((string) request('category') === (string) $subcategory->id)
+                                        @selected(
+                                            (string) request('category') ===
+                                            (string) $subcategory->id
+                                        )
                                     >
                                         — {{ $subcategory->name }}
                                     </option>
@@ -145,12 +165,17 @@
                     {{-- Brand --}}
                     <div class="product-index-page__select">
                         <select id="product-brand-filter">
-                            <option value="">All Brands</option>
+                            <option value="">
+                                All Brands
+                            </option>
 
                             @foreach ($brands as $brand)
                                 <option
                                     value="{{ $brand->id }}"
-                                    @selected((string) request('brand') === (string) $brand->id)
+                                    @selected(
+                                        (string) request('brand') ===
+                                        (string) $brand->id
+                                    )
                                 >
                                     {{ $brand->name }}
                                 </option>
@@ -179,6 +204,7 @@
                         <i class="ri-close-circle-line"></i>
                         <span>Clear</span>
                     </button>
+
                 </div>
             </div>
 
@@ -187,11 +213,17 @@
                 <div class="product-index-page__result-count">
                     <span>
                         Showing
+
                         <strong id="product-visible-count">
                             {{ $products->count() }}
                         </strong>
+
                         of
-                        <strong>{{ $products->total() }}</strong>
+
+                        <strong>
+                            {{ $products->total() }}
+                        </strong>
+
                         products
                     </span>
                 </div>
@@ -205,9 +237,11 @@
             {{-- Table --}}
             <div class="product-index-page__table-wrapper">
                 <table class="product-index-page__table">
+
                     <thead>
                     <tr>
                         <th>Product</th>
+                        <th>Type</th>
                         <th>Source</th>
                         <th>Category</th>
                         <th>Brand</th>
@@ -219,21 +253,40 @@
                     </thead>
 
                     <tbody id="products-table-body">
+
                     @forelse ($products as $product)
+
                         @php
                             $productCategories = $product->categories;
 
-                            $brandId = $product->brand?->id ?? '';
                             $brandName = $product->brand?->name ?? '';
+
+                            $isVariable = $product->type === 'variable';
+
+                            $variantCount = $isVariable
+                                ? $product->variants->count()
+                                : 0;
+
+                            $stock = $isVariable
+                                ? $product->variants->sum('stock')
+                                : (int) $product->stock;
+
+                            $stockClass = $stock <= 0
+                                ? 'product-index-page__stock--empty'
+                                : ($stock <= 5
+                                    ? 'product-index-page__stock--low'
+                                    : 'product-index-page__stock--available');
                         @endphp
 
                         <tr
                             class="product-index-page__product-row"
                             data-product-row
                         >
+
                             {{-- Product --}}
                             <td>
                                 <div class="product-index-page__product">
+
                                     <div class="product-index-page__thumbnail">
                                         @if ($product->thumbnail)
                                             <img
@@ -246,6 +299,7 @@
                                     </div>
 
                                     <div class="product-index-page__product-info">
+
                                         <a
                                             href="{{ route('admin-products.show', $product) }}"
                                             class="product-index-page__product-name"
@@ -255,36 +309,67 @@
 
                                         @if ($product->sku)
                                             <span class="product-index-page__sku">
-                                                SKU: {{ $product->sku }}
-                                            </span>
+                                                    SKU: {{ $product->sku }}
+                                                </span>
                                         @endif
+
                                     </div>
+                                </div>
+                            </td>
+
+                            {{-- Product Type --}}
+                            <td>
+                                <div class="product-index-page__product-type">
+
+                                    @if ($isVariable)
+                                        <span
+                                            class="product-index-page__type product-index-page__type--variable"
+                                        >
+                                                <i class="ri-git-branch-line"></i>
+                                                Variable
+                                            </span>
+
+                                        <small>
+                                            {{ $variantCount }}
+                                            {{ $variantCount === 1 ? 'variant' : 'variants' }}
+                                        </small>
+                                    @else
+                                        <span
+                                            class="product-index-page__type product-index-page__type--simple"
+                                        >
+                                                <i class="ri-box-3-line"></i>
+                                                Simple
+                                            </span>
+                                    @endif
+
                                 </div>
                             </td>
 
                             {{-- Source --}}
                             <td>
-                                <span
-                                    class="product-index-page__source product-index-page__source--{{ strtolower($product->source) }}"
-                                >
-                                    {{ $product->source === 'aliexpress'
-                                        ? 'AliExpress'
-                                        : ucfirst($product->source) }}
-                                </span>
+                                    <span
+                                        class="product-index-page__source product-index-page__source--{{ strtolower($product->source) }}"
+                                    >
+                                        {{ $product->source === 'aliexpress'
+                                            ? 'AliExpress'
+                                            : ucfirst($product->source) }}
+                                    </span>
                             </td>
 
                             {{-- Categories --}}
                             <td>
                                 <div class="product-index-page__categories">
+
                                     @forelse ($productCategories as $category)
                                         <span>
-                                            {{ $category->name }}
-                                        </span>
+                                                {{ $category->name }}
+                                            </span>
                                     @empty
                                         <span class="product-index-page__muted">
-                                            —
-                                        </span>
+                                                —
+                                            </span>
                                     @endforelse
+
                                 </div>
                             </td>
 
@@ -292,68 +377,79 @@
                             <td>
                                 @if ($product->brand)
                                     <span class="product-index-page__brand">
-                                        {{ $brandName }}
-                                    </span>
+                                            {{ $brandName }}
+                                        </span>
                                 @else
                                     <span class="product-index-page__muted">
-                                        —
-                                    </span>
+                                            —
+                                        </span>
                                 @endif
                             </td>
 
                             {{-- Price --}}
                             <td>
                                 <div class="product-index-page__price">
+
                                     <strong>
                                         ${{ number_format((float) $product->price, 2) }}
                                     </strong>
 
-                                    @if ($product->compare_price)
+                                    @if ($product->compare_price !== null)
                                         <del>
                                             ${{ number_format((float) $product->compare_price, 2) }}
                                         </del>
                                     @endif
+
                                 </div>
                             </td>
 
                             {{-- Stock --}}
                             <td>
-                                @php
-                                    $stock = $product->variants->sum('stock');
-                                @endphp
+                                <div class="product-index-page__stock-wrapper">
 
-                                @if ($product->variants->isNotEmpty())
-                                    <span
-                                        class="
-                                            product-index-page__stock
-                                            {{ $stock <= 0 ? 'product-index-page__stock--empty' : '' }}
-                                        "
-                                    >
-                                        {{ $stock }}
-                                    </span>
-                                @else
-                                    <span class="product-index-page__muted">
-                                        —
-                                    </span>
-                                @endif
+                                        <span
+                                            class="
+                                                product-index-page__stock
+                                                {{ $stockClass }}
+                                            "
+                                        >
+                                            {{ $stock }}
+                                        </span>
+
+                                    @if ($isVariable)
+                                        <small>
+                                            Total
+                                        </small>
+                                    @endif
+
+                                </div>
                             </td>
 
                             {{-- Status --}}
                             <td>
                                 @if ($product->status)
-                                    <span class="product-index-page__status product-index-page__status--active">
-                                        Active
-                                    </span>
+
+                                    <span
+                                        class="product-index-page__status product-index-page__status--active"
+                                    >
+                                            Active
+                                        </span>
+
                                 @else
-                                    <span class="product-index-page__status product-index-page__status--inactive">
-                                        Inactive
-                                    </span>
+
+                                    <span
+                                        class="product-index-page__status product-index-page__status--inactive"
+                                    >
+                                            Inactive
+                                        </span>
+
                                 @endif
                             </td>
 
                             {{-- Actions --}}
                             <td>
                                 <div class="product-index-page__actions">
+
                                     <a
                                         href="{{ route('admin-products.show', $product) }}"
                                         class="product-index-page__action"
@@ -386,43 +482,27 @@
                                             <i class="ri-delete-bin-line"></i>
                                         </button>
                                     </form>
+
                                 </div>
                             </td>
+
                         </tr>
+
                     @empty
+
                         <tr>
                             <td
-                                colspan="8"
+                                colspan="9"
                                 class="product-index-page__empty product-index-page__empty--initial"
                             >
                                 <i class="ri-shopping-bag-3-line"></i>
 
                                 <strong>
-                                    {{ request()->hasAny([
-                                        'search',
-                                        'status',
-                                        'source',
-                                        'category',
-                                        'brand',
-                                    ])
-                                        ? 'No products found.'
-                                        : 'No products found.' }}
+                                    No products found.
                                 </strong>
 
-                                <span>
-                                    {{ request()->hasAny([
-                                        'search',
-                                        'status',
-                                        'source',
-                                        'category',
-                                        'brand',
-                                    ])
-                                        ? 'Try changing your search or filter options.'
-                                        : 'Add your first product to get started.' }}
-                                </span>
-
                                 @if (
-                                    !request()->hasAny([
+                                    request()->hasAny([
                                         'search',
                                         'status',
                                         'source',
@@ -430,13 +510,26 @@
                                         'brand',
                                     ])
                                 )
-                                    <a href="{{ route('admin-products.create') }}">
+                                    <span>
+                                            Try changing your search or filter options.
+                                        </span>
+                                @else
+                                    <span>
+                                            Add your first product to get started.
+                                        </span>
+
+                                    <a
+                                        href="{{ route('admin-products.create') }}"
+                                    >
                                         Add Product
                                     </a>
                                 @endif
+
                             </td>
                         </tr>
+
                     @endforelse
+
                     </tbody>
                 </table>
             </div>
@@ -449,13 +542,18 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const page = document.querySelector('.product-index-page');
+
+            const page = document.querySelector(
+                '.product-index-page'
+            );
 
             if (!page) {
                 return;
             }
 
-            const searchInput = page.querySelector('#product-search');
+            const searchInput = page.querySelector(
+                '#product-search'
+            );
 
             const searchClear = page.querySelector(
                 '#product-search-clear'
@@ -494,9 +592,10 @@
             );
 
             /*
-             * Build URL from the current filter values.
+             * Build URL from current filters.
              */
             const buildFilterUrl = () => {
+
                 const url = new URL(
                     window.location.href
                 );
@@ -508,11 +607,20 @@
                 url.searchParams.delete('brand');
                 url.searchParams.delete('page');
 
-                const search = searchInput.value.trim();
-                const status = statusFilter.value;
-                const source = sourceFilter.value;
-                const category = categoryFilter.value;
-                const brand = brandFilter.value;
+                const search =
+                    searchInput.value.trim();
+
+                const status =
+                    statusFilter.value;
+
+                const source =
+                    sourceFilter.value;
+
+                const category =
+                    categoryFilter.value;
+
+                const brand =
+                    brandFilter.value;
 
                 if (search) {
                     url.searchParams.set(
@@ -547,25 +655,28 @@
                         'brand',
                         brand
                     );
-
                 }
 
                 return url;
             };
 
             /*
-             * Apply filters through URL.
+             * Apply Filters.
              */
             const applyFilters = () => {
-                const url = buildFilterUrl();
 
-                window.location.href = url.toString();
+                const url =
+                    buildFilterUrl();
+
+                window.location.href =
+                    url.toString();
             };
 
             /*
-             * Clear all URL filters.
+             * Clear Filters.
              */
             const clearFilters = () => {
+
                 const url = new URL(
                     window.location.href
                 );
@@ -577,13 +688,15 @@
                 url.searchParams.delete('brand');
                 url.searchParams.delete('page');
 
-                window.location.href = url.toString();
+                window.location.href =
+                    url.toString();
             };
 
             /*
-             * Render active filter badges.
+             * Render Active Filters.
              */
             const renderActiveFilters = () => {
+
                 if (!activeFilters) {
                     return;
                 }
@@ -592,72 +705,93 @@
 
                 const filters = [];
 
-                if (searchInput.value.trim()) {
+                if (
+                    searchInput.value.trim()
+                ) {
                     filters.push({
-                        label: `Search: ${searchInput.value.trim()}`,
+                        label:
+                            `Search: ${searchInput.value.trim()}`
                     });
                 }
 
-                if (statusFilter.value) {
+                if (
+                    statusFilter.value
+                ) {
                     filters.push({
-                        label: `Status: ${
-                            statusFilter.options[
-                                statusFilter.selectedIndex
-                                ]?.text || ''
-                        }`,
+                        label:
+                            `Status: ${
+                                statusFilter.options[
+                                    statusFilter.selectedIndex
+                                    ]?.text || ''
+                            }`
                     });
                 }
 
-                if (sourceFilter.value) {
+                if (
+                    sourceFilter.value
+                ) {
                     filters.push({
-                        label: `Source: ${
-                            sourceFilter.options[
-                                sourceFilter.selectedIndex
-                                ]?.text || ''
-                        }`,
+                        label:
+                            `Source: ${
+                                sourceFilter.options[
+                                    sourceFilter.selectedIndex
+                                    ]?.text || ''
+                            }`
                     });
                 }
 
-                if (categoryFilter.value) {
+                if (
+                    categoryFilter.value
+                ) {
                     filters.push({
-                        label: `Category: ${
-                            categoryFilter.options[
-                                categoryFilter.selectedIndex
-                                ]?.text || ''
-                        }`,
+                        label:
+                            `Category: ${
+                                categoryFilter.options[
+                                    categoryFilter.selectedIndex
+                                    ]?.text || ''
+                            }`
                     });
                 }
 
-                if (brandFilter.value) {
+                if (
+                    brandFilter.value
+                ) {
                     filters.push({
-                        label: `Brand: ${
-                            brandFilter.options[
-                                brandFilter.selectedIndex
-                                ]?.text || ''
-                        }`,
+                        label:
+                            `Brand: ${
+                                brandFilter.options[
+                                    brandFilter.selectedIndex
+                                    ]?.text || ''
+                            }`
                     });
                 }
 
-                filters.forEach((filter) => {
-                    const badge =
-                        document.createElement('span');
+                filters.forEach(
+                    (filter) => {
 
-                    badge.className =
-                        'product-index-page__active-filter';
+                        const badge =
+                            document.createElement(
+                                'span'
+                            );
 
-                    badge.textContent =
-                        filter.label;
+                        badge.className =
+                            'product-index-page__active-filter';
 
-                    activeFilters.appendChild(
-                        badge
-                    );
-                });
+                        badge.textContent =
+                            filter.label;
+
+                        activeFilters.appendChild(
+                            badge
+                        );
+                    }
+                );
             };
 
             /*
-             * Update search clear button.
+             * Search Clear Button.
              */
             const updateSearchClear = () => {
+
                 searchClear.classList.toggle(
                     'is-visible',
                     searchInput.value.length > 0
@@ -666,15 +800,14 @@
 
             /*
              * Search on Enter.
-             *
-             * Search is intentionally NOT applied
-             * on every keystroke because filtering is
-             * server-side.
              */
             searchInput.addEventListener(
                 'keydown',
                 (event) => {
-                    if (event.key !== 'Enter') {
+
+                    if (
+                        event.key !== 'Enter'
+                    ) {
                         return;
                     }
 
@@ -685,11 +818,12 @@
             );
 
             /*
-             * Search clear.
+             * Clear Search.
              */
             searchClear.addEventListener(
                 'click',
                 () => {
+
                     searchInput.value = '';
 
                     applyFilters();
@@ -697,7 +831,7 @@
             );
 
             /*
-             * Filter button.
+             * Filter Button.
              */
             filterButton.addEventListener(
                 'click',
@@ -705,7 +839,7 @@
             );
 
             /*
-             * Clear all filters.
+             * Clear Filters Button.
              */
             clearFiltersButton.addEventListener(
                 'click',
@@ -713,7 +847,7 @@
             );
 
             /*
-             * Update clear button while typing.
+             * Search Input.
              */
             searchInput.addEventListener(
                 'input',
@@ -721,36 +855,42 @@
             );
 
             /*
-             * Delete confirmation.
+             * Delete Confirmation.
              */
             page.querySelectorAll(
                 '[data-delete-product]'
-            ).forEach((form) => {
-                form.addEventListener(
-                    'submit',
-                    (event) => {
-                        const confirmed =
-                            window.confirm(
-                                'Are you sure you want to delete this product? This action cannot be undone.'
-                            );
+            ).forEach(
+                (form) => {
 
-                        if (!confirmed) {
-                            event.preventDefault();
+                    form.addEventListener(
+                        'submit',
+                        (event) => {
+
+                            const confirmed =
+                                window.confirm(
+                                    'Are you sure you want to delete this product? This action cannot be undone.'
+                                );
+
+                            if (!confirmed) {
+                                event.preventDefault();
+                            }
                         }
-                    }
-                );
-            });
+                    );
+                }
+            );
 
             /*
-             * Initial state.
+             * Initial State.
              */
             updateSearchClear();
+
             renderActiveFilters();
 
             if (visibleCount) {
                 visibleCount.textContent =
                     {{ $products->count() }};
             }
+
         });
     </script>
 @endsection

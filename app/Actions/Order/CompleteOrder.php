@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Actions\Order;
 
 use App\Models\Cart;
+use App\Models\InventoryTransaction;
 use App\Models\Order;
+use App\Models\Product;
 use App\Models\ProductVariant;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -61,6 +63,11 @@ final class CompleteOrder
             |--------------------------------------------------------------------------
             | Already Paid
             |--------------------------------------------------------------------------
+            |
+            | Important:
+            | Do not process stock again if the webhook and checkout success
+            | fallback both attempt to complete the same order.
+            |
             */
 
             if ($order->isPaid()) {
@@ -187,15 +194,20 @@ final class CompleteOrder
 
             /*
             |--------------------------------------------------------------------------
-            | Lock & Validate Variants
+            | Prepare Stock Operations
             |--------------------------------------------------------------------------
             |
-            | The order item already contains the historical shipping_cost
-            | snapshot. We intentionally do not recalculate or modify it here.
+            | Simple product:
+            |     products.stock
+            |
+            | Variable product:
+            |     product_variants.stock
+            |
+            | Stock is only reduced after payment has been confirmed.
             |
             */
 
-            $variants = [];
+            $stockItems = [];
 
             foreach ($order->items as $item) {
                 $quantity = (int) $item->quantity;
@@ -227,18 +239,352 @@ final class CompleteOrder
 
                 /*
                 |--------------------------------------------------------------------------
-                | Non-Variant Product
+                | Lock Product
                 |--------------------------------------------------------------------------
+                |
+                | Product must always be locked because:
+                |
+                | 1. Simple products store stock here.
+                | 2. We need to verify the product type.
+                |
                 */
 
-                if ($item->variant_id === null) {
-                    Log::info(
-                        'CompleteOrder found non-variant order item.',
+                $product = Product::query()
+                    ->whereKey($item->product_id)
+                    ->lockForUpdate()
+                    ->first();
+
+                if (
+                    $product === null
+                    || !$product->isActive()
+                ) {
+                    Log::error(
+                        'CompleteOrder product is unavailable.',
                         [
                             'order_id' => $order->id,
                             'order_item_id' => $item->id,
                             'product_id' => $item->product_id,
+                        ],
+                    );
+
+                    throw ValidationException::withMessages([
+                        'order' => sprintf(
+                            'The product "%s" is no longer available.',
+                            $item->product_name,
+                        ),
+                    ]);
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | SIMPLE PRODUCT
+                |--------------------------------------------------------------------------
+                */
+
+                if ($product->isSimple()) {
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Simple Product Must Not Have Variant
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if ($item->variant_id !== null) {
+                        Log::error(
+                            'CompleteOrder found variant on simple product.',
+                            [
+                                'order_id' => $order->id,
+                                'order_item_id' => $item->id,
+                                'product_id' => $product->id,
+                                'variant_id' => $item->variant_id,
+                            ],
+                        );
+
+                        throw ValidationException::withMessages([
+                            'order' => sprintf(
+                                'The order item for "%s" contains an invalid variant.',
+                                $item->product_name,
+                            ),
+                        ]);
+                    }
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Validate Simple Product Stock
+                    |--------------------------------------------------------------------------
+                    */
+
+                    $stock = (int) $product->stock;
+
+                    if ($stock < $quantity) {
+                        Log::warning(
+                            'CompleteOrder insufficient simple product stock.',
+                            [
+                                'order_id' => $order->id,
+                                'order_item_id' => $item->id,
+                                'product_id' => $product->id,
+                                'current_stock' => $stock,
+                                'requested_quantity' => $quantity,
+                            ],
+                        );
+
+                        throw ValidationException::withMessages([
+                            'order' => sprintf(
+                                'Only %d item(s) are available for "%s".',
+                                $stock,
+                                $item->product_name,
+                            ),
+                        ]);
+                    }
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Aggregate Simple Product Stock
+                    |--------------------------------------------------------------------------
+                    */
+
+                    $key = 'product:' . $product->id;
+
+                    if (isset($stockItems[$key])) {
+                        $stockItems[$key]['quantity'] += $quantity;
+                    } else {
+                        $stockItems[$key] = [
+                            'type' => 'simple',
+                            'product' => $product,
+                            'variant' => null,
                             'quantity' => $quantity,
+                            'product_name' => $item->product_name,
+                        ];
+                    }
+
+                    continue;
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | VARIABLE PRODUCT
+                |--------------------------------------------------------------------------
+                */
+
+                if ($product->isVariable()) {
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Variable Product Requires Variant
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if ($item->variant_id === null) {
+                        Log::error(
+                            'CompleteOrder variable product has no variant.',
+                            [
+                                'order_id' => $order->id,
+                                'order_item_id' => $item->id,
+                                'product_id' => $product->id,
+                            ],
+                        );
+
+                        throw ValidationException::withMessages([
+                            'order' => sprintf(
+                                'A variant is required for "%s".',
+                                $item->product_name,
+                            ),
+                        ]);
+                    }
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Lock Variant
+                    |--------------------------------------------------------------------------
+                    */
+
+                    $variant = ProductVariant::query()
+                        ->whereKey($item->variant_id)
+                        ->where('product_id', $product->id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (
+                        $variant === null
+                        || !$variant->isActive()
+                    ) {
+                        Log::error(
+                            'CompleteOrder variant is unavailable.',
+                            [
+                                'order_id' => $order->id,
+                                'order_item_id' => $item->id,
+                                'product_id' => $product->id,
+                                'variant_id' => $item->variant_id,
+                            ],
+                        );
+
+                        throw ValidationException::withMessages([
+                            'order' => sprintf(
+                                'The selected variant for "%s" is no longer available.',
+                                $item->product_name,
+                            ),
+                        ]);
+                    }
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Validate Variant Stock
+                    |--------------------------------------------------------------------------
+                    */
+
+                    $stock = (int) $variant->stock;
+
+                    if ($stock < $quantity) {
+                        Log::warning(
+                            'CompleteOrder insufficient variant stock.',
+                            [
+                                'order_id' => $order->id,
+                                'order_item_id' => $item->id,
+                                'product_id' => $product->id,
+                                'variant_id' => $variant->id,
+                                'current_stock' => $stock,
+                                'requested_quantity' => $quantity,
+                            ],
+                        );
+
+                        throw ValidationException::withMessages([
+                            'order' => sprintf(
+                                'Only %d item(s) are available for "%s".',
+                                $stock,
+                                $item->product_name,
+                            ),
+                        ]);
+                    }
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Aggregate Variant Stock
+                    |--------------------------------------------------------------------------
+                    */
+
+                    $key = 'variant:' . $variant->id;
+
+                    if (isset($stockItems[$key])) {
+                        $stockItems[$key]['quantity'] += $quantity;
+                    } else {
+                        $stockItems[$key] = [
+                            'type' => 'variable',
+                            'product' => $product,
+                            'variant' => $variant,
+                            'quantity' => $quantity,
+                            'product_name' => $item->product_name,
+                        ];
+                    }
+
+                    continue;
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | Invalid Product Type
+                |--------------------------------------------------------------------------
+                */
+
+                Log::error(
+                    'CompleteOrder found invalid product type.',
+                    [
+                        'order_id' => $order->id,
+                        'order_item_id' => $item->id,
+                        'product_id' => $product->id,
+                        'product_type' => $product->type,
+                    ],
+                );
+
+                throw ValidationException::withMessages([
+                    'order' => sprintf(
+                        'The product "%s" has an invalid product type.',
+                        $item->product_name,
+                    ),
+                ]);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Reduce Stock & Create Inventory Transactions
+            |--------------------------------------------------------------------------
+            */
+
+            foreach ($stockItems as $stockItem) {
+                $quantity = (int) $stockItem['quantity'];
+
+                /** @var Product $product */
+                $product = $stockItem['product'];
+
+                /** @var ProductVariant|null $variant */
+                $variant = $stockItem['variant'];
+
+                /*
+                |--------------------------------------------------------------------------
+                | SIMPLE PRODUCT STOCK
+                |--------------------------------------------------------------------------
+                */
+
+                if ($stockItem['type'] === 'simple') {
+                    $stockBefore = (int) $product->stock;
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Final Stock Check
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if ($stockBefore < $quantity) {
+                        throw ValidationException::withMessages([
+                            'order' => sprintf(
+                                'Only %d item(s) are available for "%s".',
+                                $stockBefore,
+                                $stockItem['product_name'],
+                            ),
+                        ]);
+                    }
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Reduce Product Stock
+                    |--------------------------------------------------------------------------
+                    */
+
+                    $product->decrement(
+                        'stock',
+                        $quantity,
+                    );
+
+                    $product->refresh();
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Inventory Transaction
+                    |--------------------------------------------------------------------------
+                    */
+
+                    InventoryTransaction::query()->create([
+                        'product_id' => $product->id,
+
+                        'product_variant_id' => null,
+
+                        'type' => 'sale',
+
+                        'quantity' => -$quantity,
+
+                        'reference' => $order->order_number,
+
+                        'note' => sprintf(
+                            'Stock reduced for order %s.',
+                            $order->order_number,
+                        ),
+                    ]);
+
+                    Log::info(
+                        'CompleteOrder reduced simple product stock.',
+                        [
+                            'order_id' => $order->id,
+                            'product_id' => $product->id,
+                            'stock_before' => $stockBefore,
+                            'quantity' => $quantity,
+                            'stock_after' => (int) $product->stock,
                         ],
                     );
 
@@ -247,169 +593,42 @@ final class CompleteOrder
 
                 /*
                 |--------------------------------------------------------------------------
-                | Lock Variant
+                | VARIABLE PRODUCT STOCK
                 |--------------------------------------------------------------------------
                 */
 
-                $variant = ProductVariant::query()
-                    ->whereKey($item->variant_id)
-                    ->lockForUpdate()
-                    ->first();
-
                 if ($variant === null) {
-                    Log::error(
-                        'CompleteOrder variant not found.',
-                        [
-                            'order_id' => $order->id,
-                            'order_item_id' => $item->id,
-                            'variant_id' => $item->variant_id,
-                        ],
-                    );
-
                     throw ValidationException::withMessages([
                         'order' => sprintf(
                             'The variant for "%s" could not be found.',
-                            $item->product_name,
+                            $stockItem['product_name'],
                         ),
                     ]);
                 }
 
+                $stockBefore = (int) $variant->stock;
+
                 /*
                 |--------------------------------------------------------------------------
-                | Validate Product Relationship
+                | Final Stock Check
                 |--------------------------------------------------------------------------
                 */
 
-                if (
-                    $item->product_id !== null
-                    && (int) $variant->product_id
-                    !== (int) $item->product_id
-                ) {
-                    Log::error(
-                        'CompleteOrder variant/product mismatch.',
-                        [
-                            'order_id' => $order->id,
-                            'order_item_id' => $item->id,
-                            'product_id' => $item->product_id,
-                            'variant_id' => $variant->id,
-                            'variant_product_id' =>
-                                $variant->product_id,
-                        ],
-                    );
-
+                if ($stockBefore < $quantity) {
                     throw ValidationException::withMessages([
                         'order' => sprintf(
-                            'The selected variant for "%s" is invalid.',
-                            $item->product_name,
+                            'Only %d item(s) are available for "%s".',
+                            $stockBefore,
+                            $stockItem['product_name'],
                         ),
                     ]);
                 }
 
                 /*
                 |--------------------------------------------------------------------------
-                | Validate Variant Status
+                | Reduce Variant Stock
                 |--------------------------------------------------------------------------
                 */
-
-                if (!$variant->isActive()) {
-                    Log::warning(
-                        'CompleteOrder variant is inactive.',
-                        [
-                            'order_id' => $order->id,
-                            'variant_id' => $variant->id,
-                            'product_id' => $variant->product_id,
-                        ],
-                    );
-
-                    throw ValidationException::withMessages([
-                        'order' => sprintf(
-                            'A variant in order %s is no longer available.',
-                            $order->order_number,
-                        ),
-                    ]);
-                }
-
-                /*
-                |--------------------------------------------------------------------------
-                | Aggregate Variant Quantity
-                |--------------------------------------------------------------------------
-                |
-                | Normally a variant appears only once in an order.
-                | Aggregating here makes stock deduction safe even if duplicate
-                | order item rows somehow exist.
-                |
-                */
-
-                if (isset($variants[$variant->id])) {
-                    $variants[$variant->id]['quantity'] += $quantity;
-                } else {
-                    $variants[$variant->id] = [
-                        'model' => $variant,
-                        'quantity' => $quantity,
-                    ];
-                }
-            }
-
-            /*
-            |--------------------------------------------------------------------------
-            | Validate & Reduce Variant Stock
-            |--------------------------------------------------------------------------
-            */
-
-            foreach ($variants as $variantData) {
-                /** @var ProductVariant $variant */
-                $variant = $variantData['model'];
-
-                $quantity = (int) $variantData['quantity'];
-
-                $currentStock = (int) $variant->stock;
-
-                /*
-                |--------------------------------------------------------------------------
-                | Validate Stock
-                |--------------------------------------------------------------------------
-                */
-
-                if ($currentStock < $quantity) {
-                    Log::warning(
-                        'CompleteOrder insufficient stock.',
-                        [
-                            'order_id' => $order->id,
-                            'variant_id' => $variant->id,
-                            'current_stock' => $currentStock,
-                            'requested_quantity' => $quantity,
-                        ],
-                    );
-
-                    throw ValidationException::withMessages([
-                        'order' => sprintf(
-                            'Insufficient stock for the variant in "%s".',
-                            $order->items
-                                ->firstWhere(
-                                    'variant_id',
-                                    $variant->id,
-                                )
-                                ?->product_name
-                            ?? 'this product',
-                        ),
-                    ]);
-                }
-
-                /*
-                |--------------------------------------------------------------------------
-                | Reduce Stock
-                |--------------------------------------------------------------------------
-                */
-
-                Log::info(
-                    'CompleteOrder reducing variant stock.',
-                    [
-                        'order_id' => $order->id,
-                        'variant_id' => $variant->id,
-                        'stock_before' => $currentStock,
-                        'quantity' => $quantity,
-                    ],
-                );
 
                 $variant->decrement(
                     'stock',
@@ -418,12 +637,36 @@ final class CompleteOrder
 
                 $variant->refresh();
 
+                /*
+                |--------------------------------------------------------------------------
+                | Inventory Transaction
+                |--------------------------------------------------------------------------
+                */
+
+                InventoryTransaction::query()->create([
+                    'product_id' => $product->id,
+
+                    'product_variant_id' => $variant->id,
+
+                    'type' => 'sale',
+
+                    'quantity' => -$quantity,
+
+                    'reference' => $order->order_number,
+
+                    'note' => sprintf(
+                        'Stock reduced for order %s.',
+                        $order->order_number,
+                    ),
+                ]);
+
                 Log::info(
-                    'CompleteOrder variant stock reduced.',
+                    'CompleteOrder reduced variant stock.',
                     [
                         'order_id' => $order->id,
+                        'product_id' => $product->id,
                         'variant_id' => $variant->id,
-                        'stock_before' => $currentStock,
+                        'stock_before' => $stockBefore,
                         'quantity' => $quantity,
                         'stock_after' => (int) $variant->stock,
                     ],

@@ -6,6 +6,8 @@ namespace App\Actions\Order;
 
 use App\Models\Cart;
 use App\Models\Order;
+use App\Models\Product;
+use App\Models\ProductVariant;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -66,13 +68,34 @@ final class CreateOrder
             $shippingCents = 0;
 
             foreach ($cart->items as $cartItem) {
-                $product = $cartItem->product;
+                /*
+                |--------------------------------------------------------------------------
+                | Validate Quantity
+                |--------------------------------------------------------------------------
+                */
+
+                $quantity = (int) $cartItem->quantity;
+
+                if ($quantity < 1) {
+                    throw ValidationException::withMessages([
+                        'cart' => 'Invalid cart quantity.',
+                    ]);
+                }
 
                 /*
                 |--------------------------------------------------------------------------
-                | Product Validation
+                | Resolve & Lock Product
                 |--------------------------------------------------------------------------
+                |
+                | Simple products store their stock directly on products.
+                | We therefore lock the product row during checkout validation.
+                |
                 */
+
+                $product = Product::query()
+                    ->whereKey($cartItem->product_id)
+                    ->lockForUpdate()
+                    ->first();
 
                 if (
                     $product === null
@@ -85,19 +108,100 @@ final class CreateOrder
 
                 /*
                 |--------------------------------------------------------------------------
-                | Variant Validation
+                | Resolve Cart Variant
                 |--------------------------------------------------------------------------
                 */
 
                 $variant = $cartItem->variant;
 
-                if ($variant !== null) {
+                /*
+                |--------------------------------------------------------------------------
+                | SIMPLE PRODUCT
+                |--------------------------------------------------------------------------
+                |
+                | Simple product:
+                |
+                | products.stock = actual stock
+                | variant_id = NULL
+                |
+                */
+
+                if ($product->isSimple()) {
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Simple Product Must Not Have Variant
+                    |--------------------------------------------------------------------------
+                    */
+
                     if (
-                        $variant->product_id !== $product->id
-                        || !$variant->isActive()
+                        $cartItem->variant_id !== null
+                        || $variant !== null
                     ) {
                         throw ValidationException::withMessages([
-                            'cart' => 'A selected product variant is no longer available.',
+                            'cart' => sprintf(
+                                'The cart item for "%s" contains an invalid variant.',
+                                $product->name,
+                            ),
+                        ]);
+                    }
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Validate Simple Product Stock
+                    |--------------------------------------------------------------------------
+                    */
+
+                    $productStock = (int) $product->stock;
+
+                    if ($productStock < 1) {
+                        throw ValidationException::withMessages([
+                            'cart' => sprintf(
+                                '"%s" is currently out of stock.',
+                                $product->name,
+                            ),
+                        ]);
+                    }
+
+                    if ($quantity > $productStock) {
+                        throw ValidationException::withMessages([
+                            'cart' => sprintf(
+                                'Only %d item(s) are available for "%s".',
+                                $productStock,
+                                $product->name,
+                            ),
+                        ]);
+                    }
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | VARIABLE PRODUCT
+                |--------------------------------------------------------------------------
+                |
+                | Variable product:
+                |
+                | products.stock = 0 / not used
+                | product_variants.stock = actual stock
+                | variant_id = required
+                |
+                */
+
+                elseif ($product->isVariable()) {
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Variable Product Requires Variant
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (
+                        $cartItem->variant_id === null
+                        || $variant === null
+                    ) {
+                        throw ValidationException::withMessages([
+                            'cart' => sprintf(
+                                'Please select a variant for "%s".',
+                                $product->name,
+                            ),
                         ]);
                     }
 
@@ -107,8 +211,9 @@ final class CreateOrder
                     |--------------------------------------------------------------------------
                     */
 
-                    $variant = $variant->newQuery()
+                    $variant = ProductVariant::query()
                         ->whereKey($variant->id)
+                        ->where('product_id', $product->id)
                         ->lockForUpdate()
                         ->first();
 
@@ -117,23 +222,22 @@ final class CreateOrder
                         || !$variant->isActive()
                     ) {
                         throw ValidationException::withMessages([
-                            'cart' => 'A selected product variant is no longer available.',
-                        ]);
-                    }
-
-                    if ($variant->product_id !== $product->id) {
-                        throw ValidationException::withMessages([
-                            'cart' => 'The selected product variant is invalid.',
+                            'cart' => sprintf(
+                                'The selected variant for "%s" is no longer available.',
+                                $product->name,
+                            ),
                         ]);
                     }
 
                     /*
                     |--------------------------------------------------------------------------
-                    | Validate Stock
+                    | Validate Variant Stock
                     |--------------------------------------------------------------------------
                     */
 
-                    if ($variant->stock < 1) {
+                    $variantStock = (int) $variant->stock;
+
+                    if ($variantStock < 1) {
                         throw ValidationException::withMessages([
                             'cart' => sprintf(
                                 '"%s" is currently out of stock.',
@@ -142,11 +246,11 @@ final class CreateOrder
                         ]);
                     }
 
-                    if ($cartItem->quantity > $variant->stock) {
+                    if ($quantity > $variantStock) {
                         throw ValidationException::withMessages([
                             'cart' => sprintf(
                                 'Only %d item(s) are available for "%s".',
-                                $variant->stock,
+                                $variantStock,
                                 $product->name,
                             ),
                         ]);
@@ -155,16 +259,14 @@ final class CreateOrder
 
                 /*
                 |--------------------------------------------------------------------------
-                | Validate Quantity
+                | Invalid Product Type
                 |--------------------------------------------------------------------------
                 */
 
-                $quantity = (int) $cartItem->quantity;
-
-                if ($quantity < 1) {
+                else {
                     throw ValidationException::withMessages([
                         'cart' => sprintf(
-                            'Invalid quantity for "%s".',
+                            'The product "%s" has an invalid product type.',
                             $product->name,
                         ),
                     ]);
@@ -176,10 +278,9 @@ final class CreateOrder
                 |--------------------------------------------------------------------------
                 */
 
-                $unitPrice = (float) (
-                    $variant?->price
-                    ?? $product->price
-                );
+                $unitPrice = $product->isVariable()
+                    ? (float) $variant->price
+                    : (float) $product->price;
 
                 if (
                     !is_finite($unitPrice)
@@ -230,17 +331,6 @@ final class CreateOrder
                 |
                 | Shipping is charged once per cart line.
                 |
-                | Example:
-                |
-                | Product × 5
-                | shipping_cost = $10
-                |
-                | Shipping = $10
-                |
-                | NOT:
-                |
-                | $10 × 5 = $50
-                |
                 */
 
                 $itemShippingCost = (float) (
@@ -273,11 +363,17 @@ final class CreateOrder
 
                 $items->push([
                     'cart_item' => $cartItem,
+
                     'product' => $product,
+
                     'variant' => $variant,
+
                     'quantity' => $quantity,
+
                     'unit_price_cents' => $unitPriceCents,
+
                     'line_total_cents' => $lineTotalCents,
+
                     'shipping_cost_cents' => $itemShippingCents,
                 ]);
             }
@@ -299,13 +395,8 @@ final class CreateOrder
             | Validate Shipping
             |--------------------------------------------------------------------------
             |
-            | Shipping is calculated directly from the current products.
-            |
-            | We intentionally do NOT use:
-            |
-            | $totals['shipping']
-            |
-            | because order creation is the final server-side pricing boundary.
+            | Shipping is calculated directly from current products.
+            | We do not trust client-provided shipping.
             |
             */
 
@@ -573,9 +664,6 @@ final class CreateOrder
                 |--------------------------------------------------------------------------
                 | Discounted Unit Price
                 |--------------------------------------------------------------------------
-                |
-                | Order item unit_price stores the discounted unit value.
-                |
                 */
 
                 $quantity = (int) $item['quantity'];
@@ -599,19 +687,31 @@ final class CreateOrder
 
                 /*
                 |--------------------------------------------------------------------------
-                | Product Image
+                | Product Image Snapshot
                 |--------------------------------------------------------------------------
+                |
+                | Variable product:
+                |     1. Variant image
+                |     2. Product thumbnail
+                |     3. Primary gallery image
+                |
+                | Simple product:
+                |     1. Product thumbnail
+                |     2. Primary gallery image
+                |
+                | The final image is stored in order_items.image so the
+                | historical order does not depend on the current product image.
+                |
                 */
 
-                $image = $item['variant']?->image;
-
-                if ($image === null) {
-                    $image = $item['product']
+                $image = $item['variant']?->image
+                    ?? $item['product']->thumbnail
+                    ?? $item['product']
                         ->images
                         ->whereNull('variant_id')
                         ->sortByDesc('is_primary')
+                        ->sortBy('sort_order')
                         ->first()?->image;
-                }
 
                 /*
                 |--------------------------------------------------------------------------
@@ -619,10 +719,25 @@ final class CreateOrder
                 |--------------------------------------------------------------------------
                 */
 
-                $shippingCost =
-                    $this->fromCents(
-                        (int) $item['shipping_cost_cents'],
-                    );
+                $shippingCost = $this->fromCents(
+                    (int) $item['shipping_cost_cents'],
+                );
+
+                /*
+                |--------------------------------------------------------------------------
+                | SKU Snapshot
+                |--------------------------------------------------------------------------
+                |
+                | Simple product:
+                |     product.sku
+                |
+                | Variable product:
+                |     variant.sku
+                |
+                */
+
+                $sku = $item['variant']?->sku
+                    ?? $item['product']->sku;
 
                 /*
                 |--------------------------------------------------------------------------
@@ -637,7 +752,7 @@ final class CreateOrder
 
                     'product_name' => $item['product']->name,
 
-                    'sku' => $item['variant']?->sku,
+                    'sku' => $sku,
 
                     'image' => $image,
 
@@ -670,10 +785,6 @@ final class CreateOrder
             |--------------------------------------------------------------------------
             | Final Shipping Validation
             |--------------------------------------------------------------------------
-            |
-            | Verify the order-level shipping equals the sum of all
-            | order-item shipping snapshots.
-            |
             */
 
             $orderItemShippingCents = $items->sum(

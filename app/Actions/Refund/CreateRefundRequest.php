@@ -16,9 +16,16 @@ final class CreateRefundRequest
     /**
      * Create a new refund request or reuse a previously rejected request.
      *
-     * One refund request is allowed per order.
-     * A rejected request can be submitted again by reusing
-     * the existing refund request row.
+     * Current refund architecture:
+     *
+     * - One refund request is allowed per order.
+     * - Shipping charges are non-refundable.
+     * - The customer requests the full remaining refundable amount.
+     * - A rejected request can be submitted again.
+     * - Partial item-level refunds are not supported by this action.
+     *
+     * Stock restoration is therefore handled as a full-order stock
+     * restoration after Stripe successfully completes the refund.
      */
     public function execute(
         Order $order,
@@ -26,29 +33,49 @@ final class CreateRefundRequest
         array $data,
     ): RefundRequest {
         return DB::transaction(
-            function () use ($order, $user, $data): RefundRequest {
+            function () use (
+                $order,
+                $user,
+                $data,
+            ): RefundRequest {
                 /*
-                 * Lock the order to prevent concurrent refund requests.
-                 */
+                |--------------------------------------------------------------------------
+                | Lock Order
+                |--------------------------------------------------------------------------
+                |
+                | Prevent concurrent refund requests for the same order.
+                |
+                */
+
                 $order = Order::query()
                     ->whereKey($order->id)
                     ->lockForUpdate()
                     ->firstOrFail();
 
                 /*
-                 * Make sure the authenticated user owns the order.
-                 */
-                if ($order->user_id !== $user->id) {
+                |--------------------------------------------------------------------------
+                | Verify Order Ownership
+                |--------------------------------------------------------------------------
+                */
+
+                if (
+                    $order->user_id === null
+                    || $order->user_id !== $user->id
+                ) {
                     throw new RuntimeException(
                         'You are not authorized to request a refund for this order.',
                     );
                 }
 
                 /*
-                 * Refund eligibility is based only on payment status.
-                 *
-                 * Order status does not restrict refund requests.
-                 */
+                |--------------------------------------------------------------------------
+                | Validate Payment Status
+                |--------------------------------------------------------------------------
+                |
+                | Refund eligibility is based on payment status.
+                |
+                */
+
                 if (
                     $order->payment_status
                     !== Order::PAYMENT_STATUS_PAID
@@ -59,24 +86,71 @@ final class CreateRefundRequest
                 }
 
                 /*
-                 * Calculate the amount that has already been
-                 * successfully refunded.
-                 */
-                $alreadyRefunded = (float) $order->refunds()
-                    ->where(
-                        'status',
-                        Refund::STATUS_SUCCEEDED,
-                    )
-                    ->sum('amount');
+                |--------------------------------------------------------------------------
+                | Validate Order Total
+                |--------------------------------------------------------------------------
+                */
+
+                $orderTotal = round(
+                    (float) $order->total,
+                    2,
+                );
+
+                $shippingAmount = round(
+                    (float) $order->shipping,
+                    2,
+                );
+
+                if (
+                    $orderTotal <= 0
+                    || $shippingAmount < 0
+                ) {
+                    throw new RuntimeException(
+                        'The order contains invalid refund amounts.',
+                    );
+                }
 
                 /*
-                 * Shipping is non-refundable.
-                 */
+                |--------------------------------------------------------------------------
+                | Calculate Successfully Refunded Amount
+                |--------------------------------------------------------------------------
+                |
+                | Only successful refunds reduce the remaining refundable
+                | amount.
+                |
+                */
+
+                $alreadyRefunded = round(
+                    (float) $order->refunds()
+                        ->where(
+                            'status',
+                            Refund::STATUS_SUCCEEDED,
+                        )
+                        ->sum('amount'),
+                    2,
+                );
+
+                /*
+                |--------------------------------------------------------------------------
+                | Calculate Remaining Refundable Amount
+                |--------------------------------------------------------------------------
+                |
+                | Shipping is intentionally excluded from the refundable
+                | amount.
+                |
+                | refundable =
+                |
+                | order total
+                | - shipping
+                | - successfully refunded amount
+                |
+                */
+
                 $refundableAmount = max(
                     0,
                     round(
-                        (float) $order->total
-                        - (float) $order->shipping
+                        $orderTotal
+                        - $shippingAmount
                         - $alreadyRefunded,
                         2,
                     ),
@@ -89,23 +163,67 @@ final class CreateRefundRequest
                 }
 
                 /*
-                 * One refund request per order.
-                 *
-                 * Lock the existing request so two simultaneous
-                 * requests cannot modify it at the same time.
-                 */
+                |--------------------------------------------------------------------------
+                | Validate Refund Reason
+                |--------------------------------------------------------------------------
+                */
+
+                $reason = trim(
+                    (string) ($data['reason'] ?? ''),
+                );
+
+                if ($reason === '') {
+                    throw new RuntimeException(
+                        'A refund reason is required.',
+                    );
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | Optional Customer Message
+                |--------------------------------------------------------------------------
+                */
+
+                $message = isset($data['message'])
+                    ? trim(
+                        (string) $data['message'],
+                    )
+                    : null;
+
+                if ($message === '') {
+                    $message = null;
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | Find Existing Refund Request
+                |--------------------------------------------------------------------------
+                |
+                | One refund request is allowed per order.
+                |
+                */
+
                 $refundRequest = RefundRequest::query()
-                    ->where('order_id', $order->id)
+                    ->where(
+                        'order_id',
+                        $order->id,
+                    )
                     ->lockForUpdate()
                     ->first();
 
                 /*
-                 * Existing refund request found.
-                 */
+                |--------------------------------------------------------------------------
+                | Existing Refund Request
+                |--------------------------------------------------------------------------
+                */
+
                 if ($refundRequest !== null) {
                     /*
-                     * A pending request is already under review.
-                     */
+                    |--------------------------------------------------------------------------
+                    | Pending
+                    |--------------------------------------------------------------------------
+                    */
+
                     if (
                         $refundRequest->status
                         === RefundRequest::STATUS_PENDING
@@ -116,8 +234,14 @@ final class CreateRefundRequest
                     }
 
                     /*
-                     * An approved request cannot be submitted again.
-                     */
+                    |--------------------------------------------------------------------------
+                    | Approved
+                    |--------------------------------------------------------------------------
+                    |
+                    | The approved request should be processed by RefundOrder.
+                    |
+                    */
+
                     if (
                         $refundRequest->status
                         === RefundRequest::STATUS_APPROVED
@@ -128,25 +252,46 @@ final class CreateRefundRequest
                     }
 
                     /*
-                     * A rejected request can be submitted again.
-                     *
-                     * Reuse the same database row instead of creating
-                     * another refund request for this order.
-                     */
+                    |--------------------------------------------------------------------------
+                    | Rejected
+                    |--------------------------------------------------------------------------
+                    |
+                    | Reuse the same row rather than creating another request.
+                    |
+                    */
+
                     if (
                         $refundRequest->status
                         === RefundRequest::STATUS_REJECTED
                     ) {
                         $refundRequest->update([
                             'requested_by' => $user->id,
+
+                            /*
+                             * Always request the full remaining refundable
+                             * amount.
+                             */
                             'amount' => $refundableAmount,
+
+                            /*
+                             * Admin deduction must be reset when a customer
+                             * submits a rejected request again.
+                             */
                             'deduction_amount' => 0,
+
                             'deduction_reason' => null,
-                            'reason' => $data['reason'],
-                            'message' => $data['message'] ?? null,
-                            'status' => RefundRequest::STATUS_PENDING,
+
+                            'reason' => $reason,
+
+                            'message' => $message,
+
+                            'status' =>
+                                RefundRequest::STATUS_PENDING,
+
                             'approved_by' => null,
+
                             'approved_at' => null,
+
                             'admin_note' => null,
                         ]);
 
@@ -154,27 +299,50 @@ final class CreateRefundRequest
                     }
 
                     /*
-                     * Safety fallback for any unexpected status.
-                     */
+                    |--------------------------------------------------------------------------
+                    | Unexpected Status
+                    |--------------------------------------------------------------------------
+                    */
+
                     throw new RuntimeException(
                         'A refund request already exists for this order.',
                     );
                 }
 
                 /*
-                 * First refund request for this order.
-                 */
+                |--------------------------------------------------------------------------
+                | Create First Refund Request
+                |--------------------------------------------------------------------------
+                */
+
                 return RefundRequest::query()->create([
                     'order_id' => $order->id,
+
                     'requested_by' => $user->id,
+
+                    /*
+                     * Full remaining refundable amount.
+                     */
                     'amount' => $refundableAmount,
+
+                    /*
+                     * Admin can apply a deduction later during approval.
+                     */
                     'deduction_amount' => 0,
+
                     'deduction_reason' => null,
-                    'reason' => $data['reason'],
-                    'message' => $data['message'] ?? null,
-                    'status' => RefundRequest::STATUS_PENDING,
+
+                    'reason' => $reason,
+
+                    'message' => $message,
+
+                    'status' =>
+                        RefundRequest::STATUS_PENDING,
+
                     'approved_by' => null,
+
                     'approved_at' => null,
+
                     'admin_note' => null,
                 ]);
             },

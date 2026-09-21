@@ -30,7 +30,6 @@
 
         <div class="checkout-success-page__container">
 
-
             {{-- =========================================================
                 SUCCESS / PENDING STATUS
             ========================================================== --}}
@@ -82,14 +81,12 @@
                                 stroke="currentColor"
                                 stroke-width="2"
                                 stroke-linecap="round"
-                                stroke-linejoin="round"
                             />
                         </svg>
 
                     </div>
 
                 @endif
-
 
                 <span class="checkout-success-page__status-badge">
 
@@ -214,7 +211,6 @@
 
                         </div>
 
-
                         <span class="checkout-success-page__item-count">
 
                             {{ $totalItemQuantity }}
@@ -236,19 +232,40 @@
                             @php
                                 /*
                                 |--------------------------------------------------------------------------
-                                | Item Shipping Cost
+                                | Product Type
                                 |--------------------------------------------------------------------------
                                 |
-                                | This is the shipping cost snapshot saved
+                                | variant_id is nullable:
+                                |
+                                | null      = simple product
+                                | not null  = variable product variant
+                                |
+                                */
+
+                                $isVariableItem =
+                                    $item->variant_id !== null;
+
+                                $isSimpleItem =
+                                    $item->variant_id === null;
+
+
+                                /*
+                                |--------------------------------------------------------------------------
+                                | Item Shipping
+                                |--------------------------------------------------------------------------
+                                |
+                                | This is the shipping snapshot saved
                                 | on the order item.
                                 |
-                                | It is NOT multiplied by quantity.
+                                | It is already the line shipping amount,
+                                | so do not multiply it by quantity.
                                 |
                                 */
 
                                 $itemShippingCost = (float) (
                                     $item->shipping_cost ?? 0
                                 );
+
 
                                 /*
                                 |--------------------------------------------------------------------------
@@ -258,6 +275,7 @@
 
                                 $itemUnitPrice = (float) $item->unit_price;
 
+
                                 /*
                                 |--------------------------------------------------------------------------
                                 | Item Line Total
@@ -265,12 +283,54 @@
                                 */
 
                                 $itemLineTotal = (float) $item->line_total;
+
+
+                                /*
+                                |--------------------------------------------------------------------------
+                                | Item Image
+                                |--------------------------------------------------------------------------
+                                |
+                                | Order item image is a snapshot.
+                                | Do not resolve the image from the current
+                                | product/variant because the product can
+                                | change after the order is created.
+                                |
+                                */
+
+                                $itemImage = $item->image;
+
+
+                                /*
+                                |--------------------------------------------------------------------------
+                                | Image URL
+                                |--------------------------------------------------------------------------
+                                */
+
+                                $itemImageUrl = null;
+
+                                if (filled($itemImage)) {
+                                    $itemImage = trim((string) $itemImage);
+
+                                    if (
+                                        str_starts_with($itemImage, 'http://') ||
+                                        str_starts_with($itemImage, 'https://') ||
+                                        str_starts_with($itemImage, '//')
+                                    ) {
+                                        $itemImageUrl = $itemImage;
+                                    } else {
+                                        $itemImageUrl = asset(
+                                            ltrim($itemImage, '/')
+                                        );
+                                    }
+                                }
                             @endphp
 
 
                             <div
                                 class="checkout-success-page__item"
                                 data-order-item="{{ $item->id }}"
+                                data-product-type="{{ $isVariableItem ? 'variable' : 'simple' }}"
+                                data-variant-id="{{ $item->variant_id ?? '' }}"
                                 data-shipping-cost="{{ $itemShippingCost }}"
                             >
 
@@ -280,11 +340,12 @@
                                 ================================================== --}}
                                 <div class="checkout-success-page__item-image">
 
-                                    @if($item->image)
+                                    @if($itemImageUrl)
 
                                         <img
-                                            src="{{ asset($item->image) }}"
+                                            src="{{ $itemImageUrl }}"
                                             alt="{{ $item->product_name }}"
+                                            loading="lazy"
                                         >
 
                                     @else
@@ -342,7 +403,22 @@
                                     </h3>
 
 
-                                    @if($item->sku)
+                                    {{-- =============================================
+                                        PRODUCT TYPE
+                                    ============================================== --}}
+                                    @if($isVariableItem)
+
+                                        <span class="checkout-success-page__item-type">
+                                            Variant Product
+                                        </span>
+
+                                    @endif
+
+
+                                    {{-- =============================================
+                                        SKU
+                                    ============================================== --}}
+                                    @if(filled($item->sku))
 
                                         <span class="checkout-success-page__item-sku">
                                             SKU: {{ $item->sku }}
@@ -351,14 +427,17 @@
                                     @endif
 
 
+                                    {{-- =============================================
+                                        QUANTITY
+                                    ============================================== --}}
                                     <span class="checkout-success-page__item-quantity">
                                         Qty: {{ $item->quantity }}
                                     </span>
 
 
-                                    {{-- =================================================
-                                        ITEM SHIPPING
-                                    ================================================== --}}
+                                    {{-- =============================================
+                                        SHIPPING
+                                    ============================================== --}}
                                     @if($itemShippingCost > 0)
 
                                         <span class="checkout-success-page__item-shipping">
@@ -450,7 +529,6 @@
                                         ${{ number_format($itemLineTotal, 2) }}
                                     </strong>
 
-
                                     @if($item->quantity > 1)
 
                                         <span>
@@ -507,9 +585,7 @@
                         @endif
 
 
-                        {{-- =================================================
-                            SHIPPING
-                        ================================================== --}}
+                        {{-- Shipping --}}
                         <div class="checkout-success-page__total-row">
 
                             <span>
@@ -615,7 +691,6 @@
                                         viewBox="0 0 24 24"
                                         aria-hidden="true"
                                     >
-
                                         <path
                                             d="M20 6 9 17l-5-5"
                                             fill="none"
@@ -624,7 +699,6 @@
                                             stroke-linecap="round"
                                             stroke-linejoin="round"
                                         />
-
                                     </svg>
 
                                 @else
@@ -669,7 +743,6 @@
                                     @endif
 
                                 </strong>
-
 
                                 <span>
 
@@ -727,7 +800,7 @@
                             </span>
 
 
-                            @if($order->apartment)
+                            @if(filled($order->apartment))
 
                                 <span>
                                     {{ $order->apartment }}
@@ -740,7 +813,7 @@
 
                                 {{ $order->city }}
 
-                                @if($order->state)
+                                @if(filled($order->state))
                                     , {{ $order->state }}
                                 @endif
 
@@ -754,9 +827,13 @@
                             </span>
 
 
-                            <span>
-                                {{ $order->phone }}
-                            </span>
+                            @if(filled($order->phone))
+
+                                <span>
+                                    {{ $order->phone }}
+                                </span>
+
+                            @endif
 
                         </address>
 
@@ -819,7 +896,6 @@
                 >
 
                     <span class="checkout-success-page__pending-spinner"></span>
-
 
                     <div>
 
@@ -903,23 +979,23 @@
                         }
 
 
-                        try {
+                        const showCopiedState =
+                            function () {
 
-                            await navigator.clipboard.writeText(
-                                orderNumber
-                            );
-
-
-                            const label =
-                                copyButton.querySelector(
-                                    "span"
-                                );
+                                const label =
+                                    copyButton.querySelector(
+                                        "span"
+                                    );
 
 
-                            if (label) {
+                                if (!label) {
+                                    return;
+                                }
+
 
                                 const originalText =
                                     label.textContent;
+
 
                                 label.textContent =
                                     "Copied";
@@ -935,21 +1011,56 @@
                                     1800
                                 );
 
-                            }
+                            };
 
+
+                        const showToast =
+                            function () {
+
+                                if (
+                                    window.AppToast &&
+                                    typeof window.AppToast.fire ===
+                                    "function"
+                                ) {
+
+                                    window.AppToast.fire({
+                                        icon: "success",
+                                        title: "Order number copied.",
+                                    });
+
+                                }
+
+                            };
+
+
+                        try {
+
+                            /*
+                            |--------------------------------------------------------------------------
+                            | Modern Clipboard API
+                            |--------------------------------------------------------------------------
+                            */
 
                             if (
-                                window.AppToast &&
-                                typeof window.AppToast.fire ===
+                                navigator.clipboard &&
+                                typeof navigator.clipboard.writeText ===
                                 "function"
                             ) {
 
-                                window.AppToast.fire({
-                                    icon: "success",
-                                    title: "Order number copied.",
-                                });
+                                await navigator.clipboard.writeText(
+                                    orderNumber
+                                );
 
+                                showCopiedState();
+                                showToast();
+
+                                return;
                             }
+
+
+                            throw new Error(
+                                "Clipboard API is unavailable."
+                            );
 
                         } catch (error) {
 
@@ -978,6 +1089,24 @@
                             temporaryInput.style.position =
                                 "fixed";
 
+                            temporaryInput.style.top =
+                                "0";
+
+                            temporaryInput.style.left =
+                                "0";
+
+                            temporaryInput.style.width =
+                                "1px";
+
+                            temporaryInput.style.height =
+                                "1px";
+
+                            temporaryInput.style.padding =
+                                "0";
+
+                            temporaryInput.style.border =
+                                "0";
+
                             temporaryInput.style.opacity =
                                 "0";
 
@@ -987,56 +1116,27 @@
                             );
 
 
+                            temporaryInput.focus();
                             temporaryInput.select();
 
 
                             try {
 
-                                document.execCommand(
-                                    "copy"
-                                );
-
-
-                                const label =
-                                    copyButton.querySelector(
-                                        "span"
+                                const copied =
+                                    document.execCommand(
+                                        "copy"
                                     );
 
 
-                                if (label) {
-
-                                    const originalText =
-                                        label.textContent;
-
-                                    label.textContent =
-                                        "Copied";
-
-
-                                    window.setTimeout(
-                                        function () {
-
-                                            label.textContent =
-                                                originalText;
-
-                                        },
-                                        1800
+                                if (!copied) {
+                                    throw new Error(
+                                        "Copy command failed."
                                     );
-
                                 }
 
 
-                                if (
-                                    window.AppToast &&
-                                    typeof window.AppToast.fire ===
-                                    "function"
-                                ) {
-
-                                    window.AppToast.fire({
-                                        icon: "success",
-                                        title: "Order number copied.",
-                                    });
-
-                                }
+                                showCopiedState();
+                                showToast();
 
                             } catch (fallbackError) {
 

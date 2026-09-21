@@ -17,6 +17,7 @@ final class Product extends Model
         'name',
         'slug',
         'sku',
+        'type',
         'source',
         'thumbnail',
         'video_url',
@@ -26,6 +27,7 @@ final class Product extends Model
         'compare_price',
         'cost_price',
         'shipping_cost',
+        'stock',
         'status',
         'featured',
         'sort_order',
@@ -41,11 +43,18 @@ final class Product extends Model
             'compare_price' => 'decimal:2',
             'cost_price' => 'decimal:2',
             'shipping_cost' => 'decimal:2',
+            'stock' => 'integer',
             'sort_order' => 'integer',
             'status' => 'boolean',
             'featured' => 'boolean',
         ];
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relationships
+    |--------------------------------------------------------------------------
+    */
 
     public function brand(): BelongsTo
     {
@@ -85,15 +94,51 @@ final class Product extends Model
         )->withTimestamps();
     }
 
-    public function scopeActive(Builder $query): Builder
-    {
-        return $query->where('status', true);
+    /*
+    |--------------------------------------------------------------------------
+    | Scopes
+    |--------------------------------------------------------------------------
+    */
+
+    public function scopeActive(
+        Builder $query,
+    ): Builder {
+        return $query->where(
+            'status',
+            true,
+        );
     }
 
-    public function scopeFeatured(Builder $query): Builder
-    {
-        return $query->where('featured', true);
+    public function scopeFeatured(
+        Builder $query,
+    ): Builder {
+        return $query->where(
+            'featured',
+            true,
+        );
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Product Type
+    |--------------------------------------------------------------------------
+    */
+
+    public function isSimple(): bool
+    {
+        return $this->type === 'simple';
+    }
+
+    public function isVariable(): bool
+    {
+        return $this->type === 'variable';
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Status
+    |--------------------------------------------------------------------------
+    */
 
     public function isActive(): bool
     {
@@ -104,6 +149,12 @@ final class Product extends Model
     {
         return $this->featured === true;
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Variants
+    |--------------------------------------------------------------------------
+    */
 
     public function hasVariants(): bool
     {

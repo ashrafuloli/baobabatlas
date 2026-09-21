@@ -17,6 +17,9 @@ final class PrepareCheckout
     /**
      * Prepare and validate the authenticated user's cart for checkout.
      *
+     * Simple products use products.stock.
+     * Variable products use product_variants.stock.
+     *
      * Shipping is calculated once per cart line using the product's
      * customer-facing shipping_cost. Quantity does not multiply shipping.
      *
@@ -122,11 +125,89 @@ final class PrepareCheckout
 
             /*
             |--------------------------------------------------------------------------
-            | Validate Variant
+            | Validate Product Type
             |--------------------------------------------------------------------------
+            |
+            | Simple:
+            |     variant_id must be NULL
+            |     stock comes from products.stock
+            |
+            | Variable:
+            |     variant_id is required
+            |     stock comes from product_variants.stock
+            |
             */
 
-            if ($variant !== null) {
+            if ($product->isSimple()) {
+                /*
+                |--------------------------------------------------------------------------
+                | Simple Product Must Not Have A Variant
+                |--------------------------------------------------------------------------
+                */
+
+                if (
+                    $item->variant_id !== null
+                    || $variant !== null
+                ) {
+                    throw ValidationException::withMessages([
+                        'cart' => sprintf(
+                            'The cart item for "%s" contains an invalid variant.',
+                            $product->name,
+                        ),
+                    ]);
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | Validate Simple Product Stock
+                |--------------------------------------------------------------------------
+                */
+
+                $productStock = (int) $product->stock;
+
+                if ($productStock < 1) {
+                    throw ValidationException::withMessages([
+                        'cart' => sprintf(
+                            '"%s" is currently out of stock.',
+                            $product->name,
+                        ),
+                    ]);
+                }
+
+                if ($quantity > $productStock) {
+                    throw ValidationException::withMessages([
+                        'cart' => sprintf(
+                            'Only %d item(s) of "%s" are available.',
+                            $productStock,
+                            $product->name,
+                        ),
+                    ]);
+                }
+            } elseif ($product->isVariable()) {
+                /*
+                |--------------------------------------------------------------------------
+                | Variable Product Must Have A Variant
+                |--------------------------------------------------------------------------
+                */
+
+                if (
+                    $item->variant_id === null
+                    || $variant === null
+                ) {
+                    throw ValidationException::withMessages([
+                        'cart' => sprintf(
+                            'Please select a variant for "%s".',
+                            $product->name,
+                        ),
+                    ]);
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | Validate Variant Relationship & Status
+                |--------------------------------------------------------------------------
+                */
+
                 if (
                     (int) $variant->product_id !== (int) $product->id
                     || !$variant->isActive()
@@ -139,7 +220,15 @@ final class PrepareCheckout
                     ]);
                 }
 
-                if ((int) $variant->stock < 1) {
+                /*
+                |--------------------------------------------------------------------------
+                | Validate Variant Stock
+                |--------------------------------------------------------------------------
+                */
+
+                $variantStock = (int) $variant->stock;
+
+                if ($variantStock < 1) {
                     throw ValidationException::withMessages([
                         'cart' => sprintf(
                             '"%s" is currently out of stock.',
@@ -148,15 +237,28 @@ final class PrepareCheckout
                     ]);
                 }
 
-                if ($quantity > (int) $variant->stock) {
+                if ($quantity > $variantStock) {
                     throw ValidationException::withMessages([
                         'cart' => sprintf(
                             'Only %d item(s) of "%s" are available.',
-                            (int) $variant->stock,
+                            $variantStock,
                             $product->name,
                         ),
                     ]);
                 }
+            } else {
+                /*
+                |--------------------------------------------------------------------------
+                | Invalid Product Type
+                |--------------------------------------------------------------------------
+                */
+
+                throw ValidationException::withMessages([
+                    'cart' => sprintf(
+                        'The product "%s" has an invalid product type.',
+                        $product->name,
+                    ),
+                ]);
             }
 
             /*
@@ -165,9 +267,21 @@ final class PrepareCheckout
             |--------------------------------------------------------------------------
             */
 
-            $unitPrice = $variant !== null
+            $unitPrice = $product->isVariable()
                 ? (float) $variant->price
                 : (float) $product->price;
+
+            if (
+                !is_finite($unitPrice)
+                || $unitPrice < 0
+            ) {
+                throw ValidationException::withMessages([
+                    'cart' => sprintf(
+                        'Invalid price for "%s".',
+                        $product->name,
+                    ),
+                ]);
+            }
 
             $itemTotal = round(
                 $unitPrice * $quantity,
@@ -182,6 +296,7 @@ final class PrepareCheckout
             | Shipping is charged once per cart line.
             |
             | Example:
+            |
             | Product A
             | Quantity: 5
             | Shipping: $10
@@ -230,17 +345,26 @@ final class PrepareCheckout
             $subtotal += $itemTotal;
 
             /*
+            |--------------------------------------------------------------------------
             | Important:
             | Shipping is per cart line, not per quantity.
+            |--------------------------------------------------------------------------
             */
+
             $shipping += $shippingCost;
 
             $totalQuantity += $quantity;
         }
 
-        $subtotal = round($subtotal, 2);
+        $subtotal = round(
+            $subtotal,
+            2,
+        );
 
-        $shipping = round($shipping, 2);
+        $shipping = round(
+            $shipping,
+            2,
+        );
 
         /*
         |--------------------------------------------------------------------------
@@ -331,7 +455,10 @@ final class PrepareCheckout
                         );
 
                         $discount = min(
-                            max(0.0, (float) $discount),
+                            max(
+                                0.0,
+                                (float) $discount,
+                            ),
                             $subtotal,
                         );
                     } catch (ValidationException) {
@@ -343,7 +470,10 @@ final class PrepareCheckout
             }
         }
 
-        $discount = round($discount, 2);
+        $discount = round(
+            $discount,
+            2,
+        );
 
         /*
         |--------------------------------------------------------------------------

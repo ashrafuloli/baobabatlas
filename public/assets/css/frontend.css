@@ -12006,7 +12006,7 @@ label {
   font-size: 11px;
   line-height: 1.2;
 }
-.order-details-page__item-quantity, .order-details-page__item-sku {
+.order-details-page__item-type, .order-details-page__item-quantity, .order-details-page__item-sku {
   display: block;
   color: #555555;
   font-size: 12px;
@@ -12626,6 +12626,32 @@ label {
   line-height: 1.6;
 }
 .order-details-page__refund-notice p strong {
+  color: #0D2B5A;
+  font-weight: 700;
+}
+.order-details-page__refund-confirmation {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-top: 18px;
+  padding: 12px 13px;
+  border-radius: 7px;
+  color: #555555;
+  background: rgba(255, 193, 7, 0.07);
+}
+.order-details-page__refund-confirmation i {
+  flex: 0 0 auto;
+  margin-top: 1px;
+  color: #FFC107;
+  font-size: 17px;
+  line-height: 1;
+}
+.order-details-page__refund-confirmation p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.order-details-page__refund-confirmation p strong {
   color: #0D2B5A;
   font-weight: 700;
 }

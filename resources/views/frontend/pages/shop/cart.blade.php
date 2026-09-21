@@ -183,6 +183,19 @@
 
                                         /*
                                         |--------------------------------------------------------------------------
+                                        | Product Type
+                                        |--------------------------------------------------------------------------
+                                        */
+
+                                        $isSimple =
+                                            $product->isSimple();
+
+                                        $isVariable =
+                                            $product->isVariable();
+
+
+                                        /*
+                                        |--------------------------------------------------------------------------
                                         | Unit Price
                                         |--------------------------------------------------------------------------
                                         */
@@ -190,6 +203,7 @@
                                         $unitPrice = $variant
                                             ? (float) $variant->price
                                             : (float) $product->price;
+
 
                                         /*
                                         |--------------------------------------------------------------------------
@@ -201,6 +215,7 @@
                                             $unitPrice *
                                             $cartItem->quantity;
 
+
                                         /*
                                         |--------------------------------------------------------------------------
                                         | Product Shipping Cost
@@ -210,6 +225,7 @@
                                         $itemShippingCost =
                                             (float) ($product->shipping_cost ?? 0);
 
+
                                         /*
                                         |--------------------------------------------------------------------------
                                         | Product Image
@@ -218,35 +234,43 @@
 
                                         $productImage = null;
 
-                                        if ($variant) {
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | Variable Product Variant Image
+                                        |--------------------------------------------------------------------------
+                                        */
+
+                                        if ($isVariable && $variant) {
 
                                             $productImage =
                                                 $variant->image;
 
-                                            if (!$productImage) {
-
-                                                $variantImage =
-                                                    $variant->images->first();
-
-                                                if ($variantImage) {
-
-                                                    $productImage =
-                                                        $variantImage->image;
-
-                                                }
-
-                                            }
-
                                         }
+
+
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | Product Image Fallback
+                                        |--------------------------------------------------------------------------
+                                        */
 
                                         if (!$productImage) {
 
                                             $productImage =
                                                 $product->images
                                                     ->whereNull('variant_id')
+                                                    ->sortByDesc('is_primary')
+                                                    ->sortBy('sort_order')
                                                     ->first()?->image;
 
                                         }
+
+
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | Product Thumbnail Fallback
+                                        |--------------------------------------------------------------------------
+                                        */
 
                                         if (!$productImage) {
 
@@ -255,11 +279,13 @@
 
                                         }
 
+
                                         $productImageUrl = $productImage
                                             ? asset($productImage)
                                             : asset(
                                                 'assets/img/products/placeholder.png'
                                             );
+
 
                                         /*
                                         |--------------------------------------------------------------------------
@@ -272,6 +298,7 @@
                                             $product->slug
                                         );
 
+
                                         /*
                                         |--------------------------------------------------------------------------
                                         | Category
@@ -281,23 +308,113 @@
                                         $category =
                                             $product->categories->first();
 
+
                                         /*
                                         |--------------------------------------------------------------------------
-                                        | Availability
+                                        | Product Availability
                                         |--------------------------------------------------------------------------
                                         */
 
                                         $isProductAvailable =
                                             $product->isActive();
 
-                                        $isVariantAvailable =
-                                            !$variant ||
-                                            $variant->isActive();
+
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | Variant Availability
+                                        |--------------------------------------------------------------------------
+                                        |
+                                        | Simple product:
+                                        |     variant MUST be null.
+                                        |
+                                        | Variable product:
+                                        |     variant MUST exist and be active.
+                                        |
+                                        */
+
+                                        $isVariantAvailable = true;
+
+                                        if ($isVariable) {
+
+                                            $isVariantAvailable =
+                                                $variant !== null &&
+                                                $variant->isActive();
+
+                                        } elseif ($isSimple) {
+
+                                            $isVariantAvailable =
+                                                $variant === null;
+
+                                        } else {
+
+                                            $isVariantAvailable = false;
+
+                                        }
+
+
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | Available Stock
+                                        |--------------------------------------------------------------------------
+                                        |
+                                        | Simple:
+                                        |     products.stock
+                                        |
+                                        | Variable:
+                                        |     product_variants.stock
+                                        |
+                                        */
+
+                                        $availableStock = 0;
+
+                                        if ($isSimple) {
+
+                                            $availableStock =
+                                                max(
+                                                    0,
+                                                    (int) $product->stock
+                                                );
+
+                                        } elseif (
+                                            $isVariable &&
+                                            $variant
+                                        ) {
+
+                                            $availableStock =
+                                                max(
+                                                    0,
+                                                    (int) $variant->stock
+                                                );
+
+                                        }
+
+
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | Cart Quantity
+                                        |--------------------------------------------------------------------------
+                                        */
+
+                                        $cartItemQuantity =
+                                            (int) $cartItem->quantity;
+
+
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | Stock Availability
+                                        |--------------------------------------------------------------------------
+                                        */
 
                                         $hasStock =
-                                            !$variant ||
-                                            $variant->stock >=
-                                            $cartItem->quantity;
+                                            $availableStock >=
+                                            $cartItemQuantity;
+
+
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | Final Availability
+                                        |--------------------------------------------------------------------------
+                                        */
 
                                         $isAvailable =
                                             $isProductAvailable &&
@@ -309,6 +426,9 @@
                                     <div
                                         class="cart-item {{ !$isAvailable ? 'is-unavailable' : '' }}"
                                         data-item-id="{{ $cartItem->id }}"
+                                        data-product-id="{{ $product->id }}"
+                                        data-product-type="{{ $product->type }}"
+                                        data-stock="{{ $availableStock }}"
                                         data-price="{{ number_format($unitPrice, 2, '.', '') }}"
                                         data-shipping-cost="{{ number_format($itemShippingCost, 2, '.', '') }}"
                                         data-update-url="{{ route('cart.items.update', $cartItem->id) }}"
@@ -365,7 +485,7 @@
                                                 Variant / SKU
                                             ===================================== --}}
 
-                                            @if ($variant)
+                                            @if ($isVariable && $variant)
 
                                                 <div class="cart-item__meta">
 
@@ -407,7 +527,7 @@
 
                                                 </div>
 
-                                            @elseif ($product->sku)
+                                            @elseif ($isSimple && $product->sku)
 
                                                 <div class="cart-item__meta">
 
@@ -442,20 +562,40 @@
 
                                                     @elseif (!$isVariantAvailable)
 
-                                                        <span>
-                                                            This variant is no longer available.
-                                                        </span>
+                                                        @if ($isVariable)
+
+                                                            <span>
+                                                                This variant is no longer available.
+                                                            </span>
+
+                                                        @else
+
+                                                            <span>
+                                                                This product has invalid variant data.
+                                                            </span>
+
+                                                        @endif
 
                                                     @elseif (!$hasStock)
 
-                                                        <span>
+                                                        @if ($availableStock <= 0)
 
-                                                            Only
-                                                            {{ $variant->stock }}
-                                                            {{ $variant->stock === 1 ? 'item' : 'items' }}
-                                                            available.
+                                                            <span>
+                                                                This product is currently out of stock.
+                                                            </span>
 
-                                                        </span>
+                                                        @else
+
+                                                            <span>
+
+                                                                Only
+                                                                {{ $availableStock }}
+                                                                {{ $availableStock === 1 ? 'item' : 'items' }}
+                                                                available.
+
+                                                            </span>
+
+                                                        @endif
 
                                                     @endif
 
@@ -489,9 +629,9 @@
                                                     <input
                                                         type="number"
                                                         class="quantity-input"
-                                                        value="{{ $cartItem->quantity }}"
+                                                        value="{{ $cartItemQuantity }}"
                                                         min="1"
-                                                        max="{{ $variant ? max(1, $variant->stock) : 999 }}"
+                                                        max="{{ $availableStock }}"
                                                         readonly
                                                         aria-label="Quantity"
                                                     >
@@ -501,7 +641,7 @@
                                                         type="button"
                                                         class="quantity-btn quantity-plus"
                                                         aria-label="Increase quantity"
-                                                        {{ !$isAvailable || ($variant && $cartItem->quantity >= $variant->stock) ? 'disabled' : '' }}
+                                                        {{ !$isAvailable || $cartItemQuantity >= $availableStock ? 'disabled' : '' }}
                                                     >
 
                                                         <i class="ri-add-line"></i>
@@ -1309,9 +1449,14 @@
 
                 const maxQuantity =
                     parseInt(
+                        item.dataset.stock,
+                        10
+                    ) ||
+                    parseInt(
                         input.max,
                         10
-                    ) || 999;
+                    ) ||
+                    0;
 
 
                 const isUnavailable =
@@ -1358,6 +1503,7 @@
 
                 const shouldDisableIncrease =
                     isUnavailable ||
+                    maxQuantity <= 0 ||
                     quantity >= maxQuantity;
 
 
@@ -1591,10 +1737,8 @@
             | Calculate Product Shipping
             |--------------------------------------------------------------------------
             |
-            | IMPORTANT:
-            |
-            | Shipping is per cart line/product.
-            | Quantity does not multiply shipping.
+            | Shipping is per cart line.
+            | Quantity does NOT multiply shipping.
             |
             */
 
@@ -2195,6 +2339,35 @@
                 }
 
 
+                /*
+                |--------------------------------------------------------------------------
+                | Client-side Stock Guard
+                |--------------------------------------------------------------------------
+                */
+
+                const availableStock =
+                    parseInt(
+                        item.dataset.stock,
+                        10
+                    ) || 0;
+
+
+                if (
+                    newQuantity < 1 ||
+                    newQuantity > availableStock
+                ) {
+
+                    showMessage(
+                        availableStock > 0
+                            ? `Only ${availableStock} item(s) are available.`
+                            : 'This product is currently out of stock.'
+                    );
+
+                    return;
+
+                }
+
+
                 item.dataset.quantityLoading =
                     'true';
 
@@ -2268,11 +2441,8 @@
 
                     /*
                     |--------------------------------------------------------------------------
-                    | Coupon
+                    | Backend may recalculate coupon.
                     |--------------------------------------------------------------------------
-                    |
-                    | Backend recalculates coupon.
-                    |
                     */
 
                     if (hasAppliedCoupon) {
@@ -2321,10 +2491,6 @@
                     |--------------------------------------------------------------------------
                     | Update Totals
                     |--------------------------------------------------------------------------
-                    |
-                    | Shipping is recalculated from
-                    | data-shipping-cost.
-                    |
                     */
 
                     updateTotals();
@@ -2532,9 +2698,14 @@
 
                     const maxQuantity =
                         parseInt(
+                            item.dataset.stock,
+                            10
+                        ) ||
+                        parseInt(
                             input.max,
                             10
-                        ) || 999;
+                        ) ||
+                        0;
 
 
                     /*

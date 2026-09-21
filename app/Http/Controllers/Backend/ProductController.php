@@ -41,54 +41,76 @@ final class ProductController extends Controller
                 'variants',
             ]);
 
-        // Search
+        /*
+        |--------------------------------------------------------------------------
+        | Search
+        |--------------------------------------------------------------------------
+        */
+
         if ($search = request('search')) {
-            $query->where(function ($query) use ($search) {
-                $query->where(
-                    'name',
-                    'like',
-                    "%{$search}%",
-                )->orWhere(
-                    'sku',
-                    'like',
-                    "%{$search}%",
-                );
-            });
-        }
-
-        // Status filter
-        if ($status = request('status')) {
-            $query->where('status', $status);
-        }
-
-        // Source filter
-        if ($source = request('source')) {
-            $query->where('source', $source);
-        }
-
-        // Brand filter
-        if ($brand = request('brand')) {
-            $query->where('brand_id', $brand);
-        }
-
-        // Category filter
-        if ($category = request('category')) {
-            $query->whereHas('categories', function ($query) use (
-                $category
-            ) {
-                $query->where(
-                    'categories.id',
-                    $category,
-                );
+            $query->where(function ($query) use ($search): void {
+                $query
+                    ->where(
+                        'name',
+                        'like',
+                        "%{$search}%",
+                    )
+                    ->orWhere(
+                        'sku',
+                        'like',
+                        "%{$search}%",
+                    );
             });
         }
 
         /*
-         * Latest created product first.
-         *
-         * created_at DESC ensures that the most recently
-         * created product appears at the top of the list.
-         */
+        |--------------------------------------------------------------------------
+        | Status Filter
+        |--------------------------------------------------------------------------
+        */
+
+        if (($status = request('status')) !== null && $status !== '') {
+            $query->where('status', $status);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Source Filter
+        |--------------------------------------------------------------------------
+        */
+
+        if ($source = request('source')) {
+            $query->where('source', $source);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Brand Filter
+        |--------------------------------------------------------------------------
+        */
+
+        if ($brand = request('brand')) {
+            $query->where('brand_id', $brand);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Category Filter
+        |--------------------------------------------------------------------------
+        */
+
+        if ($category = request('category')) {
+            $query->whereHas(
+                'categories',
+                function ($query) use ($category): void {
+                    $query->where(
+                        'categories.id',
+                        $category,
+                    );
+                },
+            );
+        }
+
         $products = $query
             ->latest('created_at')
             ->paginate(15)
@@ -158,53 +180,98 @@ final class ProductController extends Controller
             $this->productValidationRules(),
         );
 
-        $this->validateAttributeData($validated);
+        $this->validateProductTypeData($validated);
 
-        $this->validateVariantData($validated);
+        if ($validated['type'] === 'variable') {
+            $this->validateAttributeData($validated);
+            $this->validateVariantData($validated);
+        }
 
         $storedFiles = [];
 
         try {
-            $product = DB::transaction(function () use (
+            DB::transaction(function () use (
                 $request,
                 $validated,
                 &$storedFiles,
-            ): Product {
+            ): void {
                 $slug = $this->generateUniqueSlug(
                     $validated['slug'] ?? null,
                     $validated['name'],
                 );
 
                 $product = Product::query()->create([
-                    'brand_id' => $validated['brand_id'] ?? null,
-                    'name' => $validated['name'],
-                    'slug' => $slug,
-                    'sku' => $validated['sku'] ?? null,
-                    'source' => $validated['source'],
-                    'thumbnail' => null,
-                    'video_url' => $validated['video_url'] ?? null,
-                    'short_description' => $this->normalizeRichText(
-                        $validated['short_description'] ?? null,
-                    ),
-                    'description' => $this->normalizeRichText(
-                        $validated['description'] ?? null,
-                    ),
-                    'price' => $validated['price'],
+                    'brand_id' =>
+                        $validated['brand_id'] ?? null,
+
+                    'name' =>
+                        $validated['name'],
+
+                    'slug' =>
+                        $slug,
+
+                    'sku' =>
+                        $validated['sku'] ?? null,
+
+                    'type' =>
+                        $validated['type'],
+
+                    'source' =>
+                        $validated['source'],
+
+                    'thumbnail' =>
+                        null,
+
+                    'video_url' =>
+                        $validated['video_url'] ?? null,
+
+                    'short_description' =>
+                        $this->normalizeRichText(
+                            $validated['short_description']
+                            ?? null,
+                        ),
+
+                    'description' =>
+                        $this->normalizeRichText(
+                            $validated['description']
+                            ?? null,
+                        ),
+
+                    'price' =>
+                        $validated['price'],
+
                     'compare_price' =>
                         $validated['compare_price'] ?? null,
+
                     'cost_price' =>
                         $validated['cost_price'] ?? null,
 
-                    // Product shipping cost
                     'shipping_cost' =>
                         $validated['shipping_cost'],
 
+                    /*
+                     * Simple products manage stock here.
+                     *
+                     * Variable products manage stock through
+                     * product_variants.stock.
+                     */
+                    'stock' =>
+                        $validated['type'] === 'simple'
+                            ? (int) ($validated['stock'] ?? 0)
+                            : 0,
+
                     'sort_order' =>
                         $validated['sort_order'] ?? 0,
-                    'status' => $request->boolean('status'),
-                    'featured' => $request->boolean('featured'),
+
+                    'status' =>
+                        $request->boolean('status'),
+
+                    'featured' =>
+                        $request->boolean('featured'),
+
                     'meta_title' =>
                         $validated['meta_title'] ?? null,
+
                     'meta_description' =>
                         $validated['meta_description'] ?? null,
                 ]);
@@ -225,14 +292,18 @@ final class ProductController extends Controller
                     $storedFiles,
                 );
 
-                $this->storeVariants(
-                    $request,
-                    $product,
-                    $validated['variants'] ?? [],
-                    $storedFiles,
-                );
-
-                return $product;
+                /*
+                 * Variants are created only for
+                 * variable products.
+                 */
+                if ($validated['type'] === 'variable') {
+                    $this->storeVariants(
+                        $request,
+                        $product,
+                        $validated['variants'],
+                        $storedFiles,
+                    );
+                }
             });
         } catch (Throwable $exception) {
             $this->deleteStoredFiles($storedFiles);
@@ -316,12 +387,16 @@ final class ProductController extends Controller
             $this->productValidationRules($product),
         );
 
-        $this->validateAttributeData($validated);
+        $this->validateProductTypeData($validated);
 
-        $this->validateVariantData(
-            $validated,
-            $product,
-        );
+        if ($validated['type'] === 'variable') {
+            $this->validateAttributeData($validated);
+
+            $this->validateVariantData(
+                $validated,
+                $product,
+            );
+        }
 
         $newFiles = [];
         $oldFiles = [];
@@ -341,34 +416,72 @@ final class ProductController extends Controller
                 );
 
                 $product->update([
-                    'brand_id' => $validated['brand_id'] ?? null,
-                    'name' => $validated['name'],
-                    'slug' => $slug,
-                    'sku' => $validated['sku'] ?? null,
-                    'source' => $validated['source'],
-                    'video_url' => $validated['video_url'] ?? null,
-                    'short_description' => $this->normalizeRichText(
-                        $validated['short_description'] ?? null,
-                    ),
-                    'description' => $this->normalizeRichText(
-                        $validated['description'] ?? null,
-                    ),
-                    'price' => $validated['price'],
+                    'brand_id' =>
+                        $validated['brand_id'] ?? null,
+
+                    'name' =>
+                        $validated['name'],
+
+                    'slug' =>
+                        $slug,
+
+                    'sku' =>
+                        $validated['sku'] ?? null,
+
+                    'type' =>
+                        $validated['type'],
+
+                    'source' =>
+                        $validated['source'],
+
+                    'video_url' =>
+                        $validated['video_url'] ?? null,
+
+                    'short_description' =>
+                        $this->normalizeRichText(
+                            $validated['short_description']
+                            ?? null,
+                        ),
+
+                    'description' =>
+                        $this->normalizeRichText(
+                            $validated['description']
+                            ?? null,
+                        ),
+
+                    'price' =>
+                        $validated['price'],
+
                     'compare_price' =>
                         $validated['compare_price'] ?? null,
+
                     'cost_price' =>
                         $validated['cost_price'] ?? null,
 
-                    // Product shipping cost
                     'shipping_cost' =>
                         $validated['shipping_cost'],
 
+                    /*
+                     * Product level stock is used only
+                     * for simple products.
+                     */
+                    'stock' =>
+                        $validated['type'] === 'simple'
+                            ? (int) ($validated['stock'] ?? 0)
+                            : 0,
+
                     'sort_order' =>
                         $validated['sort_order'] ?? 0,
-                    'status' => $request->boolean('status'),
-                    'featured' => $request->boolean('featured'),
+
+                    'status' =>
+                        $request->boolean('status'),
+
+                    'featured' =>
+                        $request->boolean('featured'),
+
                     'meta_title' =>
                         $validated['meta_title'] ?? null,
+
                     'meta_description' =>
                         $validated['meta_description'] ?? null,
                 ]);
@@ -390,13 +503,27 @@ final class ProductController extends Controller
                     $newFiles,
                 );
 
-                $this->updateVariants(
-                    $request,
-                    $product,
-                    $validated['variants'] ?? [],
-                    $newFiles,
-                    $oldFiles,
-                );
+                /*
+                 * Variable product:
+                 * Create/update variants.
+                 *
+                 * Simple product:
+                 * Remove all existing variants.
+                 */
+                if ($validated['type'] === 'variable') {
+                    $this->updateVariants(
+                        $request,
+                        $product,
+                        $validated['variants'],
+                        $newFiles,
+                        $oldFiles,
+                    );
+                } else {
+                    $this->removeAllProductVariants(
+                        $product,
+                        $oldFiles,
+                    );
+                }
 
                 $this->removeGalleryImages(
                     $request,
@@ -479,22 +606,45 @@ final class ProductController extends Controller
                 'nullable',
                 'string',
                 'max:255',
-                Rule::unique('products', 'slug')
-                    ->ignore($productId),
+                Rule::unique(
+                    'products',
+                    'slug',
+                )->ignore($productId),
             ],
 
             'sku' => [
                 'nullable',
                 'string',
                 'max:255',
-                Rule::unique('products', 'sku')
-                    ->ignore($productId),
+                Rule::unique(
+                    'products',
+                    'sku',
+                )->ignore($productId),
+            ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | Product Type
+            |--------------------------------------------------------------------------
+            */
+
+            'type' => [
+                'required',
+                'string',
+                Rule::in([
+                    'simple',
+                    'variable',
+                ]),
             ],
 
             'source' => [
                 'required',
                 'string',
-                'in:own,amazon,aliexpress',
+                Rule::in([
+                    'own',
+                    'amazon',
+                    'aliexpress',
+                ]),
             ],
 
             'thumbnail' => [
@@ -556,6 +706,19 @@ final class ProductController extends Controller
                 'min:0',
             ],
 
+            /*
+            |--------------------------------------------------------------------------
+            | Simple Product Stock
+            |--------------------------------------------------------------------------
+            */
+
+            'stock' => [
+                'required_if:type,simple',
+                'nullable',
+                'integer',
+                'min:0',
+            ],
+
             'sort_order' => [
                 'nullable',
                 'integer',
@@ -584,6 +747,12 @@ final class ProductController extends Controller
                 'exists:categories,id',
             ],
 
+            /*
+            |--------------------------------------------------------------------------
+            | Product Attributes
+            |--------------------------------------------------------------------------
+            */
+
             'attribute_ids' => [
                 'nullable',
                 'array',
@@ -611,11 +780,16 @@ final class ProductController extends Controller
             ],
 
             /*
-             * Product Variants
-             */
+            |--------------------------------------------------------------------------
+            | Product Variants
+            |--------------------------------------------------------------------------
+            */
+
             'variants' => [
+                'required_if:type,variable',
                 'nullable',
                 'array',
+                'min:1',
                 'max:100',
             ],
 
@@ -672,6 +846,12 @@ final class ProductController extends Controller
                 'exists:attribute_values,id',
             ],
 
+            /*
+            |--------------------------------------------------------------------------
+            | Gallery Removal
+            |--------------------------------------------------------------------------
+            */
+
             'remove_image_ids' => [
                 'nullable',
                 'array',
@@ -681,6 +861,38 @@ final class ProductController extends Controller
                 'integer',
             ],
         ];
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Product Type Validation
+    |--------------------------------------------------------------------------
+    */
+
+    private function validateProductTypeData(
+        array $validated,
+    ): void {
+        $type = $validated['type'];
+
+        if ($type === 'simple') {
+            if (!empty($validated['variants'])) {
+                throw ValidationException::withMessages([
+                    'variants' =>
+                        'Simple products cannot have variants.',
+                ]);
+            }
+
+            return;
+        }
+
+        $variants = $validated['variants'] ?? [];
+
+        if ($variants === []) {
+            throw ValidationException::withMessages([
+                'variants' =>
+                    'Variable products must have at least one variant.',
+            ]);
+        }
     }
 
     private function validateAttributeData(
@@ -693,10 +905,24 @@ final class ProductController extends Controller
             ->unique()
             ->values();
 
+        /*
+         * A variable product must have
+         * at least one selected attribute.
+         */
+        if ($attributeIds->isEmpty()) {
+            throw ValidationException::withMessages([
+                'attribute_ids' =>
+                    'Variable products require at least one attribute.',
+            ]);
+        }
+
         $attributeValues =
             $validated['attribute_values'] ?? [];
 
-        foreach ($attributeValues as $attributeId => $valueIds) {
+        foreach (
+            $attributeValues as
+            $attributeId => $valueIds
+        ) {
             $attributeId = (int) $attributeId;
 
             if (!$attributeIds->contains($attributeId)) {
@@ -706,11 +932,21 @@ final class ProductController extends Controller
                 ]);
             }
 
-            $validCount = DB::table('attribute_values')
-                ->where('attribute_id', $attributeId)
+            $valueIds = array_map(
+                'intval',
+                $valueIds,
+            );
+
+            $validCount = DB::table(
+                'attribute_values',
+            )
+                ->where(
+                    'attribute_id',
+                    $attributeId,
+                )
                 ->whereIn(
                     'id',
-                    array_map('intval', $valueIds),
+                    $valueIds,
                 )
                 ->count();
 
@@ -739,16 +975,28 @@ final class ProductController extends Controller
         array $validated,
         ?Product $product = null,
     ): void {
-        $variants = $validated['variants'] ?? [];
+        /*
+         * Simple products do not use variants.
+         */
+        if ($validated['type'] === 'simple') {
+            return;
+        }
+
+        $variants =
+            $validated['variants'] ?? [];
 
         if ($variants === []) {
-            return;
+            throw ValidationException::withMessages([
+                'variants' =>
+                    'Variable products must have at least one variant.',
+            ]);
         }
 
         $selectedAttributeIds = collect(
             $validated['attribute_ids'] ?? [],
         )
             ->map(fn ($id): int => (int) $id)
+            ->unique()
             ->values();
 
         if ($selectedAttributeIds->isEmpty()) {
@@ -759,13 +1007,18 @@ final class ProductController extends Controller
         }
 
         $existingVariantIds = $product
-            ? $product->variants()
+            ? $product
+                ->variants()
                 ->pluck('id')
-                ->map(fn ($id): int => (int) $id)
+                ->map(
+                    fn ($id): int => (int) $id,
+                )
                 ->all()
             : [];
 
         $variantIds = [];
+
+        $variantCombinations = [];
 
         foreach ($variants as $index => $variant) {
             $variantId = isset($variant['id'])
@@ -789,18 +1042,28 @@ final class ProductController extends Controller
                 $variantIds[] = $variantId;
             }
 
-            $values = $variant['values'] ?? [];
+            $values =
+                $variant['values'] ?? [];
 
-            if (!is_array($values) || $values === []) {
+            if (
+                !is_array($values) ||
+                $values === []
+            ) {
                 throw ValidationException::withMessages([
                     "variants.$index.values" =>
                         'Each variant must have attribute values.',
                 ]);
             }
 
-            foreach ($values as $attributeId => $valueId) {
-                $attributeId = (int) $attributeId;
-                $valueId = (int) $valueId;
+            foreach (
+                $values as
+                $attributeId => $valueId
+            ) {
+                $attributeId =
+                    (int) $attributeId;
+
+                $valueId =
+                    (int) $valueId;
 
                 if (
                     !$selectedAttributeIds->contains(
@@ -813,9 +1076,17 @@ final class ProductController extends Controller
                     ]);
                 }
 
-                $valid = DB::table('attribute_values')
-                    ->where('id', $valueId)
-                    ->where('attribute_id', $attributeId)
+                $valid = DB::table(
+                    'attribute_values',
+                )
+                    ->where(
+                        'id',
+                        $valueId,
+                    )
+                    ->where(
+                        'attribute_id',
+                        $attributeId,
+                    )
                     ->exists();
 
                 if (!$valid) {
@@ -834,10 +1105,11 @@ final class ProductController extends Controller
                 ->values()
                 ->all();
 
-            $expectedAttributeIds = $selectedAttributeIds
-                ->sort()
-                ->values()
-                ->all();
+            $expectedAttributeIds =
+                $selectedAttributeIds
+                    ->sort()
+                    ->values()
+                    ->all();
 
             if (
                 $variantAttributeIds !==
@@ -848,8 +1120,47 @@ final class ProductController extends Controller
                         'Every variant must contain one value for each selected attribute.',
                 ]);
             }
+
+            /*
+             * Prevent duplicate combinations such as:
+             *
+             * Color: Red + Size: M
+             * Color: Red + Size: M
+             */
+            $combination = collect($values)
+                ->mapWithKeys(
+                    fn ($valueId, $attributeId): array => [
+                        (int) $attributeId =>
+                            (int) $valueId,
+                    ],
+                )
+                ->sortKeys()
+                ->map(
+                    fn ($valueId, $attributeId): string =>
+                        $attributeId . ':' . $valueId,
+                )
+                ->implode('|');
+
+            if (
+                in_array(
+                    $combination,
+                    $variantCombinations,
+                    true,
+                )
+            ) {
+                throw ValidationException::withMessages([
+                    "variants.$index.values" =>
+                        'Duplicate variant combination detected.',
+                ]);
+            }
+
+            $variantCombinations[] = $combination;
         }
 
+        /*
+         * Prevent the same existing variant ID
+         * from being submitted multiple times.
+         */
         if (
             count($variantIds) !==
             count(array_unique($variantIds))
@@ -860,19 +1171,26 @@ final class ProductController extends Controller
             ]);
         }
 
+        /*
+         * SKU uniqueness inside the submitted form.
+         */
         $skus = collect($variants)
             ->pluck('sku')
             ->map(
-                fn ($sku): string => trim((string) $sku),
+                fn ($sku): string =>
+                trim((string) $sku),
             )
             ->filter()
             ->values();
 
         if (
             $skus->count() !==
-            $skus->unique(
-                fn (string $sku): string => strtolower($sku),
-            )->count()
+            $skus
+                ->unique(
+                    fn (string $sku): string =>
+                    strtolower($sku),
+                )
+                ->count()
         ) {
             throw ValidationException::withMessages([
                 'variants' =>
@@ -880,9 +1198,16 @@ final class ProductController extends Controller
             ]);
         }
 
+        /*
+         * SKU uniqueness against database.
+         */
         foreach ($variants as $index => $variant) {
+            $sku = trim(
+                (string) $variant['sku'],
+            );
+
             $query = ProductVariant::query()
-                ->where('sku', $variant['sku']);
+                ->where('sku', $sku);
 
             if (isset($variant['id'])) {
                 $query->where(
@@ -919,7 +1244,10 @@ final class ProductController extends Controller
 
         while (
         Product::query()
-            ->where('slug', $generatedSlug)
+            ->where(
+                'slug',
+                $generatedSlug,
+            )
             ->when(
                 $ignoreId !== null,
                 fn ($query) => $query->where(
@@ -1013,9 +1341,9 @@ final class ProductController extends Controller
             return;
         }
 
-        $sortOrder = (int) $product->images()->max(
-            'sort_order',
-        );
+        $sortOrder = (int) $product
+            ->images()
+            ->max('sort_order');
 
         foreach ($files as $file) {
             if (!$file instanceof UploadedFile) {
@@ -1032,12 +1360,23 @@ final class ProductController extends Controller
             $sortOrder++;
 
             ProductImage::query()->create([
-                'product_id' => $product->id,
-                'variant_id' => null,
-                'image' => $path,
-                'alt_text' => $product->name,
-                'sort_order' => $sortOrder,
-                'is_primary' => false,
+                'product_id' =>
+                    $product->id,
+
+                'variant_id' =>
+                    null,
+
+                'image' =>
+                    $path,
+
+                'alt_text' =>
+                    $product->name,
+
+                'sort_order' =>
+                    $sortOrder,
+
+                'is_primary' =>
+                    false,
             ]);
         }
     }
@@ -1050,13 +1389,24 @@ final class ProductController extends Controller
     ): void {
         foreach ($variants as $index => $variantData) {
             $variant = ProductVariant::query()->create([
-                'product_id' => $product->id,
-                'sku' => $variantData['sku'],
-                'price' => $variantData['price'],
+                'product_id' =>
+                    $product->id,
+
+                'sku' =>
+                    trim($variantData['sku']),
+
+                'price' =>
+                    $variantData['price'],
+
                 'compare_price' =>
                     $variantData['compare_price'] ?? null,
-                'stock' => $variantData['stock'],
-                'image' => null,
+
+                'stock' =>
+                    $variantData['stock'],
+
+                'image' =>
+                    null,
+
                 'status' =>
                     isset($variantData['status'])
                         ? (bool) $variantData['status']
@@ -1067,7 +1417,10 @@ final class ProductController extends Controller
                 "variants.$index.image",
             );
 
-            if ($variantImage instanceof UploadedFile) {
+            if (
+                $variantImage instanceof
+                UploadedFile
+            ) {
                 $path = $this->storeImage(
                     $variantImage,
                     self::VARIANT_IMAGE_DIRECTORY,
@@ -1082,7 +1435,7 @@ final class ProductController extends Controller
 
             $this->storeVariantValues(
                 $variant,
-                $variantData['values'] ?? [],
+                $variantData['values'],
             );
         }
     }
@@ -1094,7 +1447,8 @@ final class ProductController extends Controller
         array &$newFiles,
         array &$oldFiles,
     ): void {
-        $existingVariants = $product->variants()
+        $existingVariants = $product
+            ->variants()
             ->get()
             ->keyBy('id');
 
@@ -1105,24 +1459,38 @@ final class ProductController extends Controller
                 ? (int) $variantData['id']
                 : null;
 
+            /*
+             * Update existing variant.
+             */
             if (
                 $variantId !== null &&
                 $existingVariants->has($variantId)
             ) {
+                /** @var ProductVariant $variant */
                 $variant = $existingVariants->get(
                     $variantId,
                 );
 
-                $submittedVariantIds[] = $variantId;
+                $submittedVariantIds[] =
+                    $variantId;
 
-                $oldImage = $variant->image;
+                $oldImage =
+                    $variant->image;
 
                 $variant->update([
-                    'sku' => $variantData['sku'],
-                    'price' => $variantData['price'],
+                    'sku' =>
+                        trim($variantData['sku']),
+
+                    'price' =>
+                        $variantData['price'],
+
                     'compare_price' =>
-                        $variantData['compare_price'] ?? null,
-                    'stock' => $variantData['stock'],
+                        $variantData['compare_price']
+                        ?? null,
+
+                    'stock' =>
+                        $variantData['stock'],
+
                     'status' =>
                         isset($variantData['status'])
                             ? (bool) $variantData['status']
@@ -1133,7 +1501,10 @@ final class ProductController extends Controller
                     "variants.$index.image",
                 );
 
-                if ($variantImage instanceof UploadedFile) {
+                if (
+                    $variantImage instanceof
+                    UploadedFile
+                ) {
                     $path = $this->storeImage(
                         $variantImage,
                         self::VARIANT_IMAGE_DIRECTORY,
@@ -1154,33 +1525,51 @@ final class ProductController extends Controller
 
                 $this->storeVariantValues(
                     $variant,
-                    $variantData['values'] ?? [],
+                    $variantData['values'],
                 );
 
                 continue;
             }
 
+            /*
+             * Create new variant.
+             */
             $variant = ProductVariant::query()->create([
-                'product_id' => $product->id,
-                'sku' => $variantData['sku'],
-                'price' => $variantData['price'],
+                'product_id' =>
+                    $product->id,
+
+                'sku' =>
+                    trim($variantData['sku']),
+
+                'price' =>
+                    $variantData['price'],
+
                 'compare_price' =>
                     $variantData['compare_price'] ?? null,
-                'stock' => $variantData['stock'],
-                'image' => null,
+
+                'stock' =>
+                    $variantData['stock'],
+
+                'image' =>
+                    null,
+
                 'status' =>
                     isset($variantData['status'])
                         ? (bool) $variantData['status']
                         : true,
             ]);
 
-            $submittedVariantIds[] = $variant->id;
+            $submittedVariantIds[] =
+                $variant->id;
 
             $variantImage = $request->file(
                 "variants.$index.image",
             );
 
-            if ($variantImage instanceof UploadedFile) {
+            if (
+                $variantImage instanceof
+                UploadedFile
+            ) {
                 $path = $this->storeImage(
                     $variantImage,
                     self::VARIANT_IMAGE_DIRECTORY,
@@ -1195,10 +1584,14 @@ final class ProductController extends Controller
 
             $this->storeVariantValues(
                 $variant,
-                $variantData['values'] ?? [],
+                $variantData['values'],
             );
         }
 
+        /*
+         * Delete variants that were removed
+         * from the submitted form.
+         */
         foreach ($existingVariants as $variant) {
             if (
                 in_array(
@@ -1211,7 +1604,36 @@ final class ProductController extends Controller
             }
 
             if ($variant->image) {
-                $oldFiles[] = $variant->image;
+                $oldFiles[] =
+                    $variant->image;
+            }
+
+            $variant->delete();
+        }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Remove All Variants
+    |--------------------------------------------------------------------------
+    |
+    | Used when a variable product is converted
+    | into a simple product.
+    |
+    */
+
+    private function removeAllProductVariants(
+        Product $product,
+        array &$oldFiles,
+    ): void {
+        $variants = $product
+            ->variants()
+            ->get();
+
+        foreach ($variants as $variant) {
+            if ($variant->image) {
+                $oldFiles[] =
+                    $variant->image;
             }
 
             $variant->delete();
@@ -1222,10 +1644,16 @@ final class ProductController extends Controller
         ProductVariant $variant,
         array $values,
     ): void {
-        foreach ($values as $attributeId => $valueId) {
+        foreach (
+            $values as
+            $attributeId => $valueId
+        ) {
             $variant->values()->create([
-                'attribute_id' => (int) $attributeId,
-                'attribute_value_id' => (int) $valueId,
+                'attribute_id' =>
+                    (int) $attributeId,
+
+                'attribute_value_id' =>
+                    (int) $valueId,
             ]);
         }
     }
@@ -1247,13 +1675,18 @@ final class ProductController extends Controller
             return;
         }
 
-        $images = $product->images()
-            ->whereIn('id', $imageIds)
+        $images = $product
+            ->images()
+            ->whereIn(
+                'id',
+                $imageIds,
+            )
             ->get();
 
         foreach ($images as $image) {
             if ($image->image) {
-                $oldFiles[] = $image->image;
+                $oldFiles[] =
+                    $image->image;
             }
 
             $image->delete();
@@ -1264,7 +1697,8 @@ final class ProductController extends Controller
         UploadedFile $file,
         string $directory,
     ): string {
-        $fullDirectory = public_path($directory);
+        $fullDirectory =
+            public_path($directory);
 
         if (!is_dir($fullDirectory)) {
             mkdir(
@@ -1284,13 +1718,18 @@ final class ProductController extends Controller
             $filename,
         );
 
-        return $directory . '/' . $filename;
+        return $directory
+            . '/'
+            . $filename;
     }
 
     private function deleteStoredFiles(
         array $paths,
     ): void {
-        foreach (array_unique($paths) as $path) {
+        foreach (
+            array_unique($paths) as
+            $path
+        ) {
             if (!$path) {
                 continue;
             }
@@ -1312,7 +1751,9 @@ final class ProductController extends Controller
             return null;
         }
 
-        $value = trim((string) $value);
+        $value = trim(
+            (string) $value,
+        );
 
         if (
             $value === '' ||

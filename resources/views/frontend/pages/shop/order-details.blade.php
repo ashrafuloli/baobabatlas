@@ -6,10 +6,10 @@
 
     @php
         /*
-         |--------------------------------------------------------------------------
-         | Order Status
-         |--------------------------------------------------------------------------
-         */
+        |--------------------------------------------------------------------------
+        | Order Status
+        |--------------------------------------------------------------------------
+        */
 
         $orderStatus = $order->status;
 
@@ -21,18 +21,13 @@
 
 
         /*
-         |--------------------------------------------------------------------------
-         | Customer-Facing Status
-         |--------------------------------------------------------------------------
-         |
-         | Order status is the primary source.
-         |
-         | Shipment delivery status is used when it provides a more specific
-         | delivery stage.
-         |
-         */
+        |--------------------------------------------------------------------------
+        | Customer-Facing Status
+        |--------------------------------------------------------------------------
+        */
 
         $status = match (true) {
+
             $orderStatus === \App\Models\Order::STATUS_FAILED
                 => 'failed',
 
@@ -81,50 +76,90 @@
 
 
         /*
-         |--------------------------------------------------------------------------
-         | Status Label
-         |--------------------------------------------------------------------------
-         */
+        |--------------------------------------------------------------------------
+        | Status Label
+        |--------------------------------------------------------------------------
+        */
 
         $statusLabel = match ($status) {
-            'paid' => 'Paid',
-            'processing' => 'Processing',
-            'shipped' => 'Shipped',
-            'in_transit' => 'In Transit',
-            'out_for_delivery' => 'Out for Delivery',
-            'delivered' => 'Delivered',
-            'completed' => 'Completed',
-            'cancelled' => 'Cancelled',
-            'failed' => 'Failed',
-            default => 'Pending',
+
+            'paid' =>
+                'Paid',
+
+            'processing' =>
+                'Processing',
+
+            'shipped' =>
+                'Shipped',
+
+            'in_transit' =>
+                'In Transit',
+
+            'out_for_delivery' =>
+                'Out for Delivery',
+
+            'delivered' =>
+                'Delivered',
+
+            'completed' =>
+                'Completed',
+
+            'cancelled' =>
+                'Cancelled',
+
+            'failed' =>
+                'Failed',
+
+            default =>
+                'Pending',
         };
 
 
         /*
-         |--------------------------------------------------------------------------
-         | Status Icon
-         |--------------------------------------------------------------------------
-         */
+        |--------------------------------------------------------------------------
+        | Status Icon
+        |--------------------------------------------------------------------------
+        */
 
         $statusIcon = match ($status) {
-            'paid' => 'ri-checkbox-circle-line',
-            'processing' => 'ri-loader-4-line',
-            'shipped' => 'ri-box-3-line',
-            'in_transit' => 'ri-truck-line',
-            'out_for_delivery' => 'ri-map-pin-time-line',
-            'delivered' => 'ri-checkbox-circle-fill',
-            'completed' => 'ri-checkbox-circle-fill',
-            'cancelled' => 'ri-close-circle-line',
-            'failed' => 'ri-error-warning-line',
-            default => 'ri-time-line',
+
+            'paid' =>
+                'ri-checkbox-circle-line',
+
+            'processing' =>
+                'ri-loader-4-line',
+
+            'shipped' =>
+                'ri-box-3-line',
+
+            'in_transit' =>
+                'ri-truck-line',
+
+            'out_for_delivery' =>
+                'ri-map-pin-time-line',
+
+            'delivered' =>
+                'ri-checkbox-circle-fill',
+
+            'completed' =>
+                'ri-checkbox-circle-fill',
+
+            'cancelled' =>
+                'ri-close-circle-line',
+
+            'failed' =>
+                'ri-error-warning-line',
+
+            default =>
+                'ri-time-line',
         };
 
 
         /*
-         |--------------------------------------------------------------------------
-         | Payment
-         |--------------------------------------------------------------------------
-         */
+        |--------------------------------------------------------------------------
+        | Payment
+        |--------------------------------------------------------------------------
+        */
 
         $canContinuePayment =
             $orderStatus === \App\Models\Order::STATUS_PENDING
@@ -133,10 +168,10 @@
 
 
         /*
-         |--------------------------------------------------------------------------
-         | Cancel
-         |--------------------------------------------------------------------------
-         */
+        |--------------------------------------------------------------------------
+        | Cancel
+        |--------------------------------------------------------------------------
+        */
 
         $canCancelOrder =
             $orderStatus === \App\Models\Order::STATUS_PENDING
@@ -145,10 +180,10 @@
 
 
         /*
-         |--------------------------------------------------------------------------
-         | Refund Eligibility
-         |--------------------------------------------------------------------------
-         */
+        |--------------------------------------------------------------------------
+        | Refund Eligibility
+        |--------------------------------------------------------------------------
+        */
 
         $canRequestRefund =
             $order->payment_status
@@ -169,10 +204,13 @@
 
 
         /*
-         |--------------------------------------------------------------------------
-         | Refund Amount
-         |--------------------------------------------------------------------------
-         */
+        |--------------------------------------------------------------------------
+        | Refund Amount
+        |--------------------------------------------------------------------------
+        |
+        | Shipping is non-refundable.
+        |
+        */
 
         $refundAmount = max(
             0,
@@ -185,10 +223,10 @@
 
 
         /*
-         |--------------------------------------------------------------------------
-         | Latest Refund Request
-         |--------------------------------------------------------------------------
-         */
+        |--------------------------------------------------------------------------
+        | Latest Refund Request
+        |--------------------------------------------------------------------------
+        */
 
         $latestRefundRequest = $order->refundRequests
             ->sortByDesc('created_at')
@@ -198,10 +236,10 @@
 
 
         /*
-         |--------------------------------------------------------------------------
-         | Successful Refund
-         |--------------------------------------------------------------------------
-         */
+        |--------------------------------------------------------------------------
+        | Successful Refund
+        |--------------------------------------------------------------------------
+        */
 
         $hasSuccessfulRefund = $order->refunds->contains(
             fn ($refund): bool =>
@@ -217,10 +255,10 @@
 
 
         /*
-         |--------------------------------------------------------------------------
-         | Refund Request State
-         |--------------------------------------------------------------------------
-         */
+        |--------------------------------------------------------------------------
+        | Refund Request State
+        |--------------------------------------------------------------------------
+        */
 
         $hasPendingRefundRequest =
             $latestRefundStatus
@@ -236,10 +274,10 @@
 
 
         /*
-         |--------------------------------------------------------------------------
-         | New Refund Request Eligibility
-         |--------------------------------------------------------------------------
-         */
+        |--------------------------------------------------------------------------
+        | New Refund Request Eligibility
+        |--------------------------------------------------------------------------
+        */
 
         $canSubmitNewRefundRequest =
             $canRequestRefund
@@ -249,28 +287,34 @@
 
 
         /*
-         |--------------------------------------------------------------------------
-         | Delivery Information
-         |--------------------------------------------------------------------------
-         */
+        |--------------------------------------------------------------------------
+        | Delivery Information
+        |--------------------------------------------------------------------------
+        */
 
         $hasShipment = $shipment !== null;
 
         $trackingNumber = $shipment?->tracking_number;
+
         $carrier = $shipment?->carrier;
+
         $trackingUrl = $shipment?->tracking_url;
 
-        $estimatedDeliveryAt = $shipment?->estimated_delivery_at;
-        $deliveredAt = $shipment?->delivered_at;
+        $estimatedDeliveryAt =
+            $shipment?->estimated_delivery_at;
+
+        $deliveredAt =
+            $shipment?->delivered_at;
 
 
         /*
-         |--------------------------------------------------------------------------
-         | Delivery Status Label
-         |--------------------------------------------------------------------------
-         */
+        |--------------------------------------------------------------------------
+        | Delivery Status Label
+        |--------------------------------------------------------------------------
+        */
 
         $deliveryStatusLabel = match ($deliveryStatus) {
+
             \App\Models\Shipment::DELIVERY_STATUS_IN_TRANSIT
                 => 'In Transit',
 
@@ -283,7 +327,8 @@
             \App\Models\Shipment::DELIVERY_STATUS_FAILED
                 => 'Delivery Failed',
 
-            default => null,
+            default =>
+                null,
         };
     @endphp
 
@@ -292,7 +337,9 @@
 
         <div class="container">
 
-            {{-- Breadcrumb --}}
+            {{-- =========================================================
+                BREADCRUMB
+            ========================================================== --}}
             <div class="order-details-page__breadcrumb">
 
                 <a href="{{ route('shop') }}">
@@ -314,7 +361,9 @@
             </div>
 
 
-            {{-- Header --}}
+            {{-- =========================================================
+                HEADER
+            ========================================================== --}}
             <div class="order-details-page__header">
 
                 <div class="order-details-page__header-content">
@@ -324,6 +373,7 @@
                         class="order-details-page__back"
                     >
                         <i class="ri-arrow-left-line"></i>
+
                         Back to My Orders
                     </a>
 
@@ -336,7 +386,8 @@
                     </h1>
 
                     <p class="order-details-page__subtitle">
-                        Placed on {{ $order->created_at->format('F j, Y') }}
+                        Placed on
+                        {{ $order->created_at->format('F j, Y') }}
                     </p>
 
                 </div>
@@ -345,6 +396,7 @@
                 <span
                     class="order-details-page__status order-details-page__status--{{ $status }}"
                 >
+
                     <i class="{{ $statusIcon }}"></i>
 
                     {{ $statusLabel }}
@@ -354,7 +406,9 @@
             </div>
 
 
-            {{-- Payment Actions --}}
+            {{-- =========================================================
+                PAYMENT ACTIONS
+            ========================================================== --}}
             @if($canContinuePayment || $canCancelOrder)
 
                 <section class="order-details-page__payment-actions">
@@ -376,8 +430,9 @@
                             </h2>
 
                             <p>
-                                Your order has been placed but payment is still
-                                pending. Complete the payment to confirm your order.
+                                Your order has been placed but payment is
+                                still pending. Complete the payment to
+                                confirm your order.
                             </p>
 
                         </div>
@@ -390,12 +445,17 @@
                         @if($canContinuePayment)
 
                             <a
-                                href="{{ route('my-order.payment', $order) }}"
+                                href="{{ route(
+                                    'my-order.payment',
+                                    $order
+                                ) }}"
                                 class="order-details-page__continue-payment"
                             >
+
                                 <i class="ri-bank-card-line"></i>
 
                                 Continue to Payment
+
                             </a>
 
                         @endif
@@ -404,21 +464,28 @@
                         @if($canCancelOrder)
 
                             <form
-                                action="{{ route('my-order.cancel', $order) }}"
+                                action="{{ route(
+                                    'my-order.cancel',
+                                    $order
+                                ) }}"
                                 method="POST"
                                 class="order-details-page__cancel-form"
                                 data-cancel-order
                             >
+
                                 @csrf
+
                                 @method('PATCH')
 
                                 <button
                                     type="submit"
                                     class="order-details-page__cancel-order"
                                 >
+
                                     <i class="ri-close-circle-line"></i>
 
                                     Cancel Order
+
                                 </button>
 
                             </form>
@@ -432,13 +499,21 @@
             @endif
 
 
-            {{-- Main Grid --}}
+            {{-- =========================================================
+                MAIN GRID
+            ========================================================== --}}
             <div class="order-details-page__grid">
 
-                {{-- Main --}}
+
+                {{-- =====================================================
+                    MAIN CONTENT
+                ====================================================== --}}
                 <div class="order-details-page__main">
 
-                    {{-- Products --}}
+
+                    {{-- =================================================
+                        ORDER ITEMS
+                    ================================================== --}}
                     <section class="order-details-page__card">
 
                         <div class="order-details-page__card-header">
@@ -449,9 +524,18 @@
                                     ORDER ITEMS
                                 </span>
 
+                                @php
+                                    $totalItemQuantity =
+                                        $order->items->sum('quantity');
+                                @endphp
+
                                 <h2>
-                                    {{ $order->items->sum('quantity') }}
-                                    {{ $order->items->sum('quantity') === 1 ? 'Item' : 'Items' }}
+                                    {{ $totalItemQuantity }}
+
+                                    {{ $totalItemQuantity === 1
+                                        ? 'Item'
+                                        : 'Items'
+                                    }}
                                 </h2>
 
                             </div>
@@ -464,32 +548,130 @@
                             @foreach($order->items as $item)
 
                                 @php
+                                    /*
+                                    |--------------------------------------------------------------------------
+                                    | Product Type
+                                    |--------------------------------------------------------------------------
+                                    */
+
+                                    $isVariableItem =
+                                        $item->variant_id !== null;
+
+                                    $isSimpleItem =
+                                        $item->variant_id === null;
+
+
+                                    /*
+                                    |--------------------------------------------------------------------------
+                                    | Variant Attributes
+                                    |--------------------------------------------------------------------------
+                                    */
+
                                     $attributes = [];
 
-                                    if ($item->variant?->values) {
-                                        foreach ($item->variant->values as $value) {
-                                            $attributeName = $value->attribute?->name;
-                                            $valueName = $value->value ?? null;
+                                    if (
+                                        $isVariableItem
+                                        && $item->variant?->values
+                                    ) {
 
-                                            if ($attributeName && $valueName) {
+                                        foreach (
+                                            $item->variant->values
+                                            as $variantValue
+                                        ) {
+
+                                            $attributeName =
+                                                $variantValue
+                                                    ->attribute
+                                                    ?->name;
+
+                                            $valueName =
+                                                $variantValue
+                                                    ->attributeValue
+                                                    ?->name;
+
+
+                                            if (
+                                                filled($attributeName)
+                                                && filled($valueName)
+                                            ) {
+
                                                 $attributes[] =
-                                                    $attributeName . ': ' . $valueName;
+                                                    $attributeName
+                                                    . ': '
+                                                    . $valueName;
+
                                             }
+
                                         }
+
                                     }
 
-                                    $category = $item->product?->categories?->first()?->name;
+
+                                    /*
+                                    |--------------------------------------------------------------------------
+                                    | Image
+                                    |--------------------------------------------------------------------------
+                                    */
+
+                                    $image =
+                                        filled($item->image)
+                                            ? trim(
+                                                (string) $item->image
+                                            )
+                                            : null;
+
+
+                                    $imageUrl = null;
+
+
+                                    if ($image) {
+
+                                        if (
+                                            str_starts_with(
+                                                $image,
+                                                'http://'
+                                            )
+                                            || str_starts_with(
+                                                $image,
+                                                'https://'
+                                            )
+                                            || str_starts_with(
+                                                $image,
+                                                '//'
+                                            )
+                                        ) {
+
+                                            $imageUrl = $image;
+
+                                        } else {
+
+                                            $imageUrl = asset(
+                                                ltrim(
+                                                    $image,
+                                                    '/'
+                                                )
+                                            );
+
+                                        }
+
+                                    }
                                 @endphp
 
 
-                                <div class="order-details-page__item">
+                                <div
+                                    class="order-details-page__item"
+                                    data-product-type="{{ $isVariableItem ? 'variable' : 'simple' }}"
+                                    data-variant-id="{{ $item->variant_id ?? '' }}"
+                                >
 
+
+                                    {{-- IMAGE --}}
                                     <div class="order-details-page__item-image">
 
-                                        @if($item->image)
+                                        @if($imageUrl)
 
                                             <img
-                                                src="{{ asset($item->image) }}"
+                                                src="{{ $imageUrl }}"
                                                 alt="{{ $item->product_name }}"
                                                 loading="lazy"
                                             >
@@ -505,16 +687,8 @@
                                     </div>
 
 
+                                    {{-- INFO --}}
                                     <div class="order-details-page__item-info">
-
-                                        @if($category)
-
-                                            <span class="order-details-page__item-category">
-                                                {{ $category }}
-                                            </span>
-
-                                        @endif
-
 
                                         <h3>
                                             {{ $item->product_name }}
@@ -539,14 +713,25 @@
 
 
                                         <span class="order-details-page__item-quantity">
-                                            Quantity: {{ $item->quantity }}
+                                            Quantity:
+                                            {{ $item->quantity }}
                                         </span>
 
 
-                                        @if($item->sku)
+                                        @if(filled($item->sku))
 
                                             <span class="order-details-page__item-sku">
-                                                SKU: {{ $item->sku }}
+                                                SKU:
+                                                {{ $item->sku }}
+                                            </span>
+
+                                        @endif
+
+
+                                        @if($isVariableItem)
+
+                                            <span class="order-details-page__item-type">
+                                                Variant Product
                                             </span>
 
                                         @endif
@@ -554,16 +739,24 @@
                                     </div>
 
 
+                                    {{-- PRICE --}}
                                     <div class="order-details-page__item-price">
 
                                         <strong>
-                                            ${{ number_format((float) $item->line_total, 2) }}
+                                            ${{ number_format(
+                                                (float) $item->line_total,
+                                                2
+                                            ) }}
                                         </strong>
+
 
                                         @if($item->quantity > 1)
 
                                             <span>
-                                                ${{ number_format((float) $item->unit_price, 2) }}
+                                                ${{ number_format(
+                                                    (float) $item->unit_price,
+                                                    2
+                                                ) }}
                                                 each
                                             </span>
 
@@ -580,7 +773,9 @@
                     </section>
 
 
-                    {{-- Delivery Tracking --}}
+                    {{-- =================================================
+                        DELIVERY TRACKING
+                    ================================================== --}}
                     @if($hasShipment)
 
                         <section class="order-details-page__card">
@@ -623,7 +818,7 @@
                                 @endif
 
 
-                                @if($carrier)
+                                @if(filled($carrier))
 
                                     <div class="order-details-page__delivery-row">
 
@@ -640,7 +835,7 @@
                                 @endif
 
 
-                                @if($trackingNumber)
+                                @if(filled($trackingNumber))
 
                                     <div class="order-details-page__delivery-row">
 
@@ -683,7 +878,9 @@
                                         </span>
 
                                         <strong>
-                                            {{ $deliveredAt->format('M j, Y h:i A') }}
+                                            {{ $deliveredAt->format(
+                                                'M j, Y h:i A'
+                                            ) }}
                                         </strong>
 
                                     </div>
@@ -691,7 +888,10 @@
                                 @endif
 
 
-                                @if($trackingUrl && $trackingNumber)
+                                @if(
+                                    filled($trackingUrl)
+                                    && filled($trackingNumber)
+                                )
 
                                     <div class="order-details-page__delivery-action">
 
@@ -700,9 +900,11 @@
                                             target="_blank"
                                             rel="noopener noreferrer"
                                         >
+
                                             <i class="ri-external-link-line"></i>
 
                                             Track Shipment
+
                                         </a>
 
                                     </div>
@@ -716,26 +918,33 @@
                     @endif
 
 
-                    {{-- Refund --}}
+                    {{-- =================================================
+                        REFUND
+                    ================================================== --}}
                     @if($canRequestRefund)
 
                         <section
-                            class="order-details-page__card order-details-page__refund-card"
+                            class="
+                                order-details-page__card
+                                order-details-page__refund-card
+                            "
                         >
 
                             <div class="order-details-page__refund-content">
 
                                 <div
-                                    class="order-details-page__refund-icon
-                                    @if($isRefunded)
-                                        order-details-page__refund-icon--success
-                                    @elseif($hasApprovedRefundRequest)
-                                        order-details-page__refund-icon--approved
-                                    @elseif($hasPendingRefundRequest)
-                                        order-details-page__refund-icon--pending
-                                    @elseif($hasRejectedRefundRequest)
-                                        order-details-page__refund-icon--rejected
-                                    @endif"
+                                    class="
+                                        order-details-page__refund-icon
+                                        @if($isRefunded)
+                                            order-details-page__refund-icon--success
+                                        @elseif($hasApprovedRefundRequest)
+                                            order-details-page__refund-icon--approved
+                                        @elseif($hasPendingRefundRequest)
+                                            order-details-page__refund-icon--pending
+                                        @elseif($hasRejectedRefundRequest)
+                                            order-details-page__refund-icon--rejected
+                                        @endif
+                                    "
                                 >
 
                                     @if($isRefunded)
@@ -778,9 +987,9 @@
 
                                         <p>
                                             Your refund has been successfully
-                                            processed. The refundable amount has
-                                            been returned through the original
-                                            payment method.
+                                            processed. The refundable amount
+                                            has been returned through the
+                                            original payment method.
                                         </p>
 
                                     @elseif($hasApprovedRefundRequest)
@@ -790,9 +999,9 @@
                                         </h2>
 
                                         <p>
-                                            Your refund request has been approved
-                                            by our team. The actual refund is now
-                                            being processed.
+                                            Your refund request has been
+                                            approved by our team. The actual
+                                            refund is now being processed.
                                         </p>
 
                                     @elseif($hasPendingRefundRequest)
@@ -802,9 +1011,10 @@
                                         </h2>
 
                                         <p>
-                                            Your refund request has been submitted
-                                            successfully. Our team will review
-                                            your request and update its status.
+                                            Your refund request has been
+                                            submitted successfully. Our team
+                                            will review your request and
+                                            update its status.
                                         </p>
 
                                     @elseif($hasRejectedRefundRequest)
@@ -814,10 +1024,10 @@
                                         </h2>
 
                                         <p>
-                                            Your previous refund request was not
-                                            approved. You can review the reason
-                                            below and submit a new request if
-                                            necessary.
+                                            Your previous refund request was
+                                            not approved. You can review the
+                                            reason below and submit a new
+                                            request if necessary.
                                         </p>
 
                                     @else
@@ -842,7 +1052,10 @@
                                         </span>
 
                                         <strong>
-                                            ${{ number_format($refundAmount, 2) }}
+                                            ${{ number_format(
+                                                $refundAmount,
+                                                2
+                                            ) }}
                                         </strong>
 
                                     </div>
@@ -852,25 +1065,34 @@
 
                                         <small>
                                             Shipping charge of
-                                            ${{ number_format((float) $order->shipping, 2) }}
+                                            ${{ number_format(
+                                                (float) $order->shipping,
+                                                2
+                                            ) }}
                                             is excluded from the refund.
                                         </small>
 
                                     @endif
 
 
+                                    {{-- Rejected Request --}}
                                     @if(
                                         $hasRejectedRefundRequest
                                         && $latestRefundRequest
                                     )
 
                                         <div
-                                            class="order-details-page__refund-rejected"
+                                            class="
+                                                order-details-page__refund-rejected
+                                            "
                                         >
 
                                             <div
-                                                class="order-details-page__refund-rejected-heading"
+                                                class="
+                                                    order-details-page__refund-rejected-heading
+                                                "
                                             >
+
                                                 <i class="ri-information-line"></i>
 
                                                 <span>
@@ -881,23 +1103,37 @@
 
 
                                             <div
-                                                class="order-details-page__refund-rejected-details"
+                                                class="
+                                                    order-details-page__refund-rejected-details
+                                                "
                                             >
 
-                                                <div>
+                                                @if(
+                                                    filled(
+                                                        $latestRefundRequest->reason
+                                                    )
+                                                )
 
-                                                    <span>
-                                                        Reason
-                                                    </span>
+                                                    <div>
 
-                                                    <strong>
-                                                        {{ $latestRefundRequest->reason }}
-                                                    </strong>
+                                                        <span>
+                                                            Reason
+                                                        </span>
 
-                                                </div>
+                                                        <strong>
+                                                            {{ $latestRefundRequest->reason }}
+                                                        </strong>
+
+                                                    </div>
+
+                                                @endif
 
 
-                                                @if($latestRefundRequest->admin_note)
+                                                @if(
+                                                    filled(
+                                                        $latestRefundRequest->admin_note
+                                                    )
+                                                )
 
                                                     <div>
 
@@ -920,18 +1156,24 @@
                                     @endif
 
 
+                                    {{-- Approved Request --}}
                                     @if(
                                         $hasApprovedRefundRequest
                                         && $latestRefundRequest
                                     )
 
                                         <div
-                                            class="order-details-page__refund-approved"
+                                            class="
+                                                order-details-page__refund-approved
+                                            "
                                         >
 
                                             <div
-                                                class="order-details-page__refund-approved-heading"
+                                                class="
+                                                    order-details-page__refund-approved-heading
+                                                "
                                             >
+
                                                 <i class="ri-checkbox-circle-line"></i>
 
                                                 <span>
@@ -942,10 +1184,14 @@
 
 
                                             <div
-                                                class="order-details-page__refund-approved-details"
+                                                class="
+                                                    order-details-page__refund-approved-details
+                                                "
                                             >
 
-                                                @if($latestRefundRequest->approver)
+                                                @if(
+                                                    $latestRefundRequest->approver
+                                                )
 
                                                     <div>
 
@@ -962,7 +1208,9 @@
                                                 @endif
 
 
-                                                @if($latestRefundRequest->approved_at)
+                                                @if(
+                                                    $latestRefundRequest->approved_at
+                                                )
 
                                                     <div>
 
@@ -971,7 +1219,9 @@
                                                         </span>
 
                                                         <strong>
-                                                            {{ $latestRefundRequest->approved_at->format('M d, Y h:i A') }}
+                                                            {{ $latestRefundRequest->approved_at->format(
+                                                                'M d, Y h:i A'
+                                                            ) }}
                                                         </strong>
 
                                                     </div>
@@ -989,54 +1239,73 @@
                             </div>
 
 
+                            {{-- Refund Action --}}
                             <div class="order-details-page__refund-action">
 
                                 @if($isRefunded)
 
                                     <span
-                                        class="order-details-page__refund-status
-                                        order-details-page__refund-status--success"
+                                        class="
+                                            order-details-page__refund-status
+                                            order-details-page__refund-status--success
+                                        "
                                     >
+
                                         <i class="ri-checkbox-circle-line"></i>
 
                                         Refunded
+
                                     </span>
 
                                 @elseif($hasPendingRefundRequest)
 
                                     <span
-                                        class="order-details-page__refund-status
-                                        order-details-page__refund-status--pending"
+                                        class="
+                                            order-details-page__refund-status
+                                            order-details-page__refund-status--pending
+                                        "
                                     >
+
                                         <i class="ri-time-line"></i>
 
                                         Refund Request Pending
+
                                     </span>
 
                                 @elseif($hasApprovedRefundRequest)
 
                                     <span
-                                        class="order-details-page__refund-status
-                                        order-details-page__refund-status--approved"
+                                        class="
+                                            order-details-page__refund-status
+                                            order-details-page__refund-status--approved
+                                        "
                                     >
+
                                         <i class="ri-checkbox-circle-line"></i>
 
                                         Refund Approved
+
                                     </span>
 
                                 @elseif($hasRejectedRefundRequest)
 
                                     <div
-                                        class="order-details-page__refund-action-group"
+                                        class="
+                                            order-details-page__refund-action-group
+                                        "
                                     >
 
                                         <span
-                                            class="order-details-page__refund-status
-                                            order-details-page__refund-status--rejected"
+                                            class="
+                                                order-details-page__refund-status
+                                                order-details-page__refund-status--rejected
+                                            "
                                         >
+
                                             <i class="ri-close-circle-line"></i>
 
                                             Request Rejected
+
                                         </span>
 
 
@@ -1044,14 +1313,23 @@
 
                                             <button
                                                 type="button"
-                                                class="order-details-page__refund-button"
+                                                class="
+                                                    order-details-page__refund-button
+                                                "
                                                 data-refund-order
                                                 data-order-number="{{ $order->order_number }}"
-                                                data-refund-amount="{{ number_format($refundAmount, 2, '.', '') }}"
+                                                data-refund-amount="{{ number_format(
+                                                    $refundAmount,
+                                                    2,
+                                                    '.',
+                                                    ''
+                                                ) }}"
                                             >
+
                                                 <i class="ri-refresh-line"></i>
 
                                                 Request Again
+
                                             </button>
 
                                         @endif
@@ -1062,14 +1340,23 @@
 
                                     <button
                                         type="button"
-                                        class="order-details-page__refund-button"
+                                        class="
+                                            order-details-page__refund-button
+                                        "
                                         data-refund-order
                                         data-order-number="{{ $order->order_number }}"
-                                        data-refund-amount="{{ number_format($refundAmount, 2, '.', '') }}"
+                                        data-refund-amount="{{ number_format(
+                                            $refundAmount,
+                                            2,
+                                            '.',
+                                            ''
+                                        ) }}"
                                     >
+
                                         <i class="ri-refund-2-line"></i>
 
                                         Request Refund
+
                                     </button>
 
                                 @endif
@@ -1081,7 +1368,9 @@
                     @endif
 
 
-                    {{-- Shipping Address --}}
+                    {{-- =================================================
+                        SHIPPING ADDRESS
+                    ================================================== --}}
                     <section class="order-details-page__card">
 
                         <div class="order-details-page__card-header">
@@ -1114,7 +1403,8 @@
                                 {{ $order->address }}
                             </span>
 
-                            @if($order->apartment)
+
+                            @if(filled($order->apartment))
 
                                 <span>
                                     {{ $order->apartment }}
@@ -1127,7 +1417,7 @@
 
                                 {{ $order->city }}
 
-                                @if($order->state)
+                                @if(filled($order->state))
                                     , {{ $order->state }}
                                 @endif
 
@@ -1141,9 +1431,13 @@
                             </span>
 
 
-                            <span>
-                                {{ $order->phone }}
-                            </span>
+                            @if(filled($order->phone))
+
+                                <span>
+                                    {{ $order->phone }}
+                                </span>
+
+                            @endif
 
                         </div>
 
@@ -1152,10 +1446,15 @@
                 </div>
 
 
-                {{-- Sidebar --}}
+                {{-- =====================================================
+                    SIDEBAR
+                ====================================================== --}}
                 <aside class="order-details-page__sidebar">
 
-                    {{-- Summary --}}
+
+                    {{-- =================================================
+                        ORDER SUMMARY
+                    ================================================== --}}
                     <section class="order-details-page__card">
 
                         <div class="order-details-page__card-header">
@@ -1184,7 +1483,10 @@
                                 </span>
 
                                 <strong>
-                                    ${{ number_format((float) $order->subtotal, 2) }}
+                                    ${{ number_format(
+                                        (float) $order->subtotal,
+                                        2
+                                    ) }}
                                 </strong>
 
                             </div>
@@ -1192,14 +1494,21 @@
 
                             @if((float) $order->discount > 0)
 
-                                <div class="order-details-page__summary-discount">
+                                <div
+                                    class="
+                                        order-details-page__summary-discount
+                                    "
+                                >
 
                                     <span>
                                         Discount
                                     </span>
 
                                     <strong>
-                                        -${{ number_format((float) $order->discount, 2) }}
+                                        -${{ number_format(
+                                            (float) $order->discount,
+                                            2
+                                        ) }}
                                     </strong>
 
                                 </div>
@@ -1216,7 +1525,24 @@
                                     </span>
 
                                     <strong>
-                                        ${{ number_format((float) $order->shipping, 2) }}
+                                        ${{ number_format(
+                                            (float) $order->shipping,
+                                            2
+                                        ) }}
+                                    </strong>
+
+                                </div>
+
+                            @else
+
+                                <div>
+
+                                    <span>
+                                        Shipping
+                                    </span>
+
+                                    <strong>
+                                        Free
                                     </strong>
 
                                 </div>
@@ -1233,7 +1559,10 @@
                                     </span>
 
                                     <strong>
-                                        ${{ number_format((float) $order->tax, 2) }}
+                                        ${{ number_format(
+                                            (float) $order->tax,
+                                            2
+                                        ) }}
                                     </strong>
 
                                 </div>
@@ -1248,7 +1577,10 @@
                                 </span>
 
                                 <strong>
-                                    ${{ number_format((float) $order->total, 2) }}
+                                    ${{ number_format(
+                                        (float) $order->total,
+                                        2
+                                    ) }}
                                 </strong>
 
                             </div>
@@ -1258,7 +1590,9 @@
                     </section>
 
 
-                    {{-- Payment --}}
+                    {{-- =================================================
+                        PAYMENT
+                    ================================================== --}}
                     <section class="order-details-page__card">
 
                         <div class="order-details-page__card-header">
@@ -1287,16 +1621,24 @@
                                 </span>
 
                                 <strong
-                                    class="order-details-page__payment-status
-                                    order-details-page__payment-status--{{ $order->payment_status }}"
+                                    class="
+                                        order-details-page__payment-status
+                                        order-details-page__payment-status--{{ $order->payment_status }}
+                                    "
                                 >
-                                    {{ ucfirst($order->payment_status) }}
+                                    {{ ucfirst(
+                                        str_replace(
+                                            '_',
+                                            ' ',
+                                            $order->payment_status
+                                        )
+                                    ) }}
                                 </strong>
 
                             </div>
 
 
-                            @if($order->payment_gateway)
+                            @if(filled($order->payment_gateway))
 
                                 <div>
 
@@ -1305,7 +1647,13 @@
                                     </span>
 
                                     <strong>
-                                        {{ ucfirst($order->payment_gateway) }}
+                                        {{ ucfirst(
+                                            str_replace(
+                                                '_',
+                                                ' ',
+                                                $order->payment_gateway
+                                            )
+                                        ) }}
                                     </strong>
 
                                 </div>
@@ -1322,7 +1670,9 @@
                                     </span>
 
                                     <strong>
-                                        {{ $order->paid_at->format('M j, Y') }}
+                                        {{ $order->paid_at->format(
+                                            'M j, Y'
+                                        ) }}
                                     </strong>
 
                                 </div>
@@ -1334,7 +1684,9 @@
                     </section>
 
 
-                    {{-- Customer --}}
+                    {{-- =================================================
+                        CUSTOMER
+                    ================================================== --}}
                     <section class="order-details-page__card">
 
                         <div class="order-details-page__card-header">
@@ -1368,26 +1720,34 @@
                             </div>
 
 
-                            <div>
+                            @if(filled($order->email))
 
-                                <i class="ri-mail-line"></i>
+                                <div>
 
-                                <span>
-                                    {{ $order->email }}
-                                </span>
+                                    <i class="ri-mail-line"></i>
 
-                            </div>
+                                    <span>
+                                        {{ $order->email }}
+                                    </span>
+
+                                </div>
+
+                            @endif
 
 
-                            <div>
+                            @if(filled($order->phone))
 
-                                <i class="ri-phone-line"></i>
+                                <div>
 
-                                <span>
-                                    {{ $order->phone }}
-                                </span>
+                                    <i class="ri-phone-line"></i>
 
-                            </div>
+                                    <span>
+                                        {{ $order->phone }}
+                                    </span>
+
+                                </div>
+
+                            @endif
 
                         </div>
 
@@ -1398,7 +1758,9 @@
             </div>
 
 
-            {{-- Bottom CTA --}}
+            {{-- =========================================================
+                BOTTOM CTA
+            ========================================================== --}}
             <div class="order-details-page__bottom">
 
                 <div>
@@ -1427,19 +1789,23 @@
         </div>
 
 
-        {{-- Refund Modal --}}
+        {{-- =========================================================
+            REFUND MODAL
+        ========================================================== --}}
         <div
             class="order-details-page__refund-modal"
             data-refund-modal
             aria-hidden="true"
         >
 
+            {{-- Overlay --}}
             <div
                 class="order-details-page__refund-modal-overlay"
                 data-refund-close
             ></div>
 
 
+            {{-- Dialog --}}
             <div
                 class="order-details-page__refund-modal-dialog"
                 role="dialog"
@@ -1447,34 +1813,47 @@
                 aria-labelledby="refund-modal-title"
             >
 
+                {{-- Close --}}
                 <button
                     type="button"
                     class="order-details-page__refund-modal-close"
                     data-refund-close
-                    aria-label="Close"
+                    aria-label="Close refund request"
                 >
+
                     <i class="ri-close-line"></i>
+
                 </button>
 
 
-                <span class="order-details-page__section-label">
-                    REFUND REQUEST
-                </span>
+                {{-- =================================================
+                    MODAL HEADER
+                ================================================== --}}
+                <div class="order-details-page__refund-modal-header">
+
+                    <span class="order-details-page__section-label">
+                        REFUND REQUEST
+                    </span>
+
+                    <h2 id="refund-modal-title">
+                        Request a Refund
+                    </h2>
+
+                    <p class="order-details-page__refund-modal-description">
+                        Submit a refund request for your order.
+                        Our team will review your request before
+                        processing the refund.
+                    </p>
+
+                </div>
 
 
-                <h2 id="refund-modal-title">
-                    Request a Refund
-                </h2>
-
-
-                <p class="order-details-page__refund-modal-description">
-                    Submit a refund request for your entire order.
-                    Shipping charges are not included in the refund.
-                </p>
-
-
+                {{-- =================================================
+                    REFUND SUMMARY
+                ================================================== --}}
                 <div class="order-details-page__refund-modal-summary">
 
+                    {{-- Order --}}
                     <div>
 
                         <span>
@@ -1488,29 +1867,37 @@
                     </div>
 
 
+                    {{-- Refundable Amount --}}
                     <div>
 
                         <span>
-                            Refund Amount
+                            Refundable Amount
                         </span>
 
                         <strong data-refund-modal-amount>
-                            ${{ number_format($refundAmount, 2) }}
+                            ${{ number_format(
+                                $refundAmount,
+                                2
+                            ) }}
                         </strong>
 
                     </div>
 
 
+                    {{-- Shipping --}}
                     @if((float) $order->shipping > 0)
 
                         <div>
 
                             <span>
-                                Shipping excluded
+                                Shipping Excluded
                             </span>
 
                             <strong>
-                                ${{ number_format((float) $order->shipping, 2) }}
+                                ${{ number_format(
+                                    (float) $order->shipping,
+                                    2
+                                ) }}
                             </strong>
 
                         </div>
@@ -1520,17 +1907,58 @@
                 </div>
 
 
+                {{-- =================================================
+                    FULL REFUND NOTICE
+                ================================================== --}}
+                <div class="order-details-page__refund-notice">
+
+                    <i class="ri-information-line"></i>
+
+                    <div>
+
+                        <strong>
+                            Full order refund
+                        </strong>
+
+                        <p>
+                            This request applies to the entire
+                            refundable portion of your order.
+                            Shipping charges are non-refundable.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                {{-- =================================================
+                    REFUND FORM
+                ================================================== --}}
                 <form
-                    action="{{ route('my-order.refund-request', $order) }}"
+                    action="{{ route(
+                        'my-order.refund-request',
+                        $order
+                    ) }}"
                     method="POST"
                     data-refund-form
                 >
+
                     @csrf
 
+
+                    {{-- =================================================
+                        REASON
+                    ================================================== --}}
                     <div class="order-details-page__refund-field">
 
                         <label for="refund-reason">
+
                             Reason
+
+                            <span>
+                                *
+                            </span>
+
                         </label>
 
                         <select
@@ -1572,6 +2000,9 @@
                     </div>
 
 
+                    {{-- =================================================
+                        MESSAGE
+                    ================================================== --}}
                     <div class="order-details-page__refund-field">
 
                         <label for="refund-message">
@@ -1587,33 +2018,55 @@
                         <textarea
                             id="refund-message"
                             name="message"
-                            rows="4"
+                            rows="5"
                             maxlength="5000"
-                            placeholder="Please provide additional details..."
+                            placeholder="Please provide additional details about your refund request..."
                         ></textarea>
+
+
+                        <div class="order-details-page__refund-field-meta">
+
+                            <span>
+                                Maximum 5000 characters
+                            </span>
+
+                            <span data-refund-message-count>
+                                0 / 5000
+                            </span>
+
+                        </div>
 
                     </div>
 
 
-                    <div class="order-details-page__refund-notice">
+                    {{-- =================================================
+                        FINAL CONFIRMATION
+                    ================================================== --}}
+                    <div class="order-details-page__refund-confirmation">
 
-                        <i class="ri-information-line"></i>
+                        <i class="ri-shield-check-line"></i>
 
                         <p>
 
-                            The refundable amount is fixed at
+                            You are requesting a refund of
 
                             <strong>
-                                ${{ number_format($refundAmount, 2) }}
-                            </strong>.
+                                ${{ number_format(
+                                    $refundAmount,
+                                    2
+                                ) }}
+                            </strong>
 
-                            Shipping charges are excluded.
+                            through your original payment method.
 
                         </p>
 
                     </div>
 
 
+                    {{-- =================================================
+                        ACTIONS
+                    ================================================== --}}
                     <div class="order-details-page__refund-actions">
 
                         <button
@@ -1628,10 +2081,13 @@
                         <button
                             type="submit"
                             class="order-details-page__refund-submit"
+                            data-refund-submit
                         >
+
                             <i class="ri-send-plane-line"></i>
 
-                            Submit Request
+                            Submit Refund Request
+
                         </button>
 
                     </div>
@@ -1650,38 +2106,49 @@
 @push('scripts')
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener(
+            'DOMContentLoaded',
+            function () {
 
-            const page = document.querySelector(
-                '.order-details-page'
-            );
-
-
-            if (!page) {
-                return;
-            }
+                const page =
+                    document.querySelector(
+                        '.order-details-page'
+                    );
 
 
-            /*
-             * Cancel Order
-             */
-            const cancelForm = page.querySelector(
-                '[data-cancel-order]'
-            );
+                if (!page) {
+                    return;
+                }
 
 
-            if (cancelForm) {
+                /*
+                |--------------------------------------------------------------------------
+                | Cancel Order
+                |--------------------------------------------------------------------------
+                */
 
-                cancelForm.addEventListener(
-                    'submit',
-                    function () {
-
-                        const button = this.querySelector(
-                            'button[type="submit"]'
-                        );
+                const cancelForm =
+                    page.querySelector(
+                        '[data-cancel-order]'
+                    );
 
 
-                        if (button) {
+                if (cancelForm) {
+
+                    cancelForm.addEventListener(
+                        'submit',
+                        function () {
+
+                            const button =
+                                this.querySelector(
+                                    'button[type="submit"]'
+                                );
+
+
+                            if (!button) {
+                                return;
+                            }
+
 
                             button.disabled = true;
 
@@ -1692,264 +2159,461 @@
                             `;
 
                         }
-
-                    }
-                );
-
-            }
-
-
-            /*
-             * Refund Modal
-             */
-            const refundModal = page.querySelector(
-                '[data-refund-modal]'
-            );
-
-
-            const refundButtons = page.querySelectorAll(
-                '[data-refund-order]'
-            );
-
-
-            const refundForm = page.querySelector(
-                '[data-refund-form]'
-            );
-
-
-            if (
-                !refundModal
-                || !refundButtons.length
-                || !refundForm
-            ) {
-                return;
-            }
-
-
-            const reasonInput = refundForm.querySelector(
-                '[name="reason"]'
-            );
-
-
-            /*
-             * Open modal
-             */
-            function openRefundModal(button) {
-
-                const orderNumber =
-                    button.dataset.orderNumber || '';
-
-
-                const refundAmount =
-                    Number(
-                        button.dataset.refundAmount || 0
                     );
-
-
-                const orderNumberElement =
-                    refundModal.querySelector(
-                        '[data-refund-order-number]'
-                    );
-
-
-                const amountElement =
-                    refundModal.querySelector(
-                        '[data-refund-modal-amount]'
-                    );
-
-
-                if (orderNumberElement) {
-
-                    orderNumberElement.textContent =
-                        `#${orderNumber}`;
 
                 }
 
 
-                if (amountElement) {
+                /*
+                |--------------------------------------------------------------------------
+                | Refund Modal
+                |--------------------------------------------------------------------------
+                */
 
-                    amountElement.textContent =
-                        `$${refundAmount.toLocaleString(
-                            'en-US',
-                            {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                            }
-                        )}`;
-
-                }
-
-
-                refundForm.reset();
-
-
-                refundModal.classList.add(
-                    'is-open'
-                );
-
-
-                refundModal.setAttribute(
-                    'aria-hidden',
-                    'false'
-                );
-
-
-                document.body.classList.add(
-                    'order-details-page--modal-open'
-                );
-
-
-                window.setTimeout(function () {
-
-                    if (reasonInput) {
-                        reasonInput.focus();
-                    }
-
-                }, 50);
-
-            }
-
-
-            /*
-             * Close modal
-             */
-            function closeRefundModal() {
-
-                refundModal.classList.remove(
-                    'is-open'
-                );
-
-
-                refundModal.setAttribute(
-                    'aria-hidden',
-                    'true'
-                );
-
-
-                document.body.classList.remove(
-                    'order-details-page--modal-open'
-                );
-
-            }
-
-
-            /*
-             * Refund buttons
-             */
-            refundButtons.forEach(function (button) {
-
-                button.addEventListener(
-                    'click',
-                    function () {
-                        openRefundModal(this);
-                    }
-                );
-
-            });
-
-
-            /*
-             * Close buttons / overlay
-             */
-            refundModal
-                .querySelectorAll('[data-refund-close]')
-                .forEach(function (element) {
-
-                    element.addEventListener(
-                        'click',
-                        closeRefundModal
+                const refundModal =
+                    page.querySelector(
+                        '[data-refund-modal]'
                     );
 
-                });
+
+                const refundButtons =
+                    page.querySelectorAll(
+                        '[data-refund-order]'
+                    );
 
 
-            /*
-             * Escape key
-             */
-            document.addEventListener(
-                'keydown',
-                function (event) {
+                const refundForm =
+                    page.querySelector(
+                        '[data-refund-form]'
+                    );
 
-                    if (
-                        event.key === 'Escape'
-                        && refundModal.classList.contains(
-                            'is-open'
-                        )
-                    ) {
-                        closeRefundModal();
-                    }
 
+                if (
+                    !refundModal
+                    || !refundButtons.length
+                    || !refundForm
+                ) {
+                    return;
                 }
-            );
 
 
-            /*
-             * Refund submit
-             */
-            refundForm.addEventListener(
-                'submit',
-                function (event) {
+                /*
+                |--------------------------------------------------------------------------
+                | Refund Fields
+                |--------------------------------------------------------------------------
+                */
 
-                    event.preventDefault();
-
-
-                    if (
-                        !reasonInput
-                        || !reasonInput.value
-                    ) {
-
-                        if (reasonInput) {
-                            reasonInput.focus();
-                        }
+                const reasonInput =
+                    refundForm.querySelector(
+                        '[name="reason"]'
+                    );
 
 
-                        if (
-                            window.AppToast
-                            && typeof window.AppToast.fire
-                            === 'function'
-                        ) {
-
-                            window.AppToast.fire({
-                                icon: 'error',
-                                title:
-                                    'Please select a refund reason.',
-                            });
-
-                        }
+                const messageInput =
+                    refundForm.querySelector(
+                        '[name="message"]'
+                    );
 
 
-                        return;
+                const messageCounter =
+                    refundForm.querySelector(
+                        '[data-refund-message-count]'
+                    );
 
-                    }
+
+                /*
+                |--------------------------------------------------------------------------
+                | Refund Submit Button
+                |--------------------------------------------------------------------------
+                */
+
+                const submitButton =
+                    refundForm.querySelector(
+                        '[data-refund-submit]'
+                    );
 
 
-                    const submitButton =
-                        refundForm.querySelector(
-                            '[type="submit"]'
+                /*
+                |--------------------------------------------------------------------------
+                | Open Refund Modal
+                |--------------------------------------------------------------------------
+                */
+
+                function openRefundModal(button) {
+
+                    const orderNumber =
+                        button.dataset.orderNumber || '';
+
+
+                    const refundAmount =
+                        Number(
+                            button.dataset.refundAmount || 0
                         );
 
 
+                    const orderNumberElement =
+                        refundModal.querySelector(
+                            '[data-refund-order-number]'
+                        );
+
+
+                    const amountElement =
+                        refundModal.querySelector(
+                            '[data-refund-modal-amount]'
+                        );
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Order Number
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (orderNumberElement) {
+
+                        orderNumberElement.textContent =
+                            `#${orderNumber}`;
+
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Refund Amount
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (amountElement) {
+
+                        amountElement.textContent =
+                            `$${refundAmount.toLocaleString(
+                                'en-US',
+                                {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                }
+                            )}`;
+
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Reset Form
+                    |--------------------------------------------------------------------------
+                    */
+
+                    refundForm.reset();
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Reset Character Counter
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (messageCounter) {
+
+                        messageCounter.textContent =
+                            '0 / 5000';
+
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Reset Submit Button
+                    |--------------------------------------------------------------------------
+                    */
+
                     if (submitButton) {
 
-                        submitButton.disabled = true;
-
+                        submitButton.disabled = false;
 
                         submitButton.innerHTML = `
-                            <i class="ri-loader-4-line ri-spin"></i>
-                            Submitting...
+                            <i class="ri-send-plane-line"></i>
+                            Submit Refund Request
                         `;
 
                     }
 
 
-                    HTMLFormElement.prototype.submit.call(
-                        refundForm
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Open
+                    |--------------------------------------------------------------------------
+                    */
+
+                    refundModal.classList.add(
+                        'is-open'
+                    );
+
+
+                    refundModal.setAttribute(
+                        'aria-hidden',
+                        'false'
+                    );
+
+
+                    document.body.classList.add(
+                        'order-details-page--modal-open'
+                    );
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Focus
+                    |--------------------------------------------------------------------------
+                    */
+
+                    window.setTimeout(
+                        function () {
+
+                            if (reasonInput) {
+                                reasonInput.focus();
+                            }
+
+                        },
+                        50
                     );
 
                 }
-            );
 
-        });
+
+                /*
+                |--------------------------------------------------------------------------
+                | Close Refund Modal
+                |--------------------------------------------------------------------------
+                */
+
+                function closeRefundModal() {
+
+                    refundModal.classList.remove(
+                        'is-open'
+                    );
+
+
+                    refundModal.setAttribute(
+                        'aria-hidden',
+                        'true'
+                    );
+
+
+                    document.body.classList.remove(
+                        'order-details-page--modal-open'
+                    );
+
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Refund Buttons
+                |--------------------------------------------------------------------------
+                */
+
+                refundButtons.forEach(
+                    function (button) {
+
+                        button.addEventListener(
+                            'click',
+                            function () {
+
+                                openRefundModal(
+                                    this
+                                );
+
+                            }
+                        );
+
+                    }
+                );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Close Buttons / Overlay
+                |--------------------------------------------------------------------------
+                */
+
+                refundModal
+                    .querySelectorAll(
+                        '[data-refund-close]'
+                    )
+                    .forEach(
+                        function (element) {
+
+                            element.addEventListener(
+                                'click',
+                                closeRefundModal
+                            );
+
+                        }
+                    );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Escape Key
+                |--------------------------------------------------------------------------
+                */
+
+                document.addEventListener(
+                    'keydown',
+                    function (event) {
+
+                        if (
+                            event.key === 'Escape'
+                            && refundModal.classList.contains(
+                                'is-open'
+                            )
+                        ) {
+
+                            closeRefundModal();
+
+                        }
+
+                    }
+                );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Message Character Counter
+                |--------------------------------------------------------------------------
+                */
+
+                if (
+                    messageInput
+                    && messageCounter
+                ) {
+
+                    function updateMessageCounter() {
+
+                        const length =
+                            messageInput.value.length;
+
+
+                        messageCounter.textContent =
+                            `${length} / 5000`;
+
+                    }
+
+
+                    messageInput.addEventListener(
+                        'input',
+                        updateMessageCounter
+                    );
+
+
+                    updateMessageCounter();
+
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Refund Submit
+                |--------------------------------------------------------------------------
+                */
+
+                refundForm.addEventListener(
+                    'submit',
+                    function (event) {
+
+                        event.preventDefault();
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Validate Reason
+                        |--------------------------------------------------------------------------
+                        */
+
+                        if (
+                            !reasonInput
+                            || !reasonInput.value
+                        ) {
+
+                            if (reasonInput) {
+                                reasonInput.focus();
+                            }
+
+
+                            if (
+                                window.AppToast
+                                && typeof window.AppToast.fire
+                                === 'function'
+                            ) {
+
+                                window.AppToast.fire({
+                                    icon: 'error',
+                                    title:
+                                        'Please select a refund reason.',
+                                });
+
+                            }
+
+
+                            return;
+
+                        }
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Confirmation
+                        |--------------------------------------------------------------------------
+                        */
+
+                        const confirmed =
+                            window.confirm(
+                                'Are you sure you want to submit this refund request?'
+                            );
+
+
+                        if (!confirmed) {
+                            return;
+                        }
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Disable Submit Button
+                        |--------------------------------------------------------------------------
+                        */
+
+                        if (submitButton) {
+
+                            submitButton.disabled = true;
+
+
+                            submitButton.innerHTML = `
+                                <i class="ri-loader-4-line ri-spin"></i>
+                                Submitting...
+                            `;
+
+                        }
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Native Form Submit
+                        |--------------------------------------------------------------------------
+                        |
+                        | Prevents this submit handler from firing again.
+                        |
+                        */
+
+                        HTMLFormElement.prototype.submit.call(
+                            refundForm
+                        );
+
+                    }
+                );
+
+            }
+        );
     </script>
 
 @endpush

@@ -43,6 +43,15 @@
 
         /*
         |--------------------------------------------------------------------------
+        | Product Type
+        |--------------------------------------------------------------------------
+        */
+
+        $isVariable = $product->isVariable();
+        $isSimple = $product->isSimple();
+
+        /*
+        |--------------------------------------------------------------------------
         | Wishlist
         |--------------------------------------------------------------------------
         */
@@ -64,7 +73,24 @@
 
         /*
         |--------------------------------------------------------------------------
-        | Product-level images
+        | Product Stock
+        |--------------------------------------------------------------------------
+        |
+        | Simple:
+        |     products.stock
+        |
+        | Variable:
+        |     variant stock is handled through the selected variant.
+        |
+        */
+
+        $productStock = $isSimple
+            ? max(0, (int) $product->stock)
+            : null;
+
+        /*
+        |--------------------------------------------------------------------------
+        | Product-level Images
         |--------------------------------------------------------------------------
         */
 
@@ -96,15 +122,17 @@
 
         /*
         |--------------------------------------------------------------------------
-        | Active variants
+        | Active Variants
         |--------------------------------------------------------------------------
         */
 
-        $activeVariants = $product->variants
-            ->filter(
-                static fn ($variant): bool => (bool) $variant->status
-            )
-            ->values();
+        $activeVariants = $isVariable
+            ? $product->variants
+                ->filter(
+                    static fn ($variant): bool => (bool) $variant->status
+                )
+                ->values()
+            : collect();
 
         /*
         |--------------------------------------------------------------------------
@@ -114,55 +142,63 @@
 
         $attributes = collect();
 
-        foreach ($activeVariants as $variant) {
-            foreach ($variant->values as $variantValue) {
-                $attribute = $variantValue->attribute;
-                $attributeValue = $variantValue->attributeValue;
+        if ($isVariable) {
+            foreach ($activeVariants as $variant) {
+                foreach ($variant->values as $variantValue) {
+                    $attribute = $variantValue->attribute;
+                    $attributeValue = $variantValue->attributeValue;
 
-                if (
-                    !$attribute ||
-                    !$attributeValue ||
-                    !$attribute->status ||
-                    !$attributeValue->status
-                ) {
-                    continue;
-                }
+                    if (
+                        !$attribute ||
+                        !$attributeValue ||
+                        !$attribute->status ||
+                        !$attributeValue->status
+                    ) {
+                        continue;
+                    }
 
-                $attributeId = (int) $attribute->id;
-                $attributeValueId = (int) $attributeValue->id;
+                    $attributeId = (int) $attribute->id;
+                    $attributeValueId = (int) $attributeValue->id;
 
-                if (!$attributes->has($attributeId)) {
+                    if (!$attributes->has($attributeId)) {
+                        $attributes->put(
+                            $attributeId,
+                            [
+                                'id' => $attributeId,
+                                'name' => $attribute->name,
+                                'slug' => $attribute->slug,
+                                'sort_order' => (int) $attribute->sort_order,
+                                'values' => collect(),
+                            ],
+                        );
+                    }
+
+                    $attributeData = $attributes->get(
+                        $attributeId,
+                    );
+
+                    if (
+                        !$attributeData['values']->has(
+                            $attributeValueId,
+                        )
+                    ) {
+                        $attributeData['values']->put(
+                            $attributeValueId,
+                            [
+                                'id' => $attributeValueId,
+                                'label' => $attributeValue->label,
+                                'value' => $attributeValue->value,
+                                'slug' => $attributeValue->slug,
+                                'sort_order' => (int) $attributeValue->sort_order,
+                            ],
+                        );
+                    }
+
                     $attributes->put(
                         $attributeId,
-                        [
-                            'id' => $attributeId,
-                            'name' => $attribute->name,
-                            'slug' => $attribute->slug,
-                            'sort_order' => (int) $attribute->sort_order,
-                            'values' => collect(),
-                        ]
+                        $attributeData,
                     );
                 }
-
-                $attributeData = $attributes->get($attributeId);
-
-                if (!$attributeData['values']->has($attributeValueId)) {
-                    $attributeData['values']->put(
-                        $attributeValueId,
-                        [
-                            'id' => $attributeValueId,
-                            'label' => $attributeValue->label,
-                            'value' => $attributeValue->value,
-                            'slug' => $attributeValue->slug,
-                            'sort_order' => (int) $attributeValue->sort_order,
-                        ]
-                    );
-                }
-
-                $attributes->put(
-                    $attributeId,
-                    $attributeData
-                );
             }
         }
 
@@ -176,13 +212,13 @@
                         ->all();
 
                     return $attribute;
-                }
+                },
             )
             ->values();
 
         /*
         |--------------------------------------------------------------------------
-        | Variant data
+        | Variant Data
         |--------------------------------------------------------------------------
         */
 
@@ -198,7 +234,9 @@
                      * ProductVariant.image
                      */
                     if (filled($variant->image)) {
-                        $url = $resolveImage($variant->image);
+                        $url = $resolveImage(
+                            $variant->image,
+                        );
 
                         if (filled($url)) {
                             $images->push([
@@ -214,7 +252,9 @@
                      * ProductImage records attached to variant
                      */
                     foreach ($variant->images as $image) {
-                        $url = $resolveImage($image->image);
+                        $url = $resolveImage(
+                            $image->image,
+                        );
 
                         if (blank($url)) {
                             continue;
@@ -272,9 +312,10 @@
                             ? (float) $variant->compare_price
                             : null,
 
-                        'stock' => $variant->stock !== null
-                            ? (int) $variant->stock
-                            : 0,
+                        'stock' => max(
+                            0,
+                            (int) ($variant->stock ?? 0),
+                        ),
 
                         'image' => filled($variant->image)
                             ? $resolveImage($variant->image)
@@ -284,17 +325,58 @@
 
                         'attributes' => $variantAttributes,
                     ];
-                }
+                },
             )
             ->values();
 
-        $initialVariant = $variants->first();
+        /*
+        |--------------------------------------------------------------------------
+        | Initial Variant
+        |--------------------------------------------------------------------------
+        */
+
+        $initialVariant = $isVariable
+            ? $variants->first()
+            : null;
 
         $initialSelections = $initialVariant['attributes'] ?? [];
 
         /*
         |--------------------------------------------------------------------------
-        | Initial main image
+        | Initial Product Price
+        |--------------------------------------------------------------------------
+        */
+
+        $initialPrice = $initialVariant['price']
+            ?? (float) $product->price;
+
+        $initialComparePrice = $initialVariant['compare_price']
+            ?? (
+                $product->compare_price !== null
+                    ? (float) $product->compare_price
+                    : null
+            );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Initial Product Stock
+        |--------------------------------------------------------------------------
+        */
+
+        $initialStock = $isSimple
+            ? $productStock
+            : (
+                $initialVariant
+                    ? max(
+                        0,
+                        (int) $initialVariant['stock'],
+                    )
+                    : 0
+            );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Initial Main Gallery
         |--------------------------------------------------------------------------
         */
 
@@ -305,7 +387,7 @@
             !empty($initialVariant['images'])
         ) {
             $initialGallery = collect(
-                $initialVariant['images']
+                $initialVariant['images'],
             );
         }
 
@@ -321,7 +403,7 @@
             filled($product->thumbnail)
         ) {
             $thumbnailUrl = $resolveImage(
-                $product->thumbnail
+                $product->thumbnail,
             );
 
             if (filled($thumbnailUrl)) {
@@ -336,18 +418,20 @@
 
         /*
         |--------------------------------------------------------------------------
-        | Related image helper
+        | Related Image Helper
         |--------------------------------------------------------------------------
         */
 
         $getRelatedImage = static function (
-            $relatedProduct
+            $relatedProduct,
         ) use (
-            $resolveImage
+            $resolveImage,
         ): string {
             $image = $relatedProduct->images
                 ->first(
-                    static fn ($image): bool => empty($image->variant_id)
+                    static fn ($image): bool => empty(
+                        $image->variant_id
+                    ),
                 );
 
             if (
@@ -355,17 +439,17 @@
                 filled($image->image)
             ) {
                 return $resolveImage(
-                    $image->image
+                    $image->image,
                 );
             }
 
             if (
                 filled(
-                    $relatedProduct->thumbnail
+                    $relatedProduct->thumbnail,
                 )
             ) {
                 return $resolveImage(
-                    $relatedProduct->thumbnail
+                    $relatedProduct->thumbnail,
                 );
             }
 
@@ -395,7 +479,7 @@
                         Shop
                     </a>
 
-                    @if($product->categories->isNotEmpty())
+                    @if ($product->categories->isNotEmpty())
 
                         @php
                             $category = $product->categories->first();
@@ -443,34 +527,24 @@
                         <div
                             class="product-gallery-thumbnails"
                             data-gallery-thumbnails
-                        >
-                            {{-- JavaScript renders variant images here --}}
-                        </div>
+                        ></div>
 
 
                         <div class="product-main-image">
 
-                            @if(
-                                $initialComparePrice =
-                                    $initialVariant['compare_price']
-                                    ?? $product->compare_price
+                            @if (
+                                $initialComparePrice &&
+                                $initialComparePrice > $initialPrice
                             )
 
-                                @if(
-                                    $initialComparePrice >
-                                    ($initialVariant['price'] ?? $product->price)
-                                )
-
-                                    <span class="product-sale-tag">
-                                        Sale
-                                    </span>
-
-                                @endif
+                                <span class="product-sale-tag">
+                                    Sale
+                                </span>
 
                             @endif
 
 
-                            @if($initialGallery->isNotEmpty())
+                            @if ($initialGallery->isNotEmpty())
 
                                 <img
                                     class="product-main-image-element"
@@ -514,7 +588,7 @@
 
                     <div class="product-information">
 
-                        @if($product->categories->isNotEmpty())
+                        @if ($product->categories->isNotEmpty())
 
                             <div class="product-category">
                                 {{ $product->categories->first()->name }}
@@ -530,7 +604,7 @@
 
                         <div class="product-brand-row">
 
-                            @if($product->brand)
+                            @if ($product->brand)
 
                                 <span class="product-brand">
                                     {{ $product->brand->name }}
@@ -539,14 +613,16 @@
                             @endif
 
 
-                            @if($product->sku)
-
-                                <span class="product-sku">
-                                    SKU:
-                                    {{ $initialVariant['sku'] ?? $product->sku }}
+                            <span class="product-sku">
+                                SKU:
+                                <span data-product-sku>
+                                    {{
+                                        $initialVariant['sku']
+                                        ?? $product->sku
+                                        ?? '—'
+                                    }}
                                 </span>
-
-                            @endif
+                            </span>
 
                         </div>
 
@@ -562,36 +638,25 @@
                                 data-product-price
                             >
                                 ${{ number_format(
-                                    $initialVariant['price'] ?? $product->price,
-                                    2
+                                    $initialPrice,
+                                    2,
                                 ) }}
                             </span>
-
-
-                            @php
-                                $initialComparePrice =
-                                    $initialVariant['compare_price']
-                                    ?? $product->compare_price;
-
-                                $initialCurrentPrice =
-                                    $initialVariant['price']
-                                    ?? $product->price;
-                            @endphp
 
 
                             <span
                                 class="product-compare-price"
                                 data-product-compare-price
-                                @if(
+                                @if (
                                     !$initialComparePrice ||
-                                    $initialComparePrice <= $initialCurrentPrice
+                                    $initialComparePrice <= $initialPrice
                                 )
                                     hidden
                                 @endif
                             >
                                 ${{ number_format(
                                     $initialComparePrice ?? 0,
-                                    2
+                                    2,
                                 ) }}
                             </span>
 
@@ -599,31 +664,29 @@
                             <span
                                 class="product-discount"
                                 data-product-discount
-                                @if(
+                                @if (
                                     !$initialComparePrice ||
-                                    $initialComparePrice <= $initialCurrentPrice
+                                    $initialComparePrice <= $initialPrice
                                 )
                                     hidden
                                 @endif
                             >
-
-                                @if(
+                                @if (
                                     $initialComparePrice &&
-                                    $initialComparePrice > $initialCurrentPrice
+                                    $initialComparePrice > $initialPrice
                                 )
-
-                                    {{ round(
-                                        (
+                                    {{
+                                        round(
                                             (
-                                                $initialComparePrice -
-                                                $initialCurrentPrice
-                                            ) /
-                                            $initialComparePrice
-                                        ) * 100
-                                    ) }}% OFF
-
+                                                (
+                                                    $initialComparePrice -
+                                                    $initialPrice
+                                                ) /
+                                                $initialComparePrice
+                                            ) * 100
+                                        )
+                                    }}% OFF
                                 @endif
-
                             </span>
 
                         </div>
@@ -637,14 +700,14 @@
 
                             <i class="ri-truck-line"></i>
 
-                            @if($shippingCost > 0)
+                            @if ($shippingCost > 0)
 
                                 <span>
                                     Shipping:
                                     <strong>
                                         ${{ number_format(
                                             $shippingCost,
-                                            2
+                                            2,
                                         ) }}
                                     </strong>
                                 </span>
@@ -666,10 +729,10 @@
                             Short Description
                         ================================================== --}}
 
-                        @if($product->short_description)
+                        @if ($product->short_description)
 
                             <div class="product-short-description">
-                                {!! nl2br($product->short_description) !!}
+                                {!! $product->short_description !!}
                             </div>
 
                         @endif
@@ -679,14 +742,17 @@
                             Dynamic Options
                         ================================================== --}}
 
-                        @if($attributes->isNotEmpty())
+                        @if (
+                            $isVariable &&
+                            $attributes->isNotEmpty()
+                        )
 
                             <div
                                 class="product-options"
                                 data-product-options
                             >
 
-                                @foreach($attributes as $attribute)
+                                @foreach ($attributes as $attribute)
 
                                     <div
                                         class="product-option-group"
@@ -714,7 +780,7 @@
 
                                         <div class="product-option-values">
 
-                                            @foreach($attribute['values'] as $attributeValue)
+                                            @foreach ($attribute['values'] as $attributeValue)
 
                                                 <button
                                                     type="button"
@@ -741,17 +807,17 @@
 
 
                         {{-- =================================================
-                            Stock
+                            Simple Product Stock
                         ================================================== --}}
 
-                        <div
-                            class="product-stock"
-                            data-product-stock
-                        >
+                        @if ($isSimple)
 
-                            @if($initialVariant)
+                            <div
+                                class="product-stock"
+                                data-product-stock
+                            >
 
-                                @if($initialVariant['stock'] > 0)
+                                @if ($productStock > 0)
 
                                     <i class="ri-checkbox-circle-line"></i>
 
@@ -760,7 +826,7 @@
                                     </span>
 
                                     <small>
-                                        {{ $initialVariant['stock'] }}
+                                        {{ $productStock }}
                                         available
                                     </small>
 
@@ -774,9 +840,57 @@
 
                                 @endif
 
-                            @endif
+                            </div>
 
-                        </div>
+                        @else
+
+                            {{-- =================================================
+                                Variable Product Stock
+                            ================================================== --}}
+
+                            <div
+                                class="product-stock"
+                                data-product-stock
+                            >
+
+                                @if ($initialVariant)
+
+                                    @if ($initialStock > 0)
+
+                                        <i class="ri-checkbox-circle-line"></i>
+
+                                        <span>
+                                            In Stock
+                                        </span>
+
+                                        <small>
+                                            {{ $initialStock }}
+                                            available
+                                        </small>
+
+                                    @else
+
+                                        <i class="ri-close-circle-line"></i>
+
+                                        <span>
+                                            Out of Stock
+                                        </span>
+
+                                    @endif
+
+                                @else
+
+                                    <i class="ri-information-line"></i>
+
+                                    <span>
+                                        Select product options
+                                    </span>
+
+                                @endif
+
+                            </div>
+
+                        @endif
 
 
                         {{-- =================================================
@@ -800,8 +914,11 @@
                                     type="number"
                                     value="1"
                                     min="1"
-                                    @if($initialVariant)
-                                        max="{{ max(1, $initialVariant['stock']) }}"
+                                    @if ($isSimple)
+                                        max="{{ max(1, $productStock) }}"
+                                    @disabled($productStock <= 0)
+                                    @elseif ($initialVariant)
+                                        max="{{ max(1, $initialStock) }}"
                                     @endif
                                     data-product-quantity
                                     aria-label="Quantity"
@@ -823,12 +940,14 @@
                                 type="button"
                                 class="product-add-cart"
                                 data-add-to-cart
-                                @if(
-                                    $initialVariant &&
-                                    $initialVariant['stock'] <= 0
+                                @disabled(
+                                    $isSimple
+                                        ? $productStock <= 0
+                                        : (
+                                            !$initialVariant ||
+                                            $initialStock <= 0
+                                        )
                                 )
-                                    disabled
-                                @endif
                             >
 
                                 <i class="ri-shopping-bag-3-line"></i>
@@ -840,10 +959,7 @@
                             </button>
 
 
-                            {{-- =================================================
-                                Wishlist
-                            ================================================== --}}
-
+                            {{-- Wishlist --}}
                             <button
                                 type="button"
                                 class="product-wishlist {{ $isWishlisted ? 'is-active' : '' }}"
@@ -967,10 +1083,10 @@
                             data-tab-panel="description"
                         >
 
-                            @if($product->description)
+                            @if ($product->description)
 
                                 <div class="product-description">
-                                    {!! nl2br($product->description) !!}
+                                    {!! $product->description !!}
                                 </div>
 
                             @else
@@ -991,7 +1107,20 @@
 
                             <div class="product-specifications">
 
-                                @if($product->brand)
+                                <div class="product-specification-row">
+
+                                    <span>
+                                        Product Type
+                                    </span>
+
+                                    <strong>
+                                        {{ $isVariable ? 'Variable Product' : 'Simple Product' }}
+                                    </strong>
+
+                                </div>
+
+
+                                @if ($product->brand)
 
                                     <div class="product-specification-row">
 
@@ -1015,13 +1144,17 @@
                                     </span>
 
                                     <strong data-product-spec-sku>
-                                        {{ $initialVariant['sku'] ?? $product->sku ?? '—' }}
+                                        {{
+                                            $initialVariant['sku']
+                                            ?? $product->sku
+                                            ?? '—'
+                                        }}
                                     </strong>
 
                                 </div>
 
 
-                                @if($product->categories->isNotEmpty())
+                                @if ($product->categories->isNotEmpty())
 
                                     <div class="product-specification-row">
 
@@ -1038,7 +1171,7 @@
                                 @endif
 
 
-                                @if($product->source)
+                                @if ($product->source)
 
                                     <div class="product-specification-row">
 
@@ -1047,7 +1180,7 @@
                                         </span>
 
                                         <strong>
-                                            {{ $product->source }}
+                                            {{ ucfirst($product->source) }}
                                         </strong>
 
                                     </div>
@@ -1063,11 +1196,11 @@
 
                                     <strong>
 
-                                        @if($shippingCost > 0)
+                                        @if ($shippingCost > 0)
 
                                             ${{ number_format(
                                                 $shippingCost,
-                                                2
+                                                2,
                                             ) }}
 
                                         @else
@@ -1097,7 +1230,7 @@
             Related Products
         ================================================================== --}}
 
-        @if($relatedProducts->isNotEmpty())
+        @if ($relatedProducts->isNotEmpty())
 
             <section class="related-products-section">
 
@@ -1128,12 +1261,18 @@
 
                     <div class="related-products-grid">
 
-                        @foreach($relatedProducts as $relatedProduct)
+                        @foreach ($relatedProducts as $relatedProduct)
 
                             @php
-                                $relatedVariant = $relatedProduct->variants
-                                    ->where('status', true)
-                                    ->first();
+                                $relatedIsVariable =
+                                    $relatedProduct->isVariable();
+
+                                $relatedVariant =
+                                    $relatedIsVariable
+                                        ? $relatedProduct->variants
+                                            ->where('status', true)
+                                            ->first()
+                                        : null;
 
                                 $relatedPrice =
                                     $relatedVariant?->price
@@ -1144,7 +1283,9 @@
                                     ?? $relatedProduct->compare_price;
 
                                 $relatedImage =
-                                    $getRelatedImage($relatedProduct);
+                                    $getRelatedImage(
+                                        $relatedProduct,
+                                    );
 
                                 $relatedSale =
                                     $relatedComparePrice &&
@@ -1161,7 +1302,7 @@
 
                                 <div class="related-product-image">
 
-                                    @if($relatedSale)
+                                    @if ($relatedSale)
 
                                         <span class="related-product-sale">
                                             Sale
@@ -1170,7 +1311,7 @@
                                     @endif
 
 
-                                    @if($relatedProduct->featured)
+                                    @if ($relatedProduct->featured)
 
                                         <span class="related-product-featured">
                                             Featured
@@ -1199,7 +1340,7 @@
                                         class="related-product-image-link"
                                     >
 
-                                        @if($relatedImage)
+                                        @if ($relatedImage)
 
                                             <img
                                                 src="{{ $relatedImage }}"
@@ -1222,7 +1363,7 @@
 
                                 <div class="related-product-content">
 
-                                    @if($relatedProduct->brand)
+                                    @if ($relatedProduct->brand)
 
                                         <span class="related-product-brand">
                                             {{ $relatedProduct->brand->name }}
@@ -1247,16 +1388,16 @@
                                         <span>
                                             ${{ number_format(
                                                 $relatedPrice,
-                                                2
+                                                2,
                                             ) }}
                                         </span>
 
-                                        @if($relatedSale)
+                                        @if ($relatedSale)
 
                                             <del>
                                                 ${{ number_format(
                                                     $relatedComparePrice,
-                                                    2
+                                                    2,
                                                 ) }}
                                             </del>
 
@@ -1334,7 +1475,6 @@
                 return;
             }
 
-
             /*
             |--------------------------------------------------------------------------
             | Product Data
@@ -1345,12 +1485,20 @@
 
             const productName = @json($product->name);
 
+            const isVariable = @json($isVariable);
+
+            const isSimple = @json($isSimple);
+
             const productPrice = Number(
                 @json($product->price)
             );
 
             const productComparePrice = @json(
                 $product->compare_price
+            );
+
+            const productStock = Number(
+                @json($productStock ?? 0)
             );
 
             const productSku = @json(
@@ -1420,7 +1568,7 @@
             );
 
             const skuElement = page.querySelector(
-                '.product-sku'
+                '[data-product-sku]'
             );
 
             const specificationSkuElement = page.querySelector(
@@ -1455,13 +1603,16 @@
             */
 
             let selectedAttributes = {
-                ...initialSelections,
+                ...initialSelections
             };
 
-            let selectedVariant = null;
+            let selectedVariant =
+                isVariable
+                    ? null
+                    : null;
 
             let hasValidVariantSelection =
-                !variants.length;
+                !isVariable;
 
 
             /*
@@ -1472,7 +1623,8 @@
 
             function formatPrice(value) {
 
-                const number = Number(value);
+                const number =
+                    Number(value);
 
                 if (!Number.isFinite(number)) {
                     return '$0.00';
@@ -1509,6 +1661,10 @@
 
             function hasCompleteSelection() {
 
+                if (!isVariable) {
+                    return true;
+                }
+
                 if (!requiredAttributeIds.length) {
                     return true;
                 }
@@ -1516,9 +1672,8 @@
                 return requiredAttributeIds.every(
                     (attributeId) => {
 
-                        const key = String(
-                            attributeId
-                        );
+                        const key =
+                            String(attributeId);
 
                         return (
                             selectedAttributes[key] !== undefined &&
@@ -1538,6 +1693,10 @@
 
             function findExactVariant() {
 
+                if (!isVariable) {
+                    return null;
+                }
+
                 if (!variants.length) {
                     return null;
                 }
@@ -1556,9 +1715,8 @@
                         return requiredAttributeIds.every(
                             (attributeId) => {
 
-                                const key = String(
-                                    attributeId
-                                );
+                                const key =
+                                    String(attributeId);
 
                                 return (
                                     Number(
@@ -1577,7 +1735,7 @@
 
             /*
             |--------------------------------------------------------------------------
-            | ALL Variant Gallery
+            | All Variant Gallery
             |--------------------------------------------------------------------------
             */
 
@@ -1586,7 +1744,6 @@
                 const images = [];
 
                 const seen = new Set();
-
 
                 variants.forEach(
                     (variant) => {
@@ -1609,7 +1766,9 @@
                                 !seen.has(imageUrl)
                             ) {
 
-                                seen.add(imageUrl);
+                                seen.add(
+                                    imageUrl
+                                );
 
                                 images.push({
                                     url: imageUrl,
@@ -1642,7 +1801,9 @@
                                         return;
                                     }
 
-                                    seen.add(imageUrl);
+                                    seen.add(
+                                        imageUrl
+                                    );
 
                                     images.push({
                                         url: imageUrl,
@@ -1659,41 +1820,36 @@
                 );
 
 
-                if (
-                    Array.isArray(
-                        productGallery
-                    )
-                ) {
+                productGallery.forEach(
+                    (image) => {
 
-                    productGallery.forEach(
-                        (image) => {
+                        const imageUrl =
+                            normalizeImageUrl(
+                                image.url ||
+                                image.image
+                            );
 
-                            const imageUrl =
-                                normalizeImageUrl(
-                                    image.url ||
-                                    image.image
-                                );
-
-                            if (
-                                !imageUrl ||
-                                seen.has(imageUrl)
-                            ) {
-                                return;
-                            }
-
-                            seen.add(imageUrl);
-
-                            images.push({
-                                url: imageUrl,
-                                alt:
-                                    image.alt ||
-                                    image.alt_text ||
-                                    productName,
-                                variantId: null,
-                            });
+                        if (
+                            !imageUrl ||
+                            seen.has(imageUrl)
+                        ) {
+                            return;
                         }
-                    );
-                }
+
+                        seen.add(
+                            imageUrl
+                        );
+
+                        images.push({
+                            url: imageUrl,
+                            alt:
+                                image.alt ||
+                                image.alt_text ||
+                                productName,
+                            variantId: null,
+                        });
+                    }
+                );
 
 
                 if (
@@ -1719,7 +1875,9 @@
             |--------------------------------------------------------------------------
             */
 
-            function getVariantImages(variant) {
+            function getVariantImages(
+                variant
+            ) {
 
                 if (!variant) {
                     return getAllVariantImages();
@@ -1744,7 +1902,9 @@
 
                     if (imageUrl) {
 
-                        seen.add(imageUrl);
+                        seen.add(
+                            imageUrl
+                        );
 
                         images.push({
                             url: imageUrl,
@@ -1777,7 +1937,9 @@
                                 return;
                             }
 
-                            seen.add(imageUrl);
+                            seen.add(
+                                imageUrl
+                            );
 
                             images.push({
                                 url: imageUrl,
@@ -1804,7 +1966,9 @@
             |--------------------------------------------------------------------------
             */
 
-            function setMainImage(imageUrl) {
+            function setMainImage(
+                imageUrl
+            ) {
 
                 if (
                     !mainImage ||
@@ -1813,12 +1977,14 @@
                     return;
                 }
 
-                mainImage.src = imageUrl;
+                mainImage.src =
+                    imageUrl;
 
                 mainImage.alt =
                     productName;
 
-                mainImage.hidden = false;
+                mainImage.hidden =
+                    false;
 
 
                 if (imagePlaceholder) {
@@ -1870,14 +2036,16 @@
                     return;
                 }
 
-                galleryThumbnails.innerHTML = '';
+                galleryThumbnails.innerHTML =
+                    '';
 
 
                 if (!images.length) {
 
                     if (mainImage) {
 
-                        mainImage.hidden = true;
+                        mainImage.hidden =
+                            true;
 
                         mainImage.removeAttribute(
                             'src'
@@ -1999,6 +2167,10 @@
 
             function renderAttributeSelections() {
 
+                if (!isVariable) {
+                    return;
+                }
+
                 page
                     .querySelectorAll(
                         '[data-option-value]'
@@ -2101,6 +2273,10 @@
 
             function updateOptionAvailability() {
 
+                if (!isVariable) {
+                    return;
+                }
+
                 page
                     .querySelectorAll(
                         '[data-option-value]'
@@ -2122,9 +2298,9 @@
                             if (!variants.length) {
 
                                 button.disabled =
-                                    false;
+                                    true;
 
-                                button.classList.remove(
+                                button.classList.add(
                                     'is-unavailable'
                                 );
 
@@ -2205,13 +2381,16 @@
 
             /*
             |--------------------------------------------------------------------------
-            | Product Price
+            | Price
             |--------------------------------------------------------------------------
             */
 
-            function updatePrice(variant) {
+            function updatePrice(
+                variant
+            ) {
 
                 const currentPrice =
+                    isVariable &&
                     variant &&
                     variant.price !== null &&
                     variant.price !== undefined
@@ -2222,6 +2401,7 @@
 
 
                 const comparePrice =
+                    isVariable &&
                     variant &&
                     variant.compare_price !== null &&
                     variant.compare_price !== undefined
@@ -2251,7 +2431,9 @@
 
                     if (
                         comparePrice !== null &&
-                        Number.isFinite(comparePrice) &&
+                        Number.isFinite(
+                            comparePrice
+                        ) &&
                         comparePrice > currentPrice
                     ) {
 
@@ -2275,7 +2457,9 @@
 
                     if (
                         comparePrice !== null &&
-                        Number.isFinite(comparePrice) &&
+                        Number.isFinite(
+                            comparePrice
+                        ) &&
                         comparePrice > currentPrice
                     ) {
 
@@ -2312,17 +2496,23 @@
             |--------------------------------------------------------------------------
             */
 
-            function updateSku(variant) {
+            function updateSku(
+                variant
+            ) {
 
                 const sku =
-                    variant?.sku ||
-                    productSku;
+                    isVariable
+                        ? (
+                            variant?.sku ||
+                            productSku
+                        )
+                        : productSku;
 
 
                 if (skuElement) {
 
                     skuElement.textContent =
-                        `SKU: ${sku}`;
+                        sku;
                 }
 
 
@@ -2340,23 +2530,55 @@
             |--------------------------------------------------------------------------
             */
 
-            function updateStock(variant) {
+            function updateStock(
+                variant
+            ) {
 
                 if (!stockElement) {
                     return;
                 }
 
 
-                if (!variants.length) {
+                /*
+                |--------------------------------------------------------------------------
+                | Simple Product
+                |--------------------------------------------------------------------------
+                */
 
-                    stockElement.innerHTML = `
-                        <i class="ri-checkbox-circle-line"></i>
-                        <span>Available</span>
-                    `;
+                if (isSimple) {
+
+                    const stock =
+                        Math.max(
+                            0,
+                            productStock
+                        );
+
+
+                    if (stock > 0) {
+
+                        stockElement.innerHTML = `
+                            <i class="ri-checkbox-circle-line"></i>
+                            <span>In Stock</span>
+                            <small>${stock} available</small>
+                        `;
+
+                    } else {
+
+                        stockElement.innerHTML = `
+                            <i class="ri-close-circle-line"></i>
+                            <span>Out of Stock</span>
+                        `;
+                    }
 
                     return;
                 }
 
+
+                /*
+                |--------------------------------------------------------------------------
+                | Variable Product
+                |--------------------------------------------------------------------------
+                */
 
                 if (!hasValidVariantSelection) {
 
@@ -2414,24 +2636,43 @@
             |--------------------------------------------------------------------------
             */
 
-            function updateQuantity(variant) {
+            function updateQuantity(
+                variant
+            ) {
 
                 if (!quantityInput) {
                     return;
                 }
 
 
-                if (!variants.length) {
+                /*
+                |--------------------------------------------------------------------------
+                | Simple Product
+                |--------------------------------------------------------------------------
+                */
+
+                if (isSimple) {
+
+                    const stock =
+                        Math.max(
+                            0,
+                            productStock
+                        );
+
 
                     quantityInput.disabled =
-                        false;
+                        stock <= 0;
 
                     quantityInput.min =
                         '1';
 
-                    quantityInput.removeAttribute(
-                        'max'
-                    );
+                    quantityInput.max =
+                        String(
+                            Math.max(
+                                1,
+                                stock
+                            )
+                        );
 
 
                     let quantity =
@@ -2443,7 +2684,10 @@
                     quantity =
                         Math.max(
                             1,
-                            quantity
+                            Math.min(
+                                quantity,
+                                stock || 1
+                            )
                         );
 
 
@@ -2456,6 +2700,7 @@
                     if (quantityDecrease) {
 
                         quantityDecrease.disabled =
+                            stock <= 0 ||
                             quantity <= 1;
                     }
 
@@ -2463,7 +2708,8 @@
                     if (quantityIncrease) {
 
                         quantityIncrease.disabled =
-                            false;
+                            stock <= 0 ||
+                            quantity >= stock;
                     }
 
 
@@ -2471,7 +2717,16 @@
                 }
 
 
-                if (!hasValidVariantSelection) {
+                /*
+                |--------------------------------------------------------------------------
+                | Variable Product
+                |--------------------------------------------------------------------------
+                */
+
+                if (
+                    !hasValidVariantSelection ||
+                    !variant
+                ) {
 
                     quantityInput.disabled =
                         true;
@@ -2499,38 +2754,6 @@
                         quantityIncrease.disabled =
                             true;
                     }
-
-
-                    return;
-                }
-
-
-                if (!variant) {
-
-                    quantityInput.disabled =
-                        true;
-
-                    quantityInput.value =
-                        '1';
-
-                    quantityInput.removeAttribute(
-                        'max'
-                    );
-
-
-                    if (quantityDecrease) {
-
-                        quantityDecrease.disabled =
-                            true;
-                    }
-
-
-                    if (quantityIncrease) {
-
-                        quantityIncrease.disabled =
-                            true;
-                    }
-
 
                     return;
                 }
@@ -2605,21 +2828,35 @@
             |--------------------------------------------------------------------------
             */
 
-            function updateAddToCart(variant) {
+            function updateAddToCart(
+                variant
+            ) {
 
                 if (!addToCartButton) {
                     return;
                 }
 
 
-                if (!variants.length) {
+                /*
+                |--------------------------------------------------------------------------
+                | Simple Product
+                |--------------------------------------------------------------------------
+                */
+
+                if (isSimple) {
 
                     addToCartButton.disabled =
-                        false;
+                        productStock <= 0;
 
                     return;
                 }
 
+
+                /*
+                |--------------------------------------------------------------------------
+                | Variable Product
+                |--------------------------------------------------------------------------
+                */
 
                 addToCartButton.disabled =
                     !hasValidVariantSelection ||
@@ -2632,7 +2869,7 @@
 
             /*
             |--------------------------------------------------------------------------
-            | Product Information Update
+            | Product Information
             |--------------------------------------------------------------------------
             */
 
@@ -2786,7 +3023,9 @@
             |--------------------------------------------------------------------------
             */
 
-            function updateCartCount(count) {
+            function updateCartCount(
+                count
+            ) {
 
                 const normalizedCount =
                     Math.max(
@@ -2862,8 +3101,14 @@
                 }
 
 
+                /*
+                |--------------------------------------------------------------------------
+                | Variable Product Validation
+                |--------------------------------------------------------------------------
+                */
+
                 if (
-                    variants.length &&
+                    isVariable &&
                     (
                         !selectedVariant ||
                         !hasValidVariantSelection
@@ -2922,8 +3167,41 @@
                     );
 
 
+                /*
+                |--------------------------------------------------------------------------
+                | Simple Product Stock
+                |--------------------------------------------------------------------------
+                */
+
+                if (isSimple) {
+
+                    if (productStock <= 0) {
+
+                        showCartToast(
+                            'This product is currently out of stock.',
+                            'error'
+                        );
+
+                        return;
+                    }
+
+
+                    quantity =
+                        Math.min(
+                            quantity,
+                            productStock
+                        );
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Variable Product Stock
+                |--------------------------------------------------------------------------
+                */
+
                 if (
-                    variants.length &&
+                    isVariable &&
                     selectedVariant
                 ) {
 
@@ -2955,6 +3233,19 @@
                 }
 
 
+                /*
+                |--------------------------------------------------------------------------
+                | Cart Payload
+                |--------------------------------------------------------------------------
+                |
+                | Simple:
+                |     variant_id = null
+                |
+                | Variable:
+                |     variant_id = selected variant ID
+                |
+                */
+
                 const payload = {
 
                     product_id:
@@ -2963,6 +3254,7 @@
                         ),
 
                     variant_id:
+                        isVariable &&
                         selectedVariant
                             ? Number(
                                 selectedVariant.id
@@ -2982,7 +3274,11 @@
 
                     const response =
                         await fetch(
-                            @json(route('cart.items.store')),
+                            @json(
+                                route(
+                                    'cart.items.store'
+                                )
+                            ),
                             {
                                 method: 'POST',
 
@@ -3082,7 +3378,8 @@
 
 
                     if (
-                        data?.cart_count !== undefined
+                        data?.cart_count !==
+                        undefined
                     ) {
 
                         updateCartCount(
@@ -3113,6 +3410,7 @@
                                         ),
 
                                     variantId:
+                                        isVariable &&
                                         selectedVariant
                                             ? Number(
                                                 selectedVariant.id
@@ -3170,12 +3468,15 @@
                 button,
                 wishlisted
             ) {
+
                 if (!button) {
                     return;
                 }
 
                 const active =
-                    Boolean(wishlisted);
+                    Boolean(
+                        wishlisted
+                    );
 
                 button.classList.toggle(
                     'is-active',
@@ -3197,9 +3498,12 @@
                 );
 
                 const icon =
-                    button.querySelector('i');
+                    button.querySelector(
+                        'i'
+                    );
 
                 if (icon) {
+
                     icon.className =
                         active
                             ? 'ri-heart-fill'
@@ -3210,7 +3514,7 @@
 
             /*
             |--------------------------------------------------------------------------
-            | Sync All Wishlist Buttons
+            | Sync Wishlist Buttons
             |--------------------------------------------------------------------------
             */
 
@@ -3218,6 +3522,7 @@
                 targetProductId,
                 wishlisted
             ) {
+
                 const normalizedProductId =
                     Number(
                         targetProductId
@@ -3253,7 +3558,7 @@
 
             /*
             |--------------------------------------------------------------------------
-            | Wishlist Loading State
+            | Wishlist Loading
             |--------------------------------------------------------------------------
             */
 
@@ -3261,6 +3566,7 @@
                 productId,
                 loading
             ) {
+
                 const normalizedProductId =
                     Number(productId);
 
@@ -3316,6 +3622,7 @@
             async function toggleWishlist(
                 button
             ) {
+
                 if (!button) {
                     return;
                 }
@@ -3333,15 +3640,6 @@
                 ) {
                     return;
                 }
-
-                /*
-                |--------------------------------------------------------------------------
-                | IMPORTANT:
-                | URL comes directly from the button.
-                | Blade generates:
-                | route('wishlist.toggle', ['product' => $product])
-                |--------------------------------------------------------------------------
-                */
 
                 const wishlistUrl =
                     button.dataset.wishlistUrl;
@@ -3430,12 +3728,6 @@
                     }
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | HTTP Errors
-                    |--------------------------------------------------------------------------
-                    */
-
                     if (
                         response.status === 419
                     ) {
@@ -3513,21 +3805,6 @@
                     }
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Wishlist Response
-                    |--------------------------------------------------------------------------
-                    |
-                    | Controller returns:
-                    |
-                    | {
-                    |     success: true,
-                    |     wishlisted: true/false,
-                    |     message: "..."
-                    | }
-                    |
-                    */
-
                     if (
                         typeof data?.wishlisted !==
                         'boolean'
@@ -3543,23 +3820,11 @@
                         data.wishlisted;
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Update Main + Related Buttons
-                    |--------------------------------------------------------------------------
-                    */
-
                     syncWishlistButtons(
                         targetProductId,
                         wishlisted
                     );
 
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Toast
-                    |--------------------------------------------------------------------------
-                    */
 
                     showCartToast(
                         data.message ||
@@ -3571,12 +3836,6 @@
                         'success'
                     );
 
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Global Wishlist Event
-                    |--------------------------------------------------------------------------
-                    */
 
                     document.dispatchEvent(
                         new CustomEvent(
@@ -3626,6 +3885,11 @@
             page.addEventListener(
                 'click',
                 (event) => {
+
+                    if (!isVariable) {
+                        return;
+                    }
+
 
                     const button =
                         event.target.closest(
@@ -3688,9 +3952,6 @@
                             mainVariantImage
                         );
 
-
-                        updateProductInformation();
-
                     } else {
 
                         selectedVariant =
@@ -3700,16 +3961,8 @@
                             false;
 
 
-                        updateStock(
-                            selectedVariant
-                        );
-
-                        updateQuantity(
-                            selectedVariant
-                        );
-
-                        updateAddToCart(
-                            selectedVariant
+                        renderGallery(
+                            getAllVariantImages()
                         );
                     }
 
@@ -3717,6 +3970,8 @@
                     renderAttributeSelections();
 
                     updateOptionAvailability();
+
+                    updateProductInformation();
                 }
             );
 
@@ -3761,6 +4016,18 @@
                     );
 
 
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Simple product:
+                    | Image has no variant, so nothing else changes.
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (!isVariable) {
+                        return;
+                    }
+
+
                     const variantId =
                         Number(
                             thumbnailElement.dataset.variantId ||
@@ -3791,11 +4058,9 @@
                     selectedVariant =
                         imageVariant;
 
-
                     selectedAttributes = {
                         ...imageVariant.attributes,
                     };
-
 
                     hasValidVariantSelection =
                         true;
@@ -3878,31 +4143,31 @@
                         ) || 1;
 
 
-                    if (
-                        variants.length &&
-                        selectedVariant &&
-                        hasValidVariantSelection
-                    ) {
-
-                        const stock =
-                            Math.max(
-                                0,
-                                Number(
-                                    selectedVariant.stock || 0
-                                )
+                    const stock =
+                        isSimple
+                            ? productStock
+                            : (
+                                selectedVariant
+                                    ? Math.max(
+                                        0,
+                                        Number(
+                                            selectedVariant.stock || 0
+                                        )
+                                    )
+                                    : 0
                             );
 
 
-                        quantity =
-                            Math.min(
-                                stock,
-                                quantity + 1
-                            );
-
-                    } else {
-
-                        quantity += 1;
+                    if (stock <= 0) {
+                        return;
                     }
+
+
+                    quantity =
+                        Math.min(
+                            stock,
+                            quantity + 1
+                        );
 
 
                     quantity =
@@ -3958,12 +4223,6 @@
             |--------------------------------------------------------------------------
             | Wishlist Click
             |--------------------------------------------------------------------------
-            |
-            | Works for:
-            |
-            | [data-wishlist]
-            | [data-related-wishlist]
-            |
             */
 
             page.addEventListener(
@@ -4158,28 +4417,44 @@
 
             /*
             |--------------------------------------------------------------------------
-            | INITIAL VARIANT
+            | Initial Variant
             |--------------------------------------------------------------------------
             */
 
-            if (variants.length) {
+            if (isVariable) {
 
-                const exactInitialVariant =
-                    findExactVariant();
+                if (variants.length) {
+
+                    const exactInitialVariant =
+                        findExactVariant();
 
 
-                if (exactInitialVariant) {
+                    if (exactInitialVariant) {
 
-                    selectedVariant =
-                        exactInitialVariant;
+                        selectedVariant =
+                            exactInitialVariant;
 
-                    hasValidVariantSelection =
-                        true;
+                        hasValidVariantSelection =
+                            true;
+
+                    } else {
+
+                        /*
+                         * Do not treat the first variant as selected
+                         * when the user has not selected all options.
+                         */
+
+                        selectedVariant =
+                            null;
+
+                        hasValidVariantSelection =
+                            false;
+                    }
 
                 } else {
 
                     selectedVariant =
-                        variants[0] || null;
+                        null;
 
                     hasValidVariantSelection =
                         false;
@@ -4197,7 +4472,7 @@
 
             /*
             |--------------------------------------------------------------------------
-            | INITIAL GALLERY
+            | Initial Gallery
             |--------------------------------------------------------------------------
             */
 
@@ -4212,6 +4487,7 @@
 
 
             if (
+                isVariable &&
                 selectedVariant &&
                 hasValidVariantSelection
             ) {
@@ -4236,7 +4512,7 @@
 
             /*
             |--------------------------------------------------------------------------
-            | INITIAL UI
+            | Initial UI
             |--------------------------------------------------------------------------
             */
 
@@ -4249,15 +4525,8 @@
 
             /*
             |--------------------------------------------------------------------------
-            | INITIAL WISHLIST STATE
+            | Initial Wishlist State
             |--------------------------------------------------------------------------
-            |
-            | IMPORTANT:
-            | Blade variable is $isWishlisted.
-            | Previously this was incorrectly:
-            |
-            | @json($isWishlisted)
-            |
             */
 
             if (wishlistButton) {
@@ -4267,19 +4536,6 @@
                     @json($isWishlisted)
                 );
             }
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | INITIAL RELATED WISHLIST STATE
-            |--------------------------------------------------------------------------
-            |
-            | Related buttons are already rendered by Blade with
-            | their correct active state, so we do not need another
-            | request here.
-            |
-            */
-
 
         });
     </script>

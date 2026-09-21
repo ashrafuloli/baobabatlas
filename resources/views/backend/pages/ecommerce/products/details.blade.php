@@ -5,6 +5,7 @@
 @section('content')
     <div class="product-details-page">
         <div class="product-details-page__container">
+
             {{-- Header --}}
             <div class="product-details-page__header">
                 <div class="product-details-page__header-content">
@@ -65,6 +66,7 @@
             {{-- Status Bar --}}
             <div class="product-details-page__status-bar">
                 <div class="product-details-page__status-list">
+
                     <div class="product-details-page__status-item">
                         <span
                             class="product-details-page__status-dot {{ $product->status ? 'is-active' : 'is-inactive' }}"
@@ -72,6 +74,15 @@
 
                         <span>
                             {{ $product->status ? 'Active' : 'Inactive' }}
+                        </span>
+                    </div>
+
+                    {{-- Product Type --}}
+                    <div class="product-details-page__status-item">
+                        <i class="ri-stack-line"></i>
+
+                        <span>
+                            {{ $product->isVariable() ? 'Variable Product' : 'Simple Product' }}
                         </span>
                     </div>
 
@@ -99,8 +110,10 @@
 
             {{-- Main Grid --}}
             <div class="product-details-page__grid">
+
                 {{-- Left Column --}}
                 <div class="product-details-page__main">
+
                     {{-- Product Overview --}}
                     <section class="product-details-page__card">
                         <div class="product-details-page__card-header">
@@ -127,6 +140,7 @@
                             </div>
 
                             <div class="product-details-page__overview-content">
+
                                 <div class="product-details-page__field">
                                     <span class="product-details-page__field-label">
                                         Product Name
@@ -136,6 +150,17 @@
                                 </div>
 
                                 <div class="product-details-page__field-grid">
+
+                                    <div class="product-details-page__field">
+                                        <span class="product-details-page__field-label">
+                                            Product Type
+                                        </span>
+
+                                        <strong>
+                                            {{ $product->isVariable() ? 'Variable Product' : 'Simple Product' }}
+                                        </strong>
+                                    </div>
+
                                     <div class="product-details-page__field">
                                         <span class="product-details-page__field-label">
                                             SKU
@@ -175,6 +200,24 @@
                                             {{ $product->sort_order }}
                                         </strong>
                                     </div>
+
+                                    {{-- Simple Product Stock --}}
+                                    @if ($product->isSimple())
+                                        <div class="product-details-page__field">
+                                            <span class="product-details-page__field-label">
+                                                Stock
+                                            </span>
+
+                                            <strong
+                                                class="{{ $product->stock <= 0
+                                                    ? 'is-out'
+                                                    : ($product->stock <= 5 ? 'is-low' : '') }}"
+                                            >
+                                                {{ $product->stock }}
+                                            </strong>
+                                        </div>
+                                    @endif
+
                                 </div>
                             </div>
                         </div>
@@ -185,7 +228,9 @@
                                     Short Description
                                 </span>
 
-                                <p>{!! nl2br($product->short_description) !!}</p>
+                                <div class="product-details-page__rich-content">
+                                    {!! $product->short_description !!}
+                                </div>
                             </div>
                         @endif
 
@@ -196,7 +241,7 @@
                                 </span>
 
                                 <div class="product-details-page__rich-content">
-                                    {!! nl2br($product->description) !!}
+                                    {!! $product->description !!}
                                 </div>
                             </div>
                         @endif
@@ -214,8 +259,11 @@
                         </div>
 
                         <div class="product-details-page__pricing-grid">
+
                             <div class="product-details-page__price-box product-details-page__price-box--main">
-                                <span>Sale Price</span>
+                                <span>
+                                    {{ $product->isVariable() ? 'Base Price' : 'Sale Price' }}
+                                </span>
 
                                 <strong>
                                     {{ number_format((float) $product->price, 2) }}
@@ -277,6 +325,12 @@
                                 </div>
                             @endif
                         </div>
+
+                        @if ($product->isVariable())
+                            <div class="product-details-page__inventory-note">
+                                Variant prices may override the base product price.
+                            </div>
+                        @endif
                     </section>
 
                     {{-- Categories --}}
@@ -308,100 +362,150 @@
                     </section>
 
                     {{-- Variants --}}
-                    <section class="product-details-page__card">
-                        <div class="product-details-page__card-header">
-                            <div>
-                                <h2>Variants</h2>
-                                <p>
-                                    {{ $product->variants->count() }}
-                                    {{ $product->variants->count() === 1 ? 'variant' : 'variants' }}
-                                    available.
-                                </p>
-                            </div>
-
-                            <i class="ri-list-check-3"></i>
-                        </div>
-
-                        @if ($product->variants->isNotEmpty())
-                            <div class="product-details-page__variants">
-                                @foreach ($product->variants as $variant)
-                                    <div
-                                        class="product-details-page__variant"
-                                        data-variant
-                                    >
-                                        <div class="product-details-page__variant-image">
-                                            @if ($variant->image)
-                                                <img
-                                                    src="{{ asset($variant->image) }}"
-                                                    alt="{{ $product->name }}"
-                                                >
-                                            @else
-                                                <div>
-                                                    <i class="ri-image-line"></i>
-                                                </div>
-                                            @endif
-                                        </div>
-
-                                        <div class="product-details-page__variant-info">
-                                            <div class="product-details-page__variant-top">
-                                                <strong>
-                                                    {{ $variant->sku ?: 'Variant #' . $variant->id }}
-                                                </strong>
-
-                                                <span
-                                                    class="product-details-page__variant-status {{ $variant->status ? 'is-active' : 'is-inactive' }}"
-                                                >
-                                                    {{ $variant->status ? 'Active' : 'Inactive' }}
-                                                </span>
-                                            </div>
-
-                                            @if ($variant->values->isNotEmpty())
-                                                <div class="product-details-page__variant-values">
-                                                    @foreach ($variant->values as $variantValue)
-                                                        <span>
-                                                            {{ $variantValue->attribute?->name }}:
-                                                            <strong>
-                                                                {{ $variantValue->attributeValue?->label ?? $variantValue->attributeValue?->value }}
-                                                            </strong>
-                                                        </span>
-                                                    @endforeach
-                                                </div>
-                                            @endif
-                                        </div>
-
-                                        <div class="product-details-page__variant-price">
-                                            <span>Price</span>
-                                            <strong>
-                                                {{ number_format((float) $variant->price, 2) }}
-                                            </strong>
-                                        </div>
-
-                                        <div class="product-details-page__variant-stock">
-                                            <span>Stock</span>
-
-                                            <strong
-                                                class="{{ $variant->stock <= 0 ? 'is-out' : ($variant->stock <= 5 ? 'is-low' : '') }}"
-                                            >
-                                                {{ $variant->stock }}
-                                            </strong>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        @else
-                            <div class="product-details-page__no-variants">
+                    @if ($product->isVariable())
+                        <section class="product-details-page__card">
+                            <div class="product-details-page__card-header">
                                 <div>
-                                    <i class="ri-stack-line"></i>
+                                    <h2>Variants</h2>
+
+                                    <p>
+                                        {{ $product->variants->count() }}
+                                        {{ $product->variants->count() === 1 ? 'variant' : 'variants' }}
+                                        available.
+                                    </p>
                                 </div>
 
-                                <strong>No variants</strong>
-
-                                <p>
-                                    This product does not have any variants.
-                                </p>
+                                <i class="ri-list-check-3"></i>
                             </div>
-                        @endif
-                    </section>
+
+                            @if ($product->variants->isNotEmpty())
+                                <div class="product-details-page__variants">
+
+                                    @foreach ($product->variants as $variant)
+                                        <div
+                                            class="product-details-page__variant"
+                                            data-variant
+                                        >
+                                            <div class="product-details-page__variant-image">
+                                                @if ($variant->image)
+                                                    <img
+                                                        src="{{ asset($variant->image) }}"
+                                                        alt="{{ $product->name }}"
+                                                    >
+                                                @else
+                                                    <div>
+                                                        <i class="ri-image-line"></i>
+                                                    </div>
+                                                @endif
+                                            </div>
+
+                                            <div class="product-details-page__variant-info">
+
+                                                <div class="product-details-page__variant-top">
+                                                    <strong>
+                                                        {{ $variant->sku ?: 'Variant #' . $variant->id }}
+                                                    </strong>
+
+                                                    <span
+                                                        class="product-details-page__variant-status {{ $variant->status ? 'is-active' : 'is-inactive' }}"
+                                                    >
+                                                        {{ $variant->status ? 'Active' : 'Inactive' }}
+                                                    </span>
+                                                </div>
+
+                                                @if ($variant->values->isNotEmpty())
+                                                    <div class="product-details-page__variant-values">
+                                                        @foreach ($variant->values as $variantValue)
+                                                            <span>
+                                                                {{ $variantValue->attribute?->name }}:
+
+                                                                <strong>
+                                                                    {{ $variantValue->attributeValue?->label ?? $variantValue->attributeValue?->value }}
+                                                                </strong>
+                                                            </span>
+                                                        @endforeach
+                                                    </div>
+                                                @endif
+                                            </div>
+
+                                            <div class="product-details-page__variant-price">
+                                                <span>Price</span>
+
+                                                <strong>
+                                                    {{ number_format((float) $variant->price, 2) }}
+                                                </strong>
+                                            </div>
+
+                                            <div class="product-details-page__variant-stock">
+                                                <span>Stock</span>
+
+                                                <strong
+                                                    class="{{ $variant->stock <= 0
+                                                        ? 'is-out'
+                                                        : ($variant->stock <= 5 ? 'is-low' : '') }}"
+                                                >
+                                                    {{ $variant->stock }}
+                                                </strong>
+                                            </div>
+                                        </div>
+                                    @endforeach
+
+                                </div>
+                            @else
+                                <div class="product-details-page__no-variants">
+                                    <div>
+                                        <i class="ri-stack-line"></i>
+                                    </div>
+
+                                    <strong>No variants</strong>
+
+                                    <p>
+                                        This variable product does not have any variants.
+                                    </p>
+                                </div>
+                            @endif
+                        </section>
+                    @endif
+
+                    {{-- Simple Product Inventory --}}
+                    @if ($product->isSimple())
+                        <section class="product-details-page__card">
+                            <div class="product-details-page__card-header">
+                                <div>
+                                    <h2>Inventory</h2>
+                                    <p>Simple product inventory information.</p>
+                                </div>
+
+                                <i class="ri-archive-stack-line"></i>
+                            </div>
+
+                            <div class="product-details-page__inventory-total">
+                                <span>Available Stock</span>
+
+                                <strong
+                                    class="{{ $product->stock <= 0
+                                        ? 'is-out'
+                                        : ($product->stock <= 5 ? 'is-low' : '') }}"
+                                >
+                                    {{ $product->stock }}
+                                </strong>
+                            </div>
+
+                            @if ($product->stock <= 0)
+                                <p class="product-details-page__inventory-note">
+                                    This product is currently out of stock.
+                                </p>
+                            @elseif ($product->stock <= 5)
+                                <p class="product-details-page__inventory-note">
+                                    Stock is running low.
+                                </p>
+                            @else
+                                <p class="product-details-page__inventory-note">
+                                    Stock is currently available.
+                                </p>
+                            @endif
+                        </section>
+                    @endif
 
                     {{-- Gallery --}}
                     <section class="product-details-page__card">
@@ -425,7 +529,7 @@
                                         aria-label="View product image"
                                     >
                                         <img
-                                            src="{{ asset( $image->image) }}"
+                                            src="{{ asset($image->image) }}"
                                             alt="{{ $image->alt_text ?: $product->name }}"
                                         >
 
@@ -508,6 +612,7 @@
 
                 {{-- Right Sidebar --}}
                 <aside class="product-details-page__sidebar">
+
                     {{-- Quick Summary --}}
                     <section class="product-details-page__card product-details-page__card--sticky">
                         <div class="product-details-page__card-header">
@@ -518,17 +623,67 @@
                         </div>
 
                         <div class="product-details-page__summary">
+
+                            {{-- Product Type --}}
                             <div class="product-details-page__summary-item">
                                 <div class="product-details-page__summary-icon">
                                     <i class="ri-stack-line"></i>
                                 </div>
 
                                 <div>
-                                    <span>Variants</span>
-                                    <strong>{{ $product->variants->count() }}</strong>
+                                    <span>Product Type</span>
+
+                                    <strong>
+                                        {{ $product->isVariable() ? 'Variable' : 'Simple' }}
+                                    </strong>
                                 </div>
                             </div>
 
+                            {{-- Variants --}}
+                            @if ($product->isVariable())
+                                <div class="product-details-page__summary-item">
+                                    <div class="product-details-page__summary-icon">
+                                        <i class="ri-git-branch-line"></i>
+                                    </div>
+
+                                    <div>
+                                        <span>Variants</span>
+
+                                        <strong>
+                                            {{ $product->variants->count() }}
+                                        </strong>
+                                    </div>
+                                </div>
+                            @endif
+
+                            {{-- Stock --}}
+                            <div class="product-details-page__summary-item">
+                                <div class="product-details-page__summary-icon">
+                                    <i class="ri-archive-stack-line"></i>
+                                </div>
+
+                                <div>
+                                    <span>
+                                        {{ $product->isVariable() ? 'Total Stock' : 'Stock' }}
+                                    </span>
+
+                                    @if ($product->isVariable())
+                                        @php
+                                            $totalStock = $product->variants->sum('stock');
+                                        @endphp
+
+                                        <strong>
+                                            {{ $totalStock }}
+                                        </strong>
+                                    @else
+                                        <strong>
+                                            {{ $product->stock }}
+                                        </strong>
+                                    @endif
+                                </div>
+                            </div>
+
+                            {{-- Gallery --}}
                             <div class="product-details-page__summary-item">
                                 <div class="product-details-page__summary-icon">
                                     <i class="ri-image-2-line"></i>
@@ -536,10 +691,14 @@
 
                                 <div>
                                     <span>Gallery Images</span>
-                                    <strong>{{ $product->images->count() }}</strong>
+
+                                    <strong>
+                                        {{ $product->images->count() }}
+                                    </strong>
                                 </div>
                             </div>
 
+                            {{-- Categories --}}
                             <div class="product-details-page__summary-item">
                                 <div class="product-details-page__summary-icon">
                                     <i class="ri-folder-line"></i>
@@ -547,10 +706,14 @@
 
                                 <div>
                                     <span>Categories</span>
-                                    <strong>{{ $product->categories->count() }}</strong>
+
+                                    <strong>
+                                        {{ $product->categories->count() }}
+                                    </strong>
                                 </div>
                             </div>
 
+                            {{-- Updated --}}
                             <div class="product-details-page__summary-item">
                                 <div class="product-details-page__summary-icon">
                                     <i class="ri-calendar-check-line"></i>
@@ -558,6 +721,7 @@
 
                                 <div>
                                     <span>Last Updated</span>
+
                                     <strong>
                                         {{ $product->updated_at?->format('M d, Y') }}
                                     </strong>
@@ -576,8 +740,14 @@
                         </div>
 
                         <div class="product-details-page__status-card">
-                            <div class="product-details-page__status-card-icon {{ $product->status ? 'is-active' : 'is-inactive' }}">
-                                <i class="{{ $product->status ? 'ri-checkbox-circle-line' : 'ri-close-circle-line' }}"></i>
+                            <div
+                                class="product-details-page__status-card-icon {{ $product->status ? 'is-active' : 'is-inactive' }}"
+                            >
+                                <i
+                                    class="{{ $product->status
+                                        ? 'ri-checkbox-circle-line'
+                                        : 'ri-close-circle-line' }}"
+                                ></i>
                             </div>
 
                             <div>
@@ -594,7 +764,11 @@
                         </div>
 
                         <div class="product-details-page__feature-card">
-                            <i class="{{ $product->featured ? 'ri-star-fill' : 'ri-star-line' }}"></i>
+                            <i
+                                class="{{ $product->featured
+                                    ? 'ri-star-fill'
+                                    : 'ri-star-line' }}"
+                            ></i>
 
                             <div>
                                 <strong>
@@ -615,58 +789,96 @@
                         <div class="product-details-page__card-header">
                             <div>
                                 <h2>Inventory</h2>
-                                <p>Current stock overview.</p>
+
+                                <p>
+                                    {{ $product->isVariable()
+                                        ? 'Current variant stock overview.'
+                                        : 'Current product stock overview.' }}
+                                </p>
                             </div>
 
                             <i class="ri-archive-stack-line"></i>
                         </div>
 
-                        @php
-                            $totalStock = $product->variants->sum('stock');
-                        @endphp
+                        @if ($product->isVariable())
 
-                        @if ($product->variants->isNotEmpty())
+                            @php
+                                $totalStock = $product->variants->sum('stock');
+                            @endphp
+
                             <div class="product-details-page__inventory-total">
                                 <span>Total Variant Stock</span>
 
-                                <strong>{{ $totalStock }}</strong>
+                                <strong>
+                                    {{ $totalStock }}
+                                </strong>
                             </div>
 
-                            <div class="product-details-page__inventory-list">
-                                @foreach ($product->variants->take(5) as $variant)
-                                    <div class="product-details-page__inventory-item">
-                                        <span>
-                                            {{ $variant->sku ?: 'Variant #' . $variant->id }}
-                                        </span>
+                            @if ($product->variants->isNotEmpty())
+                                <div class="product-details-page__inventory-list">
 
-                                        <strong
-                                            class="{{ $variant->stock <= 0 ? 'is-out' : ($variant->stock <= 5 ? 'is-low' : '') }}"
-                                        >
-                                            {{ $variant->stock }}
-                                        </strong>
-                                    </div>
-                                @endforeach
-                            </div>
+                                    @foreach ($product->variants->take(5) as $variant)
+                                        <div class="product-details-page__inventory-item">
+                                            <span>
+                                                {{ $variant->sku ?: 'Variant #' . $variant->id }}
+                                            </span>
 
-                            @if ($product->variants->count() > 5)
-                                <div class="product-details-page__inventory-more">
-                                    +{{ $product->variants->count() - 5 }} more variants
+                                            <strong
+                                                class="{{ $variant->stock <= 0
+                                                    ? 'is-out'
+                                                    : ($variant->stock <= 5 ? 'is-low' : '') }}"
+                                            >
+                                                {{ $variant->stock }}
+                                            </strong>
+                                        </div>
+                                    @endforeach
+
                                 </div>
+
+                                @if ($product->variants->count() > 5)
+                                    <div class="product-details-page__inventory-more">
+                                        +{{ $product->variants->count() - 5 }}
+                                        more variants
+                                    </div>
+                                @endif
+                            @else
+                                <p class="product-details-page__inventory-note">
+                                    No variants have been created for this variable product.
+                                </p>
                             @endif
+
                         @else
+
                             <div class="product-details-page__inventory-total">
                                 <span>Product Stock</span>
 
-                                <strong>—</strong>
+                                <strong
+                                    class="{{ $product->stock <= 0
+                                        ? 'is-out'
+                                        : ($product->stock <= 5 ? 'is-low' : '') }}"
+                                >
+                                    {{ $product->stock }}
+                                </strong>
                             </div>
 
-                            <p class="product-details-page__inventory-note">
-                                This product uses variants for inventory management.
-                            </p>
+                            @if ($product->stock <= 0)
+                                <p class="product-details-page__inventory-note">
+                                    This product is currently out of stock.
+                                </p>
+                            @elseif ($product->stock <= 5)
+                                <p class="product-details-page__inventory-note">
+                                    Stock is running low.
+                                </p>
+                            @else
+                                <p class="product-details-page__inventory-note">
+                                    Product stock is currently available.
+                                </p>
+                            @endif
+
                         @endif
                     </section>
 
-                    {{-- Timestamps --}}
+                    {{-- Timeline --}}
                     <section class="product-details-page__card">
                         <div class="product-details-page__card-header">
                             <div>
@@ -683,6 +895,7 @@
 
                                 <div>
                                     <span>Created</span>
+
                                     <strong>
                                         {{ $product->created_at?->format('M d, Y · h:i A') }}
                                     </strong>
@@ -694,6 +907,7 @@
 
                                 <div>
                                     <span>Last Updated</span>
+
                                     <strong>
                                         {{ $product->updated_at?->format('M d, Y · h:i A') }}
                                     </strong>
@@ -714,6 +928,7 @@
                         </div>
 
                         <div class="product-details-page__actions">
+
                             <a
                                 href="{{ route('admin-products.edit', $product) }}"
                                 class="product-details-page__action product-details-page__action--primary"
@@ -738,6 +953,7 @@
                                     Delete Product
                                 </button>
                             </form>
+
                         </div>
                     </section>
                 </aside>
@@ -750,9 +966,13 @@
             data-lightbox
             aria-hidden="true"
         >
-            <div class="product-details-page__lightbox-overlay" data-lightbox-close></div>
+            <div
+                class="product-details-page__lightbox-overlay"
+                data-lightbox-close
+            ></div>
 
             <div class="product-details-page__lightbox-content">
+
                 <button
                     type="button"
                     class="product-details-page__lightbox-close"
@@ -785,6 +1005,7 @@
                 >
                     <i class="ri-arrow-right-s-line"></i>
                 </button>
+
             </div>
         </div>
     </div>
@@ -793,36 +1014,83 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const page = document.querySelector('.product-details-page');
+            const page = document.querySelector(
+                '.product-details-page'
+            );
 
             if (!page) {
                 return;
             }
 
+            /*
+             * Gallery Lightbox
+             */
             const galleryItems = Array.from(
-                page.querySelectorAll('[data-gallery-image]')
+                page.querySelectorAll(
+                    '[data-gallery-image]'
+                )
             );
 
-            const lightbox = page.querySelector('[data-lightbox]');
-            const lightboxImage = page.querySelector('[data-lightbox-image]');
-            const previousButton = page.querySelector('[data-lightbox-prev]');
-            const nextButton = page.querySelector('[data-lightbox-next]');
-            const closeButtons = page.querySelectorAll('[data-lightbox-close]');
+            const lightbox = page.querySelector(
+                '[data-lightbox]'
+            );
+
+            const lightboxImage = page.querySelector(
+                '[data-lightbox-image]'
+            );
+
+            const previousButton = page.querySelector(
+                '[data-lightbox-prev]'
+            );
+
+            const nextButton = page.querySelector(
+                '[data-lightbox-next]'
+            );
+
+            const closeButtons = page.querySelectorAll(
+                '[data-lightbox-close]'
+            );
 
             let currentIndex = 0;
 
+            const updateLightboxImage = () => {
+                if (
+                    !galleryItems.length ||
+                    !lightboxImage
+                ) {
+                    return;
+                }
+
+                lightboxImage.src =
+                    galleryItems[currentIndex]
+                        .dataset.image || '';
+            };
+
             const openLightbox = (index) => {
-                if (!galleryItems.length || !lightbox || !lightboxImage) {
+                if (
+                    !galleryItems.length ||
+                    !lightbox ||
+                    !lightboxImage
+                ) {
                     return;
                 }
 
                 currentIndex = index;
 
-                lightboxImage.src = galleryItems[currentIndex].dataset.image || '';
-                lightbox.classList.add('is-visible');
-                lightbox.setAttribute('aria-hidden', 'false');
+                updateLightboxImage();
 
-                document.body.classList.add('product-details-lightbox-open');
+                lightbox.classList.add(
+                    'is-visible'
+                );
+
+                lightbox.setAttribute(
+                    'aria-hidden',
+                    'false'
+                );
+
+                document.body.classList.add(
+                    'product-details-lightbox-open'
+                );
             };
 
             const closeLightbox = () => {
@@ -830,10 +1098,18 @@
                     return;
                 }
 
-                lightbox.classList.remove('is-visible');
-                lightbox.setAttribute('aria-hidden', 'true');
+                lightbox.classList.remove(
+                    'is-visible'
+                );
 
-                document.body.classList.remove('product-details-lightbox-open');
+                lightbox.setAttribute(
+                    'aria-hidden',
+                    'true'
+                );
+
+                document.body.classList.remove(
+                    'product-details-lightbox-open'
+                );
             };
 
             const showPrevious = () => {
@@ -842,11 +1118,14 @@
                 }
 
                 currentIndex =
-                    (currentIndex - 1 + galleryItems.length) %
+                    (
+                        currentIndex -
+                        1 +
+                        galleryItems.length
+                    ) %
                     galleryItems.length;
 
-                lightboxImage.src =
-                    galleryItems[currentIndex].dataset.image || '';
+                updateLightboxImage();
             };
 
             const showNext = () => {
@@ -855,55 +1134,98 @@
                 }
 
                 currentIndex =
-                    (currentIndex + 1) %
+                    (
+                        currentIndex +
+                        1
+                    ) %
                     galleryItems.length;
 
-                lightboxImage.src =
-                    galleryItems[currentIndex].dataset.image || '';
+                updateLightboxImage();
             };
 
-            galleryItems.forEach((item, index) => {
-                item.addEventListener('click', () => {
-                    openLightbox(index);
-                });
-            });
-
-            closeButtons.forEach((button) => {
-                button.addEventListener('click', closeLightbox);
-            });
-
-            previousButton?.addEventListener('click', showPrevious);
-            nextButton?.addEventListener('click', showNext);
-
-            document.addEventListener('keydown', (event) => {
-                if (!lightbox?.classList.contains('is-visible')) {
-                    return;
-                }
-
-                if (event.key === 'Escape') {
-                    closeLightbox();
-                }
-
-                if (event.key === 'ArrowLeft') {
-                    showPrevious();
-                }
-
-                if (event.key === 'ArrowRight') {
-                    showNext();
-                }
-            });
-
-            page.querySelectorAll('[data-delete-form]').forEach((form) => {
-                form.addEventListener('submit', (event) => {
-                    const confirmed = window.confirm(
-                        'Are you sure you want to delete this product? This action cannot be undone.'
+            galleryItems.forEach(
+                (item, index) => {
+                    item.addEventListener(
+                        'click',
+                        () => {
+                            openLightbox(index);
+                        }
                     );
+                }
+            );
 
-                    if (!confirmed) {
-                        event.preventDefault();
+            closeButtons.forEach(
+                (button) => {
+                    button.addEventListener(
+                        'click',
+                        closeLightbox
+                    );
+                }
+            );
+
+            previousButton?.addEventListener(
+                'click',
+                showPrevious
+            );
+
+            nextButton?.addEventListener(
+                'click',
+                showNext
+            );
+
+            document.addEventListener(
+                'keydown',
+                (event) => {
+                    if (
+                        !lightbox?.classList.contains(
+                            'is-visible'
+                        )
+                    ) {
+                        return;
                     }
-                });
-            });
+
+                    if (
+                        event.key === 'Escape'
+                    ) {
+                        closeLightbox();
+                    }
+
+                    if (
+                        event.key === 'ArrowLeft'
+                    ) {
+                        showPrevious();
+                    }
+
+                    if (
+                        event.key === 'ArrowRight'
+                    ) {
+                        showNext();
+                    }
+                }
+            );
+
+            /*
+             * Delete Confirmation
+             */
+            page.querySelectorAll(
+                '[data-delete-form]'
+            ).forEach(
+                (form) => {
+                    form.addEventListener(
+                        'submit',
+                        (event) => {
+                            const confirmed =
+                                window.confirm(
+                                    'Are you sure you want to delete this product? This action cannot be undone.'
+                                );
+
+                            if (!confirmed) {
+                                event.preventDefault();
+                            }
+                        }
+                    );
+                }
+            );
         });
     </script>
 @endpush

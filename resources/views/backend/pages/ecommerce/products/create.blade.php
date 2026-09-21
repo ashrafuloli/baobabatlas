@@ -12,9 +12,13 @@
 @section('content')
     <div class="product-create-page">
 
-        {{-- Page Header --}}
+        {{-- =========================================================
+            PAGE HEADER
+        ========================================================== --}}
         <div class="product-create-page__header">
+
             <div class="product-create-page__header-content">
+
                 <span class="product-create-page__eyebrow">
                     Ecommerce
                 </span>
@@ -24,8 +28,10 @@
                 </h1>
 
                 <p class="product-create-page__subtitle">
-                    Create a new product with media, pricing, options, variants, and SEO.
+                    Create a new product with media, pricing, inventory,
+                    options, variants, and SEO.
                 </p>
+
             </div>
 
             <a
@@ -35,26 +41,37 @@
                 <i class="ri-arrow-left-line"></i>
                 Back to Products
             </a>
+
         </div>
 
 
-        {{-- Validation Errors --}}
+        {{-- =========================================================
+            VALIDATION ERRORS
+        ========================================================== --}}
         @if ($errors->any())
+
             <div class="product-create-page__alert product-create-page__alert--error">
+
                 <div class="product-create-page__alert-icon">
                     <i class="ri-error-warning-line"></i>
                 </div>
 
                 <div>
-                    <strong>Please fix the following errors:</strong>
+
+                    <strong>
+                        Please fix the following errors:
+                    </strong>
 
                     <ul>
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
                     </ul>
+
                 </div>
+
             </div>
+
         @endif
 
 
@@ -65,6 +82,7 @@
             class="product-create-page__form"
             id="product-create-form"
         >
+
             @csrf
 
             <div class="product-create-page__layout">
@@ -74,10 +92,14 @@
                 ====================================================== --}}
                 <div class="product-create-page__main">
 
-                    {{-- Product Source --}}
+
+                    {{-- =================================================
+                        PRODUCT SOURCE
+                    ================================================== --}}
                     <section class="product-create-page__card">
 
                         <div class="product-create-page__card-header">
+
                             <div class="product-create-page__card-heading">
 
                                 <div class="product-create-page__section-icon">
@@ -85,15 +107,21 @@
                                 </div>
 
                                 <div>
-                                    <h2>Product Source</h2>
+
+                                    <h2>
+                                        Product Source
+                                    </h2>
 
                                     <p>
                                         Choose where this product comes from.
                                     </p>
+
                                 </div>
 
                             </div>
+
                         </div>
+
 
                         <div class="product-create-page__card-body">
 
@@ -111,21 +139,27 @@
                                 >
                                     <option
                                         value="own"
-                                        @selected(old('source', 'own') === 'own')
+                                        @selected(
+                                            old('source', 'own') === 'own'
+                                        )
                                     >
                                         Own
                                     </option>
 
                                     <option
                                         value="amazon"
-                                        @selected(old('source') === 'amazon')
+                                        @selected(
+                                            old('source') === 'amazon'
+                                        )
                                     >
                                         Amazon
                                     </option>
 
                                     <option
                                         value="aliexpress"
-                                        @selected(old('source') === 'aliexpress')
+                                        @selected(
+                                            old('source') === 'aliexpress'
+                                        )
                                     >
                                         AliExpress
                                     </option>
@@ -138,10 +172,13 @@
                     </section>
 
 
-                    {{-- Product Information --}}
+                    {{-- =================================================
+                        PRODUCT INFORMATION
+                    ================================================== --}}
                     <section class="product-create-page__card">
 
                         <div class="product-create-page__card-header">
+
                             <div class="product-create-page__card-heading">
 
                                 <div class="product-create-page__section-icon">
@@ -149,20 +186,67 @@
                                 </div>
 
                                 <div>
-                                    <h2>Product Information</h2>
+
+                                    <h2>
+                                        Product Information
+                                    </h2>
 
                                     <p>
                                         Add the basic information for this product.
                                     </p>
+
                                 </div>
 
                             </div>
+
                         </div>
 
 
                         <div class="product-create-page__card-body">
 
-                            {{-- Name --}}
+
+                            {{-- Product Type --}}
+                            <div class="product-create-page__field">
+
+                                <label for="type">
+                                    Product Type
+                                    <span>*</span>
+                                </label>
+
+                                <select
+                                    id="type"
+                                    name="type"
+                                    required
+                                    data-product-type
+                                >
+                                    <option
+                                        value="simple"
+                                        @selected(
+                                            old('type', 'simple') === 'simple'
+                                        )
+                                    >
+                                        Simple Product
+                                    </option>
+
+                                    <option
+                                        value="variable"
+                                        @selected(
+                                            old('type') === 'variable'
+                                        )
+                                    >
+                                        Variable Product
+                                    </option>
+                                </select>
+
+                                <small data-product-type-help>
+                                    Simple products manage stock directly
+                                    on the product.
+                                </small>
+
+                            </div>
+
+
+                            {{-- Product Name --}}
                             <div class="product-create-page__field">
 
                                 <label for="name">
@@ -243,6 +327,7 @@
                                         </option>
 
                                         @foreach ($brands as $brand)
+
                                             <option
                                                 value="{{ $brand->id }}"
                                                 @selected(
@@ -252,7 +337,9 @@
                                             >
                                                 {{ $brand->name }}
                                             </option>
+
                                         @endforeach
+
                                     </select>
 
                                 </div>
@@ -298,7 +385,9 @@
                                     name="category_ids[]"
                                     multiple
                                 >
+
                                     @foreach ($categories as $category)
+
                                         <option
                                             value="{{ $category->id }}"
                                             @selected(
@@ -311,7 +400,9 @@
                                         >
                                             {{ $category->name }}
                                         </option>
+
                                     @endforeach
+
                                 </select>
 
                                 <small>
@@ -395,12 +486,13 @@
                     </section>
 
 
-                    {{-- =====================================================
+                    {{-- =================================================
                         PRODUCT MEDIA
-                    ====================================================== --}}
+                    ================================================== --}}
                     <section class="product-create-page__card">
 
                         <div class="product-create-page__card-header">
+
                             <div class="product-create-page__card-heading">
 
                                 <div class="product-create-page__section-icon">
@@ -408,14 +500,19 @@
                                 </div>
 
                                 <div>
-                                    <h2>Product Media</h2>
+
+                                    <h2>
+                                        Product Media
+                                    </h2>
 
                                     <p>
                                         Add a primary image and gallery images.
                                     </p>
+
                                 </div>
 
                             </div>
+
                         </div>
 
 
@@ -427,11 +524,15 @@
                                 <div class="product-create-page__media-heading">
 
                                     <div>
-                                        <h3>Product Thumbnail</h3>
+
+                                        <h3>
+                                            Product Thumbnail
+                                        </h3>
 
                                         <p>
                                             This image will be used as the primary product image.
                                         </p>
+
                                     </div>
 
                                     <span>
@@ -490,11 +591,15 @@
                                 <div class="product-create-page__media-heading">
 
                                     <div>
-                                        <h3>Product Gallery</h3>
+
+                                        <h3>
+                                            Product Gallery
+                                        </h3>
 
                                         <p>
                                             Add multiple images to showcase this product.
                                         </p>
+
                                     </div>
 
                                     <span>
@@ -550,12 +655,13 @@
                     </section>
 
 
-                    {{-- =====================================================
-                        VIDEO
-                    ====================================================== --}}
+                    {{-- =================================================
+                        PRODUCT VIDEO
+                    ================================================== --}}
                     <section class="product-create-page__card">
 
                         <div class="product-create-page__card-header">
+
                             <div class="product-create-page__card-heading">
 
                                 <div class="product-create-page__section-icon">
@@ -563,14 +669,19 @@
                                 </div>
 
                                 <div>
-                                    <h2>Product Video</h2>
+
+                                    <h2>
+                                        Product Video
+                                    </h2>
 
                                     <p>
                                         Add a YouTube video to showcase the product.
                                     </p>
+
                                 </div>
 
                             </div>
+
                         </div>
 
 
@@ -602,12 +713,13 @@
                     </section>
 
 
-                    {{-- =====================================================
+                    {{-- =================================================
                         PRICING
-                    ====================================================== --}}
+                    ================================================== --}}
                     <section class="product-create-page__card">
 
                         <div class="product-create-page__card-header">
+
                             <div class="product-create-page__card-heading">
 
                                 <div class="product-create-page__section-icon">
@@ -615,14 +727,19 @@
                                 </div>
 
                                 <div>
-                                    <h2>Pricing</h2>
+
+                                    <h2>
+                                        Pricing & Inventory
+                                    </h2>
 
                                     <p>
-                                        Set default product pricing.
+                                        Set product pricing and inventory.
                                     </p>
+
                                 </div>
 
                             </div>
+
                         </div>
 
 
@@ -630,6 +747,8 @@
 
                             <div class="product-create-page__grid product-create-page__grid--three">
 
+
+                                {{-- Price --}}
                                 <div class="product-create-page__field">
 
                                     <label for="price">
@@ -657,6 +776,7 @@
                                 </div>
 
 
+                                {{-- Compare Price --}}
                                 <div class="product-create-page__field">
 
                                     <label for="compare_price">
@@ -682,6 +802,7 @@
                                 </div>
 
 
+                                {{-- Cost Price --}}
                                 <div class="product-create-page__field">
 
                                     <label for="cost_price">
@@ -707,6 +828,7 @@
                                 </div>
 
 
+                                {{-- Shipping --}}
                                 <div class="product-create-page__field">
 
                                     <label for="shipping_cost">
@@ -735,6 +857,52 @@
 
                                 </div>
 
+
+                                {{-- Simple Product Stock --}}
+                                <div
+                                    class="product-create-page__field"
+                                    data-simple-stock
+                                >
+
+                                    <label for="stock">
+                                        Stock
+                                        <span>*</span>
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        id="stock"
+                                        name="stock"
+                                        value="{{ old('stock', 0) }}"
+                                        min="0"
+                                        step="1"
+                                        placeholder="0"
+                                        data-simple-stock-input
+                                    >
+
+                                    <small>
+                                        Available stock for this simple product.
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+
+                            {{-- Variable Product Info --}}
+                            <div
+                                class="product-create-page__variant-note"
+                                data-variable-price-note
+                                hidden
+                            >
+
+                                <i class="ri-information-line"></i>
+
+                                <p>
+                                    For variable products, inventory is managed
+                                    separately for each variant below.
+                                </p>
+
                             </div>
 
                         </div>
@@ -742,12 +910,16 @@
                     </section>
 
 
-                    {{-- =====================================================
+                    {{-- =================================================
                         OPTIONS & VARIANTS
-                    ====================================================== --}}
-                    <section class="product-create-page__card">
+                    ================================================== --}}
+                    <section
+                        class="product-create-page__card"
+                        data-variable-options
+                    >
 
                         <div class="product-create-page__card-header">
+
                             <div class="product-create-page__card-heading">
 
                                 <div class="product-create-page__section-icon">
@@ -755,38 +927,82 @@
                                 </div>
 
                                 <div>
-                                    <h2>Options & Variants</h2>
+
+                                    <h2>
+                                        Options & Variants
+                                    </h2>
 
                                     <p>
-                                        Select product options and generate every possible variant combination.
+                                        Select product options and generate
+                                        every possible variant combination.
                                     </p>
+
                                 </div>
 
                             </div>
+
                         </div>
 
 
                         <div class="product-create-page__card-body">
 
-                            {{-- Attribute / Option Selection --}}
+
+                            {{-- Product Options --}}
                             <div class="product-create-page__variant-builder">
 
                                 <div class="product-create-page__sub-heading">
 
                                     <div>
-                                        <h3>Product Options</h3>
+
+                                        <h3>
+                                            Product Options
+                                        </h3>
 
                                         <p>
-                                            Select options like Color, Size, Storage, Material, etc.
+                                            Select options like Color, Size,
+                                            Storage, Material, etc.
                                         </p>
+
                                     </div>
 
                                 </div>
 
 
+                                @php
+                                    $oldAttributeIds = collect(
+                                        old('attribute_ids', [])
+                                    )
+                                        ->map(
+                                            fn ($id) => (string) $id
+                                        )
+                                        ->all();
+
+                                    $oldAttributeValues = old(
+                                        'attribute_values',
+                                        []
+                                    );
+                                @endphp
+
+
                                 <div class="product-create-page__attribute-list">
 
                                     @forelse ($attributes as $attribute)
+
+                                        @php
+                                            $attributeSelected = in_array(
+                                                (string) $attribute->id,
+                                                $oldAttributeIds,
+                                                true
+                                            );
+
+                                            $selectedValueIds = collect(
+                                                $oldAttributeValues[$attribute->id] ?? []
+                                            )
+                                                ->map(
+                                                    fn ($id) => (string) $id
+                                                )
+                                                ->all();
+                                        @endphp
 
                                         <div
                                             class="product-create-page__attribute-card"
@@ -801,6 +1017,7 @@
                                                     name="attribute_ids[]"
                                                     value="{{ $attribute->id }}"
                                                     data-attribute-toggle
+                                                    @checked($attributeSelected)
                                                 >
 
                                                 <span class="product-create-page__attribute-content">
@@ -824,7 +1041,9 @@
                                             <div
                                                 class="product-create-page__attribute-values"
                                                 data-attribute-values
-                                                hidden
+                                                @if (!$attributeSelected)
+                                                    hidden
+                                                @endif
                                             >
 
                                                 <div class="product-create-page__values-header">
@@ -858,7 +1077,13 @@
                                                                 data-attribute-id="{{ $attribute->id }}"
                                                                 data-attribute-name="{{ $attribute->name }}"
                                                                 data-value-label="{{ $value->label }}"
-                                                                disabled
+                                                                @checked(
+                                                                    in_array(
+                                                                        (string) $value->id,
+                                                                        $selectedValueIds,
+                                                                        true
+                                                                    )
+                                                                )
                                                             >
 
                                                             <span>
@@ -890,7 +1115,8 @@
                                                 </strong>
 
                                                 <p>
-                                                    Create attributes and options before creating variants.
+                                                    Create attributes and options
+                                                    before creating variants.
                                                 </p>
 
                                             </div>
@@ -920,7 +1146,8 @@
                                         </h3>
 
                                         <p>
-                                            Generate all possible combinations from the selected options.
+                                            Generate all possible combinations
+                                            from the selected options.
                                         </p>
 
                                     </div>
@@ -976,6 +1203,7 @@
                                     <table class="product-create-page__variant-table">
 
                                         <thead>
+
                                         <tr>
                                             <th>Variant</th>
                                             <th>SKU</th>
@@ -986,6 +1214,7 @@
                                             <th>Status</th>
                                             <th></th>
                                         </tr>
+
                                         </thead>
 
                                         <tbody id="variants-list"></tbody>
@@ -1003,8 +1232,8 @@
                                 <i class="ri-information-line"></i>
 
                                 <p>
-                                    Each variant can have its own SKU, price, compare price,
-                                    stock, image, and active status.
+                                    Each variant can have its own SKU, price,
+                                    compare price, stock, image, and active status.
                                 </p>
 
                             </div>
@@ -1014,12 +1243,13 @@
                     </section>
 
 
-                    {{-- =====================================================
+                    {{-- =================================================
                         SEO
-                    ====================================================== --}}
+                    ================================================== --}}
                     <section class="product-create-page__card">
 
                         <div class="product-create-page__card-header">
+
                             <div class="product-create-page__card-heading">
 
                                 <div class="product-create-page__section-icon">
@@ -1027,19 +1257,25 @@
                                 </div>
 
                                 <div>
-                                    <h2>SEO</h2>
+
+                                    <h2>
+                                        SEO
+                                    </h2>
 
                                     <p>
                                         Optimize this product for search engines.
                                     </p>
+
                                 </div>
 
                             </div>
+
                         </div>
 
 
                         <div class="product-create-page__card-body">
 
+                            {{-- Meta Title --}}
                             <div class="product-create-page__field">
 
                                 <div class="product-create-page__label-row">
@@ -1066,6 +1302,7 @@
                             </div>
 
 
+                            {{-- Meta Description --}}
                             <div class="product-create-page__field">
 
                                 <div class="product-create-page__label-row">
@@ -1102,7 +1339,8 @@
                 ====================================================== --}}
                 <aside class="product-create-page__sidebar">
 
-                    {{-- Status --}}
+
+                    {{-- Product Status --}}
                     <section class="product-create-page__card">
 
                         <div class="product-create-page__card-header">
@@ -1114,11 +1352,15 @@
                                 </div>
 
                                 <div>
-                                    <h2>Product Status</h2>
+
+                                    <h2>
+                                        Product Status
+                                    </h2>
 
                                     <p>
                                         Control product visibility.
                                     </p>
+
                                 </div>
 
                             </div>
@@ -1184,7 +1426,7 @@
                     </section>
 
 
-                    {{-- Checklist --}}
+                    {{-- Product Checklist --}}
                     <section class="product-create-page__card">
 
                         <div class="product-create-page__card-header">
@@ -1196,11 +1438,15 @@
                                 </div>
 
                                 <div>
-                                    <h2>Product Checklist</h2>
+
+                                    <h2>
+                                        Product Checklist
+                                    </h2>
 
                                     <p>
                                         Important product sections.
                                     </p>
+
                                 </div>
 
                             </div>
@@ -1225,7 +1471,18 @@
                                 <span>Pricing</span>
                             </div>
 
-                            <div class="product-create-page__check-item">
+                            <div
+                                class="product-create-page__check-item"
+                                data-simple-check
+                            >
+                                <i class="ri-checkbox-circle-line"></i>
+                                <span>Product stock</span>
+                            </div>
+
+                            <div
+                                class="product-create-page__check-item"
+                                data-variable-check
+                            >
                                 <i class="ri-checkbox-circle-line"></i>
                                 <span>Options & variants</span>
                             </div>
@@ -1263,6 +1520,7 @@
                 </aside>
 
             </div>
+
         </form>
 
     </div>
@@ -1275,6 +1533,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+
             const page = document.querySelector(
                 '.product-create-page',
             );
@@ -1283,6 +1542,7 @@
                 return;
             }
 
+
             const form = page.querySelector(
                 '#product-create-form',
             );
@@ -1290,11 +1550,169 @@
 
             /*
             |--------------------------------------------------------------------------
-            | Quill 2 Rich Text Editors
+            | Product Type
             |--------------------------------------------------------------------------
-            |
-            | Short Description + Product Description.
-            |
+            */
+
+            const productTypeInput =
+                page.querySelector(
+                    '[data-product-type]',
+                );
+
+            const simpleStockField =
+                page.querySelector(
+                    '[data-simple-stock]',
+                );
+
+            const simpleStockInput =
+                page.querySelector(
+                    '[data-simple-stock-input]',
+                );
+
+            const variableOptions =
+                page.querySelector(
+                    '[data-variable-options]',
+                );
+
+            const variablePriceNote =
+                page.querySelector(
+                    '[data-variable-price-note]',
+                );
+
+            const productTypeHelp =
+                page.querySelector(
+                    '[data-product-type-help]',
+                );
+
+            const simpleCheck =
+                page.querySelector(
+                    '[data-simple-check]',
+                );
+
+            const variableCheck =
+                page.querySelector(
+                    '[data-variable-check]',
+                );
+
+
+            const getProductType = () => {
+                return productTypeInput?.value || 'simple';
+            };
+
+
+            const isVariableProduct = () => {
+                return getProductType() === 'variable';
+            };
+
+
+            const updateProductTypeUI = () => {
+
+                const isVariable =
+                    isVariableProduct();
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Simple Stock
+                |--------------------------------------------------------------------------
+                */
+
+                if (simpleStockField) {
+                    simpleStockField.hidden =
+                        isVariable;
+                }
+
+
+                if (simpleStockInput) {
+
+                    simpleStockInput.required =
+                        !isVariable;
+
+                    /*
+                     * Variable products don't use
+                     * products.stock.
+                     */
+                    if (isVariable) {
+                        simpleStockInput.value = '0';
+                    }
+
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Variable Options
+                |--------------------------------------------------------------------------
+                */
+
+                if (variableOptions) {
+                    variableOptions.hidden =
+                        !isVariable;
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Variable Pricing Note
+                |--------------------------------------------------------------------------
+                */
+
+                if (variablePriceNote) {
+                    variablePriceNote.hidden =
+                        !isVariable;
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Help Text
+                |--------------------------------------------------------------------------
+                */
+
+                if (productTypeHelp) {
+
+                    productTypeHelp.textContent =
+                        isVariable
+                            ? 'Variable products manage inventory separately for each variant.'
+                            : 'Simple products manage stock directly on the product.';
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Checklist
+                |--------------------------------------------------------------------------
+                */
+
+                if (simpleCheck) {
+                    simpleCheck.hidden =
+                        isVariable;
+                }
+
+                if (variableCheck) {
+                    variableCheck.hidden =
+                        !isVariable;
+                }
+
+            };
+
+
+            productTypeInput?.addEventListener(
+                'change',
+                updateProductTypeUI,
+            );
+
+
+            /*
+             * Initial state.
+             */
+            updateProductTypeUI();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Quill 2
+            |--------------------------------------------------------------------------
             */
 
             const quillToolbar = [
@@ -1353,13 +1771,10 @@
             const quillEditors = [];
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | Initialize Quill Editor
-            |--------------------------------------------------------------------------
-            */
+            const initQuillEditor = (
+                editorElement,
+            ) => {
 
-            const initQuillEditor = (editorElement) => {
                 if (
                     !editorElement ||
                     typeof window.Quill === 'undefined'
@@ -1367,12 +1782,14 @@
                     return null;
                 }
 
+
                 const editorWrapper =
                     editorElement.parentElement;
 
                 if (!editorWrapper) {
                     return null;
                 }
+
 
                 const sourceTextarea =
                     editorWrapper.querySelector(
@@ -1384,63 +1801,48 @@
                 }
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | Placeholder
-                |--------------------------------------------------------------------------
-                */
-
                 const placeholder =
                     editorElement.dataset.placeholder ||
                     (
-                        sourceTextarea.name === 'short_description'
+                        sourceTextarea.name ===
+                        'short_description'
                             ? 'Write a short summary of this product...'
                             : 'Write your product description...'
                     );
 
-                /*
-                |--------------------------------------------------------------------------
-                | Create Quill
-                |--------------------------------------------------------------------------
-                */
 
-                const quill = new window.Quill(
-                    editorElement,
-                    {
-                        theme: 'snow',
+                const quill =
+                    new window.Quill(
+                        editorElement,
+                        {
+                            theme: 'snow',
 
-                        modules: {
-                            toolbar: quillToolbar,
+                            modules: {
+                                toolbar:
+                                quillToolbar,
+                            },
+
+                            placeholder,
                         },
+                    );
 
-                        placeholder,
-                    },
-                );
-
-
-                /*
-                |--------------------------------------------------------------------------
-                | Load Existing HTML Content
-                |--------------------------------------------------------------------------
-                */
 
                 const initialValue =
-                    sourceTextarea.value?.trim() ?? '';
+                    sourceTextarea.value?.trim() ??
+                    '';
+
 
                 if (initialValue) {
+
                     quill.clipboard.dangerouslyPasteHTML(
                         initialValue,
                     );
+
                 }
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | Sync Quill HTML To Textarea
-                |--------------------------------------------------------------------------
-                */
-
                 const syncQuill = () => {
+
                     const html =
                         quill.root.innerHTML.trim();
 
@@ -1448,26 +1850,15 @@
                         html === '<p><br></p>'
                             ? ''
                             : html;
+
                 };
 
-
-                /*
-                |--------------------------------------------------------------------------
-                | Quill Change Event
-                |--------------------------------------------------------------------------
-                */
 
                 quill.on(
                     'text-change',
                     syncQuill,
                 );
 
-
-                /*
-                |--------------------------------------------------------------------------
-                | Initial Sync
-                |--------------------------------------------------------------------------
-                */
 
                 syncQuill();
 
@@ -1481,12 +1872,6 @@
                 return quill;
             };
 
-
-            /*
-            |--------------------------------------------------------------------------
-            | Initialize All Quill Editors
-            |--------------------------------------------------------------------------
-            */
 
             page.querySelectorAll(
                 '[data-quill-editor]',
@@ -1507,27 +1892,35 @@
             const slugInput =
                 page.querySelector('#slug');
 
+
             if (
                 nameInput &&
                 slugInput
             ) {
+
                 let slugManuallyChanged =
                     slugInput.value.trim() !== '';
+
 
                 slugInput.addEventListener(
                     'input',
                     () => {
+
                         slugManuallyChanged =
                             slugInput.value.trim() !== '';
+
                     },
                 );
+
 
                 nameInput.addEventListener(
                     'input',
                     () => {
+
                         if (slugManuallyChanged) {
                             return;
                         }
+
 
                         slugInput.value =
                             nameInput.value
@@ -1545,8 +1938,10 @@
                                     /-+/g,
                                     '-',
                                 );
+
                     },
                 );
+
             }
 
 
@@ -1560,38 +1955,51 @@
                 page.querySelector('#thumbnail');
 
             const thumbnailPreview =
-                page.querySelector('#thumbnail-preview');
+                page.querySelector(
+                    '#thumbnail-preview',
+                );
+
 
             if (
                 thumbnailInput &&
                 thumbnailPreview
             ) {
+
                 thumbnailInput.addEventListener(
                     'change',
                     () => {
+
                         const file =
                             thumbnailInput.files?.[0];
+
 
                         if (!file) {
                             return;
                         }
+
 
                         if (
                             !file.type.startsWith(
                                 'image/',
                             )
                         ) {
-                            thumbnailInput.value = '';
+
+                            thumbnailInput.value =
+                                '';
 
                             return;
+
                         }
+
 
                         const reader =
                             new FileReader();
 
+
                         reader.addEventListener(
                             'load',
                             (event) => {
+
                                 thumbnailPreview.innerHTML = `
                                     <img
                                         src="${event.target.result}"
@@ -1608,18 +2016,22 @@
                                     </button>
                                 `;
 
+
                                 const removeButton =
                                     thumbnailPreview.querySelector(
                                         '[data-remove-thumbnail]',
                                     );
 
+
                                 removeButton?.addEventListener(
                                     'click',
                                     (clickEvent) => {
+
                                         clickEvent.preventDefault();
                                         clickEvent.stopPropagation();
 
-                                        thumbnailInput.value = '';
+                                        thumbnailInput.value =
+                                            '';
 
                                         thumbnailPreview.innerHTML = `
                                             <div class="product-create-page__upload-icon">
@@ -1634,14 +2046,19 @@
                                                 JPG, PNG or WebP
                                             </span>
                                         `;
+
                                     },
                                 );
+
                             },
                         );
 
+
                         reader.readAsDataURL(file);
+
                     },
                 );
+
             }
 
 
@@ -1655,26 +2072,37 @@
                 page.querySelector('#gallery');
 
             const galleryPreview =
-                page.querySelector('#gallery-preview');
+                page.querySelector(
+                    '#gallery-preview',
+                );
+
 
             if (
                 galleryInput &&
                 galleryPreview
             ) {
+
                 galleryInput.addEventListener(
                     'change',
                     () => {
-                        galleryPreview.innerHTML = '';
 
-                        const files = Array.from(
-                            galleryInput.files || [],
-                        );
+                        galleryPreview.innerHTML =
+                            '';
+
+
+                        const files =
+                            Array.from(
+                                galleryInput.files ||
+                                [],
+                            );
+
 
                         files.forEach(
                             (
                                 file,
                                 index,
                             ) => {
+
                                 if (
                                     !file.type.startsWith(
                                         'image/',
@@ -1683,22 +2111,28 @@
                                     return;
                                 }
 
+
                                 const reader =
                                     new FileReader();
+
 
                                 reader.addEventListener(
                                     'load',
                                     (event) => {
+
                                         const item =
                                             document.createElement(
                                                 'div',
                                             );
 
+
                                         item.className =
                                             'product-create-page__gallery-item';
 
+
                                         item.dataset.galleryIndex =
                                             String(index);
+
 
                                         item.innerHTML = `
                                             <img
@@ -1716,17 +2150,23 @@
                                             </button>
                                         `;
 
+
                                         galleryPreview.appendChild(
                                             item,
                                         );
+
                                     },
                                 );
 
+
                                 reader.readAsDataURL(file);
+
                             },
                         );
+
                     },
                 );
+
             }
 
 
@@ -1741,27 +2181,33 @@
                     '[data-attribute-card]',
                 );
 
+
             attributeCards.forEach(
                 (card) => {
+
                     const toggle =
                         card.querySelector(
                             '[data-attribute-toggle]',
                         );
+
 
                     const valuesContainer =
                         card.querySelector(
                             '[data-attribute-values]',
                         );
 
+
                     const valueInputs =
                         card.querySelectorAll(
                             '[data-attribute-value]',
                         );
 
+
                     const selectAllButton =
                         card.querySelector(
                             '[data-select-all]',
                         );
+
 
                     if (
                         !toggle ||
@@ -1773,12 +2219,14 @@
 
                     const updateSelectAllButton =
                         () => {
+
                             if (
                                 !selectAllButton ||
                                 !toggle.checked
                             ) {
                                 return;
                             }
+
 
                             const checkedCount =
                                 Array.from(
@@ -1788,8 +2236,10 @@
                                         input.checked,
                                 ).length;
 
+
                             const totalCount =
                                 valueInputs.length;
+
 
                             selectAllButton.textContent =
                                 totalCount > 0 &&
@@ -1797,30 +2247,39 @@
                                 totalCount
                                     ? 'Deselect All'
                                     : 'Select All';
+
                         };
 
 
                     const updateValuesState =
                         () => {
+
                             const enabled =
                                 toggle.checked;
+
 
                             valuesContainer.hidden =
                                 !enabled;
 
+
                             valueInputs.forEach(
                                 (input) => {
+
                                     input.disabled =
                                         !enabled;
+
 
                                     if (!enabled) {
                                         input.checked =
                                             false;
                                     }
+
                                 },
                             );
 
+
                             updateSelectAllButton();
+
                         };
 
 
@@ -1832,10 +2291,12 @@
 
                     valueInputs.forEach(
                         (input) => {
+
                             input.addEventListener(
                                 'change',
                                 updateSelectAllButton,
                             );
+
                         },
                     );
 
@@ -1843,9 +2304,11 @@
                     selectAllButton?.addEventListener(
                         'click',
                         () => {
+
                             if (!toggle.checked) {
                                 return;
                             }
+
 
                             const allChecked =
                                 Array.from(
@@ -1855,19 +2318,48 @@
                                         input.checked,
                                 );
 
+
                             valueInputs.forEach(
                                 (input) => {
+
                                     input.checked =
                                         !allChecked;
+
                                 },
                             );
 
+
                             updateSelectAllButton();
+
                         },
                     );
 
 
-                    updateValuesState();
+                    /*
+                     * Important:
+                     * Keep old selected values enabled
+                     * after validation error.
+                     */
+                    if (toggle.checked) {
+
+                        valueInputs.forEach(
+                            (input) => {
+                                input.disabled =
+                                    false;
+                            },
+                        );
+
+                        valuesContainer.hidden =
+                            false;
+
+                        updateSelectAllButton();
+
+                    } else {
+
+                        updateValuesState();
+
+                    }
+
                 },
             );
 
@@ -1883,26 +2375,35 @@
                     '#generate-variants',
                 );
 
+
             const variantsContainer =
                 page.querySelector(
                     '#variants-container',
                 );
+
 
             const variantsList =
                 page.querySelector(
                     '#variants-list',
                 );
 
+
             const variantCount =
                 page.querySelector(
                     '#variant-count',
                 );
 
+
             const defaultPrice =
-                page.querySelector('#price');
+                page.querySelector(
+                    '#price',
+                );
+
 
             const defaultComparePrice =
-                page.querySelector('#compare_price');
+                page.querySelector(
+                    '#compare_price',
+                );
 
 
             /*
@@ -1911,202 +2412,228 @@
             |--------------------------------------------------------------------------
             */
 
-            if (
-                generateButton &&
-                variantsContainer &&
-                variantsList
-            ) {
-                generateButton.addEventListener(
-                    'click',
-                    () => {
-                        const selectedAttributes =
-                            [];
+            generateButton?.addEventListener(
+                'click',
+                () => {
 
-                        attributeCards.forEach(
-                            (card) => {
-                                const toggle =
-                                    card.querySelector(
-                                        '[data-attribute-toggle]',
-                                    );
+                    /*
+                     * Only variable products can generate variants.
+                     */
+                    if (!isVariableProduct()) {
 
-                                if (
-                                    !toggle?.checked
-                                ) {
-                                    return;
-                                }
+                        window.alert(
+                            'Please select Variable Product first.',
+                        );
 
-                                const attributeId =
-                                    String(
-                                        card.dataset
-                                            .attributeId ||
-                                        '',
-                                    ).trim();
+                        return;
+                    }
 
-                                if (!attributeId) {
-                                    return;
-                                }
 
-                                const selectedValues =
-                                    Array.from(
-                                        card.querySelectorAll(
-                                            '[data-attribute-value]:checked',
-                                        ),
-                                    )
-                                        .map(
-                                            (input) => {
-                                                const valueId =
-                                                    String(
-                                                        input.value ||
-                                                        '',
-                                                    ).trim();
+                    const selectedAttributes =
+                        [];
 
-                                                const valueLabel =
-                                                    String(
-                                                        input.dataset
-                                                            .valueLabel ||
-                                                        '',
-                                                    ).trim();
 
-                                                const valueAttributeId =
-                                                    String(
-                                                        input.dataset
-                                                            .attributeId ||
-                                                        attributeId,
-                                                    ).trim();
+                    attributeCards.forEach(
+                        (card) => {
 
-                                                const attributeName =
-                                                    String(
-                                                        input.dataset
-                                                            .attributeName ||
-                                                        '',
-                                                    ).trim();
+                            const toggle =
+                                card.querySelector(
+                                    '[data-attribute-toggle]',
+                                );
 
-                                                if (
-                                                    !valueId ||
-                                                    !valueAttributeId
-                                                ) {
-                                                    return null;
-                                                }
 
-                                                return {
-                                                    id: valueId,
-                                                    label: valueLabel,
-                                                    attributeId:
-                                                    valueAttributeId,
-                                                    attributeName,
-                                                };
-                                            },
-                                        )
-                                        .filter(Boolean);
+                            if (!toggle?.checked) {
+                                return;
+                            }
 
-                                if (
-                                    selectedValues.length >
-                                    0
-                                ) {
-                                    selectedAttributes.push(
-                                        {
-                                            attributeId,
-                                            values:
-                                            selectedValues,
+
+                            const attributeId =
+                                String(
+                                    card.dataset
+                                        .attributeId ||
+                                    '',
+                                ).trim();
+
+
+                            if (!attributeId) {
+                                return;
+                            }
+
+
+                            const selectedValues =
+                                Array.from(
+                                    card.querySelectorAll(
+                                        '[data-attribute-value]:checked',
+                                    ),
+                                )
+                                    .map(
+                                        (input) => {
+
+                                            const valueId =
+                                                String(
+                                                    input.value ||
+                                                    '',
+                                                ).trim();
+
+
+                                            const valueLabel =
+                                                String(
+                                                    input.dataset
+                                                        .valueLabel ||
+                                                    '',
+                                                ).trim();
+
+
+                                            const valueAttributeId =
+                                                String(
+                                                    input.dataset
+                                                        .attributeId ||
+                                                    attributeId,
+                                                ).trim();
+
+
+                                            const attributeName =
+                                                String(
+                                                    input.dataset
+                                                        .attributeName ||
+                                                    '',
+                                                ).trim();
+
+
+                                            if (
+                                                !valueId ||
+                                                !valueAttributeId
+                                            ) {
+                                                return null;
+                                            }
+
+
+                                            return {
+                                                id: valueId,
+
+                                                label:
+                                                valueLabel,
+
+                                                attributeId:
+                                                valueAttributeId,
+
+                                                attributeName,
+                                            };
+
                                         },
-                                    );
-                                }
-                            },
-                        );
+                                    )
+                                    .filter(Boolean);
 
 
-                        if (
-                            selectedAttributes.length ===
-                            0
-                        ) {
-                            variantsContainer.hidden =
-                                true;
+                            if (
+                                selectedValues.length >
+                                0
+                            ) {
 
-                            window.alert(
-                                'Please select at least one option and one value before generating variants.',
-                            );
+                                selectedAttributes.push({
+                                    attributeId,
 
-                            return;
-                        }
+                                    values:
+                                    selectedValues,
+                                });
 
+                            }
 
-                        const groups =
-                            selectedAttributes.map(
-                                (attribute) =>
-                                    attribute.values,
-                            );
-
-                        const combinations =
-                            buildCombinations(
-                                groups,
-                            );
+                        },
+                    );
 
 
-                        if (
-                            !combinations.length
-                        ) {
-                            variantsContainer.hidden =
-                                true;
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Attribute Validation
+                    |--------------------------------------------------------------------------
+                    */
 
-                            window.alert(
-                                'No valid variant combinations could be generated.',
-                            );
-
-                            return;
-                        }
-
-
-                        const invalidCombination =
-                            combinations.find(
-                                (combination) => {
-                                    return (
-                                        combination.length ===
-                                        0 ||
-                                        combination.some(
-                                            (item) => {
-                                                return (
-                                                    !item.id ||
-                                                    !item.attributeId
-                                                );
-                                            },
-                                        )
-                                    );
-                                },
-                            );
-
-
-                        if (
-                            invalidCombination
-                        ) {
-                            variantsContainer.hidden =
-                                true;
-
-                            window.alert(
-                                'One or more variant combinations are missing attribute values.',
-                            );
-
-                            return;
-                        }
-
-
-                        renderVariants(
-                            combinations,
-                        );
+                    if (
+                        selectedAttributes.length ===
+                        0
+                    ) {
 
                         variantsContainer.hidden =
-                            false;
+                            true;
 
-                        variantsContainer.scrollIntoView(
-                            {
-                                behavior:
-                                    'smooth',
-                                block:
-                                    'start',
-                            },
+
+                        window.alert(
+                            'Please select at least one option and one value before generating variants.',
                         );
-                    },
-                );
-            }
+
+
+                        return;
+
+                    }
+
+
+                    const attributeWithoutValues =
+                        selectedAttributes.find(
+                            (attribute) =>
+                                attribute.values
+                                    .length === 0,
+                        );
+
+
+                    if (attributeWithoutValues) {
+
+                        window.alert(
+                            'Each selected option must have at least one value.',
+                        );
+
+                        return;
+
+                    }
+
+
+                    const groups =
+                        selectedAttributes.map(
+                            (attribute) =>
+                                attribute.values,
+                        );
+
+
+                    const combinations =
+                        buildCombinations(
+                            groups,
+                        );
+
+
+                    if (
+                        !combinations.length
+                    ) {
+
+                        variantsContainer.hidden =
+                            true;
+
+
+                        window.alert(
+                            'No valid variant combinations could be generated.',
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    renderVariants(
+                        combinations,
+                    );
+
+
+                    variantsContainer.hidden =
+                        false;
+
+
+                    variantsContainer.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start',
+                    });
+
+                },
+            );
 
 
             /*
@@ -2118,12 +2645,14 @@
             function buildCombinations(
                 groups,
             ) {
+
                 if (
                     !Array.isArray(groups) ||
                     !groups.length
                 ) {
                     return [];
                 }
+
 
                 if (
                     groups.some(
@@ -2135,34 +2664,45 @@
                     return [];
                 }
 
+
                 return groups.reduce(
                     (
                         combinations,
                         group,
                     ) => {
+
                         if (
                             !combinations.length
                         ) {
+
                             return group.map(
                                 (item) => [item],
                             );
+
                         }
+
 
                         return combinations.flatMap(
                             (combination) => {
+
                                 return group.map(
                                     (item) => {
+
                                         return [
                                             ...combination,
                                             item,
                                         ];
+
                                     },
                                 );
+
                             },
                         );
+
                     },
                     [],
                 );
+
             }
 
 
@@ -2175,21 +2715,27 @@
             function renderVariants(
                 combinations,
             ) {
+
                 if (!variantsList) {
                     return;
                 }
 
-                variantsList.innerHTML = '';
+
+                variantsList.innerHTML =
+                    '';
+
 
                 combinations.forEach(
                     (
                         combination,
                         index,
                     ) => {
+
                         const row =
                             document.createElement(
                                 'tr',
                             );
+
 
                         const variantLabel =
                             combination
@@ -2200,6 +2746,7 @@
                                 .filter(Boolean)
                                 .join(' / ');
 
+
                         row.dataset.variantIndex =
                             String(index);
 
@@ -2208,11 +2755,13 @@
                             combination
                                 .map(
                                     (item) => {
+
                                         const attributeId =
                                             String(
                                                 item.attributeId ||
                                                 '',
                                             ).trim();
+
 
                                         const valueId =
                                             String(
@@ -2220,12 +2769,14 @@
                                                 '',
                                             ).trim();
 
+
                                         if (
                                             !attributeId ||
                                             !valueId
                                         ) {
                                             return '';
                                         }
+
 
                                         return `
                                             <span>
@@ -2248,13 +2799,16 @@
                                                 data-value-id="${escapeAttribute(valueId)}"
                                             >
                                         `;
+
                                     },
                                 )
                                 .join('');
 
 
                         row.innerHTML = `
+
                             <td>
+
                                 <div class="product-create-page__variant-name">
 
                                     <strong>
@@ -2276,10 +2830,12 @@
                                     >
 
                                 </div>
+
                             </td>
 
 
                             <td>
+
                                 <input
                                     type="text"
                                     name="variants[${index}][sku]"
@@ -2287,10 +2843,12 @@
                                     placeholder="SKU"
                                     required
                                 >
+
                             </td>
 
 
                             <td>
+
                                 <div class="product-create-page__variant-price">
 
                                     <span>$</span>
@@ -2310,10 +2868,12 @@
                                     >
 
                                 </div>
+
                             </td>
 
 
                             <td>
+
                                 <div class="product-create-page__variant-price">
 
                                     <span>$</span>
@@ -2332,10 +2892,12 @@
                                     >
 
                                 </div>
+
                             </td>
 
 
                             <td>
+
                                 <input
                                     type="number"
                                     name="variants[${index}][stock]"
@@ -2346,10 +2908,12 @@
                                     placeholder="0"
                                     required
                                 >
+
                             </td>
 
 
                             <td>
+
                                 <label
                                     class="product-create-page__variant-image"
                                 >
@@ -2369,10 +2933,12 @@
                                     </span>
 
                                 </label>
+
                             </td>
 
 
                             <td>
+
                                 <label
                                     class="product-create-page__variant-switch"
                                 >
@@ -2387,10 +2953,12 @@
                                     <span></span>
 
                                 </label>
+
                             </td>
 
 
                             <td>
+
                                 <button
                                     type="button"
                                     class="product-create-page__remove-variant"
@@ -2399,38 +2967,53 @@
                                 >
                                     <i class="ri-delete-bin-line"></i>
                                 </button>
+
                             </td>
+
                         `;
+
 
                         variantsList.appendChild(
                             row,
                         );
 
-                        setupVariantImage(row);
+
+                        setupVariantImage(
+                            row,
+                        );
+
                     },
                 );
 
+
                 updateVariantCount();
+
                 setupVariantRemoval();
+
             }
 
 
             /*
             |--------------------------------------------------------------------------
-            | Variant Image Preview
+            | Variant Image
             |--------------------------------------------------------------------------
             */
 
-            function setupVariantImage(row) {
+            function setupVariantImage(
+                row,
+            ) {
+
                 const input =
                     row.querySelector(
                         '[data-variant-image-input]',
                     );
 
+
                 const preview =
                     row.querySelector(
                         '[data-variant-image-preview]',
                     );
+
 
                 if (
                     !input ||
@@ -2439,44 +3022,58 @@
                     return;
                 }
 
+
                 input.addEventListener(
                     'change',
                     () => {
+
                         const file =
                             input.files?.[0];
+
 
                         if (!file) {
                             return;
                         }
+
 
                         if (
                             !file.type.startsWith(
                                 'image/',
                             )
                         ) {
-                            input.value = '';
+
+                            input.value =
+                                '';
 
                             return;
+
                         }
+
 
                         const reader =
                             new FileReader();
 
+
                         reader.addEventListener(
                             'load',
                             (event) => {
+
                                 preview.innerHTML = `
                                     <img
                                         src="${event.target.result}"
                                         alt="Variant image"
                                     >
                                 `;
+
                             },
                         );
 
+
                         reader.readAsDataURL(file);
+
                     },
                 );
+
             }
 
 
@@ -2487,9 +3084,11 @@
             */
 
             function setupVariantRemoval() {
+
                 if (!variantsList) {
                     return;
                 }
+
 
                 variantsList
                     .querySelectorAll(
@@ -2497,19 +3096,26 @@
                     )
                     .forEach(
                         (button) => {
+
                             button.addEventListener(
                                 'click',
                                 () => {
+
                                     button
                                         .closest('tr')
                                         ?.remove();
 
+
                                     reindexVariants();
+
                                     updateVariantCount();
+
                                 },
                             );
+
                         },
                     );
+
             }
 
 
@@ -2520,9 +3126,11 @@
             */
 
             function reindexVariants() {
+
                 if (!variantsList) {
                     return;
                 }
+
 
                 const rows =
                     Array.from(
@@ -2531,27 +3139,34 @@
                         ),
                     );
 
+
                 rows.forEach(
                     (
                         row,
                         index,
                     ) => {
+
                         row.dataset.variantIndex =
                             String(index);
+
 
                         row.querySelectorAll(
                             '[name]',
                         ).forEach(
                             (input) => {
+
                                 input.name =
                                     input.name.replace(
                                         /variants\[\d+\]/,
                                         `variants[${index}]`,
                                     );
+
                             },
                         );
+
                     },
                 );
+
             }
 
 
@@ -2562,6 +3177,7 @@
             */
 
             function updateVariantCount() {
+
                 if (
                     !variantCount ||
                     !variantsList
@@ -2569,10 +3185,12 @@
                     return;
                 }
 
+
                 const count =
                     variantsList.querySelectorAll(
                         'tr',
                     ).length;
+
 
                 variantCount.textContent =
                     `${count} ${
@@ -2581,16 +3199,20 @@
                             : 'Variants'
                     }`;
 
+
                 if (variantsContainer) {
+
                     variantsContainer.hidden =
                         count === 0;
+
                 }
+
             }
 
 
             /*
             |--------------------------------------------------------------------------
-            | SEO Character Counters
+            | SEO Counters
             |--------------------------------------------------------------------------
             */
 
@@ -2598,6 +3220,7 @@
                 '#meta_title',
                 '#meta-title-count',
             );
+
 
             setupCharacterCounter(
                 '#meta_description',
@@ -2609,15 +3232,18 @@
                 inputSelector,
                 countSelector,
             ) {
+
                 const input =
                     page.querySelector(
                         inputSelector,
                     );
 
+
                 const counter =
                     page.querySelector(
                         countSelector,
                     );
+
 
                 if (
                     !input ||
@@ -2626,139 +3252,260 @@
                     return;
                 }
 
+
                 const update = () => {
+
                     counter.textContent =
                         String(
                             input.value.length,
                         );
+
                 };
+
 
                 input.addEventListener(
                     'input',
                     update,
                 );
 
+
                 update();
+
             }
 
 
             /*
             |--------------------------------------------------------------------------
-            | Form Submit
+            | Form Submit Validation
             |--------------------------------------------------------------------------
             */
 
-            if (form) {
-                form.addEventListener(
-                    'submit',
-                    (event) => {
+            form?.addEventListener(
+                'submit',
+                (event) => {
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Sync Quill
+                    |--------------------------------------------------------------------------
+                    */
+
+                    quillEditors.forEach(
+                        ({
+                             quill,
+                             sourceTextarea,
+                         }) => {
+
+                            if (
+                                !quill ||
+                                !sourceTextarea
+                            ) {
+                                return;
+                            }
+
+
+                            const html =
+                                quill.root.innerHTML.trim();
+
+
+                            sourceTextarea.value =
+                                html === '<p><br></p>'
+                                    ? ''
+                                    : html;
+
+                        },
+                    );
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Product Type Validation
+                    |--------------------------------------------------------------------------
+                    */
+
+                    const type =
+                        getProductType();
+
+
+                    if (
+                        type !== 'simple' &&
+                        type !== 'variable'
+                    ) {
+
+                        event.preventDefault();
+
+                        window.alert(
+                            'Please select a valid product type.',
+                        );
+
+                        productTypeInput?.focus();
+
+                        return;
+
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Simple Product
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (type === 'simple') {
+
+                        const stock =
+                            Number(
+                                simpleStockInput?.value ||
+                                0,
+                            );
+
+
+                        if (
+                            !Number.isInteger(stock) ||
+                            stock < 0
+                        ) {
+
+                            event.preventDefault();
+
+                            window.alert(
+                                'Please enter a valid stock quantity.',
+                            );
+
+                            simpleStockInput?.focus();
+
+                            return;
+
+                        }
+
 
                         /*
-                        |--------------------------------------------------------------------------
-                        | Sync All Quill Editors
-                        |--------------------------------------------------------------------------
-                        */
+                         * Remove stale generated variants
+                         * if user switched from variable to simple.
+                         */
+                        if (variantsList) {
+                            variantsList.innerHTML =
+                                '';
+                        }
 
-                        quillEditors.forEach(
-                            ({
-                                 quill,
-                                 sourceTextarea,
-                             }) => {
-                                if (
-                                    !quill ||
-                                    !sourceTextarea
-                                ) {
-                                    return;
-                                }
 
-                                const html =
-                                    quill.root.innerHTML.trim();
+                        if (variantsContainer) {
+                            variantsContainer.hidden =
+                                true;
+                        }
 
-                                sourceTextarea.value =
-                                    html === '<p><br></p>'
-                                        ? ''
-                                        : html;
-                            },
+
+                        return;
+
+                    }
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Variable Product
+                    |--------------------------------------------------------------------------
+                    */
+
+                    reindexVariants();
+
+
+                    const variantRows =
+                        Array.from(
+                            variantsList?.querySelectorAll(
+                                'tr',
+                            ) || [],
                         );
 
 
-                        /*
-                        |--------------------------------------------------------------------------
-                        | Reindex Variants
-                        |--------------------------------------------------------------------------
-                        */
+                    if (
+                        variantRows.length === 0
+                    ) {
 
-                        reindexVariants();
+                        event.preventDefault();
+
+                        window.alert(
+                            'Please generate at least one product variant.',
+                        );
+
+                        generateButton?.focus();
+
+                        return;
+
+                    }
 
 
-                        /*
-                        |--------------------------------------------------------------------------
-                        | Validate Variants
-                        |--------------------------------------------------------------------------
-                        */
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Validate Variant Attribute Values
+                    |--------------------------------------------------------------------------
+                    */
 
-                        const variantRows =
+                    for (
+                        const row of variantRows
+                        ) {
+
+                        const valueInputs =
                             Array.from(
-                                variantsList?.querySelectorAll(
-                                    'tr',
-                                ) || [],
+                                row.querySelectorAll(
+                                    'input[data-variant-value]',
+                                ),
+                            ).filter(
+                                (input) => {
+
+                                    return (
+                                        input.value.trim() !==
+                                        '' &&
+                                        input.dataset
+                                            .attributeId &&
+                                        input.dataset
+                                            .valueId
+                                    );
+
+                                },
                             );
 
-                        for (
-                            const row of variantRows
-                            ) {
-                            const valueInputs =
-                                Array.from(
-                                    row.querySelectorAll(
-                                        'input[data-variant-value]',
-                                    ),
-                                ).filter(
-                                    (input) => {
-                                        return (
-                                            input.value.trim() !==
-                                            '' &&
-                                            input.dataset
-                                                .attributeId &&
-                                            input.dataset
-                                                .valueId
-                                        );
-                                    },
-                                );
 
-                            if (
-                                valueInputs.length ===
-                                0
-                            ) {
-                                event.preventDefault();
+                        if (
+                            valueInputs.length ===
+                            0
+                        ) {
 
-                                window.alert(
-                                    'Each variant must have attribute values.',
-                                );
+                            event.preventDefault();
 
-                                row.scrollIntoView(
-                                    {
-                                        behavior:
-                                            'smooth',
-                                        block:
-                                            'center',
-                                    },
-                                );
 
-                                return;
-                            }
+                            window.alert(
+                                'Each variant must have attribute values.',
+                            );
+
+
+                            row.scrollIntoView({
+                                behavior:
+                                    'smooth',
+
+                                block:
+                                    'center',
+                            });
+
+
+                            return;
+
                         }
-                    },
-                );
-            }
+
+                    }
+
+                },
+            );
 
 
             /*
             |--------------------------------------------------------------------------
-            | HTML Escaping
+            | HTML Escape
             |--------------------------------------------------------------------------
             */
 
-            function escapeHtml(value) {
+            function escapeHtml(
+                value,
+            ) {
+
                 return String(value)
                     .replace(
                         /&/g,
@@ -2780,12 +3527,20 @@
                         /'/g,
                         '&#039;',
                     );
+
             }
 
 
-            function escapeAttribute(value) {
-                return escapeHtml(value);
+            function escapeAttribute(
+                value,
+            ) {
+
+                return escapeHtml(
+                    value,
+                );
+
             }
+
         });
     </script>
 

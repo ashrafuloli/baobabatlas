@@ -27,6 +27,9 @@ return new class extends Migration
                 ->nullable()
                 ->unique();
 
+            $table->string('type', 20)
+                ->default('simple');
+
             $table->string('source', 20)
                 ->default('own');
 
@@ -53,6 +56,9 @@ return new class extends Migration
             $table->decimal('shipping_cost', 12, 2)
                 ->default(0);
 
+            $table->unsignedInteger('stock')
+                ->default(0);
+
             $table->boolean('status')
                 ->default(true);
 
@@ -71,6 +77,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index('brand_id');
+            $table->index('type');
             $table->index('source');
             $table->index('status');
             $table->index('featured');
